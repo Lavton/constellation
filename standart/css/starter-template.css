@@ -1,0 +1,49 @@
+body {
+  padding-top: 50px;
+  text-align: left;
+}
+
+.starter-template {
+  padding: 10px 10px;
+  text-align: left;
+}
+
+
+.myClass {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.myClass2 {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.menu-items {
+  display: none;
+}
+
+.menu-title {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.menu-open .menu-items {
+  display: block;
+}
+
+
+.my-col {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86,61,124,.2);
+}
+
+.bill-transactions {
+  outline: 2px solid #eee;
+  overflow-y: scroll;
+  max-height: 15em;
+}
