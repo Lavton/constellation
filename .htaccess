@@ -1,2 +1,3 @@
 DirectoryIndex index.php
 allow from all
+adddefaultcharset utf8

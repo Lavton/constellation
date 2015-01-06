@@ -1,5 +1,9 @@
 body {
-  padding-top: 50px;
+  min-height: 2000px;
+}
+
+.navbar-static-top {
+  margin-bottom: 19px;
 }
 .starter-template {
   padding: 40px 15px;
@@ -14,7 +18,183 @@ body {
   padding: 40px 15px;
   text-align: center;	
 }
-footer {
-	  padding: 40px 15px;
-  text-align: center;
+.footer {
+  /*position: absolute;*/
+  bottom: 0;
+  width: 100%;
+  min-width: 940px;
+  margin-bottom: 0;
+  background-color: #E6E6E6;
+  border-top: 2px solid #9B9B9B;
+  line-height: 55px;
+  color: #9B9B9B;
+  margin-top: 75px;
 }
+.footer .social i {
+vertical-align: middle;
+}
+.fa-2x {
+font-size: 2em;
+}
+.footer .social a:hover {
+color: #777;
+}
+.footer .social a {
+text-align: center;
+color: #9B9B9B;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+a:hover, a:focus {
+color: #2a6496;
+text-decoration: underline;
+}
+.fa {
+	width: 40px;
+
+}
+
+
+
+.header.lvl1 {
+  height: 40px;
+  color: white;
+}
+
+.container {
+  width: 940px !important;
+}
+
+
+.header .login {
+line-height: 40px;
+font-family: sans-serif;
+font-weight: bolder;
+text-align: right;
+}
+
+.header-lvl2-container {
+position: relative;
+/* height: 40px; */
+/* margin-bottom: 20px; */
+}
+.header.lvl2, .header.lvl2 .row {
+background-color: #99B6C3;
+}
+
+
+
+
+/*.container.inner {
+  padding-left: 0px;
+  padding-right: 0px;
+  width: 940px !important;
+}*/
+
+.logo-cell {
+  position: relative;
+  margin-left: 15px;
+  margin-right: 10px;
+  width: 80px;
+  float: left;
+  height: 40px;
+}
+
+.logo-container {
+  position: absolute;
+  z-index: 1000;
+}
+
+.header.lvl1 {
+  /*height: 40px;*/
+  /*background-color: #678D9E;*/
+  color: white;
+}
+.header.lvl1 .row {
+  /*background-color: #678D9E;*/
+}
+
+.header-lvl2-container {
+  position: relative;
+  height: 40px;
+  /*margin-bottom: 20px;*/
+}
+
+.header.lvl2 {
+  width: 100%;
+  /* width: 960px; */
+  height: 40px;
+  color: white;
+  display: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.header.lvl2.current {
+  display: block;
+  z-index: 100;
+}
+
+.header ul {
+  padding-left: 0px;
+}
+
+.header a {
+  color: white;
+}
+
+.header a:hover {
+  text-decoration: none;
+}
+
+.header li {
+  list-style: none;
+  float: left;
+  line-height: 40px;
+  padding: 0px 12px;
+  font-family: sans-serif;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.header.lvl2,
+.header.lvl2 .row {
+  background-color: #99B6C3;
+}
+
+.header li:hover {
+  background-color: #437185; /*при наведении*/
+}
+.header li.current {
+  background-color: #24556A !important; /*выбранное*/
+}
+
+
+
+/*.header li i {
+  font-weight: normal;
+}*/
+
+/*.header .badge {
+  background-color: transparent;
+  border: 1px solid white;
+}
+*/
+.header .login {
+  line-height: 40px;
+  font-family: sans-serif;
+  font-weight: bolder;
+  text-align: right;
+}
+
+/*.header .login .logout-url {
+  font-weight: normal;
+}
+*/

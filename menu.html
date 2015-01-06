@@ -1,22 +1,41 @@
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-default navbar-static-top navbar-inverse"> 
+    <div class="header lvl1">
       <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/index.php">СПО "Созвездие"</a>
+        <div class="row">
+          <div class="col-xs-9">
+            <div class="logo-cell">
+              <a href="/index.php">
+                <div class="logo-container">
+                  СПО "СОзвездие"
+                </div>
+              </a>
+            </div>
+            <ul>
+              <a href="/method.php">
+                <li class="current">
+                  База знаний <i class="fa fa-caret-down"></i>
+                </li>
+              </a>
+              <a href="/events.php">
+                <li class="">
+                  Мероприятия
+                </li>
+              </a>
+              <a href="/about.php">
+                <li class=" for-students">
+                  О нас <i class="fa fa-caret-down"></i>
+                </li>
+              </a>
+            </ul>
+          </div>
+          <div class="col-xs-3 login">
+            
+            <i class="fa fa-user"></i>&nbsp;<a href="/login.php">Войти</a>
+            
+          </div>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="/index.php">Главная</a></li>
-            <li><a href="method.php">База знаний</a>
-            </li>
-            <li><a href="events.php">Мероприятия</a></li>
-            <li><a href="about.php">О нас</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
       </div>
+    </div>
+  </div>
+
 </nav>
