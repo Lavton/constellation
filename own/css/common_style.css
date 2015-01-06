@@ -176,7 +176,9 @@ background-color: #99B6C3;
   background-color: #24556A !important; /*выбранное*/
 }
 
-
+.header .login .logout-url {
+font-weight: normal;
+}
 
 /*.header li i {
   font-weight: normal;

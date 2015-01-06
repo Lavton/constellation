@@ -10,7 +10,8 @@
 </head>
 <body>
   <?php
-    include('menu.html')
+    include('menu.html');
+     session_start();
   ?>
       
   <div class="container lead">

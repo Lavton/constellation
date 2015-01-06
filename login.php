@@ -42,8 +42,7 @@
       dataType: "json",
       data:  $.param(data)
     }).done(function(json) {
-      console.log(json);
-      console.log('success');
+      window.location = "/index.php";
     }).fail(function() {
       alert("No user with such data.");
     });;
