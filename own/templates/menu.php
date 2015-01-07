@@ -12,7 +12,7 @@
             </div>
             <ul>
               <a href="/method">
-                <li class="current">
+                <li class=""> <!-- current -->
                   База знаний <i class="fa fa-caret-down"></i>
                 </li>
               </a>

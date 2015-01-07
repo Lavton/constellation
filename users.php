@@ -41,7 +41,7 @@ $('input[type=radio][name=group_r]').change(function() {
     data =  {new_group: this.value, action: "change_group"};
     $.ajax({
       type: "POST",
-      url: "/r_user.php",
+      url: "/handlers/user.php",
       dataType: "json",
       data:  $.param(data)
     }).done(function(json) {

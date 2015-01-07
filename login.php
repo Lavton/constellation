@@ -33,7 +33,7 @@
     data =  {username: $("#inputUser").val(),};
     $.ajax({
       type: "POST",
-      url: "/r_login.php",
+      url: "/handlers/login.php",
       dataType: "json",
       data:  $.param(data)
     }).done(function(json) {
