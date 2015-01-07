@@ -3,8 +3,9 @@ allow from all
 adddefaultcharset utf8
 ErrorDocument 404 /error/404.php
 RewriteEngine on
+
+#переделываем в человекочитаемый url
+RewriteRule ^(.*)users/([0-9]+)$ /users.php?id=$2 [QSA]
+
 #Убираем расширение файла из URL
-RewriteEngine on
-RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php [L]
-RewriteEngine on
-RewriteRule ^.*/users.php/(.*)$ /users.php?id=$1 [L,QSA]
+RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php 

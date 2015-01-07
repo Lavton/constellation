@@ -33,7 +33,7 @@ function auth_function(){
 	if ($result["result"] == "Success")	 {
 		start_session($result);
 	}
-	$result["ses"] = $_SESSION;
+	// $result["ss"] = $_SESSION;
 	echo json_encode($result);
 }
 
@@ -41,7 +41,6 @@ function auth_function(){
 function start_session($result){
 	session_start();
 	$_SESSION["user"] = $result["name"];
-	if (!isset($_SESSION["count"])) $_SESSION["count"] = 0;
-	$_SESSION["count"] = $_SESSION["count"] + 1;
+	$_SESSION["user_id"] = $result["user_id"];
 }
 ?>

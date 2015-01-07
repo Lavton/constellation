@@ -8,7 +8,7 @@
 	 session_destroy();
 ?>
 <script>
-	window.location = "/login.php";
+	window.location = "/login";
 </script>
 </body>
 </html>

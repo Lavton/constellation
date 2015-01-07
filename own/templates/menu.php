@@ -4,24 +4,24 @@
         <div class="row">
           <div class="col-xs-9">
             <div class="logo-cell">
-              <a href="/index.php">
+              <a href="/">
                 <div class="logo-container">
                   СПО "СОзвездие"
                 </div>
               </a>
             </div>
             <ul>
-              <a href="/method.php">
+              <a href="/method">
                 <li class="current">
                   База знаний <i class="fa fa-caret-down"></i>
                 </li>
               </a>
-              <a href="/events.php">
+              <a href="/events">
                 <li class="">
                   Мероприятия
                 </li>
               </a>
-              <a href="/about.php">
+              <a href="/about">
                 <li class=" for-students">
                   О нас <i class="fa fa-caret-down"></i>
                 </li>
@@ -32,9 +32,9 @@
             <i class="fa fa-user">&nbsp<?php
               session_start();
               if (isset($_SESSION["user"])) {
-                echo '<a href="/users.php">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout.php">выйти</a>)</span>';
+                echo '<a href="/users/'.$_SESSION["user_id"].'">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
               } else {
-                echo '<a href="/login.php">Войти</a>';
+                echo '<a href="/login">Войти</a>';
               }
             ?>
             </i>

@@ -11,6 +11,11 @@
   <?php
     include('own/templates/menu.php');
   ?>
+  <?php
+     echo "HELLO";
+     echo "__".print_r($_GET)."__";
+     echo $_POST;
+  ?>
       
   <div class="container lead">
     <div class="starter-template">

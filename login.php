@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <link rel="shortcut icon" href="/own/images/icon.ico">
-    <title>CПО "СОзвездие" | будущий сайт отряда</title>
-    <link rel="stylesheet" href="standart/css/bootstrap.css"/>
-    <link rel="stylesheet" href="/standart/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="own/css/common_style.css">
-    <link href="/own/css/signin.css" rel="stylesheet">
-</head>
+  <title>CПО "СОзвездие" | будущий сайт отряда</title>
+  <?php
+    include('own/templates/header.php');
+  ?>
+  
 
+</head>
 <body>
   <?php
-    include('menu.html')
+    include('own/templates/menu.php');
   ?>
 
   <div class="container">
@@ -26,12 +24,9 @@
     </form>
   </div>
 
-  <script type="text/javascript" src="standart/js/jquery.js"></script>
-  <script type="text/javascript" src="standart/js/underscore.js"></script>
-  <script type="text/javascript" src="standart/js/backbone.js"></script>
-  <script type="text/javascript" src="standart/js/jstree.js"></script>
-  <script type="text/javascript" src="standart/js/bootstrap.js"></script>
-
+<?php
+  include('own/templates/footer.php');
+?>
   <script>
   $(".btn").click(function() {
     console.log("Hello");
@@ -42,7 +37,12 @@
       dataType: "json",
       data:  $.param(data)
     }).done(function(json) {
-      window.location = "/index.php";
+      // debugger;
+      if (json.result == "Success") {
+        window.location = "/";
+      } else {
+        alert("No user with such data.");
+      }
     }).fail(function() {
       alert("No user with such data.");
     });;

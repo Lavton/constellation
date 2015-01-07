@@ -18,6 +18,8 @@ body {
   padding: 40px 15px;
   text-align: center;	
 }
+
+/*Низ сайта*/
 .footer {
   /*position: absolute;*/
   bottom: 0;
@@ -60,9 +62,10 @@ text-decoration: underline;
 	width: 40px;
 
 }
+/*конец низа сайта*/
 
 
-
+/*меню*/
 .header.lvl1 {
   height: 40px;
   color: white;
@@ -88,8 +91,6 @@ position: relative;
 .header.lvl2, .header.lvl2 .row {
 background-color: #99B6C3;
 }
-
-
 
 
 /*.container.inner {
@@ -200,3 +201,43 @@ font-weight: normal;
   font-weight: normal;
 }
 */
+/*конец меню*/
+
+
+
+/*авторизация*/
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+/*конец авторизации*/
