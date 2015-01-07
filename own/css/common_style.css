@@ -1,26 +1,17 @@
-body {
-  min-height: 2000px;
+html {
+  position: relative;
+  min-height: 100%;
 }
-
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
 .navbar-static-top {
   margin-bottom: 19px;
 }
-.starter-template {
-  padding: 40px 15px;
-  text-align: center;
-}
-.news {
-  padding: 40px 15px;
-  text-align: center;
-}
-
-.ctred {
-  padding: 40px 15px;
-  text-align: center;	
-}
 
 /*Низ сайта*/
-.footer {
+footer {
   /*position: absolute;*/
   bottom: 0;
   width: 100%;
@@ -32,21 +23,21 @@ body {
   color: #9B9B9B;
   margin-top: 75px;
 }
-.footer .social i {
+footer .social i {
 vertical-align: middle;
 }
 .fa-2x {
 font-size: 2em;
 }
-.footer .social a:hover {
+footer .social a:hover {
 color: #777;
 }
-.footer .social a {
+footer .social a {
 text-align: center;
 color: #9B9B9B;
 }
 
-.footer {
+footer {
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -62,6 +53,31 @@ text-decoration: underline;
 	width: 40px;
 
 }
+
+
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -60px;
+}
+#push{
+  height: 60px;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+  footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+
 /*конец низа сайта*/
 
 
@@ -241,3 +257,18 @@ font-weight: normal;
   border-top-right-radius: 0;
 }
 /*конец авторизации*/
+
+.page-cont {
+  padding: 40px 15px;
+}
+
+.starter-template {
+  text-align: center;
+}
+.news {
+  text-align: center;
+}
+
+.ctred {
+  text-align: center; 
+}

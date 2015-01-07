@@ -22,12 +22,6 @@
  
     </div> <!-- /container -->
 
-      </div>
-            <footer>
-        <p>&copy; СОзвездие 2014-2015</p>
-      </footer>
-    </div><!-- /.container -->
-
 <?php
   include('own/templates/footer.php');
 ?>

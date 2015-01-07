@@ -1,3 +1,6 @@
+    <!-- Part 1: Wrap all page content here -->
+<div id="wrap">
+
 <nav class="navbar navbar-default navbar-static-top navbar-inverse"> 
     <div class="header lvl1">
       <div class="container">
@@ -44,6 +47,5 @@
       </div>
     </div>
   </div>
-
 </nav>
-
+<div class="page-cont">
