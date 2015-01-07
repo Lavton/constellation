@@ -96,9 +96,11 @@ text-align: right;
 
 .header-lvl2-container {
 position: relative;
-/* height: 40px; */
-/* margin-bottom: 20px; */
+ height: 40px; 
+ display: none;
+ /*margin-bottom: 20px; */
 }
+
 .header.lvl2, .header.lvl2 .row {
 background-color: #99B6C3;
 }
@@ -131,12 +133,6 @@ background-color: #99B6C3;
 }
 .header.lvl1 .row {
   /*background-color: #678D9E;*/
-}
-
-.header-lvl2-container {
-  position: relative;
-  height: 40px;
-  /*margin-bottom: 20px;*/
 }
 
 .header.lvl2 {
@@ -178,7 +174,7 @@ background-color: #99B6C3;
 
 .header.lvl2,
 .header.lvl2 .row {
-  background-color: #99B6C3;
+  background-color: #333;
 }
 
 .header li:hover {

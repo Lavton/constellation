@@ -21,11 +21,11 @@
             </a>
             <a href="/events">
               <li class="">
-                Мероприятия
+                Мероприятия <i class="fa fa-caret-down"></i>
               </li>
             </a>
             <a href="/about">
-              <li class=" about-us">
+              <li class="about-us">
                 О нас <i class="fa fa-caret-down"></i>
               </li>
             </a>
@@ -46,6 +46,64 @@
       </div>
     </div>
   </div>
-  
+
+
+  <div class="header-lvl2-container">
+      <div class="header lvl2 about">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="logo-cell"></div>
+              <ul>
+                <a href="/">
+                  <li class="">
+                    Глоссарий и история СО
+                  </li>
+                </a>
+                <a href="/">
+                  <li class="">
+                    История отряда
+                  </li>
+                </a>
+                <a href="/">
+                  <li class="">
+                    Отряд в лицах
+                  </li>
+                </a>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<div class="header-lvl2-container">
+      <div class="header lvl2 events">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="logo-cell"></div>
+              <ul>
+                <a href="/">
+                  <li class="">
+                    Актуальные
+                  </li>
+                </a>
+                <a href="/">
+                  <li class="">
+                    Грядущие
+                  </li>
+                </a>
+                <a href="/">
+                  <li class="">
+                    Прошедшие
+                  </li>
+                </a>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  </div>
 </nav>
 <div class="page-cont">
