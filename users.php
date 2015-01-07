@@ -11,10 +11,6 @@
   <?php
     include('own/templates/menu.php');
   ?>
-  <?php
-     // echo "HELLO";
-     // echo "__".print_r($_GET)."__";
-  ?>
       
   <div class="container">
 <?php
