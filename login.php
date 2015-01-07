@@ -5,7 +5,7 @@
   <?php
     include('own/templates/header.php');
   ?>
-  
+
 
 </head>
 <body>
@@ -37,15 +37,16 @@
       dataType: "json",
       data:  $.param(data)
     }).done(function(json) {
-      // debugger;
       if (json.result == "Success") {
+        console.log(json);
+        $(".menu_login").html('<a href="/users/'+json.user_id+'">&nbsp;'+json.name+'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>');
         window.location = "/";
       } else {
         alert("No user with such data.");
       }
     }).fail(function() {
       alert("No user with such data.");
-    });;
+    });
   });
   </script>
 

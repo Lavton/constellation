@@ -40,7 +40,15 @@ function auth_function(){
 
 function start_session($result){
 	session_start();
+
 	$_SESSION["user"] = $result["name"];
 	$_SESSION["user_id"] = $result["user_id"];
+	$query = 'SELECT group_id, name FROM groups WHERE group_id IN (SELECT group_id FROM users_groups WHERE user_id='.$_SESSION["user_id"].') ORDER BY group_id;';
+	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+	while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+	    $_SESSION["groups_av"][$line["group_id"]] = $line["name"];
+	    $_SESSION["current_group"] = $line["group_id"];
+    }
 }
+
 ?>

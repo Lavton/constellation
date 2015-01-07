@@ -12,53 +12,56 @@
     include('own/templates/menu.php');
   ?>
   <?php
-     echo "HELLO";
-     echo "__".print_r($_GET)."__";
-     echo $_POST;
+     // echo "HELLO";
+     // echo "__".print_r($_GET)."__";
   ?>
       
-  <div class="container lead">
-    <div class="starter-template">
-      <h1>Для незарегистрированных пользователей</h1>
-      <p class="lead">Тут просто написано, какие мы крутые</p>
-      <p class="lead">что мы пед отряд<br/>
-        что мы при Политехе, СПб<br/>
-        что мы ездим в лен область и на море<br/>
-        <br/>
-        ну и как с нами связаться линк
-      </p>
-    </div>
-    ______________________________________
-    <div class="news">
-      <h1> для зарегистрированных:<br/>Новости</h1>
-      возможно это будет вкладками, возможно как-то ещё
-      <div class="jumbotron">
-
-        <!-- Example row of columns -->
-        <div class="row">
-          <div class="col-md-4">
-            <h2>Отрядные мероприятия</h2>
-            <p>Тут новости по мероприятиям. К которым сейчас вот готовимся. Линки ведут в обсуждения мероприятий</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-          </div>
-          <div class="col-md-4">
-            <h2>Интересные события в СПб</h2>
-            <p>Тут любой боец может написать про что-нибудь интересное, на что он хочет пригласить СО*</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-         </div>
-          <div class="col-md-4">
-            <h2>Для обучения</h2>
-            <p>А тут - различные полезные курсы и обучающие мероприятия. Да, самостоятельным полем. Потому что мы педагогический отряд, нам надо учиться!</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-          </div>
-        </div>
-        <hr>
-      </div>
-    </div>
+  <div class="container">
+<?php
+  session_start();
+  if ($_GET["id"] == $_SESSION["user_id"]) {
+    echo "<h2>Выбрать категорию доступа</h2>";
+    foreach ($_SESSION["groups_av"] as $key => $value) {
+      if ($_SESSION["current_group"] == $key) {
+        echo '<input type="radio" checked name="group_r" value="'.$key.'"> '.$value.'<br/>';
+      } else {
+        echo '<input type="radio" name="group_r" value="'.$key.'"> '.$value.'<br/>';
+      }
+    }
+  } else {
+    echo '<h2>Просмотреть профиль</h2>';
+    echo "(не сейчас, а когда он будет)";
+  }
+?>
   </div> 
 
 <?php
   include('own/templates/footer.php');
 ?>
+
+<script type="text/javascript">
+//send ajax on changing radio
+$('input[type=radio][name=group_r]').change(function() {
+    data =  {new_group: this.value, action: "change_group"};
+    $.ajax({
+      type: "POST",
+      url: "/r_user.php",
+      dataType: "json",
+      data:  $.param(data)
+    }).done(function(json) {
+      if (json.result == "Success") {
+        console.log(json);
+      } else {
+        alert("No.");
+      }
+    }).fail(function() {
+      alert("Fail.");
+    });
+
+
+  console.log(this.value);
+});
+
+</script>
 </body>
 </html>
