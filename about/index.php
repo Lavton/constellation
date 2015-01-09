@@ -1,33 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-  <title>о нас | CПО "СОзвездие"</title>
   <?php
-    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/header.php');
+    session_start();
+    if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] > 2)) {
+      echo '<meta http-equiv="Refresh" content="0; URL=/about/faces">';
+    } else {
+      echo '<meta http-equiv="Refresh" content="0; URL=/about/history">';
+    }  
+    exit();
   ?>
-
 </head>
 <body>
-  <?php
-    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/menu.php');
-  ?>
-      
-
-    <div class="container ctred">
-      для незарегистрированных пользователей - подробнее про СО*, про отряды вообще, глоссарий там... <br/>
-      для зарегистрированных (бойцов) - то же, + расширенный вариант нумеровочки со страничками каждого бойца.<br/>
-      и смены, которые мы отработали, может что ещё.. <br/>
- 
-    </div> <!-- /container -->
-
-      </div>
-            <footer>
-        <p>&copy; СОзвездие 2014-2015</p>
-      </footer>
-    </div><!-- /.container -->
-
-<?php
-  include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
-?>
 </body>
 </html>

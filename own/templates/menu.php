@@ -55,21 +55,28 @@
             <div class="col-xs-12">
               <div class="logo-cell"></div>
               <ul>
-                <a href="/">
+                <a href="/about/glossary">
                   <li class="">
                     Глоссарий и история СО
                   </li>
                 </a>
-                <a href="/">
+                <a href="/about/history">
                   <li class="">
                     История отряда
                   </li>
                 </a>
+                <?php
+                session_start();
+                if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] > 2)) {
+                  ?>
                 <a href="/about/faces" class="about faces">
                   <li class="">
                     Отряд в лицах
                   </li>
                 </a>
+                <?php
+                }
+                ?>
               </ul>
             </div>
           </div>
