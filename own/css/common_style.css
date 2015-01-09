@@ -2,14 +2,12 @@ html {
   position: relative;
   min-height: 100%;
 }
+
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
 
-.navbar-static-top {
-  margin-bottom: 19px;
-}
 
 /*Низ сайта*/
 
@@ -26,41 +24,18 @@ footer {
   color: #9B9B9B;
   margin-top: 75px;
 }
-footer .social i {
-vertical-align: middle;
-}
-.fa-2x {
-font-size: 2em;
-}
-footer .social a:hover {
-color: #777;
-}
-footer .social a {
-text-align: center;
-color: #9B9B9B;
-}
+  footer .social i {
+    vertical-align: middle;
+  }
+  
+  footer .social a {
+    text-align: center;
+    color: #9B9B9B;
+  }
 
-
-a:hover, a:focus {
-color: #2a6496;
-text-decoration: underline;
-}
-.fa {
-	width: 40px;
-
-}
-
-
-
-/*#wrap {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  margin: 0 auto -60px;
-}
-#push{
-  height: 60px;
-}*/
+  footer .social a:hover {
+    color: #777;
+  }
 
 /* Lastly, apply responsive CSS fixes as necessary */
 @media (max-width: 767px) {
@@ -77,40 +52,17 @@ text-decoration: underline;
 
 
 /*меню*/
-.header.lvl1 {
-  height: 40px;
-  color: white;
-}
 
-.container {
+.header .container {
   width: 940px !important;
 }
-
 
 .header .login {
-line-height: 40px;
-font-family: sans-serif;
-font-weight: bolder;
-text-align: right;
+  line-height: 40px;
+  font-family: sans-serif;
+  font-weight: bolder;
+  text-align: right;
 }
-
-.header-lvl2-container {
-position: relative;
- height: 40px; 
- display: none;
- /*margin-bottom: 20px; */
-}
-
-.header.lvl2, .header.lvl2 .row {
-background-color: #99B6C3;
-}
-
-
-/*.container.inner {
-  padding-left: 0px;
-  padding-right: 0px;
-  width: 940px !important;
-}*/
 
 .logo-cell {
   position: relative;
@@ -126,29 +78,6 @@ background-color: #99B6C3;
   z-index: 1000;
 }
 
-.header.lvl1 {
-  /*height: 40px;*/
-  /*background-color: #678D9E;*/
-  color: white;
-}
-.header.lvl1 .row {
-  /*background-color: #678D9E;*/
-}
-
-.header.lvl2 {
-  width: 100%;
-  /* width: 960px; */
-  height: 40px;
-  color: white;
-  display: none;
-  position: absolute;
-  z-index: -1;
-}
-
-.header.lvl2.current {
-  display: block;
-  z-index: 100;
-}
 
 .header ul {
   padding-left: 0px;
@@ -158,9 +87,9 @@ background-color: #99B6C3;
   color: white;
 }
 
-.header a:hover {
-  text-decoration: none;
-}
+  .header a:hover {
+    text-decoration: none;
+  }
 
 .header li {
   list-style: none;
@@ -172,31 +101,17 @@ background-color: #99B6C3;
   cursor: pointer;
 }
 
-.header.lvl2,
-.header.lvl2 .row {
-  background-color: #333;
-}
-
-.header li:hover {
-  background-color: #437185; /*при наведении*/
-}
-.header li.current {
-  background-color: #24556A !important; /*выбранное*/
-}
+  .header li:hover {
+    background-color: #437185; /*при наведении*/
+  }
+  .header li.current {
+    background-color: #24556A !important; /*выбранное*/
+  }
 
 .header .login .logout-url {
 font-weight: normal;
 }
 
-/*.header li i {
-  font-weight: normal;
-}*/
-
-/*.header .badge {
-  background-color: transparent;
-  border: 1px solid white;
-}
-*/
 .header .login {
   line-height: 40px;
   font-family: sans-serif;
@@ -204,10 +119,42 @@ font-weight: normal;
   text-align: right;
 }
 
-/*.header .login .logout-url {
-  font-weight: normal;
+.header.lvl1 {
+  height: 40px;
+  color: white;
 }
-*/
+
+
+.header-lvl2-container {
+  position: relative;
+  height: 40px; 
+  display: none;
+}
+
+.header.lvl2, .header.lvl2 .row {
+  background-color: #99B6C3;
+}
+
+.header.lvl2 {
+  width: 100%;
+  height: 40px;
+  color: white;
+  display: none;
+  position: absolute;
+  z-index: -1;
+}
+
+  .header.lvl2.current {
+    display: block;
+    z-index: 100;
+  }
+
+.header.lvl2,
+.header.lvl2 .row {
+  background-color: #333;
+}
+
+
 /*конец меню*/
 
 
@@ -218,40 +165,39 @@ font-weight: normal;
   padding: 15px;
   margin: 0 auto;
 }
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
-  margin-bottom: 10px;
-}
-.form-signin .checkbox {
-  font-weight: normal;
-}
-.form-signin .form-control {
-  position: relative;
-  height: auto;
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
-  padding: 10px;
-  font-size: 16px;
-}
-.form-signin .form-control:focus {
-  z-index: 2;
-}
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
+
+  .form-signin .form-signin-heading,
+  .form-signin .checkbox {
+    margin-bottom: 10px;
+  }
+
+  .form-signin .checkbox {
+    font-weight: normal;
+  }
+  .form-signin .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+  }
+  .form-signin .form-control:focus {
+    z-index: 2;
+  }
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
 /*конец авторизации*/
 
-.page-cont {
-  /*padding: 40px 15px;*/
-}
 
 .starter-template {
   text-align: center;

@@ -17,6 +17,7 @@
   session_start();
   if ($_GET["id"] == $_SESSION["user_id"]) {
     echo "<h2>Выбрать категорию доступа</h2>";
+    echo "<i>данное поле влияет на то, как вы видите страницы.</i> <br/> ";
     foreach ($_SESSION["groups_av"] as $key => $value) {
       if ($_SESSION["current_group"] == $key) {
         echo '<input type="radio" checked name="group_r" value="'.$key.'"> '.$value.'<br/>';
