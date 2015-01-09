@@ -3,13 +3,13 @@
 <head lang="en">
   <title>CПО "СОзвездие" | будущий сайт отряда</title>
   <?php
-    include('own/templates/header.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/header.php');
   ?>
 
 </head>
 <body>
   <?php
-    include('own/templates/menu.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/menu.php');
   ?>
       
 
@@ -27,7 +27,7 @@
     </div><!-- /.container -->
 
 <?php
-  include('own/templates/footer.php');
+  include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
 ?>
 </body>
 </html>

@@ -1,3 +1,10 @@
+if (typeof String.prototype.startsWith != 'function') {
+  // see below for better implementation!
+  String.prototype.startsWith = function (str){
+    return this.indexOf(str) == 0;
+  };
+}
+
 (function() {
 	// $("nav a").click(function(event) {
  //        console.log($(this).attr("href"));
@@ -7,9 +14,8 @@
  //    	});
 	// });
 	var locat = window.location.pathname
-	$("nav li.current").removeClass("current");
-	$("nav a[href='"+locat+"'] li").addClass("current");
-	if ((locat=="/about") || (locat=="/events")) {
+	
+	if ((locat.startsWith("/about")) || (locat.startsWith("/events"))) {
 		$(".header-lvl2-container").show();
 		add_submenu(locat);
 	} else {
@@ -17,19 +23,14 @@
 	}
 
 	function add_submenu (locat) {
+		$("nav li.current").removeClass("current");
 		$("nav .header.lvl2").removeClass("current");
-		switch (locat) {
-			case "/about":
-			console.log("Beee")
-				$("nav .header.lvl2.about").addClass("current");
-				break;
-			case "/events":
-			console.log("AAA")
-				$("nav .header.lvl2.events").addClass("current");
-				break;
-
+		$("nav a[href='"+locat+"'] li").addClass("current");
+		if (locat.startsWith("/about")) {
+			$("nav a.about.index li").addClass("current");
+			$("nav .header.lvl2.about").addClass("current");
+		} else if (locat.startsWith("/events")) {
+			$("nav .header.lvl2.events").addClass("current");
 		}
-
-
 	}
 })();

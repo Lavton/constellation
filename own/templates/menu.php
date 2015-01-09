@@ -24,7 +24,7 @@
                 Мероприятия <i class="fa fa-caret-down"></i>
               </li>
             </a>
-            <a href="/about">
+            <a href="/about" class="about index">
               <li class="about-us">
                 О нас <i class="fa fa-caret-down"></i>
               </li>
@@ -65,7 +65,7 @@
                     История отряда
                   </li>
                 </a>
-                <a href="/">
+                <a href="/about/faces" class="about faces">
                   <li class="">
                     Отряд в лицах
                   </li>
