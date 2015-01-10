@@ -4,6 +4,7 @@
   <title>CПО "СОзвездие" | будущий сайт отряда</title>
   <?php
     include('own/templates/header.php');
+    include_once('own/templates/php_globals.php');
   ?>
 
 </head>
@@ -15,7 +16,7 @@
   <div class="container">
     <?php
       session_start();
-      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == 1) || (!(isset($_SESSION["user_id"])))) {
+      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["user_id"])))) {
         include('own/templates/indexes/1.php');
       } else {
         include('own/templates/indexes/not1.php');

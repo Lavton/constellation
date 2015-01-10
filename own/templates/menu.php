@@ -1,6 +1,8 @@
     <!-- Part 1: Wrap all page content here -->
 <div id="wrap">
-
+<?php
+  include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
+?>
 <nav class="navbar navbar-default navbar-static-top navbar-inverse"> 
   <div class="header lvl1">
     <div class="container">
@@ -67,7 +69,7 @@
                 </a>
                 <?php
                 session_start();
-                if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] > 2)) {
+                if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) {
                   ?>
                 <a href="/about/faces" class="about faces">
                   <li class="">

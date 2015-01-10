@@ -1,4 +1,5 @@
 <?php
+include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
 if (is_ajax()) {
 	if (isset($_POST["action"]) && !empty($_POST["action"])) { //Checks if action value exists
 		$action = $_POST["action"];
@@ -6,11 +7,6 @@ if (is_ajax()) {
 			case "change_group": change_group(); break;
 		}
 	}
-}
-
-//Function to check if the request is an AJAX request
-function is_ajax() {
-  return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
 
 //change curren group and return if successed
