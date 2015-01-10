@@ -28,6 +28,7 @@
   include('own/templates/footer.php');
 ?>
   <script>
+  /*отправляем Ajax при заполнении формы.*/
   $(".btn").click(function() {
     console.log("Hello");
     data =  {username: $("#inputUser").val(),};

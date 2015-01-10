@@ -1,5 +1,4 @@
 if (typeof String.prototype.startsWith != 'function') {
-  // see below for better implementation!
   String.prototype.startsWith = function (str){
     return this.indexOf(str) == 0;
   };
@@ -13,9 +12,12 @@ if (typeof String.prototype.startsWith != 'function') {
  //          trigger: true
  //    	});
 	// });
-	var locat = window.location.pathname
+    
+    /*смотрим путь, на котором мы сейчас*/
+	var locat = window.location.pathname;
 	
 	if ((locat.startsWith("/about")) || (locat.startsWith("/events"))) {
+		/*показываем подменю*/
 		$(".header-lvl2-container").show();
 		add_submenu(locat);
 	} else {

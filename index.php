@@ -15,6 +15,7 @@
       
   <div class="container">
     <?php
+    /*Если незарег, то одно показываем, иначе - другое*/
       session_start();
       if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["user_id"])))) {
         include('own/templates/indexes/1.php');

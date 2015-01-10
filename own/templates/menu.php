@@ -1,9 +1,10 @@
-    <!-- Part 1: Wrap all page content here -->
 <div id="wrap">
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
 ?>
+<!-- для меню -->
 <nav class="navbar navbar-default navbar-static-top navbar-inverse"> 
+  <!-- основное меню -->
   <div class="header lvl1">
     <div class="container">
       <div class="row">
@@ -37,7 +38,7 @@
           <i class="fa fa-user">&nbsp<span class="menu_login"><?php
             session_start();
             if (isset($_SESSION["user"])) {
-              echo '<a href="/users/'.$_SESSION["user_id"].'">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
+              echo '<a href="/about/users/'.$_SESSION["user_id"].'">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } else {
               echo '<a href="/login">Войти</a>';
             }
@@ -49,7 +50,7 @@
     </div>
   </div>
 
-
+  <!-- подменю. Не всегда активно. -->
   <div class="header-lvl2-container">
       <div class="header lvl2 about">
         <div class="container">
@@ -68,10 +69,11 @@
                   </li>
                 </a>
                 <?php
+                /*отображаем страницу со всеми людьми лишь бойцам+*/
                 session_start();
                 if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) {
                   ?>
-                <a href="/about/faces" class="about faces">
+                <a href="/about/users" class="about faces">
                   <li class="">
                     Отряд в лицах
                   </li>

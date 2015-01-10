@@ -4,6 +4,7 @@ function is_ajax() {
   return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
 
+/*алаесы для групп доступа*/
 define("UNREG", 1);
 define("CANDIDATE", 2);
 define("FIGHTER", 3);

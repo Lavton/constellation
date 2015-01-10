@@ -1,9 +1,11 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
+
 if (is_ajax()) {
 	if (isset($_POST["action"]) && !empty($_POST["action"])) { //Checks if action value exists
 		$action = $_POST["action"];
-		switch($action) { //Switch case for value of action
+		switch($action) {
+			/*если просят менять группу доступа - сделаем это!*/
 			case "change_group": change_group(); break;
 		}
 	}

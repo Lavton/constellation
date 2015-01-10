@@ -5,7 +5,7 @@ ErrorDocument 404 /error/404.php
 RewriteEngine on
 
 #переделываем в человекочитаемый url
-RewriteRule ^(.*)users/([0-9]+)$ /users.php?id=$2 [QSA]
+RewriteRule ^(.*)users/([0-9]+)$ /about/users.php?id=$2 [QSA]
 
 #Убираем расширение файла из URL
 RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php 
