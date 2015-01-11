@@ -38,7 +38,7 @@
           <i class="fa fa-user">&nbsp<span class="menu_login"><?php
             session_start();
             if (isset($_SESSION["user"])) {
-              echo '<a href="/about/users/'.$_SESSION["user_id"].'">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
+              echo '<a href="/about/users/0">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } else {
               echo '<a href="/login">Войти</a>';
             }

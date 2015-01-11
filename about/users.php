@@ -17,7 +17,7 @@
     <?php
       session_start();
       /*смотрим на свой профиль*/
-      if (isset($_GET["id"]) && $_GET["id"] == $_SESSION["user_id"]) {
+      if (isset($_GET["id"]) && $_GET["id"] == 0) {
         echo "<h2>Выбрать категорию доступа</h2>";
         echo "<i>данное поле влияет на то, как вы видите страницы.</i> <br/> ";
         foreach ($_SESSION["groups_av"] as $key => $value) {
