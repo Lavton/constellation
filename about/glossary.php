@@ -13,7 +13,7 @@
   ?>
       
 
-    <div class="container ctred">
+    <div id="page-container">
   даже не спрашивайте, что будет тут!
     </div> <!-- /container -->
 

@@ -1,19 +1,35 @@
-<!DOCTYPE html>
 <html>
 <head lang="en">
+  <title>CПО "СОзвездие" | будущий сайт отряда</title>
   <?php
-  include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
+    include($_SERVER['DOCUMENT_ROOT'].'/own/templates/header.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
+  ?>
+
+</head>
+<body>
+  <?php
+  include($_SERVER['DOCUMENT_ROOT'].'/own/templates/menu.php');
     session_start();
     /*если ты боец+, то перенаправляют на нумеровочку*/
     if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) {
-      echo '<meta http-equiv="Refresh" content="0; URL=/about/users">';
-      /*иначе - на историю отряда (нумеровочка недоступна)*/
+?>
+<div id="after-js-container">
+<script type="text/javascript">
+  $("nav a[href='/about/users']").trigger("click");
+</script>
+</div>
+<?php
     } else {
-      echo '<meta http-equiv="Refresh" content="0; URL=/about/history">';
+        /*иначе - на историю отряда (нумеровочка недоступна)*/
+      ?>
+<div id="after-js-container">
+<script type="text/javascript">
+  $("nav a[href='/about/history']").trigger("click");
+</script>
+</div>
+      <?php
     }  
-    exit();
   ?>
-</head>
-<body>
 </body>
 </html>

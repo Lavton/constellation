@@ -1,3 +1,6 @@
+<?php
+  include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
+?>
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -13,9 +16,9 @@
   ?>
       
 
-    <div class="container ctred">
+    <div id="page-container">
   тут история отряда.
-    </div> <!-- /container -->
+    </div> 
 
 
 <?php

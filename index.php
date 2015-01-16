@@ -13,7 +13,7 @@
     include('own/templates/menu.php');
   ?>
       
-  <div class="container">
+  <div id="page-container">
     <?php
     /*Если незарег, то одно показываем, иначе - другое*/
       session_start();
@@ -29,5 +29,13 @@
 <?php
   include('own/templates/footer.php');
 ?>
+<div id="after-js-container">
+  <script type="text/javascript">
+    console.log("main hello");
+    // $("html").on("change_url", function(e) {
+      document.title = 'CПО "СОзвездие" | будущий сайт отряда';
+    // }, false)
+  </script>
+</div>
 </body>
 </html>

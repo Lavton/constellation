@@ -13,7 +13,7 @@
     include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/menu.php');
   ?>
       
-  <div class="container">
+  <div id="page-container">
     <?php
       session_start();
       /*смотрим на свой профиль*/
@@ -66,7 +66,7 @@
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
 ?>
-
+<div id="after-js-container">
 <script type="text/javascript">
 //send ajax on changing radio
 $('input[type=radio][name=group_r]').change(function() {
@@ -91,5 +91,6 @@ $('input[type=radio][name=group_r]').change(function() {
 });
 
 </script>
+</div>
 </body>
 </html>

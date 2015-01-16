@@ -8,10 +8,14 @@
 	// @unset($_COOKIE[session_name()]);
 	 session_destroy();
 
-	  exit();
+	  // exit();
   ?>
 </head>
 <body>
-
+<div id="after-js-container">
+  <script>
+    window.location = "/login";
+  </script>
+</div>
 </body>
 </html>

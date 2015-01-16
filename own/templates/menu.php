@@ -1,4 +1,3 @@
-<div id="wrap">
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
 ?>
@@ -117,4 +116,3 @@
 
   </div>
 </nav>
-<div class="page-cont">

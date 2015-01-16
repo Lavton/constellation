@@ -13,7 +13,7 @@
     include('own/templates/menu.php');
   ?>
 
-  <div class="container">
+  <div id="page-container">
     <form class="form-signin" role="form">
       <h2 class="form-signin-heading">Please sign in</h2>
       <label for="inputEmail" class="sr-only">Email address</label>
@@ -27,6 +27,7 @@
 <?php
   include('own/templates/footer.php');
 ?>
+<div id="after-js-container">
   <script>
   /*отправляем Ajax при заполнении формы.*/
   $(".btn").click(function() {
@@ -50,6 +51,6 @@
     });
   });
   </script>
-
+</div>
 </body>
 </html>
