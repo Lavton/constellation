@@ -16,19 +16,18 @@
 ?>
 <div id="after-js-container">
   <script type="text/javascript">
-  console.log("Hello events");
-    // $("html").on("change_url", function(e) {
       document.title = 'мероприятия | CПО "СОзвездие"';
-    // }, false)
   </script>
 </div>
 <?php    
   }
   if (is_ajax()) {
+    /*Если поступил ajax-запрос, мы просто возвращаем содержимое двух контейнеров*/
     get_content();
     get_js();
     exit();
   }
+  /*иначе - весь код страницы*/
 ?>
 
 <!DOCTYPE html>

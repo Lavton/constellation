@@ -31,10 +31,7 @@
 ?>
 <div id="after-js-container">
   <script type="text/javascript">
-    console.log("main hello");
-    // $("html").on("change_url", function(e) {
       document.title = 'CПО "СОзвездие" | будущий сайт отряда';
-    // }, false)
   </script>
 </div>
 </body>

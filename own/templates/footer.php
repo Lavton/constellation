@@ -23,4 +23,3 @@
 <script type="text/javascript" src="/standart/js/bootstrap.js"></script>
 
 <script type="text/javascript" src="/own/js/menu.js"></script>
-<!-- <script type="text/javascript" src="/own/js/menu.js"></script> -->
