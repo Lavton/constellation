@@ -14,6 +14,12 @@
   ?>
 
   <div id="page-container">
+    <!-- Put this script tag to the <head> of your page -->
+
+<!-- Put this div tag to the place, where Auth block will be -->
+<div id="vk_auth"></div>
+<div id="vk_api_transport"></div>
+
     <form class="form-signin" role="form">
       <h2 class="form-signin-heading">Please sign in</h2>
       <label for="inputEmail" class="sr-only">Email address</label>
@@ -28,6 +34,24 @@
   include('own/templates/footer.php');
 ?>
 <div id="after-js-container">
+  <script type="text/javascript" src="//vk.com/js/api/openapi.js"></script>
+
+  <script type="text/javascript">
+  /*при ajax загрузке не всегда опенАПИ к этому моменту подгружается.
+  Ждём, пока это не произойдёт в цикле.*/
+    var intID = setInterval(function(){
+      if (typeof VK !== "undefined") {
+        VK.init({apiId: 4602552});
+        VK.Widgets.Auth("vk_auth", {width: "500px", onAuth: function(data) {
+          console.log(data);
+          alert('user '+data['uid']+' authorized');
+        }
+       });
+      clearInterval(intID);
+      }
+    }, 50);
+  </script>
+
   <script>
   /*отправляем Ajax при заполнении формы.*/
   $(".btn").click(function() {

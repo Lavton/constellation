@@ -25,13 +25,25 @@ if (typeof String.prototype.startsWith != 'function') {
         	var link = document.createElement('div');
         	$(link).html(data);
         	$("#page-container").html($(link).find("#page-container").html());
-        	$("#after-js-container").html($(link).find("#after-js-container").html());
+        	$("#after-js-container").html("");
+        	/*последовательно добавляем все скрипты*/
+        	_.each($(link).find("#after-js-container script"), function(element, index, list) {
+        		var scrpt = document.createElement('script');
+        		$(scrpt).html($(element).html());
+        		var atrib = $(element).attr('src');
+        		if (atrib != undefined) {
+        			scrpt.src = atrib;
+        		}
+        		document.getElementById("after-js-container").appendChild(scrpt);  
+        		scrpt.onLoad= function() {
+				console.log("hello")
+				}
+        	})
+
         	if (!if_history) {
         		// добавляем в историю
     	    	window.history.pushState({"page": page, "type": "page", "title": document.title}, document.title, page); 
 	        }
-	        // выполняем все js-скрипты
-	        eval($(link).find("#after-js-container script").html());
 	        // меняем вид меню
 	        on_change();
         });
@@ -63,6 +75,9 @@ if (typeof String.prototype.startsWith != 'function') {
 		function add_submenu (locat) {
 			$("nav li.current").removeClass("current");
 			$("nav .header.lvl2").removeClass("current");
+			if (locat.startsWith("/about/users")) {
+				locat = "/about/users";
+			}
 			$("nav a[href='"+locat+"'] li").addClass("current");
 			if (locat.startsWith("/about")) {
 				$("nav a.about.index li").addClass("current");
