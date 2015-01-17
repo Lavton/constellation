@@ -17,8 +17,7 @@
     <!-- Put this script tag to the <head> of your page -->
 
 <!-- Put this div tag to the place, where Auth block will be -->
-<div id="vk_auth"></div>
-<div id="vk_api_transport"></div>
+<div id="auth_wrapper"><div id="vk_auth"></div></div>
 
     <form class="form-signin" role="form">
       <h2 class="form-signin-heading">Please sign in</h2>
@@ -42,12 +41,14 @@
     var intID = setInterval(function(){
       if (typeof VK !== "undefined") {
         VK.init({apiId: 4602552});
-        VK.Widgets.Auth("vk_auth", {width: "500px", onAuth: function(data) {
+        VK.Widgets.Auth("vk_auth", {width: "300px", onAuth: function(data) {
           console.log(data);
           alert('user '+data['uid']+' authorized');
         }
        });
-      clearInterval(intID);
+        // debugger;
+        // $("#vk_auth").attr("style") = "";
+        clearInterval(intID);
       }
     }, 50);
   </script>
