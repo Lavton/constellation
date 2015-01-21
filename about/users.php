@@ -19,7 +19,8 @@
       /*смотрим на свой профиль*/
       if (isset($_GET["id"]) && $_GET["id"] == 0) {
         echo "<h2>Выбрать категорию доступа</h2>";
-        echo "<i>данное поле влияет на то, как вы видите страницы.</i> <br/> ";
+        echo "<i>данное поле влияет на то, как вы видите страницы.</i> ";
+        echo '<span class="saved">  (Изменения сохранены)</span><br/>';
         foreach ($_SESSION["groups_av"] as $key => $value) {
           if ($_SESSION["current_group"] == $key) {
             echo '<input type="radio" checked name="group_r" value="'.$key.'"> '.$value.'<br/>';
@@ -27,6 +28,7 @@
             echo '<input type="radio" name="group_r" value="'.$key.'"> '.$value.'<br/>';
           }
         }
+
       /*смотрим на чужой профиль (доступно >=бойцам)*/
       } elseif (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
         echo '<h2>Просмотреть профиль</h2>';
@@ -79,6 +81,10 @@ $('input[type=radio][name=group_r]').change(function() {
     }).done(function(json) {
       if (json.result == "Success") {
         console.log(json);
+        var saved = $(".saved");
+        $(saved).stop(true, true);
+        $(saved).fadeIn("slow");
+        $(saved).fadeOut("slow");
       } else {
         alert("No.");
       }

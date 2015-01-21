@@ -215,3 +215,8 @@ footer {
 .ctred {
   text-align: center; 
 }
+
+.saved {
+  color: green;
+  display: none;
+}

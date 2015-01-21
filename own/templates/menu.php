@@ -93,17 +93,17 @@
             <div class="col-xs-12">
               <div class="logo-cell"></div>
               <ul>
-                <a href="/">
+                <a href="#">
                   <li class="">
                     Актуальные
                   </li>
                 </a>
-                <a href="/">
+                <a href="#">
                   <li class="">
                     Грядущие
                   </li>
                 </a>
-                <a href="/">
+                <a href="#">
                   <li class="">
                     Прошедшие
                   </li>

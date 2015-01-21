@@ -33,11 +33,13 @@ if (typeof String.prototype.startsWith != 'function') {
         		var atrib = $(element).attr('src');
         		if (atrib != undefined) {
         			scrpt.src = atrib;
-        		}
-        		document.getElementById("after-js-container").appendChild(scrpt);  
-        		scrpt.onLoad= function() {
-				console.log("hello")
-				}
+        			/*дабы не качать внешние (скорее всего большие) скрипты каждый раз - занесём их в шаблон*/
+        			if ($("#footer-js script[src='"+atrib+"']")[0] == undefined) {
+		        		document.getElementById("footer-js").appendChild(scrpt);  
+		        	}
+        		} else {
+    	    		document.getElementById("after-js-container").appendChild(scrpt);  
+	        	}
         	})
 
         	if (!if_history) {
