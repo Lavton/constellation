@@ -23,13 +23,23 @@
         include('own/templates/indexes/not1.php');
       }
     ?>
-
+<table>
+  <tr>
+<td><div class="vk-g"><div id="vk_groups"></div></div></td>
+<td><div class="in-w"><iframe src='/inwidget/index.php?view=16&inline=4' scrolling='no' frameborder='no' style='border:none;width:260px;height:400px;overflow:hidden;'></iframe></div></td>
+</tr></table>
   </div> 
 
 <?php
   include('own/templates/footer.php');
 ?>
 <div id="after-js-container">
+  <script type="text/javascript" src="//vk.com/js/api/openapi.js"></script>
+
+  <!-- VK Widget -->
+  <script type="text/javascript">
+    VK.Widgets.Group("vk_groups", {mode: 0, width: "260", height: "400", color1: 'FFFFFF', color2: '2B587A', color3: '333'}, 19748633);
+  </script>
   <script type="text/javascript">
       document.title = 'CПО "СОзвездие" | будущий сайт отряда';
   </script>

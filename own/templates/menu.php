@@ -59,12 +59,12 @@
               <ul>
                 <a href="/about/glossary">
                   <li class="">
-                    Глоссарий и история СО
+                    Об отрядах
                   </li>
                 </a>
                 <a href="/about/history">
                   <li class="">
-                    История отряда
+                    Наша история
                   </li>
                 </a>
                 <?php

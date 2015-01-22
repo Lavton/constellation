@@ -9,8 +9,8 @@ if (is_ajax()) {
 //return data of authorization
 function auth_function(){
 	$return = $_POST;
-	
-	$link = mysql_connect('127.0.0.1', 'lavton', 'qwerty')
+	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+	$link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
     or die('Не удалось соединиться: ' . mysql_error());
 	mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
 	// Выполняем SQL-запрос
