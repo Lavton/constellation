@@ -88,6 +88,7 @@ $('input[type=radio][name=group_r]').change(function() {
     }).done(function(json) {
       if (json.result == "Success") {
         console.log(json);
+        /*всплывающая надпись, что всё ОК*/
         var saved = $(".saved");
         $(saved).stop(true, true);
         $(saved).fadeIn("slow");
@@ -98,19 +99,20 @@ $('input[type=radio][name=group_r]').change(function() {
     }).fail(function() {
       alert("Fail.");
     });
-
-
-  console.log(this.value);
 });
 
 </script>
+
+<!-- скрипт для сохранения файла из js -->
 <script src="/standart/js/FileSaver.js"></script>
+
 <script>
-/*отправляем Ajax чтобы посмотреть всех.*/
+/*отправляем Ajax чтобы посмотреть всех бойцов.*/
 $(".get-all").click(function() {
+  /*двойное назначение кнопки:
+  Если не нажимали - добавляет таблицу со всеми бойцами и проч.*/
   if ($(".get-all").hasClass("unclick")) {
   data =  {action: "all",};
-  console.log(data);
   $.ajax({
     type: "POST",
     url: "/handlers/user.php",
@@ -144,15 +146,14 @@ $(".get-all").click(function() {
           "<a target='_blank' href='//vk.com/"+element.vk_id +"'>VK</a></small></span></td><td>" 
           + element.year_of_entrance + 
           "</td></tr>");
-        //debugger;
       });
     } else {
       console.log("fail1");
-      console.log(json);
     }
   }).fail(function() {
     console.log("fail2");
   });
+  /*Если нажимали - скрывает таблицу*/
   } else {
     $(".get-all").toggleClass("unclick");
     $(".get-all").text("а можно всех посмотреть?");
@@ -168,6 +169,7 @@ $(".get-all").click(function() {
 <script type="text/javascript">
 
 $(".vCard-start").click(function() {
+  /*Если не нажимали - делает видимыми кнопки для экспорта vCard*/
   if ($(".vCard-start").hasClass("unclick")) {
     $(".vCard-start").text("cкрыть импорт в vCard");
     $(".vCard-get-all").show("slow");
@@ -175,9 +177,11 @@ $(".vCard-start").click(function() {
     $(".vCard-get").show("slow");
     $(".vCard-category").show("slow");
     _.each($("#page-container table.table tbody tr td:first-child"), function(element, index, list) {
+      /*вставляем чекбокс везде перед номером*/
       var num = $(element).parent().attr("class");
       $(element).html("<input type='checkbox' name='vCard_check' value='"+num+ "'>" +$(element).html());
     });
+    /*второе назначение - скрыть всё.*/
   } else {
     $(".vCard-start").html("выбрать людей для импорта в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr>");
     $(".vCard-get-all").hide("slow");
@@ -192,8 +196,7 @@ $(".vCard-start").click(function() {
   $(".vCard-start").toggleClass("unclick");
 });
 
-
-
+/*сделать все выбранными*/
 $(".vCard-get-all").click(function() {
   $('input[type=checkbox][name=vCard_check]').each(function(){
     this.setAttribute("checked", "checked")
@@ -201,13 +204,16 @@ $(".vCard-get-all").click(function() {
     $(".vCard-get").prop('disabled', false);
   });
 });
+/*убрать выбор везде*/
 $(".vCard-get-none").click(function() {
   $('input[type=checkbox][name=vCard_check]').each(function(){
     this.removeAttribute("checked")
-    $(this).parent().html($(this).parent().html());
+    $(this).parent().html($(this).parent().html()); //перерисовка
     $(".vCard-get").prop('disabled', true);
   });
 });
+
+/*немного магии при выборе конкретного, чтобы всё работало*/
 $('#page-container').on('change', 'input[type=checkbox][name=vCard_check]', function(event) // вешаем обработчик на все ссылки, даже созданные после загрузки страницы
 {
   if (this.hasAttribute("checked")) {
@@ -219,17 +225,15 @@ $('#page-container').on('change', 'input[type=checkbox][name=vCard_check]', func
     this.setAttribute("checked", "checked");
     $(".vCard-get").prop('disabled', false);
   }
-  // debugger;
 });
 
+/*генерация vCard*/
 $(".vCard-get").click(function() {
   var ids = [];
   _.each($('input[type=checkbox][name=vCard_check][checked]'), function(element, index, list) {
     ids.push($(element).val()*1);
   });
-  console.log(ids);
   data = {action: "get_full_info", ids: ids}
-  console.log(data);
   $.ajax({
       type: "POST",
       url: "/handlers/user.php",
@@ -237,8 +241,6 @@ $(".vCard-get").click(function() {
       data:  $.param(data)
     }).done(function(json) {
       if (json.result == "Success") {
-        console.log(json);
-
         var card = "";
         _.each(json.users, function(element, index, list) {
           var this_card = "";
@@ -283,6 +285,8 @@ $(".vCard-get").click(function() {
           this_card += "END:VCARD\n\n";
           card += this_card;
         });
+
+        /*запись полученной строки в файл*/
         var blob = new Blob([card], {type: "text/plain;charset=utf-8"});
         saveAs(blob, "contacts.vcf");
       } else {
