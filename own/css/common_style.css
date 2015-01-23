@@ -224,3 +224,7 @@ footer {
 .text-right {
   float: right;
 }
+
+.own-hidden {
+  display: none;
+}

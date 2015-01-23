@@ -59,16 +59,17 @@
     расширенный вариант нумеровочки со страничками каждого бойца.<br/>
     и смены, которые мы отработали, может что ещё.. <br/>
     <span title='запрос может занять некоторое время. Ищите конкретного человека? Воспользуйтесь поиском!'>
-      <button type="button" class="btn btn-info get-all">а можно всех посмотреть?</button>
+      <button type="button" class="btn btn-info get-all unclick">а можно всех посмотреть?</button>
     </span> 
-     <button type="button" class="hidden btn btn-info vCard-start">выбрать людей для импорта в <abbr title="формат записной книжки для Android, iPhone и т.д.">vCard</abbr></button>
-     <button type="button" class="btn btn-default btn-sm hidden vCard-get-all">Выбрать всех</button>
-     <button type="button" class="btn btn-default btn-sm hidden vCard-get-none">Снять выбор</button>
-     <button type="button" class="btn btn-success hidden vCard-get" disabled="disabled">Получить vCard</button>
+     <button type="button" class="own-hidden btn btn-info vCard-start unclick">выбрать людей для импорта в <abbr title="формат записной книжки для Android, iPhone и т.д.">vCard</abbr></button>
+     <button type="button" class="btn btn-default btn-sm own-hidden vCard-get-all">Выбрать всех</button>
+     <button type="button" class="btn btn-default btn-sm own-hidden vCard-get-none">Снять выбор</button>
+     <input type="text" class="vCard-category own-hidden" placeholder="назначить группу для контактов" size=30 />
+     <button type="button" class="btn btn-success own-hidden vCard-get" disabled="disabled">Получить vCard</button>
     <?php
       }
     ?>
-
+    <div class="table-container"></div>
   </div> 
 
 <?php
@@ -103,10 +104,11 @@ $('input[type=radio][name=group_r]').change(function() {
 });
 
 </script>
-
+<script src="/standart/js/FileSaver.js"></script>
 <script>
 /*отправляем Ajax чтобы посмотреть всех.*/
 $(".get-all").click(function() {
+  if ($(".get-all").hasClass("unclick")) {
   data =  {action: "all",};
   console.log(data);
   $.ajax({
@@ -116,12 +118,12 @@ $(".get-all").click(function() {
     data:  $.param(data)
   }).done(function(json) {
     if (json.result == "Success") {
-      $(".vCard-start").removeClass("hidden");
-      $(".vCard-start").hide();
+      $(".get-all").toggleClass("unclick");
+      $(".get-all").text("ААА! УБЕРИТЕ ИХ!!!")
+      $(".vCard-start").addClass("unclick");
       $(".vCard-start").show("slow");
-
       if ($("table.table")[0]==undefined){
-        $("#page-container").append('<table class="table table-bordered">\
+        $(".table-container").append('<table class="table table-bordered">\
           <thead><tr>\
           <th>#</th>\
           <th>имя</th>\
@@ -151,30 +153,46 @@ $(".get-all").click(function() {
   }).fail(function() {
     console.log("fail2");
   });
+  } else {
+    $(".get-all").toggleClass("unclick");
+    $(".get-all").text("а можно всех посмотреть?");
+    $(".table-container").html("");
+    if (!$(".vCard-start").hasClass("unclick")) {
+      $(".vCard-start").trigger("click");
+    }
+    $(".vCard-start").hide("slow");
+  }
 });
 </script>
 
 <script type="text/javascript">
+
 $(".vCard-start").click(function() {
-  if ($('input[type=checkbox][name=vCard_check]')[0] == undefined) {
-    $(".vCard-get-all").removeClass("hidden");
-    $(".vCard-get-all").hide();
+  if ($(".vCard-start").hasClass("unclick")) {
+    $(".vCard-start").text("cкрыть импорт в vCard");
     $(".vCard-get-all").show("slow");
-
-    $(".vCard-get-none").removeClass("hidden");
-    $(".vCard-get-none").hide();
     $(".vCard-get-none").show("slow");
-
-    $(".vCard-get").removeClass("hidden");
-    $(".vCard-get").hide();
     $(".vCard-get").show("slow");
-
+    $(".vCard-category").show("slow");
     _.each($("#page-container table.table tbody tr td:first-child"), function(element, index, list) {
       var num = $(element).parent().attr("class");
       $(element).html("<input type='checkbox' name='vCard_check' value='"+num+ "'>" +$(element).html());
     });
+  } else {
+    $(".vCard-start").html("выбрать людей для импорта в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr>");
+    $(".vCard-get-all").hide("slow");
+    $(".vCard-get-none").hide("slow");
+    $(".vCard-get").hide("slow");
+    $(".vCard-category").hide("slow");
+    _.each($("#page-container table.table tbody tr td:first-child"), function(element, index, list) {
+        var num = $(element).parent().attr("class");
+        $(element).html(num);
+    });
   }
+  $(".vCard-start").toggleClass("unclick");
 });
+
+
 
 $(".vCard-get-all").click(function() {
   $('input[type=checkbox][name=vCard_check]').each(function(){
@@ -204,6 +222,76 @@ $('#page-container').on('change', 'input[type=checkbox][name=vCard_check]', func
   // debugger;
 });
 
+$(".vCard-get").click(function() {
+  var ids = [];
+  _.each($('input[type=checkbox][name=vCard_check][checked]'), function(element, index, list) {
+    ids.push($(element).val()*1);
+  });
+  console.log(ids);
+  data = {action: "get_full_info", ids: ids}
+  console.log(data);
+  $.ajax({
+      type: "POST",
+      url: "/handlers/user.php",
+      dataType: "json",
+      data:  $.param(data)
+    }).done(function(json) {
+      if (json.result == "Success") {
+        console.log(json);
+
+        var card = "";
+        _.each(json.users, function(element, index, list) {
+          var this_card = "";
+          this_card += "BEGIN:VCARD\n";
+          this_card += "VERSION:3.0\n";
+   
+          this_card += "FN:" + element.name + " " + element.surname + "\n";
+          this_card += "N:" + element.surname;
+          if (element.maiden_name != null) {
+            this_card += ","+element.maiden_name;
+          }
+          this_card += ";"+element.name+";";
+          if (element.second_name != null) {
+            this_card += element.second_name;
+          }
+          this_card +=";;\n";
+          
+          if (element.birthdate != null) {
+            this_card += "BDAY:"+element.birthdate+"\n";
+          }
+
+          if (element.phone != null) {
+            var tel = element.phone;
+            this_card += "TEL;TYPE=MAIN:"+
+            "+7-"+tel[0]+tel[1]+tel[2]+"-"+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+tel[8]+tel[9]+
+            "\n";
+          }
+          if (element.second_phone != null) {
+            var tel = element.second_phone;
+            this_card += "TEL;TYPE=CELL:"+
+            "+7-"+tel[0]+tel[1]+tel[2]+"-"+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+tel[8]+tel[9]+
+            "\n";
+          }
+
+          if (element.email != null) {
+            this_card += "EMAIL;TYPE=INTERNET:"+element.email+"\n";
+          }
+
+          if ($(".vCard-category").val() != "") {
+            this_card += "CATEGORIES:"+$(".vCard-category").val()+"\n";
+          }
+          this_card += "END:VCARD\n\n";
+          card += this_card;
+        });
+        var blob = new Blob([card], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, "contacts.vcf");
+      } else {
+        alert("No.");
+      }
+    }).fail(function() {
+      alert("Fail.");
+    });
+});
 
 </script>
 </div>

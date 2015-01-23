@@ -7,6 +7,7 @@ if (is_ajax()) {
 			/*если просят менять группу доступа - сделаем это!*/
 			case "change_group": change_group(); break;
 			case "all": get_all(); break;
+			case 'get_full_info': get_full_info(); break;
 		}
 	}
 }
@@ -44,4 +45,31 @@ function get_all() {
 	echo json_encode($result);
 }
 
+function get_full_info() {
+	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+	$link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+    or die('Не удалось соединиться: ' . mysql_error());
+	mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+	// Выполняем SQL-запрос
+	@mysql_query("Set charset utf8");
+	@mysql_query("Set character_set_client = utf8");
+	@mysql_query("Set character_set_connection = utf8");
+	@mysql_query("Set character_set_results = utf8");
+	@mysql_query("Set collation_connection = utf8_general_ci");
+
+	$ids = array();
+	foreach ($_POST["ids"] as $value) {
+		array_push($ids, $value);
+	}
+	$ids = implode(", ", $ids);
+	/*поиск юзера*/
+	$query = "SELECT name, second_name, surname, maiden_name, birthdate, phone, second_phone, email FROM fighters WHERE id IN ($ids) ORDER BY id;";
+	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+	$result["users"] = array();
+	while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+		array_push($result["users"], $line);
+    }
+	$result["result"] = "Success";
+	echo json_encode($result);
+}
 ?>
