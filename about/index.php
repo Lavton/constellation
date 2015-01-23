@@ -14,6 +14,9 @@
     /*если ты боец+, то перенаправляют на нумеровочку*/
     if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) {
   ?>
+  <?php
+  include($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
+  ?>
   <div id="after-js-container">
     <script type="text/javascript">
     // эмулируем нажатие по ссылке

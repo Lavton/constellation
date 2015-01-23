@@ -220,3 +220,7 @@ footer {
   color: green;
   display: none;
 }
+
+.text-right {
+  float: right;
+}

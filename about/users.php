@@ -58,7 +58,13 @@
     ?>
     расширенный вариант нумеровочки со страничками каждого бойца.<br/>
     и смены, которые мы отработали, может что ещё.. <br/>
-   <button type="button" class="btn btn-info get-all">а можно всех посмотреть?</button>
+    <span title='запрос может занять некоторое время. Ищите конкретного человека? Воспользуйтесь поиском!'>
+      <button type="button" class="btn btn-info get-all">а можно всех посмотреть?</button>
+    </span> 
+     <button type="button" class="hidden btn btn-info vCard-start">выбрать людей для импорта в <abbr title="формат записной книжки для Android, iPhone и т.д.">vCard</abbr></button>
+     <button type="button" class="btn btn-default btn-sm hidden vCard-get-all">Выбрать всех</button>
+     <button type="button" class="btn btn-default btn-sm hidden vCard-get-none">Снять выбор</button>
+     <button type="button" class="btn btn-success hidden vCard-get" disabled="disabled">Получить vCard</button>
     <?php
       }
     ?>
@@ -110,7 +116,34 @@ $(".get-all").click(function() {
     data:  $.param(data)
   }).done(function(json) {
     if (json.result == "Success") {
-      console.log(json);
+      $(".vCard-start").removeClass("hidden");
+      $(".vCard-start").hide();
+      $(".vCard-start").show("slow");
+
+      if ($("table.table")[0]==undefined){
+        $("#page-container").append('<table class="table table-bordered">\
+          <thead><tr>\
+          <th>#</th>\
+          <th>имя</th>\
+          <th>год вступления</th>\
+          </tr></thead>\
+          <tbody>\
+        </tbody></table>')
+      }
+      var table_body = $("#page-container table.table tbody")[0];
+      _.each(json.users, function(element, index, list) {
+        $(table_body).append("<tr class='"+element.id+"'><td>"
+          +element.id+
+          "</td><td>"+
+          "<strong>"+
+          " " + element.name + " " + element.surname + 
+          "</strong>"+
+          "<span class='text-right'><small><a href='users/"+element.id+"'>Профиль</a>/" + 
+          "<a target='_blank' href='//vk.com/"+element.vk_id +"'>VK</a></small></span></td><td>" 
+          + element.year_of_entrance + 
+          "</td></tr>");
+        //debugger;
+      });
     } else {
       console.log("fail1");
       console.log(json);
@@ -121,6 +154,58 @@ $(".get-all").click(function() {
 });
 </script>
 
+<script type="text/javascript">
+$(".vCard-start").click(function() {
+  if ($('input[type=checkbox][name=vCard_check]')[0] == undefined) {
+    $(".vCard-get-all").removeClass("hidden");
+    $(".vCard-get-all").hide();
+    $(".vCard-get-all").show("slow");
+
+    $(".vCard-get-none").removeClass("hidden");
+    $(".vCard-get-none").hide();
+    $(".vCard-get-none").show("slow");
+
+    $(".vCard-get").removeClass("hidden");
+    $(".vCard-get").hide();
+    $(".vCard-get").show("slow");
+
+    _.each($("#page-container table.table tbody tr td:first-child"), function(element, index, list) {
+      var num = $(element).parent().attr("class");
+      $(element).html("<input type='checkbox' name='vCard_check' value='"+num+ "'>" +$(element).html());
+    });
+  }
+});
+
+$(".vCard-get-all").click(function() {
+  $('input[type=checkbox][name=vCard_check]').each(function(){
+    this.setAttribute("checked", "checked")
+    $(this).parent().html($(this).parent().html());
+    $(".vCard-get").prop('disabled', false);
+  });
+});
+$(".vCard-get-none").click(function() {
+  $('input[type=checkbox][name=vCard_check]').each(function(){
+    this.removeAttribute("checked")
+    $(this).parent().html($(this).parent().html());
+    $(".vCard-get").prop('disabled', true);
+  });
+});
+$('#page-container').on('change', 'input[type=checkbox][name=vCard_check]', function(event) // вешаем обработчик на все ссылки, даже созданные после загрузки страницы
+{
+  if (this.hasAttribute("checked")) {
+    this.removeAttribute("checked");
+    if ($('input[type=checkbox][name=vCard_check][checked]')[0] == undefined) {
+      $(".vCard-get").prop('disabled', true);
+    }
+  } else {
+    this.setAttribute("checked", "checked");
+    $(".vCard-get").prop('disabled', false);
+  }
+  // debugger;
+});
+
+
+</script>
 </div>
 </body>
 </html>
