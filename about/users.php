@@ -58,7 +58,7 @@
     ?>
     расширенный вариант нумеровочки со страничками каждого бойца.<br/>
     и смены, которые мы отработали, может что ещё.. <br/>
-   
+   <button type="button" class="btn btn-info get-all">а можно всех посмотреть?</button>
     <?php
       }
     ?>
@@ -97,6 +97,30 @@ $('input[type=radio][name=group_r]').change(function() {
 });
 
 </script>
+
+<script>
+/*отправляем Ajax чтобы посмотреть всех.*/
+$(".get-all").click(function() {
+  data =  {action: "all",};
+  console.log(data);
+  $.ajax({
+    type: "POST",
+    url: "/handlers/user.php",
+    dataType: "json",
+    data:  $.param(data)
+  }).done(function(json) {
+    if (json.result == "Success") {
+      console.log(json);
+    } else {
+      console.log("fail1");
+      console.log(json);
+    }
+  }).fail(function() {
+    console.log("fail2");
+  });
+});
+</script>
+
 </div>
 </body>
 </html>
