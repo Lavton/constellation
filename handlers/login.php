@@ -47,6 +47,10 @@ function start_session($result){
 	    $_SESSION["groups_av"][$line["group_id"]] = $line["name"];
 	    $_SESSION["current_group"] = $line["group_id"];
     }
+	$query = 'SELECT * FROM fighters where id=\''.$_SESSION["user_id"].'\';';
+	$result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+	$result = mysql_fetch_array($result, MYSQL_ASSOC);
+	$_SESSION["user_info"] = $result;
 }
 
 ?>
