@@ -63,7 +63,7 @@ function get_full_info() {
 	}
 	$ids = implode(", ", $ids);
 	/*поиск юзера*/
-	$query = "SELECT name, second_name, surname, maiden_name, birthdate, phone, second_phone, email FROM fighters WHERE id IN ($ids) ORDER BY id;";
+	$query = "SELECT id, vk_id, name, second_name, surname, maiden_name, birthdate, phone, second_phone, email FROM fighters WHERE id IN ($ids) ORDER BY id;";
 	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 	$result["users"] = array();
 	while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
