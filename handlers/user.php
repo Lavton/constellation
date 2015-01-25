@@ -8,6 +8,7 @@ if (is_ajax()) {
 			case "change_group": change_group(); break;
 			case "all": get_all(); break;
 			case 'get_full_info': get_full_info(); break;
+			case "get_one_info": get_one_info(); break;
 		}
 	}
 }
@@ -72,4 +73,26 @@ function get_full_info() {
 	$result["result"] = "Success";
 	echo json_encode($result);
 }
+
+
+function get_one_info() {
+	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+	$link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+    or die('Не удалось соединиться: ' . mysql_error());
+	mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+	// Выполняем SQL-запрос
+	@mysql_query("Set charset utf8");
+	@mysql_query("Set character_set_client = utf8");
+	@mysql_query("Set character_set_connection = utf8");
+	@mysql_query("Set character_set_results = utf8");
+	@mysql_query("Set collation_connection = utf8_general_ci");
+
+	/*поиск юзера*/
+	$query = "SELECT * FROM fighters WHERE id='".$_POST['id']."' ORDER BY id;";
+	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+	$result["user"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+	$result["result"] = "Success";
+	echo json_encode($result);
+}
+
 ?>

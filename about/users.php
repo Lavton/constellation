@@ -32,9 +32,36 @@
       /*смотрим на чужой профиль (доступно >=бойцам)*/
       } elseif (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
     ?>
-        echo '<h2>Просмотреть профиль</h2>';
-        echo "(не сейчас, а когда он будет)";
+      <div class="user-info">
+        <div class="col-xs-12 user-name">
+          <h2></h2>
+          <div class="btn-toolbar">
+            <a href="/users/415/edit" class="hidden btn btn-primary" role="button">Редактировать</a>
+          </div>
+          <hr>
+        </div>
+        <div class="row own-row">
+              <div class="col-xs-3">
+      
+            <img class="pull-left ava" src="" width="200" height="200">
+      
+          </div>
+          <div class="col-xs-9 info-str">
+            <ul>
+              <li class='vk hidden'><strong>vk: </strong></li>
+              <li class='phone-first hidden'><strong>Телефон: </strong></li>
+              <li class='phone-second hidden'><strong>Телефон: </strong></li>
+              <li class='email hidden'><strong>e-mail: </strong></li>
+              <li class='birthdate hidden'><strong>День рождения: </strong></li>
+              <li class='year_of_entrance hidden'><strong>Год вступления в отряд: </strong></li>
+              <li class='group_of_rights hidden'><strong>Права доступа: </strong></li>
+              
+            </ul>
+          </div>
+      
+        </div>
 
+      </div>
     <?php
       /*не боец попытался посмотреть профиль*/
       } elseif (isset($_GET["id"])) {
@@ -89,6 +116,15 @@
   <script type="text/javascript" src="/own/js/users/all_of_us.js"></script>
 
   <script type="text/javascript" src="/own/js/users/one_fighter.js"></script>
+  <?php
+  if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+  ?>
+  <script type="text/javascript">
+    get_user_info(<?=$_GET["id"]?>);
+  </script>
+  <?php
+  }
+  ?>
 
 </div>
 </body>

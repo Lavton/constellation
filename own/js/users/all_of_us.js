@@ -199,7 +199,7 @@ $(".vCard-get").click(function() {
                   "</a></li>";
                 }
                 if (element.email != null) {
-                  this_card += "<li><strong>Телефон:</strong><a href='mailto:"+element.email+"'> "+
+                  this_card += "<li><strong>e-mail:</strong><a href='mailto:"+element.email+"'> "+
                   element.email+
                   "</a></li>";                
                 }
