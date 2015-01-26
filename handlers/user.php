@@ -37,10 +37,12 @@ function get_all() {
 	@mysql_query("Set character_set_results = utf8");
 	@mysql_query("Set collation_connection = utf8_general_ci");
 	/*поиск юзера*/
-	$query = 'SELECT id, vk_id, name, surname, year_of_entrance FROM fighters ORDER BY id;';
+	$query = 'SELECT id, vk_id, name, surname, maiden_name, nickname, year_of_entrance FROM fighters ORDER BY id;';
 	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+	$result["users"] = array();
+
 	while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
-		$result["users"][$line["id"]] = $line;
+		array_push($result["users"], $line);
     }
 	$result["result"] = "Success";
 	echo json_encode($result);

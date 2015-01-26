@@ -1,10 +1,14 @@
-(function() {
+'use strict';
+var contr = null;
+var intID = setInterval(function(){
+  if (typeof(angular) !== "undefined") {
+
 /*отправляем Ajax чтобы посмотреть всех бойцов.*/
 $(".get-all").click(function() {
   /*двойное назначение кнопки:
   Если не нажимали - добавляет таблицу со всеми бойцами и проч.*/
   if ($(".get-all").hasClass("unclick")) {
-  data =  {action: "all",};
+  var data =  {action: "all",};
   $.ajax({
     type: "POST",
     url: "/handlers/user.php",
@@ -16,29 +20,13 @@ $(".get-all").click(function() {
       $(".get-all").text("ААА! УБЕРИТЕ ИХ!!!")
       $(".vCard-start").addClass("unclick");
       $(".vCard-start").show("slow");
-      if ($("table.common-contacts")[0]==undefined){
-        $(".table-container").append('<table class="table common-contacts table-bordered">\
-          <thead><tr>\
-          <th>#</th>\
-          <th>имя</th>\
-          <th>год вступления</th>\
-          </tr></thead>\
-          <tbody>\
-        </tbody></table>')
+      if (contr == null) {
+        contr = angular.module('myApp', [])
+        .controller('fightersApp', ['$scope', function ($scope) {
+          $scope.fighters = json.users;
+        }]);
+        angular.bootstrap(document, ['myApp']);
       }
-      var table_body = $("#page-container table.common-contacts tbody")[0];
-      _.each(json.users, function(element, index, list) {
-        $(table_body).append(
-          "<tr class='"+element.id+"'><td>"+
-          "<a href='users/"+element.id+"'>"+element.id+ "</a>"+
-          "</td><td>"+
-          "<strong>"+
-          " " + element.name + " " + element.surname + 
-          "</strong>"+
-          "</td><td>" + element.year_of_entrance + 
-          "</td></tr>"
-        );
-      });
     } else {
       console.log("fail1");
     }
@@ -49,12 +37,13 @@ $(".get-all").click(function() {
   } else {
     $(".get-all").toggleClass("unclick");
     $(".get-all").text("а можно всех посмотреть?");
-    $(".table-container").html("");
     if (!$(".vCard-start").hasClass("unclick")) {
       $(".vCard-start").trigger("click");
     }
     $(".vCard-start").hide("slow");
   }
+  $("table.common-contacts").toggleClass("hidden");
+  //console.log("Hello");
 });
 
 $(".vCard-start").click(function() {
@@ -129,7 +118,7 @@ $(".vCard-get").click(function() {
     _.each($('input[type=checkbox][name=vCard_check][checked]'), function(element, index, list) {
       ids.push($(element).val()*1);
     });
-    data = {action: "get_full_info", ids: ids}
+    var data = {action: "get_full_info", ids: ids}
     $.ajax({
         type: "POST",
         url: "/handlers/user.php",
@@ -142,7 +131,7 @@ $(".vCard-get").click(function() {
         });
         if (json.result == "Success") {
           $("table.common-contacts").hide("slow");
-          data2 = {user_ids: user_ids, fields: ["photo_100", "photo_200", "domain"]}
+          var data2 = {user_ids: user_ids, fields: ["photo_100", "photo_200", "domain"]}
           $.ajax({
               type: "GET",
               url: "https://api.vk.com/method/users.get",
@@ -290,4 +279,7 @@ $(".vCard-get").click(function() {
   $(".vCard-get").toggleClass("unclick");
 });
 
-})();
+
+      clearInterval(intID);
+  }
+}, 50);

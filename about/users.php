@@ -99,21 +99,45 @@
      <input type="text" class="vCard-category own-hidden" placeholder="назначить группу для контактов" size=30 />
      <button type="button" class="btn btn-success own-hidden vCard-make">импорт в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr></button>
 
+    <div class="table-container" ng-cloak ng-controller="fightersApp">
+      <table class="table common-contacts hidden table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>имя</th>
+            <th>год вступления</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="fighter in fighters" class="{{fighter.id}}">
+            <td><a href='users/{{fighter.id}}'>{{fighter.id}}</a></td>
+            <td><strong>{{fighter.name}} {{fighter.surname}}</strong></td>
+            <td>{{fighter.year_of_entrance}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <?php
       }
     ?>
-    <div class="table-container"></div>
-  </div> 
+  </div>  <!-- page-container -->
 
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
 ?>
 <div id="after-js-container">
-  <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
 
   <!-- скрипт для сохранения файла из js -->
   <script src="/standart/js/FileSaver.js"></script>
-  <script type="text/javascript" src="/own/js/users/all_of_us.js"></script>
+
+  <script type="text/javascript" src="/standart/js/angular.js"></script>
+
+
+   <script type="text/javascript" src="/own/js/users/all_of_us.js"></script>
+
+  <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
+
 
   <script type="text/javascript" src="/own/js/users/one_fighter.js"></script>
   <?php
