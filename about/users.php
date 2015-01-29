@@ -100,17 +100,19 @@
      <button type="button" class="btn btn-success own-hidden vCard-make">импорт в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr></button>
 
     <div class="table-container" ng-cloak ng-controller="fightersApp">
+      <div class="search_wrap hidden"> Search: <input class="search" ng-model="query">
       <table class="table common-contacts hidden table-bordered">
         <thead>
           <tr>
             <th>#</th>
             <th>имя</th>
-            <th>год вступления</th>
+            <th>год вступления в отряд</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="fighter in fighters" class="{{fighter.id}}">
-            <td><a href='users/{{fighter.id}}'>{{fighter.id}}</a></td>
+          <tr ng-repeat="fighter in fighters | filter:query" class="{{fighter.id}}">
+            <td class="ids"><a href='users/{{fighter.id}}'>{{fighter.id}}</a></td>
+            <td class="inputs hidden"> <input type="checkbox" name='vCard_check' value="{{fighter.id}}"> </td>
             <td><strong>{{fighter.name}} {{fighter.surname}}</strong></td>
             <td>{{fighter.year_of_entrance}}</td>
           </tr>

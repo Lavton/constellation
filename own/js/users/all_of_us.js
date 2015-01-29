@@ -18,12 +18,17 @@ $(".get-all").click(function() {
     if (json.result == "Success") {
       $(".get-all").toggleClass("unclick");
       $(".get-all").text("ААА! УБЕРИТЕ ИХ!!!")
+      $(".search_wrap").removeClass("hidden");
+      $("input.search").focus();
       $(".vCard-start").addClass("unclick");
       $(".vCard-start").show("slow");
       if (contr == null) {
         contr = angular.module('myApp', [])
         .controller('fightersApp', ['$scope', function ($scope) {
           $scope.fighters = json.users;
+          _.each($scope.fighters, function(element, index, list) {
+            element.checked = false;
+          });
         }]);
         angular.bootstrap(document, ['myApp']);
       }
@@ -41,6 +46,7 @@ $(".get-all").click(function() {
       $(".vCard-start").trigger("click");
     }
     $(".vCard-start").hide("slow");
+    $(".search_wrap").addClass("hidden");
   }
   $("table.common-contacts").toggleClass("hidden");
   //console.log("Hello");
@@ -54,21 +60,26 @@ $(".vCard-start").click(function() {
     $(".vCard-get-all").show("slow");
     $(".vCard-get-none").show("slow");
     $(".vCard-get").show("slow");
-    _.each($("#page-container table.common-contacts tbody tr td:first-child"), function(element, index, list) {
-      /*вставляем чекбокс везде перед номером*/
-      var num = $(element).parent().attr("class");
-      $(element).html("<input type='checkbox' name='vCard_check' value='"+num+ "'>");
-    });
+    // _.each($("#page-container table.common-contacts tbody tr td:first-child"), function(element, index, list) {
+    //  /* вставляем чекбокс везде перед номером*/
+    //   var num = $(element).parent().attr("class");
+    //   $(element).html("<input type='checkbox' name='vCard_check' value='"+num+ "'>");
+    // });
+    $("table.common-contacts tbody td.ids").addClass("hidden");
+    $("table.common-contacts tbody td.inputs").removeClass("hidden");
     /*второе назначение - скрыть всё.*/
   } else {
     $(".vCard-start").html("Кого хотите посмотреть?");
     $(".vCard-get-all").hide("slow");
     $(".vCard-get-none").hide("slow");
     $(".vCard-get").hide("slow");
-    _.each($("#page-container table.common-contacts tbody tr td:first-child"), function(element, index, list) {
-        var num = $(element).parent().attr("class");
-        $(element).html("<a href='users/"+num+"'>"+num+ "</a>");
-    });
+    // _.each($("#page-container table.common-contacts tbody tr td:first-child"), function(element, index, list) {
+    //     var num = $(element).parent().attr("class");
+    //     $(element).html("<a href='users/"+num+"'>"+num+ "</a>");
+    // });
+    $("table.common-contacts tbody td.ids").removeClass("hidden");
+    $("table.common-contacts tbody td.inputs").addClass("hidden");
+
     if (!$(".vCard-get").hasClass("unclick")) {
       $(".vCard-get").trigger("click");
     }
