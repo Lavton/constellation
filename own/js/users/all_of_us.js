@@ -1,10 +1,32 @@
 'use strict';
-var contr = null;
+window.angular_conroller = null;
+
+function loadScript(url, callback)
+{
+
+    // Adding the script tag to the head as suggested before
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+
+    // Then bind the event to the callback function.
+    // There are several events for cross browser compatibility.
+    script.onreadystatechange = callback;
+    script.onload = callback;
+
+    // Fire the loading
+    if ($("#footer-js script[src='"+url+"']")[0] == undefined) {
+      document.getElementById("footer-js").appendChild(script);  
+    } else {
+      callback();
+    }
+}
+
 var intID = setInterval(function(){
   if (typeof(angular) !== "undefined") {
 
 /*отправляем Ajax чтобы посмотреть всех бойцов.*/
-$(".get-all").click(function() {
+$('#page-container').on('click', ".get-all", function() {
   /*двойное назначение кнопки:
   Если не нажимали - добавляет таблицу со всеми бойцами и проч.*/
   if ($(".get-all").hasClass("unclick")) {
@@ -22,16 +44,29 @@ $(".get-all").click(function() {
       $("input.search").focus();
       $(".vCard-start").addClass("unclick");
       $(".vCard-start").show("slow");
-      if (contr == null) {
-        contr = angular.module('myApp', [])
+      console.log("heRe");
+      
+      loadScript("/standart/js/checklist-model.js", function() {
+        if (window.angular_conroller == null) {          
+        window.angular_conroller = angular.module('common_c_app', ["checklist-model"])
         .controller('fightersApp', ['$scope', function ($scope) {
+        $scope.checkAll = function() {
+          $scope.fighters.selected_f = angular.copy($scope.fighters);
+        };
+        $scope.uncheckAll = function() {
+          $scope.fighters.selected_f = [];
+        };
           $scope.fighters = json.users;
+          $scope.fighters.selected_f = [];
           _.each($scope.fighters, function(element, index, list) {
             element.checked = false;
           });
         }]);
-        angular.bootstrap(document, ['myApp']);
+        
       }
+      angular.bootstrap(document, ['common_c_app']);
+      });
+
     } else {
       console.log("fail1");
     }
@@ -60,11 +95,6 @@ $(".vCard-start").click(function() {
     $(".vCard-get-all").show("slow");
     $(".vCard-get-none").show("slow");
     $(".vCard-get").show("slow");
-    // _.each($("#page-container table.common-contacts tbody tr td:first-child"), function(element, index, list) {
-    //  /* вставляем чекбокс везде перед номером*/
-    //   var num = $(element).parent().attr("class");
-    //   $(element).html("<input type='checkbox' name='vCard_check' value='"+num+ "'>");
-    // });
     $("table.common-contacts tbody td.ids").addClass("hidden");
     $("table.common-contacts tbody td.inputs").removeClass("hidden");
     /*второе назначение - скрыть всё.*/
@@ -73,10 +103,6 @@ $(".vCard-start").click(function() {
     $(".vCard-get-all").hide("slow");
     $(".vCard-get-none").hide("slow");
     $(".vCard-get").hide("slow");
-    // _.each($("#page-container table.common-contacts tbody tr td:first-child"), function(element, index, list) {
-    //     var num = $(element).parent().attr("class");
-    //     $(element).html("<a href='users/"+num+"'>"+num+ "</a>");
-    // });
     $("table.common-contacts tbody td.ids").removeClass("hidden");
     $("table.common-contacts tbody td.inputs").addClass("hidden");
 
