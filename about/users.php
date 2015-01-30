@@ -129,7 +129,7 @@
         <tbody>
           <tr ng-repeat="fighter in fighters.selected_f | orderBy:id" class="{{fighter.id}}">
             <td><a href='users/{{fighter.id}}'>{{fighter.id}}</a></td>
-            <td><img ng-src={{fighter.photo_100}} /></td>
+            <td><img ng-src="{{fighter.photo_100}}" /></td>
             <td>
               <ul>
                 <li><strong>ФИО:</strong> {{fighter.surname}} <span ng-show="fighter.maiden_name">({{fighter.maiden_name}}) </span>{{fighter.name}} {{fighter.second_name}} </li>

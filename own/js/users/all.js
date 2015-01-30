@@ -24,13 +24,12 @@ function loadScript(url, callback)
       callback();
     }
 }
+
 if (! window.fighters.all_script ) {
   window.fighters.all_script = true;
 var intID = setInterval(function(){
   if (typeof(angular) !== "undefined") {
 
-
-/*отправляем Ajax чтобы посмотреть всех бойцов.*/
 $('#page-container').on('click', ".get-all", function() {
   /*двойное назначение кнопки:
   Если не нажимали - добавляет таблицу со всеми бойцами и проч.*/
@@ -38,13 +37,14 @@ $('#page-container').on('click', ".get-all", function() {
       $(".get-all").text("ААА! УБЕРИТЕ ИХ!!!")
       $(".search_wrap").removeClass("hidden");
       $(".search_wrap input").prop("autofocus", true);
+
       // $(".vCard-start").addClass("unclick");
       $(".vCard-start").show("slow");
       $("table.common-contacts").removeClass("hidden");
       if (window.fighters.angular_conroller == null) {
       loadScript("/standart/js/checklist-model.js", function() {
         window.fighters.angular_conroller = angular.module('common_c_app', ["checklist-model"], function($httpProvider)
-        {
+        { //магия, чтобы PHP понимал запрос
           // Используем x-www-form-urlencoded Content-Type
           $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
          
@@ -95,7 +95,7 @@ $('#page-container').on('click', ".get-all", function() {
           }];
         });
 
-
+        //запускаем ангулар
         window.fighters.angular_conroller.controller('fightersApp', ['$scope', '$http', init_angular_f_c]);
         angular.bootstrap(document, ['common_c_app']);
         window.fighters.was_init = true;
@@ -116,30 +116,34 @@ $('#page-container').on('click', ".get-all", function() {
     $(".vCard-start").hide("slow");
     $(".search_wrap input").prop("autofocus", false);
     $(".search_wrap").addClass("hidden");
-    $("table.common-contacts").addClass("hidden");
+    setTimeout(function(){
+      $("table.common-contacts").addClass("hidden");
+    },1000)
   }
   
     $(".get-all").toggleClass("clicked");
 
 });
-
-
-
       clearInterval(intID);
   }
 }, 50);
 }
 
+/*логика ангулара*/
 function init_angular_f_c ($scope, $http) {
 
+  /*выбрать всех*/
   $scope.checkAll = function() {
     $scope.fighters.selected_f = angular.copy($scope.fighters);
     $(".vCard-get").prop('disabled', false);
   };
+  /*убрать выбор всех*/
   $scope.uncheckAll = function() {
     $scope.fighters.selected_f = [];
     $(".vCard-get").prop('disabled', true);
   };
+
+  /*аякс запрос методом ангулара*/
   var data =  {action: "all",};
   $http.post('/handlers/user.php', data).success(function(response) {
     window.fighters.scope = $scope
@@ -151,7 +155,8 @@ function init_angular_f_c ($scope, $http) {
       element.fi = element.name + " " + element.surname;
     });
   });
-          
+
+  /*либо появляются чекбоксы, либо исчезают*/
   $scope.toggleChecking = function() {
     /*Если не нажимали - делает видимыми кнопки для экспорта vCard*/
     if (!$(".vCard-start").hasClass("clicked")) {
@@ -165,21 +170,26 @@ function init_angular_f_c ($scope, $http) {
       /*второе назначение - скрыть всё.*/
     } else {
       $(".vCard-start").html("Кого хотите посмотреть?");
-      $(".vCard-get-all").hide("slow");
-      $(".vCard-get-none").hide("slow");
+      
       $(".vCard-get").hide("slow");
       $scope.hidden_inputs = "hidden";
       $scope.hidden_ids = "";
-      console.log("what to hide");
-      // debugger;
       if ($(".vCard-get").hasClass("clicked")) {
-        setTimeout(function(){
+        setTimeout(function(){ //магия, без которой не работает
           $(".vCard-get").trigger("click");
-        },1000)
+          $(".vCard-get-all").hide();
+          $(".vCard-get-none").hide();
+          $(".search_wrap").show();
+        },500)
+      } else {
+        $(".vCard-get-all").hide("slow");
+        $(".vCard-get-none").hide("slow");
       }
     }
     $(".vCard-start").toggleClass("clicked");
   }
+
+  /*при клике на чекбокс нужно проверить, есть ли хотя бы 1 выбранный*/
   $scope.checkClicked = function() {
     if ($scope.fighters.selected_f.length > 0) {
       $(".vCard-get").prop('disabled', false);
@@ -188,15 +198,20 @@ function init_angular_f_c ($scope, $http) {
     }
   }
 
+  /*просто изменение формата вывода телефона*/
   $scope.goodView = function(tel) {
     return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
   }
 
+  /*показать выбранных бойцов*/
   $scope.showSelected = function() {
     if (!$(".vCard-get").hasClass("clicked")){
       $(".vCard-get").text("Скрыть контакты");
       $(".vCard-category").show("slow");
       $(".vCard-make").show("slow");
+      $(".vCard-get-all").hide("slow");
+      $(".vCard-get-none").hide("slow");
+      $(".search_wrap").hide("slow");
       $("table.common-contacts").addClass("hidden")
       $("table.direct-contacts").removeClass("hidden")
       if ($scope.fighters.selected_f.photo_100 == undefined) {
@@ -228,15 +243,16 @@ function init_angular_f_c ($scope, $http) {
             dataType: "jsonp",
             data:  $.param(data2)
           }).done(function(vk_response) {
-            console.log("get vk")
+            setTimeout(function(){
             _.each($scope.fighters.selected_f, function(element, index, list) {
               var this_fighter = _.findWhere(vk_response.response, {domain: element.vk_id});
+              if (this_fighter) {element.photo_100 = this_fighter.photo_100}
               element.vk_domain = this_fighter ? this_fighter.domain : element.vk_id;
-              setTimeout(function() {
-                $scope.$apply(function() {if (this_fighter) element.photo_100 = this_fighter.photo_100});
-              }, 500);
-            });  
+            });
+            $scope.$apply();
+            }, 10);
 
+            /*генерим vCard*/
             $scope.makeCard = function() { //TODO make code more clear
               var json = response
               var json2 = vk_response
@@ -304,11 +320,15 @@ function init_angular_f_c ($scope, $http) {
       $(".vCard-make").hide("slow");
       $("table.common-contacts").removeClass("hidden")
       $("table.direct-contacts").addClass("hidden")
+      $(".vCard-get-all").show("slow");
+      $(".vCard-get-none").show("slow");
+      $(".search_wrap").show("slow");
+      $scope.fighters.selected_f = []
     }
     $(".vCard-get").toggleClass("clicked");
   }
 
-
+/*если нажать ESC на 'Search' - буквы удаляться*/
 $('#page-container').on('keyup', "input.search", function(event) {
   if (event.keyCode == 27) {
     $scope.$apply('query=""')
