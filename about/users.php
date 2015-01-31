@@ -32,32 +32,68 @@
       /*смотрим на чужой профиль (доступно >=бойцам)*/
       } elseif (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
     ?>
-      <div class="user-info hidden" ng-cloak ng-controller="oneFighterApp">
-        <div class="col-xs-12 user-name">
-          <h2>{{fighter.name}} {{fighter.second_name}} {{fighter.surname}} <span ng-show="fighter.maiden_name">({{fighter.maiden_name}})</span></h2>
-          <hr>
-        </div>
-        <div class="row own-row">
-              <div class="col-xs-3">
-      
-            <img class="pull-left ava" ng-src="{{fighter.photo_200}}" width="200" height="200">
-      
+      <div ng-cloak ng-controller="oneFighterApp">
+        <div class="user-info hidden">
+          
+          <div class="col-xs-12">
+            <h2>{{fighter.name}} {{fighter.second_name}} {{fighter.surname}} <span ng-show="fighter.maiden_name">({{fighter.maiden_name}})</span>
+          <button type="button" class="btn btn-primary text-right" ng-click="editPerson()">Редактировать</button></h2>
+            <hr>
           </div>
-          <div class="col-xs-9 info-str">
-            <ul>
-              <li ng-show="fighter.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{fighter.domain}}'>vk.com/{{fighter.domain}}</a></li>
-              <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
-              <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
-              <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
-              <li ng-show="fighter.birthdate"><strong>День рождения: </strong>{{fighter.birthdate | date: 'dd.MM.yyyy'}}</li>
-              <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
-              <li ng-show="fighter.group_of_rights"><strong>Права доступа: </strong>{{fighter.group_of_rights}}</li>
-              
-            </ul>
+          <div class="row own-row">
+                <div class="col-xs-3">
+        
+              <img class="pull-left ava" ng-src="{{fighter.photo_200}}" width="200" height="200">
+        
+            </div>
+            <div class="col-xs-9 info-str">
+              <ul>
+                <li ng-show="fighter.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{fighter.domain}}'>vk.com/{{fighter.domain}}</a></li>
+                <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
+                <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
+                <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
+                <li ng-show="fighter.birthdate"><strong>День рождения: </strong>{{fighter.birthdate | date: 'dd.MM.yyyy'}}</li>
+                <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
+                <li ng-show="fighter.group_of_rights"><strong>Права доступа: </strong>{{fighter.group_of_rights}}</li>
+                
+              </ul>
+            </div>
           </div>
-      
         </div>
-
+        <div class="user-edit hidden">
+          <form ng-submit="submit()">
+            <div class="col-xs-12">
+              <h2>
+                <input type="text" ng-model="fighter.name" size="{{(fighter.name).length}}+1" /> 
+                <input type="text" ng-model="fighter.second_name"  size="{{(fighter.second_name).length}}+1" />
+                <input type="text" ng-model="fighter.surname"  size="{{(fighter.surname).length}}+1" />
+                (<input type="text" ng-model="fighter.maiden_name"  size="{{(fighter.maiden_name).length}}+1" />)
+            <input type="submit" class="btn btn-primary text-right" ng-click="editPerson()" value="Сохранить"></input>
+            <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editPerson()" >Отменить</input>
+          </h2>
+              <hr>
+            </div>
+            <div class="row own-row">
+                  <div class="col-xs-3">
+          
+                <img class="pull-left ava" ng-src="{{fighter.photo_200}}" width="200" height="200">
+          
+              </div>
+              <div class="col-xs-9 info-str">
+                <ul>
+                  <li><strong>vk: </strong>vk.com/<input type="text" ng-model="fighter.domain" size="{{(fighter.domain).length}}" /></li>
+                  <li><strong>Телефон:</strong> <input type="text" ng-model="fighter.phone" size="{{(fighter.phone).length}}" /> </li>
+                  <li><strong>Второй телефон:</strong> <input type="text" ng-model="fighter.second_phone" size="{{(fighter.second_phone).length}}" /> </li>
+                  <li><strong>e-mail:</strong> <input type="text" ng-model="fighter.email" size="{{(fighter.email).length}}" /></li>
+                  <li><strong>День рождения: </strong><input type="text" ng-model="fighter.birthdate" size="{{(fighter.birthdate).length}}" /></li>
+                  <li><strong>Год вступления в отряд: </strong><input type="text" ng-model="fighter.year_of_entrance" size="{{(fighter.year_of_entrance).length}}" /></li>
+                  <li ng-show="fighter.group_of_rights"><strong>Права доступа: </strong><input type="text" ng-model="fighter.group_of_rights" size="{{(fighter.group_of_rights).length}}" /></li>
+                  
+                </ul>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     <?php
       /*не боец попытался посмотреть профиль*/

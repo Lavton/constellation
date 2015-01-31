@@ -83,48 +83,65 @@ function get_user_info(userid) {
     $scope.goodView = function(tel) {
       return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
     }
+
     $scope.fighter = {};
+    $scope.editPerson = function() {
+      $(".user-info").toggleClass("hidden");
+      $(".user-edit").toggleClass("hidden");
+      $scope.master = angular.copy($scope.fighter); 
+    };
     $(".user-info").removeClass("hidden")
     var data = {action: "get_one_info", id: userid}
     $scope.fighter.photo_200 = "http://vk.com/images/camera_b.gif"
     $.ajax({
-        type: "POST",
-        url: "/handlers/user.php",
-        dataType: "json",
-        data:  $.param(data)
-      }).done(function(json) {
-        console.log(json);
-        $scope.fighter = json.user;
-        $scope.$apply();
+      type: "POST",
+      url: "/handlers/user.php",
+      dataType: "json",
+      data:  $.param(data)
+    }).done(function(json) {
+      console.log(json);
+      $scope.fighter = json.user;
+      $scope.$apply();
         
 
-        var data_vk = {user_ids: $scope.fighter.vk_id, fields: ["photo_200", "domain"]}
-        $.ajax({
-          type: "GET",
-          url: "https://api.vk.com/method/users.get",
-          dataType: "jsonp",
-          data:  $.param(data_vk)
-        }).done(function(json2) {
-          if ((json2 !== undefined) && (json2.error == undefined)) {
-           var user_vk = json2.response[0];
+      var data_vk = {user_ids: $scope.fighter.vk_id, fields: ["photo_200", "domain"]}
+      $.ajax({
+        type: "GET",
+        url: "https://api.vk.com/method/users.get",
+        dataType: "jsonp",
+        data:  $.param(data_vk)
+      }).done(function(json2) {
+        if ((json2 !== undefined) && (json2.error == undefined)) {
+         var user_vk = json2.response[0];
+        }
+        if (user_vk == undefined) {
+          user_vk = {photo_200: "http://vk.com/images/camera_b.gif",
+            domain: json.user.vk_id,
+            uid: 0
           }
-          if (user_vk == undefined) {
-            user_vk = {photo_200: "http://vk.com/images/camera_b.gif",
-              domain: json.user.vk_id,
-              uid: 0
-            }
-            
-          }
-          console.log(user_vk);
-          $scope.fighter.domain = user_vk.domain
-          // $scope.fighter += _.pick(user_vk, 'photo_200', 'domain')
-          $scope.fighter.photo_200 = user_vk.photo_200;
-          $scope.$apply();
-          console.log($scope.fighter)
-          console.log($locale.id)
-        });
+          
+        }
+        console.log(user_vk);
+        $scope.fighter.domain = user_vk.domain
+        // $scope.fighter += _.pick(user_vk, 'photo_200', 'domain')
+        $scope.fighter.photo_200 = user_vk.photo_200;
 
+        $scope.$apply();
+        console.log($scope.fighter)
+        console.log($locale.id)
       });
 
+    });
+    $scope.submit = function() {
+      var data =  angular.copy($scope.fighter);
+      console.log(data)
+/*      $http.post('/handlers/user.php', data).success(function(response) {
+        console.log("response")
+      });      */
+      console.log("submite")
+    }
+    $scope.resetInfo = function() {
+      $scope.fighter = angular.copy($scope.master);
+    }
   }
 }
