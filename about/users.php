@@ -32,29 +32,26 @@
       /*смотрим на чужой профиль (доступно >=бойцам)*/
       } elseif (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
     ?>
-      <div class="user-info">
+      <div class="user-info hidden" ng-cloak ng-controller="oneFighterApp">
         <div class="col-xs-12 user-name">
-          <h2></h2>
-          <div class="btn-toolbar">
-            <a href="/users/415/edit" class="hidden btn btn-primary" role="button">Редактировать</a>
-          </div>
+          <h2>{{fighter.name}} {{fighter.second_name}} {{fighter.surname}} <span ng-show="fighter.maiden_name">({{fighter.maiden_name}})</span></h2>
           <hr>
         </div>
         <div class="row own-row">
               <div class="col-xs-3">
       
-            <img class="pull-left ava" src="" width="200" height="200">
+            <img class="pull-left ava" ng-src="{{fighter.photo_200}}" width="200" height="200">
       
           </div>
           <div class="col-xs-9 info-str">
             <ul>
-              <li class='vk hidden'><strong>vk: </strong></li>
-              <li class='phone-first hidden'><strong>Телефон: </strong></li>
-              <li class='phone-second hidden'><strong>Телефон: </strong></li>
-              <li class='email hidden'><strong>e-mail: </strong></li>
-              <li class='birthdate hidden'><strong>День рождения: </strong></li>
-              <li class='year_of_entrance hidden'><strong>Год вступления в отряд: </strong></li>
-              <li class='group_of_rights hidden'><strong>Права доступа: </strong></li>
+              <li ng-show="fighter.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{fighter.domain}}'>vk.com/{{fighter.domain}}</a></li>
+              <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
+              <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
+              <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
+              <li ng-show="fighter.birthdate"><strong>День рождения: </strong>{{fighter.birthdate | date: 'dd.MM.yyyy'}}</li>
+              <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
+              <li ng-show="fighter.group_of_rights"><strong>Права доступа: </strong>{{fighter.group_of_rights}}</li>
               
             </ul>
           </div>

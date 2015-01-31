@@ -1,5 +1,92 @@
-function get_user_info (userid) {
-	data = {action: "get_one_info", id: userid}
+'use strict';
+function get_user_info(userid) {
+  if (window.fighters == undefined) {
+    window.fighters = {}
+  }
+  window.fighters.one_angular_conroller = null;
+
+  if (! window.fighters.one_script ) {
+    window.fighters.one_script = true;
+  var intID = setInterval(function(){
+    if (typeof(angular) !== "undefined") {
+        if (window.fighters.one_angular_conroller == null) {
+          window.fighters.one_angular_conroller = angular.module('one_c_app', [], function($httpProvider)
+          { //магия, чтобы PHP понимал запрос
+            // Используем x-www-form-urlencoded Content-Type
+            $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+           
+            // Переопределяем дефолтный transformRequest в $http-сервисе
+            $httpProvider.defaults.transformRequest = [function(data)
+            {
+              var param = function(obj)
+              {
+                var query = '';
+                var name, value, fullSubName, subValue, innerObj, i;
+                
+                for(name in obj)
+                {
+                  value = obj[name];
+                  
+                  if(value instanceof Array)
+                  {
+                    for(i=0; i<value.length; ++i)
+                    {
+                      subValue = value[i];
+                      fullSubName = name + '[' + i + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  }
+                  else if(value instanceof Object)
+                  {
+                    for(subName in value)
+                    {
+                      subValue = value[subName];
+                      fullSubName = name + '[' + subName + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  }
+                  else if(value !== undefined && value !== null)
+                  {
+                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+                  }
+                }
+                
+                return query.length ? query.substr(0, query.length - 1) : query;
+              };
+              
+              return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+            }];
+          });
+
+          //запускаем ангулар
+          window.fighters.one_angular_conroller.controller('oneFighterApp', ['$scope', '$http', '$locale', init_angular_o_f_c]);
+          angular.bootstrap(document, ['one_c_app']);
+          window.fighters.was_init_one = true;
+        
+        }
+        if (window.fighters.was_init_one && $(".user-info").hasClass("hidden")) {
+          angular.bootstrap(document, ['one_c_app']);
+        }
+   
+        clearInterval(intID);
+    }
+  }, 50);
+  }
+
+  /*логика ангулара*/
+  function init_angular_o_f_c ($scope, $http, $locale) {
+    $locale.id = 'ru-ru' //TODO make it works(
+    $scope.goodView = function(tel) {
+      return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
+    }
+    $scope.fighter = {};
+    $(".user-info").removeClass("hidden")
+    var data = {action: "get_one_info", id: userid}
+    $scope.fighter.photo_200 = "http://vk.com/images/camera_b.gif"
     $.ajax({
         type: "POST",
         url: "/handlers/user.php",
@@ -7,95 +94,37 @@ function get_user_info (userid) {
         data:  $.param(data)
       }).done(function(json) {
         console.log(json);
-        var fio = json.user.name+ " ";
-        if (json.user.second_name != null) {
-          fio += json.user.second_name + " ";
-        }
-        fio += json.user.surname + " ";
-        if (json.user.maiden_name != null) {
-          fio += "("+json.user.maiden_name+") ";
-        }
+        $scope.fighter = json.user;
+        $scope.$apply();
+        
 
-        $(".user-info h2").text(fio);
-
-
-        data_vk = {user_ids: json.user.vk_id, fields: ["photo_200", "domain"]}
+        var data_vk = {user_ids: $scope.fighter.vk_id, fields: ["photo_200", "domain"]}
         $.ajax({
           type: "GET",
           url: "https://api.vk.com/method/users.get",
           dataType: "jsonp",
           data:  $.param(data_vk)
         }).done(function(json2) {
-          var user_vk = json2.response[0];
+          if ((json2 !== undefined) && (json2.error == undefined)) {
+           var user_vk = json2.response[0];
+          }
           if (user_vk == undefined) {
             user_vk = {photo_200: "http://vk.com/images/camera_b.gif",
               domain: json.user.vk_id,
               uid: 0
             }
-            console.log(element.surname + ' ' + element.vk_id);
+            
           }
           console.log(user_vk);
-          $(".user-info .ava").attr('src', user_vk.photo_200);
-          var link = $(".user-info .info-str li.vk")
-          link.removeClass('hidden').
-            html(link.html() + "<a target='_blank' href='//vk.com/"+
-                              user_vk.domain+"'>vk.com/"+user_vk.domain+"</a>")
+          $scope.fighter.domain = user_vk.domain
+          // $scope.fighter += _.pick(user_vk, 'photo_200', 'domain')
+          $scope.fighter.photo_200 = user_vk.photo_200;
+          $scope.$apply();
+          console.log($scope.fighter)
+          console.log($locale.id)
+        });
 
-          if (json.user.phone != null) {
-            link = $(".user-info .info-str li.phone-first")
-            var tel = json.user.phone;
-            tel = "<a href='tel:+7"+tel+"'> "+
-            "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9]+
-            "</a>";
-            link.removeClass('hidden').html(link.html() + tel)
-          }
-          if (json.user.second_phone != null) {
-            var tel = json.user.second_phone;
-            tel = "<a href='tel:+7"+tel+"'> "+
-            "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9]+
-            "</a>";
-            link = $(".user-info .info-str li.phone-second")
-            link.removeClass('hidden').html(link.html() + tel)
-          }
-
-
-          if (json.user.email != null) {
-            var email = json.user.email;
-            email = "<a href='mailto:"+email+"'>"+
-              email+
-              "</a>";
-            link = $(".user-info .info-str li.email")
-            link.removeClass('hidden').html(link.html() + email)
-          }
-
-
-          if (json.user.birthdate != null) {
-            var birthdate = json.user.birthdate;
-            link = $(".user-info .info-str li.birthdate")
-            link.removeClass('hidden').html(link.html() + birthdate)
-          }
-
-
-          if (json.user.year_of_entrance != null) {
-            var year_of_entrance = json.user.year_of_entrance;
-            link = $(".user-info .info-str li.year_of_entrance")
-            link.removeClass('hidden').html(link.html() + year_of_entrance)
-          }
-
-
-          if (json.user.group_of_rights != null) {
-            var group_of_rights = json.user.group_of_rights;
-            link = $(".user-info .info-str li.group_of_rights")
-            link.removeClass('hidden').html(link.html() + group_of_rights)
-          }
-
-
-        }).fail(function(json) {
-        console.log("Fail");
-       });
-
-      }).fail(function(json) {
-        console.log("Fail");
       });
-      
+
+  }
 }

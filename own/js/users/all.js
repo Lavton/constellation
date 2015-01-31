@@ -3,7 +3,9 @@
 if (window.fighters == undefined) {
   window.fighters = {}
 }
-window.fighters.angular_conroller = null;
+if (window.fighters.angular_conroller == undefined) {
+  window.fighters.angular_conroller = null;
+}
 function loadScript(url, callback)
 {
 
