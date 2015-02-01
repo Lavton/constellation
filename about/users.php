@@ -39,6 +39,7 @@
             <h2>{{fighter.name}} {{fighter.second_name}} {{fighter.surname}} <span ng-show="fighter.maiden_name">({{fighter.maiden_name}})</span>
           <button type="button" class="btn btn-primary text-right" ng-click="editPerson()">Редактировать</button></h2>
             <hr>
+            <span class="saved">  (Изменения сохранены)</span>
           </div>
           <div class="row own-row">
                 <div class="col-xs-3">

@@ -120,6 +120,10 @@ function get_user_info(userid) {
       console.log(data)
       $http.post('/handlers/user.php', data).success(function(response) {
         console.log(response)
+        var saved = $(".saved");
+        $(saved).stop(true, true);
+        $(saved).fadeIn("slow");
+        $(saved).fadeOut("slow");
       });      
       console.log("submite")
       });
