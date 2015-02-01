@@ -81,7 +81,7 @@
               </div>
               <div class="col-xs-9 info-str">
                 <ul>
-                  <li><strong>vk: </strong>vk.com/<input type="text" ng-model="fighter.domain" size="{{(fighter.domain).length}}" /></li>
+                  <li><strong>vk: </strong>vk.com/<input type="text" class="vk-domain" ng-model="fighter.domain" size="{{(fighter.domain).length}}" />   (uid: {{fighter.vk_id}})</li>
                   <li><strong>Телефон:</strong> <input type="text" ng-model="fighter.phone" size="{{(fighter.phone).length}}" /> </li>
                   <li><strong>Второй телефон:</strong> <input type="text" ng-model="fighter.second_phone" size="{{(fighter.second_phone).length}}" /> </li>
                   <li><strong>e-mail:</strong> <input type="text" ng-model="fighter.email" size="{{(fighter.email).length}}" /></li>

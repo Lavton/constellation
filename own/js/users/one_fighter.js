@@ -101,10 +101,32 @@ function get_user_info(userid) {
     }).done(function(json) {
       console.log(json);
       $scope.fighter = json.user;
+      $scope.fighter.domain = $scope.fighter.vk_id
       $scope.$apply();
         
+      get_vk();
 
-      var data_vk = {user_ids: $scope.fighter.vk_id, fields: ["photo_200", "domain"]}
+    });
+    $scope.submit = function() {
+      get_vk(function() {
+      var data =  angular.copy($scope.fighter);
+      console.log(data)
+/*      $http.post('/handlers/user.php', data).success(function(response) {
+        console.log("response")
+      });      */
+      console.log("submite")
+      });
+    }
+    $scope.resetInfo = function() {
+      $scope.fighter = angular.copy($scope.master);
+    }
+    $("#page-container").on("focusout", "input.vk-domain", function() {
+      console.log("out");
+      get_vk()
+    });
+
+    function get_vk(callback) {
+      var data_vk = {user_ids: $scope.fighter.domain, fields: ["photo_200", "domain"]}
       $.ajax({
         type: "GET",
         url: "https://api.vk.com/method/users.get",
@@ -125,23 +147,13 @@ function get_user_info(userid) {
         $scope.fighter.domain = user_vk.domain
         // $scope.fighter += _.pick(user_vk, 'photo_200', 'domain')
         $scope.fighter.photo_200 = user_vk.photo_200;
+        $scope.fighter.vk_id = user_vk.uid;
 
         $scope.$apply();
-        console.log($scope.fighter)
-        console.log($locale.id)
+        if (callback) {
+          callback();
+        }
       });
-
-    });
-    $scope.submit = function() {
-      var data =  angular.copy($scope.fighter);
-      console.log(data)
-/*      $http.post('/handlers/user.php', data).success(function(response) {
-        console.log("response")
-      });      */
-      console.log("submite")
-    }
-    $scope.resetInfo = function() {
-      $scope.fighter = angular.copy($scope.master);
     }
   }
 }
