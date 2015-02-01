@@ -68,9 +68,9 @@
                 <input type="text" ng-model="fighter.second_name"  size="{{(fighter.second_name).length}}+1" />
                 <input type="text" ng-model="fighter.surname"  size="{{(fighter.surname).length}}+1" />
                 (<input type="text" ng-model="fighter.maiden_name"  size="{{(fighter.maiden_name).length}}+1" />)
-            <input type="submit" class="btn btn-primary text-right" ng-click="editPerson()" value="Сохранить"></input>
-            <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editPerson()" >Отменить</input>
-          </h2>
+                <input type="submit" class="btn btn-primary text-right" ng-click="editPerson()" value="Сохранить"></input>
+                <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editPerson()" >Отменить</input>
+              </h2>
               <hr>
             </div>
             <div class="row own-row">
@@ -87,7 +87,7 @@
                   <li><strong>e-mail:</strong> <input type="text" ng-model="fighter.email" size="{{(fighter.email).length}}" /></li>
                   <li><strong>День рождения: </strong><input type="text" ng-model="fighter.birthdate" size="{{(fighter.birthdate).length}}" /></li>
                   <li><strong>Год вступления в отряд: </strong><input type="text" ng-model="fighter.year_of_entrance" size="{{(fighter.year_of_entrance).length}}" /></li>
-                  <li ng-show="fighter.group_of_rights"><strong>Права доступа: </strong><input type="text" ng-model="fighter.group_of_rights" size="{{(fighter.group_of_rights).length}}" /></li>
+                  <li><strong>Права доступа: </strong><input type="text" ng-model="fighter.group_of_rights" size="{{(fighter.group_of_rights).length}}" /></li>
                   
                 </ul>
               </div>

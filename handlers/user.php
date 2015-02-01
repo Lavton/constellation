@@ -9,6 +9,7 @@ if (is_ajax()) {
 			case "all": get_all(); break;
 			case 'get_full_info': get_full_info(); break;
 			case "get_one_info": get_one_info(); break;
+			case 'set_new_data': set_new_data(); break;
 		}
 	}
 }
@@ -97,4 +98,74 @@ function get_one_info() {
 	echo json_encode($result);
 }
 
+function set_new_data() {
+	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+	$link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+    or die('Не удалось соединиться: ' . mysql_error());
+	mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+	// Выполняем SQL-запрос
+	@mysql_query("Set charset utf8");
+	@mysql_query("Set character_set_client = utf8");
+	@mysql_query("Set character_set_connection = utf8");
+	@mysql_query("Set character_set_results = utf8");
+	@mysql_query("Set collation_connection = utf8_general_ci");
+
+	$names = array();
+	$values = array();
+	if (isset($_POST["vk_id"])) {
+		array_push($names, "vk_id");
+		array_push($values, "'".$_POST["vk_id"]."'");
+	}
+	if (isset($_POST["group_of_rights"])) {
+		array_push($names, "group_of_rights");
+		array_push($values, "'".$_POST["group_of_rights"]."'");
+	}
+	if (isset($_POST["name"])) {
+		array_push($names, "name");
+		array_push($values, "'".$_POST["name"]."'");
+	}
+	if (isset($_POST["second_name"])) {
+		array_push($names, "second_name");
+		array_push($values, "'".$_POST["second_name"]."'");
+	}
+	if (isset($_POST["surname"])) {
+		array_push($names, "surname");
+		array_push($values, "'".$_POST["surname"]."'");
+	}
+	if (isset($_POST["maiden_name"])) {
+		array_push($names, "maiden_name");
+		array_push($values, "'".$_POST["maiden_name"]."'");
+	}
+	if (isset($_POST["phone"])) {
+		array_push($names, "phone");
+		array_push($values, "'".$_POST["phone"]."'");
+	}
+	if (isset($_POST["second_phone"])) {
+		array_push($names, "second_phone");
+		array_push($values, "'".$_POST["second_phone"]."'");
+	}
+	if (isset($_POST["email"])) {
+		array_push($names, "email");
+		array_push($values, "'".$_POST["email"]."'");
+	}
+	if (isset($_POST["birthdate"])) {
+		array_push($names, "birthdate");
+		array_push($values, "'".$_POST["birthdate"]."'");
+	}
+	if (isset($_POST["year_of_entrance"])) {
+		array_push($names, "year_of_entrance");
+		array_push($values, "'".$_POST["year_of_entrance"]."'");
+	}
+	$conc = array();
+	foreach ($names as $key => $value) {
+		array_push($conc, "".$value."=".$values[$key]);
+	}
+	$conc = implode(", ", $conc);
+	$query = "UPDATE fighters SET ".$conc." WHERE id='".$_POST['id']."';";
+	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+//	$result["user"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+	$result["result"] = "Success";
+	$result["query"] = $query;
+	echo json_encode($result);
+}
 ?>

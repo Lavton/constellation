@@ -234,7 +234,6 @@ function init_angular_f_c ($scope, $http) {
             element.second_phone = this_fighter.second_phone;
             element.email = this_fighter.email;
             element.vk_id = this_fighter.vk_id;
-
             user_ids.push(element.vk_id);
           });
 
@@ -247,9 +246,9 @@ function init_angular_f_c ($scope, $http) {
           }).done(function(vk_response) {
             setTimeout(function(){
             _.each($scope.fighters.selected_f, function(element, index, list) {
-              var this_fighter = _.findWhere(vk_response.response, {domain: element.vk_id});
-              if (this_fighter) {element.photo_100 = this_fighter.photo_100}
-              element.vk_domain = this_fighter ? this_fighter.domain : element.vk_id;
+              var this_fighter = _.findWhere(vk_response.response, {uid: element.vk_id*1});
+              element.vk_domain = this_fighter ? this_fighter.domain : ("id"+element.vk_id);
+              element.photo_100 = this_fighter ? this_fighter.photo_100 : element.photo_100;
             });
             $scope.$apply();
             }, 10);

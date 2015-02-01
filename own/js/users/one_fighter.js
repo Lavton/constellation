@@ -110,10 +110,17 @@ function get_user_info(userid) {
     $scope.submit = function() {
       get_vk(function() {
       var data =  angular.copy($scope.fighter);
+      data.vk_id = ""+data.vk_id;
+      data.action = "set_new_data"
+      _.each(data, function(element, index, list){
+        if (!element) {
+          data[index] = null;
+        }
+      })
       console.log(data)
-/*      $http.post('/handlers/user.php', data).success(function(response) {
-        console.log("response")
-      });      */
+      $http.post('/handlers/user.php', data).success(function(response) {
+        console.log(response)
+      });      
       console.log("submite")
       });
     }
