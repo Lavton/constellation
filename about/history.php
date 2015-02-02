@@ -18,6 +18,12 @@
 
     <div id="page-container">
   тут история отряда.
+  <?php 
+  session_start();
+  echo print_r($_SESSION);
+  echo "<br><br><br>";
+  echo print_r($_COOKIE);
+  ?>
     </div> 
 
 

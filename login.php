@@ -54,6 +54,7 @@
             data:  $.param(odata)
           }).done(function(json) {
             console.log(json);
+            window.location = "/";
           });
         }
        });

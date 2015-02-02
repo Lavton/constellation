@@ -72,15 +72,14 @@ function vk_auth(){
 		$result["result"] = "Fail";
 	}
 	session_start();
-	$result["s"] = $_SESSION;
+	// $result["s"] = $_SESSION;
+	// $result["c"]= $_COOKIE;
 	echo json_encode($result);
 }
 
 function start_vk_session() {
 	session_start();
 	$_SESSION["vk_id"] = $_POST["uid"];
-	$_SESSION["first_name"] = $_POST["first_name"];
-	$_SESSION["last_name"] = $_POST["last_name"];
 	$_SESSION["photo"] = $_POST["photo_rec"];
 	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
 	$link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
@@ -97,6 +96,11 @@ function start_vk_session() {
 	$result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 	$result = mysql_fetch_array($result, MYSQL_ASSOC);
 	$_SESSION["group"] = $result["group_of_rights"]+0 ;
+	$_SESSION["current_group"] = $_SESSION["group"];
+	setcookie ("vk_id", $_SESSION["vk_id"], time() + 60*60*24*100, "/");
+	setcookie ("hash", $_POST["hash"], time() + 60*60*24*100, "/");
+	setcookie ("photo", $_SESSION["photo"], time() + 60*60*24*100, "/");
+	setcookie ("current_group", $_SESSION["current_group"], time() + 60*60*24*100, "/");
 }
 
 ?>
