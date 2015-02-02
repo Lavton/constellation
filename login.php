@@ -43,7 +43,18 @@
         VK.init({apiId: 4602552});
         VK.Widgets.Auth("vk_auth", {width: "300px", onAuth: function(data) {
           console.log(data);
-          alert('user '+data['uid']+' authorized');
+          // alert('user '+data['uid']+' authorized');
+          var odata = _.pick(data, 'uid', 'hash', 'first_name', 'last_name', 'photo_rec');
+          odata.action = "vk_auth";
+          console.log(odata)
+          $.ajax({
+            type: "POST",
+            url: "/handlers/login.php",
+            dataType: "json",
+            data:  $.param(odata)
+          }).done(function(json) {
+            console.log(json);
+          });
         }
        });
         // debugger;
@@ -56,7 +67,8 @@
   <script>
   /*отправляем Ajax при заполнении формы.*/
   $(".btn").click(function() {
-    data =  {username: $("#inputUser").val(),};
+    var data =  {username: $("#inputUser").val(),};
+    data.action = "simple_auc";
     $.ajax({
       type: "POST",
       url: "/handlers/login.php",
