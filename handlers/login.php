@@ -95,7 +95,12 @@ function start_vk_session() {
 	$query = 'SELECT group_of_rights FROM fighters where vk_id=\''.$_POST["uid"].'\';';
 	$result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 	$result = mysql_fetch_array($result, MYSQL_ASSOC);
-	$_SESSION["group"] = $result["group_of_rights"]+0 ;
+	$_SESSION["group"] = $result["group_of_rights"];
+	if (is_null($_SESSION["group"])) {
+		$_SESSION["group"] = 2;
+	} else {
+		$_SESSION["group"] = $_SESSION["group"] + 0;
+	}
 	$_SESSION["current_group"] = $_SESSION["group"];
 	setcookie ("vk_id", $_SESSION["vk_id"], time() + 60*60*24*100, "/");
 	setcookie ("hash", $_POST["hash"], time() + 60*60*24*100, "/");

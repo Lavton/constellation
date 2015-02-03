@@ -13,6 +13,15 @@
 	define("COMMAND_STAFF", 6);
 	define("ADMIN", 7);
 
+	$groups_rus = array();
+	$groups_rus[1] = "Незарегистрированный пользователь";
+	$groups_rus[2] = "Кандидат";
+	$groups_rus[3] = "Боец";
+	$groups_rus[4] = "Старик отряда";
+	$groups_rus[5] = "Экс-комсостав";
+	$groups_rus[6] = "Комсостав";
+	$groups_rus[7] = "Администратор";
+
 	function check_session() {
 		session_start();
 		if (!isset($_SESSION["vk_id"])) {
@@ -36,11 +45,16 @@
 					$query = 'SELECT group_of_rights FROM fighters where vk_id=\''.$_COOKIE["vk_id"].'\';';
 					$result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 					$result = mysql_fetch_array($result, MYSQL_ASSOC);
-					$_SESSION["group"] = $result["group_of_rights"]+0 ;
+					$_SESSION["group"] = $result["group_of_rights"];
+					if (is_null($_SESSION["group"])) {
+						$_SESSION["group"] = 2;
+					} else {
+						$_SESSION["group"] = $_SESSION["group"] + 0;
+					}
 					$_SESSION["current_group"] = $_COOKIE["current_group"] <= $_SESSION["group"] ? $_COOKIE["current_group"] : $_SESSION["group"];
-					setcookie ("vk_id", $_SESSION["vk_id"], time() + 60*60*24*100, "/");
-					setcookie ("hash", $_SESSION["hash"], time() + 60*60*24*100, "/");
-					setcookie ("photo", $_SESSION["photo"], time() + 60*60*24*100, "/");
+					setcookie ("vk_id", $_COOKIE["vk_id"], time() + 60*60*24*100, "/");
+					setcookie ("hash", $_COOKIE["hash"], time() + 60*60*24*100, "/");
+					setcookie ("photo", $_COOKIE["photo"], time() + 60*60*24*100, "/");
 					setcookie ("current_group", $_COOKIE["current_group"], time() + 60*60*24*100, "/");
 				}
 			}

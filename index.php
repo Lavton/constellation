@@ -3,35 +3,36 @@
 <head lang="en">
   <title>CПО "СОзвездие" | будущий сайт отряда</title>
   <?php
-    include('own/templates/header.php');
-    include_once('own/templates/php_globals.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/header.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
   ?>
-
 </head>
 <body>
   <?php
-    include('own/templates/menu.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/menu.php');
   ?>
       
   <div id="page-container">
     <?php
     /*Если незарег, то одно показываем, иначе - другое*/
+      check_session();
       session_start();
-      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["user_id"])))) {
-        include('own/templates/indexes/1.php');
+      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["vk_id"])))) {
+        include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/indexes/1.php');
       } else {
-        include('own/templates/indexes/not1.php');
+        include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/indexes/not1.php');
       }
     ?>
-      <table>
-        <tr>
+    <table width="100%">
+      <tr>
       <td><div class="vk-g"><div id="vk_groups"></div></div></td>
       <td><div class="in-w"><iframe src='/inwidget/index.php?view=16&inline=4' scrolling='no' frameborder='no' style='border:none;width:260px;height:400px;overflow:hidden;'></iframe></div></td>
-      </tr></table>
+      </tr>
+    </table>
   </div> 
 
 <?php
-  include('own/templates/footer.php');
+  include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
 ?>
 <div id="after-js-container">
   <script type="text/javascript" src="//vk.com/js/api/openapi.js"></script>

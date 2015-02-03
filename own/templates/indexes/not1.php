@@ -1,5 +1,6 @@
 <?php
 /*для зарегистрированных содержание главной страницы*/
+if (!(isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["vk_id"]))))) {
 ?>
 <div class="news">
   <h1> для зарегистрированных пользователей:<br/>Новости</h1>
@@ -26,3 +27,6 @@
     <hr>
   </div>
 </div>
+<?php
+}
+?>

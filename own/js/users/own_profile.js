@@ -1,5 +1,7 @@
 //send ajax on changing radio
-$('input[type=radio][name=group_r]').change(function() {
+if (!(window.own_profile_script)) {
+  window.own_profile_script = true;
+$("#page-container").on('change', 'input[type=radio][name=group_r]', function() {
     data =  {new_group: this.value, action: "change_group"};
     $.ajax({
       type: "POST",
@@ -21,3 +23,4 @@ $('input[type=radio][name=group_r]').change(function() {
       alert("Fail.");
     });
 });
+}

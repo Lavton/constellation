@@ -17,6 +17,7 @@
 
 <div id="footer-js">
 	<script type="text/javascript" src="/standart/js/jquery.js"></script>
+  <script type="text/javascript" src="/standart/js/angular.js"></script>
 	<script type="text/javascript" src="/standart/js/underscore.js"></script>
 	<script type="text/javascript" src="/own/js/menu.js"></script>
 </div>
