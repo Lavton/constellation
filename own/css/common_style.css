@@ -233,3 +233,10 @@ footer {
   margin-right: 0 !important;
   margin-left: 0 !important;;
 }
+
+.ng-dirty.ng-invalid {
+  border-color: red;
+}
+.ng-dirty.ng-valid {
+  border-color: green;
+}

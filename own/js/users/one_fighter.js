@@ -101,12 +101,20 @@ function get_user_info(userid) {
     }).done(function(json) {
       console.log(json);
       $scope.fighter = json.user;
-      $scope.fighter.domain = $scope.fighter.vk_id
+      $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
+      $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
+      console.log("start")
+      $.getJSON("/own/group_names.json", function(group_json){
+        $scope.groups = group_json;
+        $scope.$apply();
+      });
+      $scope.fighter.domain = "id"+$scope.fighter.vk_id
       $scope.$apply();
         
       get_vk();
 
     });
+
     $scope.submit = function() {
       get_vk(function() {
       var data =  angular.copy($scope.fighter);
@@ -136,6 +144,8 @@ function get_user_info(userid) {
       get_vk()
     });
 
+
+
     function get_vk(callback) {
       var data_vk = {user_ids: $scope.fighter.domain, fields: ["photo_200", "domain"]}
       $.ajax({
@@ -156,7 +166,6 @@ function get_user_info(userid) {
         }
         console.log(user_vk);
         $scope.fighter.domain = user_vk.domain
-        // $scope.fighter += _.pick(user_vk, 'photo_200', 'domain')
         $scope.fighter.photo_200 = user_vk.photo_200;
         $scope.fighter.vk_id = user_vk.uid;
 
@@ -168,3 +177,5 @@ function get_user_info(userid) {
     }
   }
 }
+
+//TODO phone input
