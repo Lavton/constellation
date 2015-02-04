@@ -67,18 +67,19 @@ function get_user_info(userid) {
           angular.bootstrap(document, ['one_c_app']);
           window.fighters.was_init_one = true;
         
-        }
-        if (window.fighters.was_init_one && $(".user-info").hasClass("hidden")) {
+        } else {
           angular.bootstrap(document, ['one_c_app']);
         }
-   
         clearInterval(intID);
     }
   }, 50);
+  } else {
+     angular.bootstrap(document, ['one_c_app']);
   }
 
   /*логика ангулара*/
   function init_angular_o_f_c ($scope, $http, $locale) {
+    console.log("hello")
     $locale.id = 'ru-ru' //TODO make it works(
     $scope.goodView = function(tel) {
       return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
