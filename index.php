@@ -28,7 +28,7 @@
       <td><div class="vk-g"><div id="vk_groups"></div></div></td>
       <td><div class="in-w"><iframe src='/inwidget/index.php?view=16&inline=4' scrolling='no' frameborder='no' style='border:none;width:260px;height:400px;overflow:hidden;'></iframe></div></td>
       </tr>
-    </table>
+    </table>    
   </div> 
 
 <?php

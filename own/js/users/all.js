@@ -269,13 +269,13 @@ function init_angular_f_c ($scope, $http) {
                   this_card += ","+element.maiden_name;
                 }
                 this_card += ";"+element.name+";";
-                if (element.second_name != null) {
+                if ((element.second_name != null) && ($scope.fighters.has_second_names)) {
                   this_card += element.second_name;
                 }
                 this_card +=";;\n";
                 
                 var vk_data=_.findWhere(json2.response, {domain: element.vk_id});
-                if (vk_data != undefined) {
+                if (vk_data != undefined) { //TODO: not works
                   this_card += "PHOTO;VALUE=uri:"+vk_data.photo_200+"\n";
                 }
 

@@ -8,8 +8,12 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
   <button type="button" class="btn btn-default btn-sm own-hidden vCard-get-none" ng-click="uncheckAll()">Снять выбор</button>
   <button type="button" class="btn btn-success own-hidden vCard-get" disabled="disabled" ng-click="showSelected()">Посмотреть контакты</button>
   <br/>
-  <input type="text" class="vCard-category own-hidden" placeholder="назначить группу для контактов" size=30 />
-  <button type="button" class="btn btn-success own-hidden vCard-make" ng-click="makeCard()">импорт в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr></button>
+  <div class="vCard-category own-hidden">
+
+    <input type="text" class="vCard-category own-hidden" placeholder="назначить группу для контактов" size=30 /> <br/>
+    Добавить отчества? <input type="checkbox" ng-model="fighters.has_second_names" ng-init={{fighters.has_second_names=true}}>
+    <button type="button" class="btn btn-success own-hidden vCard-make" ng-click="makeCard()">импорт в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr></button>
+  </div>
   <div class="search_wrap hidden"> Search: <input class="search" ng-model="query"></div>
   <table class="table common-contacts hidden table-bordered">
     <thead>
