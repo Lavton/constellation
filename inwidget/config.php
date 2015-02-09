@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
 $CONFIG = array(
 
 	// Instagram login
-	'LOGIN' => 'fotokto_ru',
+	'LOGIN' => 'spo_sozvezdie',
 
 	// CLIEN_ID of Instagram application
 	'CLIENT_ID' => Passwords::$instagram_client_id,
