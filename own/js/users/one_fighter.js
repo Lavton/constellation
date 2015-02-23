@@ -4,11 +4,20 @@ function get_user_info(userid) {
     window.fighters = {}
   }
   window.fighters.one_angular_conroller = null;
-
   if (! window.fighters.one_script ) {
     window.fighters.one_script = true;
   var intID = setInterval(function(){
     if (typeof(angular) !== "undefined") {
+    var noopDirective = function() { return function () {}; };
+    // if (previewMode) {
+        // Disable ngPaste directive
+        if (window.fighters.one_angular_conroller) {
+          angular.module('one_c_app')
+              .factory('ngPasteDirective', noopDirective);
+          window.fighters.one_angular_conroller == null
+        }
+    // }
+//window.fighters.one_angular_conroller == null
         if (window.fighters.one_angular_conroller == null) {
           window.fighters.one_angular_conroller = angular.module('one_c_app', [], function($httpProvider)
           { //магия, чтобы PHP понимал запрос
@@ -61,7 +70,6 @@ function get_user_info(userid) {
               return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
             }];
           });
-
           //запускаем ангулар
           window.fighters.one_angular_conroller.controller('oneFighterApp', ['$scope', '$http', '$locale', init_angular_o_f_c]);
           angular.bootstrap(document, ['one_c_app']);
@@ -76,7 +84,6 @@ function get_user_info(userid) {
   } else {
      angular.bootstrap(document, ['one_c_app']);
   }
-
   /*логика ангулара*/
   function init_angular_o_f_c ($scope, $http, $locale) {
     console.log("hello")
@@ -84,7 +91,7 @@ function get_user_info(userid) {
     $scope.goodView = function(tel) {
       return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
     }
-
+    $scope.id = userid;
     $scope.fighter = {};
     $scope.editPerson = function() {
       $(".user-info").toggleClass("hidden");
@@ -92,29 +99,38 @@ function get_user_info(userid) {
       $scope.master = angular.copy($scope.fighter); 
     };
     $(".user-info").removeClass("hidden")
-    var data = {action: "get_one_info", id: userid}
-    $scope.fighter.photo_200 = "http://vk.com/images/camera_b.gif"
-    $.ajax({
-      type: "POST",
-      url: "/handlers/user.php",
-      dataType: "json",
-      data:  $.param(data)
-    }).done(function(json) {
-      console.log(json);
-      $scope.fighter = json.user;
-      $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
-      $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
-      console.log("start")
-      $.getJSON("/own/group_names.json", function(group_json){
-        $scope.groups = group_json;
-        $scope.$apply();
-      });
-      $scope.fighter.domain = "id"+$scope.fighter.vk_id
-      $scope.$apply();
-        
-      get_vk();
-
-    });
+    var inthrefID = setInterval(function(){
+      var fid=window.location.href.split("/")
+      var userid=fid[fid.length-1] //TODO сделать тут нормально!
+      if (userid != "users") {
+        var data = {action: "get_one_info", id: userid}
+        console.log(data + " " + userid + " " + fid)
+        // debugger;
+        $scope.fighter.photo_200 = "http://vk.com/images/camera_b.gif"
+        $.ajax({
+          type: "POST",
+          url: "/handlers/user.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(json) {
+          console.log("Получили с сервера "+userid + " "+window.location.href)
+          console.log(json);
+          $scope.fighter = json.user;
+          $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
+          $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
+          console.log("start")
+          $.getJSON("/own/group_names.json", function(group_json){
+            $scope.groups = group_json;
+            $scope.$apply();
+          });
+          $scope.fighter.domain = "id"+$scope.fighter.vk_id
+          $scope.$apply();
+            
+          get_vk();
+          clearInterval(inthrefID);
+        });
+      }
+    }, 50);
 
     $scope.submit = function() {
       get_vk(function() {
@@ -142,6 +158,8 @@ function get_user_info(userid) {
     }
 
     $scope.killFighter = function() {
+      var fid=window.location.href.split("/")
+      var userid=fid[fid.length-1] //TODO сделать тут нормально!
       if (confirm("Точно удалить профиль?")) {
         var data = {action: "kill_fighter", id: userid}
         $.ajax({ //TODO: make with angular
@@ -172,6 +190,7 @@ function get_user_info(userid) {
         dataType: "jsonp",
         data:  $.param(data_vk)
       }).done(function(json2) {
+        console.log("Получили с VK")
         if ((json2 !== undefined) && (json2.error == undefined)) {
          var user_vk = json2.response[0];
         }
