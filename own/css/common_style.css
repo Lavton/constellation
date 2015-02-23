@@ -240,3 +240,10 @@ footer {
 .ng-dirty.ng-valid {
   border-color: green;
 }
+
+.own-invalid {
+  border-color: red;
+}
+.own-valid {
+  border-color: green;
+}

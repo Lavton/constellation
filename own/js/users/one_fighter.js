@@ -140,6 +140,23 @@ function get_user_info(userid) {
     $scope.resetInfo = function() {
       $scope.fighter = angular.copy($scope.master);
     }
+
+    $scope.killFighter = function() {
+      if (confirm("Точно удалить профиль?")) {
+        var data = {action: "kill_fighter", id: userid}
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/user.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(response) {
+          if (response.result == "Success") {
+            window.location="/";
+          }
+        });
+      }
+    }
+
     $("#page-container").on("focusout", "input.vk-domain", function() {
       console.log("out");
       get_vk()

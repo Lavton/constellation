@@ -8,11 +8,11 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
   <button type="button" class="btn btn-default btn-sm own-hidden vCard-get-none" ng-click="uncheckAll()">Снять выбор</button>
   <button type="button" class="btn btn-success own-hidden vCard-get" disabled="disabled" ng-click="showSelected()">Посмотреть контакты</button>
   <br/>
-  <div class="vCard-category own-hidden">
+  <div class="vCard-creater own-hidden">
 
-    <input type="text" class="vCard-category own-hidden" placeholder="назначить группу для контактов" size=30 /> <br/>
-    Добавить отчества? <input type="checkbox" ng-model="fighters.has_second_names" ng-init={{fighters.has_second_names=true}}>
-    <button type="button" class="btn btn-success own-hidden vCard-make" ng-click="makeCard()">импорт в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr></button>
+    <input type="text" class="vCard-category" placeholder="назначить группу для контактов" size=30 /> <br/>
+    <span title="Не все программы корректно отображают формат записи без отчества и девичьей фамилии и норовят вставить их при наличии">Добавить доп инфу? <input type="checkbox" ng-model="fighters.has_second" /></span>
+    <button type="button" class="btn btn-success vCard-make" ng-click="makeCard()">импорт в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr></button>
   </div>
   <div class="search_wrap hidden"> Search: <input class="search" ng-model="query"></div>
   <table class="table common-contacts hidden table-bordered">
@@ -59,4 +59,13 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
     </tbody>
   </table>
 </div>
+<?php /*комсостав+ может добавлять новых бойцов*/
+if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+?><br/><br/><br/>
+  <button type="button" class="btn btn-warning pre-add-new" >Добавить нового бойца?</button> 
+ <span class="add-new-input-w hidden">  vk.com/<input type="text" class="add-new-fighter-d" placeholder="введите домен вконтакте" size=30 />
+         id: <input type="number" class="add-new-fighter-id" />
+
+  </span>
+<?php } ?>  
 <?php } ?>

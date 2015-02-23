@@ -32,6 +32,102 @@ if (! window.fighters.all_script ) {
 var intID = setInterval(function(){
   if (typeof(angular) !== "undefined") {
 
+var id_and_uid = null;
+$('#page-container').on('click', ".pre-add-new", function() {
+  if (! $(".pre-add-new").hasClass("clicked")) {
+    $(".add-new-input-w").removeClass("hidden")
+    $(".pre-add-new").addClass("clicked")
+    $(".pre-add-new").text("Добавить")
+    var data = {action: "get_all_ids"}
+    $.ajax({ //TODO: make with angular
+      type: "POST",
+      url: "/handlers/user.php",
+      dataType: "json",
+      data:  $.param(data)
+    }).done(function(response) {
+      id_and_uid = response.ids;
+      console.log(response)
+      $(".add-new-fighter-id").val(response.ids[response.ids.length-1].id*1+1);
+      $(".add-new-fighter-id").addClass("own-valid")
+      setInterval(function(){
+        var new_val = $(".add-new-fighter-id").val()
+        if (_.findWhere(response.ids, {id: new_val+""})) {
+          $(".add-new-fighter-id").addClass("own-invalid")
+          $(".add-new-fighter-id").removeClass("own-valid")
+        } else {
+          $(".add-new-fighter-id").addClass("own-valid")
+          $(".add-new-fighter-id").removeClass("own-invalid")
+        }
+      }, 750);
+    });
+  } else {
+    var data = {user_ids: $(".add-new-fighter-d").val(), fields: ["contacts", "bdate"]}
+    $.ajax({ //TODO: make with angular
+      type: "GET",
+      url: "https://api.vk.com/method/users.get",
+      dataType: "jsonp",
+      data:  $.param(data)
+    }).done(function(vk_response) {
+      if (vk_response.response) {
+        console.log(vk_response.response[0].uid);
+        $(".add-new-fighter-d").addClass("own-valid")
+        $(".add-new-fighter-d").removeClass("own-invalid")
+        if (_.findWhere(id_and_uid, {vk_id: vk_response.response[0].uid+""})) {
+          $(".add-new-fighter-d").addClass("own-invalid")
+          $(".add-new-fighter-d").removeClass("own-valid")
+        } else {
+          $(".add-new-fighter-d").addClass("own-valid")
+          $(".add-new-fighter-d").removeClass("own-invalid")
+        }
+
+      } else {
+        $(".add-new-fighter-d").addClass("own-invalid")
+        $(".add-new-fighter-d").removeClass("own-valid")
+      }
+
+      //добавляем нового пользователя лишь если данные корректны
+      if ($(".add-new-fighter-d").hasClass("own-valid") && $(".add-new-fighter-id").hasClass("own-valid")) {
+        var vk_user = vk_response.response[0];
+        var bd = [];
+        if (vk_user.bdate){
+          vk_user.bdate.split(".");
+        }
+        if (!bd[0]) {
+          bd[0] = "01"
+        }
+        if (!bd[1]) {
+          bd[1] = "01"
+        }
+        if (!bd[2]) {
+          bd[2] = "0001"
+        }
+        bd = bd[2]+"-"+bd[1]+"-"+bd[0]; 
+        var send_data = {
+          action: "add_new_fighter", 
+          id: $(".add-new-fighter-id").val()*1, 
+          vk_id: vk_user.uid+"",
+          name: vk_user.first_name,
+          surname: vk_user.last_name,
+          birthdate: bd,
+          year_of_entrance: (new Date()).getFullYear(),
+          group_of_rights: 3
+        }
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/user.php",
+          dataType: "json",
+          data:  $.param(send_data)
+        }).done(function(response) {
+          if (response.result == "Success") {
+            window.location="/about/users/"+$(".add-new-fighter-id").val();
+          }
+        });
+      }
+    });
+  }
+  console.log("Hello")
+});
+
 $('#page-container').on('click', ".get-all", function() {
   /*двойное назначение кнопки:
   Если не нажимали - добавляет таблицу со всеми бойцами и проч.*/
@@ -205,12 +301,13 @@ function init_angular_f_c ($scope, $http) {
     return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
   }
 
+
   /*показать выбранных бойцов*/
   $scope.showSelected = function() {
     if (!$(".vCard-get").hasClass("clicked")){
+      $scope.fighters.has_second = true;
       $(".vCard-get").text("Скрыть контакты");
-      $(".vCard-category").show("slow");
-      $(".vCard-make").show("slow");
+      $(".vCard-creater").show("slow");
       $(".vCard-get-all").hide("slow");
       $(".vCard-get-none").hide("slow");
       $(".search_wrap").hide("slow");
@@ -265,11 +362,11 @@ function init_angular_f_c ($scope, $http) {
                      
                 this_card += "FN:" + element.name + " " + element.surname + "\n";
                 this_card += "N:" + element.surname;
-                if (element.maiden_name != null) {
+                if ((element.maiden_name != null)  && ($scope.fighters.has_second)) {
                   this_card += ","+element.maiden_name;
                 }
                 this_card += ";"+element.name+";";
-                if ((element.second_name != null) && ($scope.fighters.has_second_names)) {
+                if ((element.second_name != null) && ($scope.fighters.has_second)) {
                   this_card += element.second_name;
                 }
                 this_card +=";;\n";
@@ -317,8 +414,7 @@ function init_angular_f_c ($scope, $http) {
       }
     } else {
       $(".vCard-get").text("Показать контакты");
-      $(".vCard-category").hide("slow");
-      $(".vCard-make").hide("slow");
+      $(".vCard-creater").hide("slow")
       $("table.common-contacts").removeClass("hidden")
       $("table.direct-contacts").addClass("hidden")
       $(".vCard-get-all").show("slow");

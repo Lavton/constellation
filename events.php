@@ -10,6 +10,7 @@
     <br/>
     для каждого мероприятия ветвь новостей и обсуждений. Функциональность для раскладки... <br/> 
   </div>
+  <div class="info_wall"></div>
 <?php
   }
   function get_js() {
@@ -17,6 +18,19 @@
 <div id="after-js-container">
   <script type="text/javascript">
       document.title = 'мероприятия | CПО "СОзвездие"';
+  </script>
+  <script type="text/javascript">
+  //sozvezdie_school
+  //spo_sozvezdie
+/*  var data2 = {domain: "spo_sozvezdie", count: 2}
+          $.ajax({ //TODO: make with angular
+            type: "GET",
+            url: "https://api.vk.com/method/wall.get",
+            dataType: "jsonp",
+            data:  $.param(data2)
+          }).done(function(vk_response) {
+            console.log(vk_response)
+          });*/
   </script>
 </div>
 <?php    

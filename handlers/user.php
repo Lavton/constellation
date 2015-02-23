@@ -10,11 +10,14 @@ if (is_ajax()) {
 			case 'get_full_info': get_full_info(); break;
 			case "get_one_info": get_one_info(); break;
 			case 'set_new_data': set_new_data(); break;
+      case "get_all_ids": get_all_ids(); break;
+      case "add_new_fighter": add_new_fighter(); break;
+      case "kill_fighter": kill_fighter(); break;
 		}
 	}
 }
 
-//change curren group and return if successed
+//change current group and return if successed
 function change_group(){
   check_session();
 	session_start();
@@ -28,6 +31,7 @@ function change_group(){
 	}
 }
 
+//get all users base info
 function get_all() {
   check_session();
   session_start();
@@ -55,6 +59,7 @@ function get_all() {
   }
 }
 
+//get selected users full info
 function get_full_info() {
   check_session();
   session_start();
@@ -87,7 +92,7 @@ function get_full_info() {
   }
 }
 
-
+//get one user info for profile
 function get_one_info() {
 	check_session();
   session_start();
@@ -112,6 +117,7 @@ function get_one_info() {
   }
 }
 
+//change one user info in profile
 function set_new_data() {
   check_session();
   session_start();
@@ -186,6 +192,119 @@ function set_new_data() {
   	echo json_encode($result);
   } else {
     echo json_encode(Array('result' => 'Fail'));
+  }
+}
+
+//get list of existing ids and vk_ids
+function get_all_ids() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+
+    // поиск юзера
+    $query = "SELECT id, vk_id FROM fighters ORDER BY id;";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["ids"] = array();
+    while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+      array_push($result["ids"], $line);
+    }
+    $result["result"] = "Success";
+    echo json_encode($result);
+  }
+}
+
+//добавляет пользователя
+function add_new_fighter() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+
+    //добавляем id и vk_id
+    // $query = "INSERT INTO fighters (id, vk_id) VALUES (".$_POST["id"].", '".$_POST["vk_id"]."');";
+    
+
+    $names = array();
+    $values = array();
+    if (isset($_POST["id"])) {
+      array_push($names, "id");
+      array_push($values, "'".$_POST["id"]."'");
+    }
+    if (isset($_POST["vk_id"])) {
+      array_push($names, "vk_id");
+      array_push($values, "'".$_POST["vk_id"]."'");
+    }
+    if (isset($_POST["group_of_rights"])) {
+      array_push($names, "group_of_rights");
+      array_push($values, "'".$_POST["group_of_rights"]."'");
+    }
+    if (isset($_POST["name"])) {
+      array_push($names, "name");
+      array_push($values, "'".$_POST["name"]."'");
+    }
+
+    if (isset($_POST["surname"])) {
+      array_push($names, "surname");
+      array_push($values, "'".$_POST["surname"]."'");
+    }
+    if (isset($_POST["birthdate"])) {
+      array_push($names, "birthdate");
+      array_push($values, "'".$_POST["birthdate"]."'");
+    }
+    if (isset($_POST["year_of_entrance"])) {
+      array_push($names, "year_of_entrance");
+      array_push($values, "'".$_POST["year_of_entrance"]."'");
+    }
+
+    $names = implode(", ", $names);
+    $values = implode(", ", $values);
+    $query = "INSERT INTO fighters (".$names.") VALUES (".$values.");";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["result"] = "Success";
+    echo json_encode($result);
+  }
+}
+
+// удаляет пользователя
+function kill_fighter() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+
+    //удаляем бойца по id
+    $query = "DELETE FROM fighters WHERE id=".$_POST["id"].";";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["result"] = "Success";
+    echo json_encode($result);
   }
 }
 ?>

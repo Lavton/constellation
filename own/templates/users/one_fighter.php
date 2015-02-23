@@ -67,6 +67,14 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
     </form>
   </div>
 <?php } ?>
+<?php
+if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+  /*удалить из БД*/
+?>
+<button type="button" class="btn btn-danger kill-fighter" ng-click="killFighter()" >Удалить профиль</button> 
+<?php
+}
+?>
 </div>
 
 <?php
