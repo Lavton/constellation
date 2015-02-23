@@ -21,7 +21,7 @@
                 База знаний <i class="fa fa-caret-down"></i>
               </li>
             </a>
-            <a href="/events">
+            <a href="/events" class="events index">
               <li class="">
                 Мероприятия <i class="fa fa-caret-down"></i>
               </li>
@@ -110,6 +110,11 @@
                 <a href="#">
                   <li class="">
                     Прошедшие
+                  </li>
+                </a>
+                <a href="/events/shift" class="events shift">
+                  <li class="">
+                    Смены
                   </li>
                 </a>
               </ul>

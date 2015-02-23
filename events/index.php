@@ -49,19 +49,19 @@
 <head lang="en">
   <title>мероприятия | CПО "СОзвездие"</title>
   <?php
-    include('own/templates/header.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/header.php');
   ?>
 
 </head>
 <body>
   <?php
-    include('own/templates/menu.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/menu.php');
   ?>
 
 
 <?php
   get_content();
-  include('own/templates/footer.php');
+  include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
   get_js();
 ?>
 </body>
