@@ -76,7 +76,8 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 }
 ?>
 </div>
-
+<br/><br/><a href="#" class="profile_priv"><<предыдщий</a>
+<a href="#" class="profile_next pull-right">следующий>></a>
 <?php
 }
 ?>

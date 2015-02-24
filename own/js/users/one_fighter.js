@@ -103,6 +103,8 @@ function get_user_info(userid) {
       var fid=window.location.href.split("/")
       var userid=fid[fid.length-1] //TODO сделать тут нормально!
       if (userid != "users") {
+        $("a.profile_priv").attr("href", (userid*1-1))
+        $("a.profile_next").attr("href", (userid*1+1))
         var data = {action: "get_one_info", id: userid}
         console.log(data + " " + userid + " " + fid)
         // debugger;
