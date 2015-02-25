@@ -55,13 +55,8 @@
   </script>
   <!-- скрипт для сохранения файла из js -->
   <script src="/standart/js/FileSaver.js"></script>
-
-
-   <script type="text/javascript" src="/own/js/users/all.js"></script>
-
+  <script type="text/javascript" src="/own/js/users/all.js"></script>
   <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
-
-
   <script type="text/javascript" src="/own/js/users/one_fighter.js"></script>
   <?php
   if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {

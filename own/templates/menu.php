@@ -112,7 +112,7 @@
                     Прошедшие
                   </li>
                 </a>
-                <a href="/events/shift" class="events shift">
+                <a href="/events/shifts" class="events shifts">
                   <li class="">
                     Смены
                   </li>

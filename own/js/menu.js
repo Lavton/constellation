@@ -82,13 +82,11 @@ if (typeof String.prototype.startsWith != 'function') {
 			if (locat.startsWith("/about/users")) {
 				locat = "/about/users";
 			}
-			console.log(locat)
 			$("nav a[href='"+locat+"'] li").addClass("current");
 			if (locat.startsWith("/about")) {
 				$("nav a.about.index li").addClass("current");
 				$("nav .header.lvl2.about").addClass("current");
 			} else if (locat.startsWith("/events")) {
-				console.log("here!")
 				$("nav a.events.index li").addClass("current");
 				$("nav .header.lvl2.events").addClass("current");
 			}

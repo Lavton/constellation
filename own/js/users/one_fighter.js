@@ -8,16 +8,6 @@ function get_user_info(userid) {
     window.fighters.one_script = true;
   var intID = setInterval(function(){
     if (typeof(angular) !== "undefined") {
-    var noopDirective = function() { return function () {}; };
-    // if (previewMode) {
-        // Disable ngPaste directive
-        if (window.fighters.one_angular_conroller) {
-          angular.module('one_c_app')
-              .factory('ngPasteDirective', noopDirective);
-          window.fighters.one_angular_conroller == null
-        }
-    // }
-//window.fighters.one_angular_conroller == null
         if (window.fighters.one_angular_conroller == null) {
           window.fighters.one_angular_conroller = angular.module('one_c_app', [], function($httpProvider)
           { //магия, чтобы PHP понимал запрос

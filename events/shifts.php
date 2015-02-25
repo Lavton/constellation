@@ -18,6 +18,11 @@
       check_session();
       session_start();
       /*настройки своего профиля*/
+      // if (!isset($_GET["id"]) {
+      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
+        include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/all.php');
+      }
+      //}
     ?>
   </div><!-- page-container -->
 <?php
@@ -28,6 +33,7 @@
   <script type="text/javascript">
     document.title = 'Смены | CПО "СОзвездие"';
   </script>
+  <script type="text/javascript" src="/own/js/shifts/all.js"></script>
 
 </div>
 </body>
