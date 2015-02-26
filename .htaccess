@@ -6,6 +6,8 @@ RewriteEngine on
 
 #переделываем в человекочитаемый url
 RewriteRule ^(.*)users/([0-9]+)$ /about/users.php?id=$2 [QSA]
+RewriteRule ^(.*)shifts/([0-9]+)$ /events/shifts.php?id=$2 [QSA]
+
 
 #Убираем расширение файла из URL
 RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php 

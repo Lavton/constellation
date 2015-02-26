@@ -7,7 +7,7 @@ if (window.shifts.angular_conroller == undefined) {
   window.shifts.angular_conroller = null;
 }
 if (! window.shifts.all_script ) {
-  window.shifts.all_script = true;
+  // window.shifts.all_script = true;
   var intID = setInterval(function(){
   if (typeof(angular) !== "undefined") {
     if (window.shifts.angular_conroller == null) {
@@ -68,6 +68,10 @@ if (! window.shifts.all_script ) {
         angular.bootstrap(document, ['common_sc_app']);
         window.shifts.was_init = true;
       }
+      if ((window.shifts.was_init) && (! $(".shifts-container").is(":visible"))) {
+        angular.bootstrap(document, ['common_sc_app']);
+        debugger;
+      }
       // if (window.shifts.was_init && isNaN(parseInt($("table.common-contacts tbody tr").attr("class")))) {
         // angular.bootstrap(document, ['common_sc_app']);
       // }
@@ -82,7 +86,51 @@ function init_angular_s_c ($scope, $http) {
   $http.post('/handlers/shift.php', data).success(function(response) {
     console.log(response);
     $scope.shifts = {}
+    var today = new Date();
     window.shifts.scope = $scope
     $scope.shifts.all = response.shifts;
+    $scope.shifts.prev = [];
+    $scope.shifts.actual = [];
+    $scope.shifts.future = [];
+    _.each($scope.shifts.all, function(element, index, list) {
+      element.st_date = new Date(element.start_date);
+      element.fn_date = new Date(element.finish_date);
+      var name = "";
+      var st_month = element.st_date.getMonth()*1 + 1;//нумерация с нуля была
+      var fn_month = element.fn_date.getMonth()*1 + 1;
+      if ((st_month == 10) || (st_month == 11)) {
+      //октябрь или ноябрь -> осень
+        name = "Осень";
+      } else if ((st_month == 12) || (st_month == 1)) { 
+      //декабрь или январь -> зима
+        name = "Зима";
+      } else if ((st_month == 3) || (st_month == 4)) { 
+      //март или апрель -> весна
+        name = "Весна";
+      } else {
+        name = "Лето ";
+        if (fn_month == 6) { //в июне кончается первая смена
+          name += "1";
+        } else if (st_month == 6) { //в июне начинается вторая смена (или первая, но её уже обработали)
+          name += "2";
+        } else if (st_month == 7) { //в июле начинается третья смена
+          name += "3";
+        } else { //осталась четвёртая
+          name += "4";
+        }
+      }
+      name += ", " + element.fn_date.getFullYear()
+      if (element.place) {
+        name += " (" + element.place + ")";
+      }
+      element.name = name;
+      if (element.fn_date < today) {
+        $scope.shifts.prev.push(element);
+      } else if (element.st_date > today) {
+        $scope.shifts.future.push(element);
+      } else {
+        $scope.shifts.actual.push(element);
+      }
+    });
   });
 }
