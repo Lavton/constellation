@@ -75,6 +75,16 @@ if (typeof String.prototype.startsWith != 'function') {
 			$("nav .header.lvl2").removeClass("current");
 			$(".header-lvl2-container").hide('slow');
 		}
+		if (locat == "/events/shifts") {
+			var evID = setInterval(function(){
+ 				if (typeof(angular) !== "undefined") {
+					if ((window.shifts.was_init) && (! $(".shifts-container").is(":visible"))) {
+						angular.bootstrap(document, ['common_sc_app']);
+				    }
+				    clearInterval(evID);
+  				}
+  			}, 50);
+		}
 
 		function add_submenu (locat) {
 			$("nav li.current").removeClass("current");
