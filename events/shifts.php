@@ -17,12 +17,16 @@
     <?php
       check_session();
       session_start();
-      /*настройки своего профиля*/
-      // if (!isset($_GET["id"]) {
-      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
-        include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/all.php');
+      if (isset($_GET["id"])) {
+        if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
+          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one.php');
+        }
+
+      } else {
+        if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
+          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/all.php');
+        }
       }
-      //}
     ?>
   </div><!-- page-container -->
 <?php
@@ -34,6 +38,16 @@
     document.title = 'Смены | CПО "СОзвездие"';
   </script>
   <script type="text/javascript" src="/own/js/shifts/all.js"></script>
+  <script type="text/javascript" src="/own/js/shifts/one.js"></script>
+  <?php
+  if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+  ?>
+  <script type="text/javascript">
+    get_shift(<?=$_GET["id"]?>);
+  </script>
+  <?php
+  }
+  ?>
 
 </div>
 </body>

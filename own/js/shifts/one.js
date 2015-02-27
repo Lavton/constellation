@@ -1,18 +1,13 @@
 'use strict';
-function get_user_info(userid) {
+function get_shift(userid) {
   if (window.fighters == undefined) {
     window.fighters = {}
   }
   window.fighters.one_angular_conroller = null;
-  var fid=window.location.href.split("/")
-  var userid=fid[fid.length-1] //TODO сделать тут нормально!
-
   if (! window.fighters.one_script ) {
     window.fighters.one_script = true;
   var intID = setInterval(function(){
-      var fid=window.location.href.split("/")
-      var userid=fid[fid.length-1] //TODO сделать тут нормально!
-    if ((typeof(angular) !== "undefined") && (userid != "users")) {
+    if (typeof(angular) !== "undefined") {
         if (window.fighters.one_angular_conroller == null) {
           window.fighters.one_angular_conroller = angular.module('one_c_app', [], function($httpProvider)
           { //магия, чтобы PHP понимал запрос
@@ -94,11 +89,12 @@ function get_user_info(userid) {
       $scope.master = angular.copy($scope.fighter); 
     };
     $(".user-info").removeClass("hidden")
-     var inthrefID = setInterval(function(){
+    var inthrefID = setInterval(function(){
       var fid=window.location.href.split("/")
       var userid=fid[fid.length-1] //TODO сделать тут нормально!
       if (userid != "users") {
-        clearInterval(inthrefID);
+        $("a.profile_priv").attr("href", (userid*1-1))
+        $("a.profile_next").attr("href", (userid*1+1))
         var data = {action: "get_one_info", id: userid}
         console.log(data + " " + userid + " " + fid)
         // debugger;
@@ -115,17 +111,6 @@ function get_user_info(userid) {
           $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
           $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
           console.log("start")
-          $("a.profile_priv").attr("href", json.prev.mid)
-          $("a.profile_next").attr("href", json.next.mid)
-          if (!json.prev.mid) {
-            $("a.profile_priv").hide();
-            console.log("hide prev");
-          }
-
-          if (!json.next.mid) {
-            $("a.profile_next").hide();
-            console.log("hide next");
-          }
           $.getJSON("/own/group_names.json", function(group_json){
             $scope.groups = group_json;
             $scope.$apply();
@@ -134,9 +119,10 @@ function get_user_info(userid) {
           $scope.$apply();
             
           get_vk();
+          clearInterval(inthrefID);
         });
       }
-    }, 100);
+    }, 50);
 
     $scope.submit = function() {
       get_vk(function() {

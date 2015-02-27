@@ -112,6 +112,15 @@ function get_one_info() {
   	$query = "SELECT * FROM fighters WHERE id='".$_POST['id']."' ORDER BY id;";
   	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
   	$result["user"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+
+    $query = "select min(id) as mid FROM fighters where id > ".$_POST['id'].";";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["next"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $query = "select max(id) as mid FROM fighters where id < ".$_POST['id'].";";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["prev"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+
+    // $result["q"] = $query;
   	$result["result"] = "Success";
   	echo json_encode($result);
   }

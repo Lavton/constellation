@@ -1,6 +1,6 @@
 <?php
-if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
-	/*просмотр профиля одного человека*/
+if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+	/*просмотр смены*/
 ?>
 <div ng-cloak ng-controller="oneFighterApp">
   <div class="user-info hidden">
@@ -76,7 +76,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 }
 ?>
 </div>
-<br/><br/><a href="#" class="profile_priv"><<предыдщий</a> &nbsp; &nbsp;
+<br/><br/><a href="#" class="profile_priv"><<предыдщий</a>
 <a href="#" class="profile_next pull-right">следующий>></a>
 <?php
 }
