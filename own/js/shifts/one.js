@@ -82,16 +82,12 @@ function get_shift(shiftid) {
   /*логика ангулара*/
   function init_angular_o_s_c ($scope, $http, $locale) {
     console.log("hello")
-    $locale.id = 'ru-ru' //TODO make it works(
-    $scope.goodView = function(tel) {
-      return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
-    }
     $scope.id = shiftid;
-    $scope.fighter = {};
-    $scope.editPerson = function() {
+    $scope.shift = {};
+    $scope.editShiftInfo = function() {
       $(".shift-info").toggleClass("hidden");
-      $(".user-edit").toggleClass("hidden");
-      $scope.master = angular.copy($scope.fighter); 
+      $(".shift-edit").toggleClass("hidden");
+      $scope.master = angular.copy($scope.shift); 
     };
     $(".shift-info").removeClass("hidden")
      var inthrefID = setInterval(function(){
@@ -102,7 +98,7 @@ function get_shift(shiftid) {
         var data = {action: "get_one_info", id: shiftid}
         console.log(data + " " + shiftid + " " + fid)
         // debugger;
-        $scope.fighter.photo_200 = "http://vk.com/images/camera_b.gif"
+        $scope.shift.photo_200 = "http://vk.com/images/camera_b.gif"
         $.ajax({
           type: "POST",
           url: "/handlers/shift.php",
@@ -153,9 +149,7 @@ function get_shift(shiftid) {
     }, 100);
 
     $scope.submit = function() {
-      get_vk(function() {
-      var data =  angular.copy($scope.fighter);
-      data.vk_id = ""+data.vk_id;
+      var data =  angular.copy($scope.shift);
       data.action = "set_new_data"
       _.each(data, function(element, index, list){
         if (!element) {
@@ -163,7 +157,7 @@ function get_shift(shiftid) {
         }
       })
       console.log(data)
-      $http.post('/handlers/user.php', data).success(function(response) {
+      $http.post('/handlers/shift.php', data).success(function(response) {
         console.log(response)
         var saved = $(".saved");
         $(saved).stop(true, true);
@@ -171,17 +165,17 @@ function get_shift(shiftid) {
         $(saved).fadeOut("slow");
       });      
       console.log("submite")
-      });
+
     }
     $scope.resetInfo = function() {
-      $scope.fighter = angular.copy($scope.master);
+      $scope.shift = angular.copy($scope.master);
     }
 
     $scope.killFighter = function() {
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
       if (confirm("Точно удалить профиль?")) {
-        var data = {action: "kill_fighter", id: shiftid}
+        var data = {action: "kill_shift", id: shiftid}
         $.ajax({ //TODO: make with angular
           type: "POST",
           url: "/handlers/user.php",
@@ -203,7 +197,7 @@ function get_shift(shiftid) {
 
 
     function get_vk(callback) {
-      var data_vk = {user_ids: $scope.fighter.domain, fields: ["photo_200", "domain"]}
+      var data_vk = {user_ids: $scope.shift.domain, fields: ["photo_200", "domain"]}
       $.ajax({
         type: "GET",
         url: "https://api.vk.com/method/users.get",
@@ -222,9 +216,9 @@ function get_shift(shiftid) {
           
         }
         console.log(user_vk);
-        $scope.fighter.domain = user_vk.domain
-        $scope.fighter.photo_200 = user_vk.photo_200;
-        $scope.fighter.vk_id = user_vk.uid;
+        $scope.shift.domain = user_vk.domain
+        $scope.shift.photo_200 = user_vk.photo_200;
+        $scope.shift.vk_id = user_vk.uid;
 
         $scope.$apply();
         if (callback) {

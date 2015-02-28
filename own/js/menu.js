@@ -92,6 +92,9 @@ if (typeof String.prototype.startsWith != 'function') {
 			if (locat.startsWith("/about/users")) {
 				locat = "/about/users";
 			}
+			if (locat.startsWith("/events/shifts")) {
+				locat = "/events/shifts";
+			}
 			$("nav a[href='"+locat+"'] li").addClass("current");
 			if (locat.startsWith("/about")) {
 				$("nav a.about.index li").addClass("current");

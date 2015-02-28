@@ -6,6 +6,7 @@ if (is_ajax()) {
 		switch($action) {
 			case "all": get_all(); break;
       case "get_one_info": get_one_info(); break;
+      case 'set_new_data': set_new_data(); break;
 		}
 	}
 }
@@ -66,6 +67,58 @@ function get_one_info() {
     // $result["q"] = $query;
     $result["result"] = "Success";
     echo json_encode($result);
+  }
+}
+
+function set_new_data() {
+  check_session();
+  session_start();
+  if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+
+    $names = array();
+    $values = array();
+    if (isset($_POST["place"])) {
+      array_push($names, "place");
+      array_push($values, "'".$_POST["place"]."'");
+    }
+    if (isset($_POST["start_date"])) {
+      array_push($names, "start_date");
+      array_push($values, "'".$_POST["start_date"]."'");
+    }
+    if (isset($_POST["finish_date"])) {
+      array_push($names, "finish_date");
+      array_push($values, "'".$_POST["finish_date"]."'");
+    }
+    if (isset($_POST["visibility"])) {
+      array_push($names, "visibility");
+      array_push($values, "'".$_POST["visibility"]."'");
+    }
+    if (isset($_POST["comments"])) {
+      array_push($names, "comments");
+      array_push($values, "'".$_POST["comments"]."'");
+    }
+    $conc = array();
+    foreach ($names as $key => $value) {
+      array_push($conc, "".$value."=".$values[$key]);
+    }
+    $conc = implode(", ", $conc);
+    $query = "UPDATE shifts SET ".$conc." WHERE id='".$_POST['id']."';";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["result"] = "Success";
+    $result["query"] = $query;
+    echo json_encode($result);
+  } else {
+    echo json_encode(Array('result' => 'Fail'));
   }
 }
 
