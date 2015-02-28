@@ -1,15 +1,20 @@
 'use strict';
-function get_shift(userid) {
-  if (window.fighters == undefined) {
-    window.fighters = {}
+function get_shift(shiftid) {
+  if (window.shifts == undefined) {
+    window.shifts = {}
   }
-  window.fighters.one_angular_conroller = null;
-  if (! window.fighters.one_script ) {
-    window.fighters.one_script = true;
+  window.shifts.one_angular_conroller = null;
+  var fid=window.location.href.split("/")
+  var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+
+  if (! window.shifts.one_script ) {
+    window.shifts.one_script = true;
   var intID = setInterval(function(){
-    if (typeof(angular) !== "undefined") {
-        if (window.fighters.one_angular_conroller == null) {
-          window.fighters.one_angular_conroller = angular.module('one_c_app', [], function($httpProvider)
+      var fid=window.location.href.split("/")
+      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+    if ((typeof(angular) !== "undefined") && (shiftid != "users")) {
+        if (window.shifts.one_angular_conroller == null) {
+          window.shifts.one_angular_conroller = angular.module('one_sc_app', [], function($httpProvider)
           { //магия, чтобы PHP понимал запрос
             // Используем x-www-form-urlencoded Content-Type
             $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
@@ -61,68 +66,91 @@ function get_shift(userid) {
             }];
           });
           //запускаем ангулар
-          window.fighters.one_angular_conroller.controller('oneFighterApp', ['$scope', '$http', '$locale', init_angular_o_f_c]);
-          angular.bootstrap(document, ['one_c_app']);
-          window.fighters.was_init_one = true;
+          window.shifts.one_angular_conroller.controller('oneShiftApp', ['$scope', '$http', '$locale', init_angular_o_s_c]);
+          angular.bootstrap(document, ['one_sc_app']);
+          window.shifts.was_init_one = true;
         
         } else {
-          angular.bootstrap(document, ['one_c_app']);
+          angular.bootstrap(document, ['one_sc_app']);
         }
         clearInterval(intID);
     }
   }, 50);
   } else {
-     angular.bootstrap(document, ['one_c_app']);
+     angular.bootstrap(document, ['one_sc_app']);
   }
   /*логика ангулара*/
-  function init_angular_o_f_c ($scope, $http, $locale) {
+  function init_angular_o_s_c ($scope, $http, $locale) {
     console.log("hello")
     $locale.id = 'ru-ru' //TODO make it works(
     $scope.goodView = function(tel) {
       return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
     }
-    $scope.id = userid;
+    $scope.id = shiftid;
     $scope.fighter = {};
     $scope.editPerson = function() {
-      $(".user-info").toggleClass("hidden");
+      $(".shift-info").toggleClass("hidden");
       $(".user-edit").toggleClass("hidden");
       $scope.master = angular.copy($scope.fighter); 
     };
-    $(".user-info").removeClass("hidden")
-    var inthrefID = setInterval(function(){
+    $(".shift-info").removeClass("hidden")
+     var inthrefID = setInterval(function(){
       var fid=window.location.href.split("/")
-      var userid=fid[fid.length-1] //TODO сделать тут нормально!
-      if (userid != "users") {
-        $("a.profile_priv").attr("href", (userid*1-1))
-        $("a.profile_next").attr("href", (userid*1+1))
-        var data = {action: "get_one_info", id: userid}
-        console.log(data + " " + userid + " " + fid)
+      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+      if (shiftid != "users") {
+        clearInterval(inthrefID);
+        var data = {action: "get_one_info", id: shiftid}
+        console.log(data + " " + shiftid + " " + fid)
         // debugger;
         $scope.fighter.photo_200 = "http://vk.com/images/camera_b.gif"
         $.ajax({
           type: "POST",
-          url: "/handlers/user.php",
+          url: "/handlers/shift.php",
           dataType: "json",
           data:  $.param(data)
         }).done(function(json) {
-          console.log("Получили с сервера "+userid + " "+window.location.href)
+          console.log("Получили с сервера "+shiftid + " "+window.location.href)
           console.log(json);
-          $scope.fighter = json.user;
-          $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
-          $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
-          console.log("start")
+          $scope.shift = json.shift
+          $scope.shift.st_date = new Date($scope.shift.start_date);
+          $scope.shift.fn_date = new Date($scope.shift.finish_date);
+          var name = "";
+          var st_month = $scope.shift.st_date.getMonth()*1 + 1;//нумерация с нуля была
+          var fn_month = $scope.shift.fn_date.getMonth()*1 + 1;
+          if ((st_month == 10) || (st_month == 11)) {
+          //октябрь или ноябрь -> осень
+            name = "Осень";
+          } else if ((st_month == 12) || (st_month == 1)) { 
+          //декабрь или январь -> зима
+            name = "Зима";
+          } else if ((st_month == 3) || (st_month == 4)) { 
+          //март или апрель -> весна
+            name = "Весна";
+          } else {
+            name = "Лето ";
+            if (fn_month == 6) { //в июне кончается первая смена
+              name += "1";
+            } else if (st_month == 6) { //в июне начинается вторая смена (или первая, но её уже обработали)
+              name += "2";
+            } else if (st_month == 7) { //в июле начинается третья смена
+              name += "3";
+            } else { //осталась четвёртая
+              name += "4";
+            }
+          }
+          name += ", " + $scope.shift.fn_date.getFullYear()
+          if ($scope.shift.place) {
+            name += " (" + $scope.shift.place + ")";
+          }
+          $scope.shift.name = name;
           $.getJSON("/own/group_names.json", function(group_json){
             $scope.groups = group_json;
             $scope.$apply();
           });
-          $scope.fighter.domain = "id"+$scope.fighter.vk_id
           $scope.$apply();
-            
-          get_vk();
-          clearInterval(inthrefID);
         });
       }
-    }, 50);
+    }, 100);
 
     $scope.submit = function() {
       get_vk(function() {
@@ -151,9 +179,9 @@ function get_shift(userid) {
 
     $scope.killFighter = function() {
       var fid=window.location.href.split("/")
-      var userid=fid[fid.length-1] //TODO сделать тут нормально!
+      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
       if (confirm("Точно удалить профиль?")) {
-        var data = {action: "kill_fighter", id: userid}
+        var data = {action: "kill_fighter", id: shiftid}
         $.ajax({ //TODO: make with angular
           type: "POST",
           url: "/handlers/user.php",

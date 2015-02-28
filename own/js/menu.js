@@ -78,7 +78,7 @@ if (typeof String.prototype.startsWith != 'function') {
 		if (locat == "/events/shifts") {
 			var evID = setInterval(function(){
  				if (typeof(angular) !== "undefined") {
-					if ((window.shifts.was_init) && (! $(".shifts-container").is(":visible"))) {
+					if ((window.shifts) && (window.shifts.was_init) && (! $(".shifts-container").is(":visible"))) {
 						angular.bootstrap(document, ['common_sc_app']);
 				    }
 				    clearInterval(evID);
