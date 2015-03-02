@@ -139,6 +139,19 @@ function get_shift(shiftid) {
             name += " (" + $scope.shift.place + ")";
           }
           $scope.shift.name = name;
+
+          $("a.shift_priv").attr("href", json.prev.mid)
+          $("a.shift_next").attr("href", json.next.mid)
+          if (!json.prev.mid) {
+            $("a.shift_priv").hide();
+            console.log("hide prev");
+          }
+
+          if (!json.next.mid) {
+            $("a.shift_next").hide();
+            console.log("hide next");
+          }
+
           $.getJSON("/own/group_names.json", function(group_json){
             $scope.groups = group_json;
             $scope.$apply();

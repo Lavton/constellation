@@ -63,10 +63,20 @@ function get_one_info() {
     $query = "SELECT * FROM shifts WHERE id='".$_POST['id']."' ORDER BY id;";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["shift"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $st = "'".$result["shift"]["start_date"]."'";
+    $query = "select min(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date > ".$st." OR (start_date = ".$st." AND id > ".$_POST['id']."));";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["next"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $result["nqu"] = $query;
+
+    $query = "select max(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date < ".$st." OR (start_date = ".$st." AND id < ".$_POST['id']."));";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["prev"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $result["pqu"] = $query;
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
       $result["shift"] = array();
     }
-    // $result["q"] = $query;
+
     $result["result"] = "Success";
     echo json_encode($result);
   }
