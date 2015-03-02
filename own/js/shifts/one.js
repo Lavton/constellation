@@ -149,6 +149,38 @@ function get_shift(shiftid) {
     }, 100);
 
     $scope.submit = function() {
+                $scope.shift.st_date = new Date($scope.shift.start_date);
+          $scope.shift.fn_date = new Date($scope.shift.finish_date);
+          var name = "";
+          var st_month = $scope.shift.st_date.getMonth()*1 + 1;//нумерация с нуля была
+          var fn_month = $scope.shift.fn_date.getMonth()*1 + 1;
+          if ((st_month == 10) || (st_month == 11)) {
+          //октябрь или ноябрь -> осень
+            name = "Осень";
+          } else if ((st_month == 12) || (st_month == 1)) { 
+          //декабрь или январь -> зима
+            name = "Зима";
+          } else if ((st_month == 3) || (st_month == 4)) { 
+          //март или апрель -> весна
+            name = "Весна";
+          } else {
+            name = "Лето ";
+            if (fn_month == 6) { //в июне кончается первая смена
+              name += "1";
+            } else if (st_month == 6) { //в июне начинается вторая смена (или первая, но её уже обработали)
+              name += "2";
+            } else if (st_month == 7) { //в июле начинается третья смена
+              name += "3";
+            } else { //осталась четвёртая
+              name += "4";
+            }
+          }
+          name += ", " + $scope.shift.fn_date.getFullYear()
+          if ($scope.shift.place) {
+            name += " (" + $scope.shift.place + ")";
+          }
+          $scope.shift.name = name;
+
       var data =  angular.copy($scope.shift);
       data.action = "set_new_data"
       _.each(data, function(element, index, list){
@@ -171,14 +203,14 @@ function get_shift(shiftid) {
       $scope.shift = angular.copy($scope.master);
     }
 
-    $scope.killFighter = function() {
+    $scope.killShift = function() {
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-      if (confirm("Точно удалить профиль?")) {
+      if (confirm("Точно удалить смену со всей информацией??")) {
         var data = {action: "kill_shift", id: shiftid}
         $.ajax({ //TODO: make with angular
           type: "POST",
-          url: "/handlers/user.php",
+          url: "/handlers/shift.php",
           dataType: "json",
           data:  $.param(data)
         }).done(function(response) {
