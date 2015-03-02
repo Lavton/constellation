@@ -26,3 +26,10 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDA
 
 </div>
 <?php } ?>
+<?php /*комсостав+ может добавлять новые смены*/
+if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+?><br/><br/><br/>
+  <button type="button" class="btn btn-warning pre-add-s-new" >Добавить новую смену.</button> 
+ 
+  </span>
+<?php } ?>  

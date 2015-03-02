@@ -206,7 +206,7 @@ function get_shift(shiftid) {
     $scope.killShift = function() {
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-      if (confirm("Точно удалить смену со всей информацией??")) {
+      if (confirm("Точно удалить смену со всей информацией?")) {
         var data = {action: "kill_shift", id: shiftid}
         $.ajax({ //TODO: make with angular
           type: "POST",

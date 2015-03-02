@@ -125,7 +125,6 @@ $('#page-container').on('click', ".pre-add-new", function() {
       }
     });
   }
-  console.log("Hello")
 });
 
 $('#page-container').on('click', ".get-all", function() {

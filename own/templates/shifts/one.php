@@ -57,9 +57,6 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
     </form>
   </div>
 <?php } ?>
-
-</div>
-
 <?php
 if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
   /*удалить из БД*/
@@ -68,7 +65,9 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <?php
 }
 ?>
+
 </div>
+
 <br/><br/><a href="#" class="shift_priv"><<предыдщая</a> &nbsp; &nbsp;
 <a href="#" class="shift_next pull-right">следующая>></a>
 
