@@ -71,19 +71,11 @@
                     Наша история
                   </li>
                 </a>
-                <?php
-                /*отображаем страницу со всеми людьми лишь бойцам+*/
-                session_start();
-                if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) {
-                  ?>
                 <a href="/about/users" class="about faces">
                   <li class="">
                     Отряд в лицах
                   </li>
                 </a>
-                <?php
-                }
-                ?>
               </ul>
             </div>
           </div>
@@ -97,19 +89,9 @@
             <div class="col-xs-12">
               <div class="logo-cell"></div>
               <ul>
-                <a href="#">
-                  <li class="">
-                    Актуальные
-                  </li>
-                </a>
-                <a href="#">
-                  <li class="">
-                    Грядущие
-                  </li>
-                </a>
-                <a href="#">
-                  <li class="">
-                    Прошедшие
+                <a href="/events/index" class="events index-t">
+                  <li class="events index-t">
+                    Мероприятия
                   </li>
                 </a>
                 <a href="/events/shifts" class="events shifts">

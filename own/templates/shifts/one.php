@@ -27,8 +27,15 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
       </div>
       <div class="col-xs-7 info-str">
         <h3>Записаться на смену</h3>
+        <details>
+           <summary>Записаться</summary>
         <form>
           <ul>
+            <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+            <li><b>Кого добавить?</b> (как комсостав, можно добавить другого. Хотите добавиться сами - просто проигнорируйте поле) <br/>
+              vk.com/<input type="text" ng-model="adding.smbdy" placeholder="домен VK"/> 
+            </li>
+            <?php }?>
             <li> <i>С какой вероятностью вы поедете на смену?</i>  (будет видно всем)<br/>
               {{adding.prob}} <input type="range" ng-model="adding.prob" ng-init="adding.prob=100" min="0" max="100" scale="1" style="width: 70%"/><br/>
             </li>
@@ -42,8 +49,8 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
               Обычные: <input type="checkbox" ng-model="adding.nonprof" ng-init="adding.nonprof=true">
             </li>
             <li> <i>Желаемый возраст детей</i> (будет видно всем)<br/>
-              От: {{adding.min_age}} <input type="range" ng-model="adding.min_age" ng-init="adding.min_age=4" min="4" max="17" scale="1" style="width: 40%"/><br/>
-              До: {{adding.max_age}} <input type="range" ng-model="adding.max_age" ng-init="adding.max_age=17" min="4" max="17" scale="1" style="width: 40%"/>
+              От: {{adding.min_age}} <input type="range" ng-model="adding.min_age" ng-init="adding.min_age=4" min="4" max={{adding.max_age}} scale="1" style="width: 40%"/><br/>
+              До: {{adding.max_age}} <input type="range" ng-model="adding.max_age" ng-init="adding.max_age=17" min={{adding.min_age}} max="17" scale="1" style="width: 40%"/>
             </li>
             <li> <i>С кем бы вы хотели работать?</i> (до 3х человек, будет видно комсоставу и тому, кого вы указали)<br/>
               vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like1"/><br/>
@@ -60,6 +67,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
             </li>
           </ul>
         </form>
+        </details>
       </div>
     </div>
   </div>
@@ -86,7 +94,6 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
             <li><strong>Дата окончания:</strong> <input type="date" ng-model="shift.finish_date" size="{{(shift.finish_date).length}}" /> </li>
             <li><strong>Место:</strong> <input type="text" ng-model="shift.place" size="{{(shift.place).length}}" /> </li>
             <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="shift.visibility" size="{{(shift.visibility).length}}" /> ({{groups[shift.visibility]}})</li>
-
             <li><strong>Комментарии:</strong><br/> <textarea ng-model="shift.comments" cols=50 rows=5></textarea>  </li>
           </ul>
         </div>

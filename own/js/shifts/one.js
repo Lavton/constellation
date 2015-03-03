@@ -110,6 +110,7 @@ function get_shift(shiftid) {
           console.log("Получили с сервера "+shiftid + " "+window.location.href)
           console.log(json);
           $scope.shift = json.shift
+          $scope.shift.visibility *= 1;
           $scope.shift.st_date = new Date($scope.shift.start_date);
           $scope.shift.fn_date = new Date($scope.shift.finish_date);
           var name = "";

@@ -1,14 +1,26 @@
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
+
   function get_content() {
 ?>
   <div id="page-container">
-    всё про мероприятия.<br/>
-    Предстоящие. <br/>
-    Актуальные (к которым сейчас надо готовиться)<br/>
-    Прошедшие.<br/>
-    <br/>
-    для каждого мероприятия ветвь новостей и обсуждений. Функциональность для раскладки... <br/> 
+    <?php 
+      check_session();
+      session_start();
+      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] < FIGHTER) || (!(isset($_SESSION["vk_id"])))) {
+    ?>
+    У нас много мероприятий в течение года! <br/>
+    Станьте бойцами и узнаете
+    <?php
+      } else {
+    ?>
+<iframe src="https://www.google.com/calendar/embed?src=kn2p9ovqid67tekk0ecbbnutsc%40group.calendar.google.com&ctz=Europe/Moscow" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+
+    <?php
+      }
+
+    ?>
   </div>
   <div class="info_wall"></div>
 <?php
