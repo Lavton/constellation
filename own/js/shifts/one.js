@@ -84,6 +84,8 @@ function get_shift(shiftid) {
     console.log("hello")
     $scope.id = shiftid;
     $scope.shift = {};
+    $scope.adding = {};
+
     $scope.editShiftInfo = function() {
       $(".shift-info").toggleClass("hidden");
       $(".shift-edit").toggleClass("hidden");

@@ -25,6 +25,42 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
           <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> {{shift.comments}} </li>     
         </ul>
       </div>
+      <div class="col-xs-7 info-str">
+        <h3>Записаться на смену</h3>
+        <form>
+          <ul>
+            <li> <i>С какой вероятностью вы поедете на смену?</i>  (будет видно всем)<br/>
+              {{adding.prob}} <input type="range" ng-model="adding.prob" ng-init="adding.prob=100" min="0" max="100" scale="1" style="width: 70%"/><br/>
+            </li>
+
+            <li> <i>Социальный статус детей</i> (будет видно всем) <br/>
+              Социалка: <input type="checkbox" ng-model="adding.soc" ng-init="adding.soc=true"> &nbsp; <br/> 
+              Домашние: <input type="checkbox" ng-model="adding.nonsoc" ng-init="adding.nonsoc=true">
+            </li>
+            <li> <i>Работа на профильных детях</i> (будет видно всем)<br/>
+              Профильники: <input type="checkbox" ng-model="adding.prof" ng-init="adding.prof=true"> &nbsp; <br/> 
+              Обычные: <input type="checkbox" ng-model="adding.nonprof" ng-init="adding.nonprof=true">
+            </li>
+            <li> <i>Желаемый возраст детей</i> (будет видно всем)<br/>
+              От: {{adding.min_age}} <input type="range" ng-model="adding.min_age" ng-init="adding.min_age=4" min="4" max="17" scale="1" style="width: 40%"/><br/>
+              До: {{adding.max_age}} <input type="range" ng-model="adding.max_age" ng-init="adding.max_age=17" min="4" max="17" scale="1" style="width: 40%"/>
+            </li>
+            <li> <i>С кем бы вы хотели работать?</i> (до 3х человек, будет видно комсоставу и тому, кого вы указали)<br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like1"/><br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like2"/><br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like3"/><br/>
+            </li>
+            <li> <i>С кем бы вы НЕ хотели работать?</i> (до 3х человек, будет видно только комсоставу)<br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike1"/><br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike2"/><br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike3"/><br/>
+            </li>
+            <li> <i>Комментарии</i> (любые. Про шанс поехать, про детей, про напарников. Будет видно только комсоставу) <br/>
+              <textarea ng-model="adding.comments" cols=50 rows=5></textarea>
+            </li>
+          </ul>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -50,6 +86,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
             <li><strong>Дата окончания:</strong> <input type="date" ng-model="shift.finish_date" size="{{(shift.finish_date).length}}" /> </li>
             <li><strong>Место:</strong> <input type="text" ng-model="shift.place" size="{{(shift.place).length}}" /> </li>
             <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="shift.visibility" size="{{(shift.visibility).length}}" /> ({{groups[shift.visibility]}})</li>
+
             <li><strong>Комментарии:</strong><br/> <textarea ng-model="shift.comments" cols=50 rows=5></textarea>  </li>
           </ul>
         </div>
