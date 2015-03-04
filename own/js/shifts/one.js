@@ -142,6 +142,7 @@ function get_shift(shiftid) {
             name += " (" + $scope.shift.place + ")";
           }
           $scope.shift.name = name;
+          $scope.shift.today = new Date();
 
           $("a.shift_priv").attr("href", json.prev.mid)
           $("a.shift_next").attr("href", json.next.mid)
@@ -163,6 +164,64 @@ function get_shift(shiftid) {
         });
       }
     }, 100);
+    $scope.guessAdd = function() {
+      var data = $scope.adding;
+      data.action = "apply_to_shift";
+      _.each(data, function(element, index, list){
+        if (!element) {
+          data[index] = null;
+        }
+      })
+      data.shift_id = $scope.shift.id;
+      data.social = data.soc*1+data.nonsoc*2;
+      data.profile = data.prof*1+data.nonprof*2;
+      var data_vk = {user_ids: [data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], fields: ["domain"]}
+      $.ajax({
+        type: "GET",
+        url: "https://api.vk.com/method/users.get",
+        dataType: "jsonp",
+        data:  $.param(data_vk)
+      }).done(function(response) {
+        if(data.smbdy) {
+          data.vk_id = _.findWhere(response.response, {domain: data.smbdy}).uid
+        }
+        if(data.like1) {
+          data.like_one = _.findWhere(response.response, {domain: data.like1}).uid
+        }
+        if(data.like2) {
+          data.like_two = _.findWhere(response.response, {domain: data.like2}).uid
+        }
+        if(data.like3) {
+          data.like_three = _.findWhere(response.response, {domain: data.like3}).uid
+        }
+
+        if(data.dislike1) {
+          data.dislike_one = _.findWhere(response.response, {domain: data.dislike1}).uid
+        }
+        if(data.dislike2) {
+          data.dislike_two = _.findWhere(response.response, {domain: data.dislike2}).uid
+        }
+        if(data.dislike3) {
+          data.dislike_three = _.findWhere(response.response, {domain: data.dislike3}).uid
+        }
+        $.ajax({
+          type: "POST",
+          url: "/handlers/shift.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(json) {
+          console.log(json)
+          var saved = $(".saved");
+          $(saved).stop(true, true);
+          $(saved).fadeIn("slow");
+          $(saved).fadeOut("slow");
+        });
+
+      });
+      console.log("submite")
+
+    }
+
 
     $scope.submit = function() {
                 $scope.shift.st_date = new Date($scope.shift.start_date);
@@ -237,15 +296,9 @@ function get_shift(shiftid) {
       }
     }
 
-    $("#page-container").on("focusout", "input.vk-domain", function() {
-      console.log("out");
-      get_vk()
-    });
 
-
-
-    function get_vk(callback) {
-      var data_vk = {user_ids: $scope.shift.domain, fields: ["photo_200", "domain"]}
+    function get_vk(ids, callback) {
+      var data_vk = {user_ids: ids, fields: ["photo_100", "domain"]}
       $.ajax({
         type: "GET",
         url: "https://api.vk.com/method/users.get",

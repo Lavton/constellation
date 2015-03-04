@@ -22,7 +22,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) |
       <p class="lead">Хочешь к нам? приходи на ШВМы! 
         Любые вопросы можно задать в группе <a href="https://vk.com/sozvezdie_school" target="_blank">ВК</a>
       </p>
-      <p class="lead"> Если вы ищете молодых и активных вожатых - пишите <a href="https://vk.com/page-19748633_38662439" target="blank">сюда</a> </p>
+      <p class="lead"> Если вы - представитель лагеря и ищете молодых и активных вожатых - пишите <a href="https://vk.com/page-19748633_38662439" target="blank">сюда</a> </p>
     </div>
     <div class="col-xs-4">
       <div class="in-w"><iframe src='/inwidget/index.php?view=16&inline=4' scrolling='no' frameborder='no' style='border:none;width:260px;height:400px;overflow:hidden;'></iframe>

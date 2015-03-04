@@ -9,6 +9,7 @@ if (is_ajax()) {
       case 'set_new_data': set_new_data(); break;
       case "kill_shift": kill_shift(); break;
       case "add_new_shift": add_new_shift(); break;
+      case "apply_to_shift": apply_to_shift(); break;
 		}
 	}
 }
@@ -67,12 +68,10 @@ function get_one_info() {
     $query = "select min(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date > ".$st." OR (start_date = ".$st." AND id > ".$_POST['id']."));";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["next"] = mysql_fetch_array($rt, MYSQL_ASSOC);
-    $result["nqu"] = $query;
 
     $query = "select max(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date < ".$st." OR (start_date = ".$st." AND id < ".$_POST['id']."));";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["prev"] = mysql_fetch_array($rt, MYSQL_ASSOC);
-    $result["pqu"] = $query;
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
       $result["shift"] = array();
     }
@@ -196,6 +195,101 @@ function add_new_shift() {
     $result["id"] = $line["id"];
     echo json_encode($result);
   }
+}
+
+function apply_to_shift() {
+  check_session();
+  session_start();
+  if (isset($_SESSION["current_group"])) {
+    if (isset($_POST["vk_id"])) { 
+      if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+        echo json_encode(array('result' =>  "Fail"));
+        return;
+      }
+    } else {
+      $_POST["vk_id"] = $_SESSION["vk_id"];
+    }
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+
+    $names = array();
+    $values = array();
+    if (isset($_POST["vk_id"])) {
+      array_push($names, "vk_id");
+      array_push($values, "'".$_POST["vk_id"]."'");
+    }
+    if (isset($_POST["shift_id"])) {
+      array_push($names, "shift_id");
+      array_push($values, "'".$_POST["shift_id"]."'");
+    }
+    if (isset($_POST["prob"])) {
+      array_push($names, "probability");
+      array_push($values, "'".$_POST["prob"]."'");
+    }
+    if (isset($_POST["social"])) {
+      array_push($names, "social");
+      array_push($values, "'".$_POST["social"]."'");
+    }
+    if (isset($_POST["profile"])) {
+      array_push($names, "profile");
+      array_push($values, "'".$_POST["profile"]."'");
+    }
+
+    if (isset($_POST["min_age"])) {
+      array_push($names, "min_age");
+      array_push($values, "'".$_POST["min_age"]."'");
+    }
+    if (isset($_POST["max_age"])) {
+      array_push($names, "max_age");
+      array_push($values, "'".$_POST["max_age"]."'");
+    }
+    
+    if (isset($_POST["like_one"])) {
+      array_push($names, "like_one");
+      array_push($values, "'".$_POST["like_one"]."'");
+    }
+    if (isset($_POST["like_two"])) {
+      array_push($names, "like_two");
+      array_push($values, "'".$_POST["like_two"]."'");
+    }
+    if (isset($_POST["like_three"])) {
+      array_push($names, "like_three");
+      array_push($values, "'".$_POST["like_three"]."'");
+    }
+    if (isset($_POST["dislike_one"])) {
+      array_push($names, "dislike_one");
+      array_push($values, "'".$_POST["dislike_one"]."'");
+    }
+    if (isset($_POST["dislike_two"])) {
+      array_push($names, "dislike_two");
+      array_push($values, "'".$_POST["dislike_two"]."'");
+    }
+    if (isset($_POST["dislike_three"])) {
+      array_push($names, "dislike_three");
+      array_push($values, "'".$_POST["dislike_three"]."'");
+    }    
+    if (isset($_POST["comments"])) {
+      array_push($names, "comments");
+      array_push($values, "'".$_POST["comments"]."'");
+    }
+
+
+    $names = implode(", ", $names);
+    $values = implode(", ", $values);
+    $query = "INSERT INTO guess_shift (".$names.") VALUES (".$values.");";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["result"] = "Success";
+    echo json_encode($result);
+  }
+
 }
 
 ?>

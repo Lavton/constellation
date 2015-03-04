@@ -25,11 +25,13 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
           <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> {{shift.comments}} </li>     
         </ul>
       </div>
-      <div class="col-xs-7 info-str">
+      <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
         <h3>Записаться на смену</h3>
         <details>
            <summary>Записаться</summary>
-        <form>
+        <form ng-submit="guessAdd()">
+        <input type="submit" class="btn btn-primary text-right" value="Записаться"></input>
+
           <ul>
             <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
             <li><b>Кого добавить?</b> (как комсостав, можно добавить другого. Хотите добавиться сами - просто проигнорируйте поле) <br/>
