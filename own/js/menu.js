@@ -66,7 +66,7 @@ if (typeof String.prototype.startsWith != 'function') {
 	    /*смотрим путь, на котором мы сейчас*/
 		var locat = window.location.pathname;
 		
-		if ((locat.startsWith("/about")) || (locat.startsWith("/events"))) {
+		if ((locat.startsWith("/about")) || (locat.startsWith("/events")) || (locat.startsWith("/method"))) {
 			/*показываем подменю*/
 			add_submenu(locat);
 			$(".header-lvl2-container").show('slow');
@@ -102,6 +102,9 @@ if (typeof String.prototype.startsWith != 'function') {
 			} else if (locat.startsWith("/events")) {
 				$("nav a.events.index li").addClass("current");
 				$("nav .header.lvl2.events").addClass("current");
+			} else if (locat.startsWith("/method")) {
+				$("nav a.method.index li").addClass("current");
+				$("nav .header.lvl2.method").addClass("current");
 			}
 		}
 	}

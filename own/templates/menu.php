@@ -16,12 +16,12 @@
             </a>
           </div>
           <ul>
-            <a href="/method">
+            <a href="/method/" class="method index">
               <li class=""> 
                 База знаний <i class="fa fa-caret-down"></i>
               </li>
             </a>
-            <a href="/events" class="events index">
+            <a href="/events/" class="events index">
               <li class="">
                 Мероприятия <i class="fa fa-caret-down"></i>
               </li>
@@ -89,7 +89,7 @@
             <div class="col-xs-12">
               <div class="logo-cell"></div>
               <ul>
-                <a href="/events/index" class="events index-t">
+                <a href="/events/" class="events index-t">
                   <li class="events index-t">
                     Мероприятия
                   </li>
@@ -104,6 +104,30 @@
           </div>
         </div>
       </div>
+
+<div class="header-lvl2-container">
+      <div class="header lvl2 method">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="logo-cell"></div>
+              <ul>
+                <a href="/method/" class="method index-t">
+                  <li class="method index-t">
+                    Наработки
+                  </li>
+                </a>
+                <a href="/method/games" class="method shifts">
+                  <li class="">
+                    Игры и Развлечения
+                  </li>
+                </a>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
   </div>
 </nav>
