@@ -60,18 +60,27 @@ function get_one_info() {
     @mysql_query("Set character_set_results = utf8");
     @mysql_query("Set collation_connection = utf8_general_ci");
 
-    // поиск юзера
+    // поиск смены
     $query = "SELECT * FROM shifts WHERE id='".$_POST['id']."' ORDER BY id;";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["shift"] = mysql_fetch_array($rt, MYSQL_ASSOC);
     $st = "'".$result["shift"]["start_date"]."'";
-    $query = "select min(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date > ".$st." OR (start_date = ".$st." AND id > ".$_POST['id']."));";
+    $query = "SELECT min(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date > ".$st." OR (start_date = ".$st." AND id > ".$_POST['id']."));";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["next"] = mysql_fetch_array($rt, MYSQL_ASSOC);
 
-    $query = "select max(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date < ".$st." OR (start_date = ".$st." AND id < ".$_POST['id']."));";
+    $query = "SELECT max(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date < ".$st." OR (start_date = ".$st." AND id < ".$_POST['id']."));";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["prev"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+
+    $_POST["vk_id"] = $_SESSION["vk_id"];
+    $query = "SELECT vk_id FROM guess_shift where (like_one=".$_POST["vk_id"]." OR like_two=".$_POST["vk_id"]." OR like_three=".$_POST["vk_id"].");";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["like_h"] = array();
+    while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+      array_push($result["like_h"], $line["vk_id"]);
+    }
+
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
       $result["shift"] = array();
     }
@@ -280,12 +289,20 @@ function apply_to_shift() {
       array_push($names, "comments");
       array_push($values, "'".$_POST["comments"]."'");
     }
-
-
+    // cначала проверим, боец ли этот человек
+    $query = "SELECT id FROM fighters where vk_id=".$_POST["vk_id"].";";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $line = mysql_fetch_array($rt, MYSQL_ASSOC);
+    if (isset($line["id"])) {
+      array_push($names, "fighter_id");
+      array_push($values, "'".$line["id"]."'");
+    }
     $names = implode(", ", $names);
     $values = implode(", ", $values);
     $query = "INSERT INTO guess_shift (".$names.") VALUES (".$values.");";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+  
+
     $result["result"] = "Success";
     echo json_encode($result);
   }

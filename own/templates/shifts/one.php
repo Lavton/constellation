@@ -27,7 +27,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
         <h3>Записаться на смену</h3>
-        <details>
+        <details ng-open="open_apply()">
            <summary>Записаться</summary>
         <form ng-submit="guessAdd()">
         <input type="submit" class="btn btn-primary text-right" value="Записаться"></input>
@@ -54,11 +54,50 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
               От: {{adding.min_age}} <input type="range" ng-model="adding.min_age" ng-init="adding.min_age=4" min="4" max={{adding.max_age}} scale="1" style="width: 40%"/><br/>
               До: {{adding.max_age}} <input type="range" ng-model="adding.max_age" ng-init="adding.max_age=17" min={{adding.min_age}} max="17" scale="1" style="width: 40%"/>
             </li>
-            <li> <i>С кем бы вы хотели работать?</i> (до 3х человек, будет видно комсоставу и тому, кого вы указали)<br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like1"/><br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like2"/><br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like3"/><br/>
-            </li>
+            <li> 
+              <i>С кем бы вы хотели работать?</i> (до 3х человек, будет видно комсоставу и тому, кого вы указали)<br/>
+    <div class="row own-row">
+      <div class="col-xs-5">
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like1" size="7"/><br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like2" size="7"/><br/>
+              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like3" size="7"/><br/> <br/>
+            </div><div class="col-xs-7">
+              <div class="like_h" ng-show="adding.like_h && !adding.smbdy">
+                C вами хотели бы работать:
+                {{adding.like_h[0]}}
+                <ul>
+                  <li>
+                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
+                  </li>
+                  <li>
+                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
+                  </li>
+                  <li>
+                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
+                  </li>
+                  <li>
+                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
+                  </li>
+                  <li>
+                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
+                  </li>
+                  <li>
+                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
+                  </li>
+                  <li>
+                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
+                  </li>
+                </ul>
+
+                <ul>
+                  <li ng-repeat="melike in adding.like_h">
+                    хм {{melike}} vk.com/<input type="text" ng-model="melike" disabled>
+                  </li>
+                </ul>
+              </div>
+</div></div>              
+            </li>              
+            
             <li> <i>С кем бы вы НЕ хотели работать?</i> (до 3х человек, будет видно только комсоставу)<br/>
               vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike1"/><br/>
               vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike2"/><br/>

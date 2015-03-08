@@ -247,3 +247,11 @@ footer {
 .own-valid {
   border-color: green;
 }
+
+.like_h {
+  border: 4px !important;
+  margin: 2px;
+  padding: 2px;
+  margin-color: green;
+  color: green;
+}

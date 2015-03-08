@@ -109,6 +109,7 @@ function get_shift(shiftid) {
         }).done(function(json) {
           console.log("Получили с сервера "+shiftid + " "+window.location.href)
           console.log(json);
+          $scope.adding.like_h = json.like_h;
           $scope.shift = json.shift
           $scope.shift.visibility *= 1;
           $scope.shift.st_date = new Date($scope.shift.start_date);
@@ -161,7 +162,27 @@ function get_shift(shiftid) {
             $scope.$apply();
           });
           $scope.$apply();
-        });
+/*          var data_vk = {user_ids: [data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], fields: ["domain"]}
+          $.ajax({
+            type: "GET",
+            url: "https://api.vk.com/method/users.get",
+            dataType: "jsonp",
+            data:  $.param(data_vk)
+          }).done(function(response) {
+            if(data.smbdy) {
+              data.vk_id = _.findWhere(response.response, {domain: data.smbdy}).uid
+            }
+            if(data.like1) {
+              data.like_one = _.findWhere(response.response, {domain: data.like1}).uid
+            }
+            if(data.like2) {
+              data.like_two = _.findWhere(response.response, {domain: data.like2}).uid
+            }
+            if(data.like3) {
+              data.like_three = _.findWhere(response.response, {domain: data.like3}).uid
+            }
+          });
+*/        });
       }
     }, 100);
     $scope.guessAdd = function() {
@@ -222,9 +243,8 @@ function get_shift(shiftid) {
 
     }
 
-
     $scope.submit = function() {
-                $scope.shift.st_date = new Date($scope.shift.start_date);
+          $scope.shift.st_date = new Date($scope.shift.start_date);
           $scope.shift.fn_date = new Date($scope.shift.finish_date);
           var name = "";
           var st_month = $scope.shift.st_date.getMonth()*1 + 1;//нумерация с нуля была
