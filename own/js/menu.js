@@ -85,6 +85,17 @@ if (typeof String.prototype.startsWith != 'function') {
   				}
   			}, 50);
 		}
+		if (locat == "/method/games") {
+			var gmID = setInterval(function(){
+ 				if (typeof(angular) !== "undefined") {
+					if ((window.games) && (window.games.was_init) && (! $(".games-container").is(":visible"))) {
+						angular.bootstrap(document, ['game_app']);
+				    }
+				    clearInterval(gmID);
+  				}
+  			}, 50);
+		}
+
 
 		function add_submenu (locat) {
 			$("nav li.current").removeClass("current");
