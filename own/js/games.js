@@ -71,6 +71,20 @@ if (window.games.angular_conroller == undefined) {
 
 /*логика ангулара*/
 function init_angular_game_c ($scope, $http) {
-  console.log("Hi "+ new Date());
-  $scope.hello = "hello"
+  $scope.game = {}
+  $scope.game.adding = {}
+  $scope.game.adding.classify = {
+    method: {},
+    place: {},
+    form: {},
+    activity: {},
+    p_numer: {},
+    relation: {},
+    time: {},
+    p_age: {},
+    camp_struct: {},
+    requered: {},
+    pr_time: {},
+    org_level: {}
+  }
 }
