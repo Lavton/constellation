@@ -14,9 +14,14 @@
   ?>
     
 
-    <div id="page-container">
-      <p>В этом разделе будет всё, что вы можете сделать для детей, чтобы они не скучали</p>
-    </div> <!-- /container -->
+  <div id="page-container">
+    <p>Вожатый - это работа. И, как и у всякой работы, у вас будут свои права и свои обязанности.
+    </p>
+    <ul>
+      <li><a href="resources/low_base.pdf" target="_blank">Законодательная база</a></li>
+      <li><a href="resources/rights.pdf" target="_blank">Права и обязанности</a></li>
+    </ul>
+  </div> <!-- /container -->
 
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');

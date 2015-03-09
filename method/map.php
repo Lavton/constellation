@@ -14,9 +14,13 @@
   ?>
     
 
-    <div id="page-container">
-      <p>В этом разделе будет всё, что вы можете сделать для детей, чтобы они не скучали</p>
-    </div> <!-- /container -->
+  <div id="page-container">
+    <p>Лагерь - как маленький город. Со своей структурой и своими служащими.
+    </p>
+    <ul>
+      <li><a href="resources/camp_map.pdf" target="_blank">Люди и территория</a></li>
+    </ul>
+  </div> <!-- /container -->
 
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');

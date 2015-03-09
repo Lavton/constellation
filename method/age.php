@@ -14,9 +14,12 @@
   ?>
     
 
-    <div id="page-container">
-      <p>В этом разделе будет всё, что вы можете сделать для детей, чтобы они не скучали</p>
-    </div> <!-- /container -->
+  <div id="page-container">
+    <p>В каждом возрасте свои особенности. Не забывайте об этом.
+    </p>
+    <ul>
+    </ul>
+  </div> <!-- /container -->
 
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
