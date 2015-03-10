@@ -71,6 +71,7 @@ function get_shift(shiftid) {
     $scope.adding = {};
     $scope.adding.vk_likes = {};
 
+
     $scope.editShiftInfo = function() {
       $(".shift-info").toggleClass("hidden");
       $(".shift-edit").toggleClass("hidden");
@@ -94,7 +95,19 @@ function get_shift(shiftid) {
         }).done(function(json) {
           console.log("Получили с сервера "+shiftid + " "+window.location.href)
           console.log(json);
-          var data_vk = {user_ids: json.like_h, fields: ["domain", "photo_50"]}
+          $scope.myself = json.myself;
+          var vk_ids = []
+          _.each(json.like_h, function(element, index, list) {
+            vk_ids.push(element.vk_id);
+          });
+          vk_ids.push($scope.myself.vk_id)
+          vk_ids.push($scope.myself.like_one)
+          vk_ids.push($scope.myself.like_two)
+          vk_ids.push($scope.myself.like_three)
+          vk_ids.push($scope.myself.dislike_one)
+          vk_ids.push($scope.myself.dislike_two)
+          vk_ids.push($scope.myself.dislike_three)
+          var data_vk = {user_ids: vk_ids, fields: ["domain", "photo_50"]}
           $.ajax({
             type: "GET",
             url: "https://api.vk.com/method/users.get",
@@ -102,8 +115,56 @@ function get_shift(shiftid) {
             data:  $.param(data_vk)
           }).done(function(response) {
             console.log("get vk like ", response.response);
-            $scope.adding.vk_likes = response.response;
+            $scope.vk_info = response.response;
+            $scope.adding.vk_likes = [];
+            _.each(json.like_h, function(element, index, list) {
+              var vk_d = _.findWhere($scope.vk_info, {uid: element.vk_id*1});
+              _.each(vk_d, function(element2, index, list){
+                element[index] = vk_d[index];
+              })
+              element.fighter = element.fighter_id;
+            });
+            $scope.adding.vk_likes = json.like_h;
+
+            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
+            _.each(vk_d, function(element2, index, list){
+              $scope.myself[index] = vk_d[index];
+            })
+
+            $scope.myself.like_1 = {}
+            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_one*1});
+            _.each(vk_d, function(element2, index, list){
+              $scope.myself.like_1[index] = vk_d[index];
+            })
+            $scope.myself.like_2 = {}
+            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_two*1});
+            _.each(vk_d, function(element2, index, list){
+              $scope.myself.like_2[index] = vk_d[index];
+            })
+            $scope.myself.like_3 = {}
+            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_three*1});
+            _.each(vk_d, function(element2, index, list){
+              $scope.myself.like_3[index] = vk_d[index];
+            })
+
+            $scope.myself.dislike_1 = {}
+            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_one*1});
+            _.each(vk_d, function(element2, index, list){
+              $scope.myself.dislike_1[index] = vk_d[index];
+            })
+            $scope.myself.dislike_2 = {}
+            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_two*1});
+            _.each(vk_d, function(element2, index, list){
+              $scope.myself.dislike_2[index] = vk_d[index];
+            })
+            $scope.myself.dislike_3 = {}
+            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_three*1});
+            _.each(vk_d, function(element2, index, list){
+              $scope.myself.dislike_3[index] = vk_d[index];
+            })
+
             $scope.$apply();
+            console.log($scope.adding.vk_likes)
           });
 
 
@@ -159,85 +220,67 @@ function get_shift(shiftid) {
             $scope.$apply();
           });
           $scope.$apply();
-/*          var data_vk = {user_ids: [data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], fields: ["domain"]}
-          $.ajax({
-            type: "GET",
-            url: "https://api.vk.com/method/users.get",
-            dataType: "jsonp",
-            data:  $.param(data_vk)
-          }).done(function(response) {
-            if(data.smbdy) {
-              data.vk_id = _.findWhere(response.response, {domain: data.smbdy}).uid
-            }
-            if(data.like1) {
-              data.like_one = _.findWhere(response.response, {domain: data.like1}).uid
-            }
-            if(data.like2) {
-              data.like_two = _.findWhere(response.response, {domain: data.like2}).uid
-            }
-            if(data.like3) {
-              data.like_three = _.findWhere(response.response, {domain: data.like3}).uid
-            }
-          });
-*/        });
+        });
       }
     }, 100);
     $scope.guessAdd = function() {
-      var data = $scope.adding;
-      data.action = "apply_to_shift";
-      _.each(data, function(element, index, list){
-        if (!element) {
-          data[index] = null;
-        }
-      })
-      data.shift_id = $scope.shift.id;
-      data.social = data.soc*1+data.nonsoc*2;
-      data.profile = data.prof*1+data.nonprof*2;
-      var data_vk = {user_ids: [data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], fields: ["domain"]}
-      $.ajax({
-        type: "GET",
-        url: "https://api.vk.com/method/users.get",
-        dataType: "jsonp",
-        data:  $.param(data_vk)
-      }).done(function(response) {
-        if(data.smbdy) {
-          data.vk_id = _.findWhere(response.response, {domain: data.smbdy}).uid
-        }
-        if(data.like1) {
-          data.like_one = _.findWhere(response.response, {domain: data.like1}).uid
-        }
-        if(data.like2) {
-          data.like_two = _.findWhere(response.response, {domain: data.like2}).uid
-        }
-        if(data.like3) {
-          data.like_three = _.findWhere(response.response, {domain: data.like3}).uid
-        }
-
-        if(data.dislike1) {
-          data.dislike_one = _.findWhere(response.response, {domain: data.dislike1}).uid
-        }
-        if(data.dislike2) {
-          data.dislike_two = _.findWhere(response.response, {domain: data.dislike2}).uid
-        }
-        if(data.dislike3) {
-          data.dislike_three = _.findWhere(response.response, {domain: data.dislike3}).uid
-        }
+      if (confirm("Записаться на смену?")) {
+        var data = $scope.adding;
+        data.action = "apply_to_shift";
+        _.each(data, function(element, index, list){
+          if (!element) {
+            data[index] = null;
+          }
+        })
+        data.shift_id = $scope.shift.id;
+        data.social = data.soc*1+data.nonsoc*2;
+        data.profile = data.prof*1+data.nonprof*2;
+        var data_vk = {user_ids: [data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], fields: ["domain"]}
         $.ajax({
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data:  $.param(data)
-        }).done(function(json) {
-          console.log(json)
-          var saved = $(".saved");
-          $(saved).stop(true, true);
-          $(saved).fadeIn("slow");
-          $(saved).fadeOut("slow");
+          type: "GET",
+          url: "https://api.vk.com/method/users.get",
+          dataType: "jsonp",
+          data:  $.param(data_vk)
+        }).done(function(response) {
+          if(data.smbdy) {
+            data.vk_id = _.findWhere(response.response, {domain: data.smbdy}).uid
+          }
+          if(data.like1) {
+            data.like_one = _.findWhere(response.response, {domain: data.like1}).uid
+          }
+          if(data.like2) {
+            data.like_two = _.findWhere(response.response, {domain: data.like2}).uid
+          }
+          if(data.like3) {
+            data.like_three = _.findWhere(response.response, {domain: data.like3}).uid
+          }
+
+          if(data.dislike1) {
+            data.dislike_one = _.findWhere(response.response, {domain: data.dislike1}).uid
+          }
+          if(data.dislike2) {
+            data.dislike_two = _.findWhere(response.response, {domain: data.dislike2}).uid
+          }
+          if(data.dislike3) {
+            data.dislike_three = _.findWhere(response.response, {domain: data.dislike3}).uid
+          }
+          $.ajax({
+            type: "POST",
+            url: "/handlers/shift.php",
+            dataType: "json",
+            data:  $.param(data)
+          }).done(function(json) {
+            console.log(json)
+            var saved = $(".saved");
+            $(saved).stop(true, true);
+            $(saved).fadeIn("slow");
+            $(saved).fadeOut("slow");
+            window.location.href = window.location.href;
+          });
+
         });
-
-      });
-      console.log("submite")
-
+        console.log("submite")
+      }
     }
 
     $scope.submit = function() {
@@ -311,38 +354,6 @@ function get_shift(shiftid) {
           }
         });
       }
-    }
-
-
-    function get_vk(ids, callback) {
-      var data_vk = {user_ids: ids, fields: ["photo_100", "domain"]}
-      $.ajax({
-        type: "GET",
-        url: "https://api.vk.com/method/users.get",
-        dataType: "jsonp",
-        data:  $.param(data_vk)
-      }).done(function(json2) {
-        console.log("Получили с VK")
-        if ((json2 !== undefined) && (json2.error == undefined)) {
-         var user_vk = json2.response[0];
-        }
-        if (user_vk == undefined) {
-          user_vk = {photo_200: "http://vk.com/images/camera_b.gif",
-            domain: json.user.vk_id,
-            uid: 0
-          }
-          
-        }
-        console.log(user_vk);
-        $scope.shift.domain = user_vk.domain
-        $scope.shift.photo_200 = user_vk.photo_200;
-        $scope.shift.vk_id = user_vk.uid;
-
-        $scope.$apply();
-        if (callback) {
-          callback();
-        }
-      });
     }
   }
 }

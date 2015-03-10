@@ -68,7 +68,12 @@
   if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
   ?>
   <script type="text/javascript">
-    get_user_info(<?=$_GET["id"]?>);
+    var intofID = setInterval(function(){
+      if ((typeof(get_user_info) != "undefined") && (get_user_info != undefined)) {
+        clearInterval(intofID);
+        get_user_info(<?=$_GET["id"]?>);
+      }
+    }, 50);
   </script>
   <?php
   }

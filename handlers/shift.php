@@ -74,12 +74,16 @@ function get_one_info() {
     $result["prev"] = mysql_fetch_array($rt, MYSQL_ASSOC);
 
     $_POST["vk_id"] = $_SESSION["vk_id"];
-    $query = "SELECT vk_id FROM guess_shift where (like_one=".$_POST["vk_id"]." OR like_two=".$_POST["vk_id"]." OR like_three=".$_POST["vk_id"].");";
+    $query = "SELECT vk_id, fighter_id FROM guess_shift where (like_one=".$_POST["vk_id"]." OR like_two=".$_POST["vk_id"]." OR like_three=".$_POST["vk_id"].");";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["like_h"] = array();
     while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
-      array_push($result["like_h"], $line["vk_id"]);
+      array_push($result["like_h"], $line);
     }
+
+    $query = "SELECT * FROM guess_shift where vk_id=".$_POST["vk_id"].";";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["myself"] = mysql_fetch_array($rt, MYSQL_ASSOC);
 
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
       $result["shift"] = array();
