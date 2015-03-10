@@ -249,9 +249,6 @@ footer {
 }
 
 .like_h {
-  border: 4px !important;
-  margin: 2px;
-  padding: 2px;
-  margin-color: green;
-  color: green;
+  border: 2px outset green !important;
+  /*color: green;*/
 }

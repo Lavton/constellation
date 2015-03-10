@@ -12,56 +12,40 @@ function get_shift(shiftid) {
   var intID = setInterval(function(){
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-    if ((typeof(angular) !== "undefined") && (shiftid != "users")) {
+      if ((typeof(angular) !== "undefined") && (shiftid != "users")) {
         if (window.shifts.one_angular_conroller == null) {
-          window.shifts.one_angular_conroller = angular.module('one_sc_app', [], function($httpProvider)
-          { //магия, чтобы PHP понимал запрос
+          window.shifts.one_angular_conroller = angular.module('one_sc_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
             // Используем x-www-form-urlencoded Content-Type
             $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-           
             // Переопределяем дефолтный transformRequest в $http-сервисе
-            $httpProvider.defaults.transformRequest = [function(data)
-            {
-              var param = function(obj)
-              {
+            $httpProvider.defaults.transformRequest = [function(data) {
+              var param = function(obj) {
                 var query = '';
                 var name, value, fullSubName, subValue, innerObj, i;
-                
-                for(name in obj)
-                {
+                for(name in obj) {
                   value = obj[name];
-                  
-                  if(value instanceof Array)
-                  {
-                    for(i=0; i<value.length; ++i)
-                    {
+                  if(value instanceof Array) {
+                    for(i=0; i<value.length; ++i) {
                       subValue = value[i];
                       fullSubName = name + '[' + i + ']';
                       innerObj = {};
                       innerObj[fullSubName] = subValue;
                       query += param(innerObj) + '&';
                     }
-                  }
-                  else if(value instanceof Object)
-                  {
-                    for(subName in value)
-                    {
+                  } else if(value instanceof Object) {
+                    for(subName in value) {
                       subValue = value[subName];
                       fullSubName = name + '[' + subName + ']';
                       innerObj = {};
                       innerObj[fullSubName] = subValue;
                       query += param(innerObj) + '&';
                     }
-                  }
-                  else if(value !== undefined && value !== null)
-                  {
+                  } else if(value !== undefined && value !== null) {
                     query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
                   }
-                }
-                
+                }              
                 return query.length ? query.substr(0, query.length - 1) : query;
               };
-              
               return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
             }];
           });
@@ -85,6 +69,7 @@ function get_shift(shiftid) {
     $scope.id = shiftid;
     $scope.shift = {};
     $scope.adding = {};
+    $scope.adding.vk_likes = {};
 
     $scope.editShiftInfo = function() {
       $(".shift-info").toggleClass("hidden");
@@ -109,7 +94,19 @@ function get_shift(shiftid) {
         }).done(function(json) {
           console.log("Получили с сервера "+shiftid + " "+window.location.href)
           console.log(json);
-          $scope.adding.like_h = json.like_h;
+          var data_vk = {user_ids: json.like_h, fields: ["domain", "photo_50"]}
+          $.ajax({
+            type: "GET",
+            url: "https://api.vk.com/method/users.get",
+            dataType: "jsonp",
+            data:  $.param(data_vk)
+          }).done(function(response) {
+            console.log("get vk like ", response.response);
+            $scope.adding.vk_likes = response.response;
+            $scope.$apply();
+          });
+
+
           $scope.shift = json.shift
           $scope.shift.visibility *= 1;
           $scope.shift.st_date = new Date($scope.shift.start_date);

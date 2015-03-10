@@ -1,6 +1,6 @@
 <?php
 if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
-	/*просмотр смены*/
+  /*просмотр смены*/
 ?>
 <div ng-cloak ng-controller="oneShiftApp">
   <div class="shift-info hidden">
@@ -56,46 +56,23 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
             </li>
             <li> 
               <i>С кем бы вы хотели работать?</i> (до 3х человек, будет видно комсоставу и тому, кого вы указали)<br/>
-    <div class="row own-row">
-      <div class="col-xs-5">
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like1" size="7"/><br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like2" size="7"/><br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like3" size="7"/><br/> <br/>
-            </div><div class="col-xs-7">
-              <div class="like_h" ng-show="adding.like_h && !adding.smbdy">
-                C вами хотели бы работать:
-                {{adding.like_h[0]}}
-                <ul>
-                  <li>
-                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
-                  </li>
-                  <li>
-                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
-                  </li>
-                  <li>
-                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
-                  </li>
-                  <li>
-                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
-                  </li>
-                  <li>
-                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
-                  </li>
-                  <li>
-                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
-                  </li>
-                  <li>
-                vk.com/<input type="text" ng-model="adding.like_h[0]" disabled size="{{(adding.like_h[0]).length}}">
-                  </li>
-                </ul>
-
-                <ul>
-                  <li ng-repeat="melike in adding.like_h">
-                    хм {{melike}} vk.com/<input type="text" ng-model="melike" disabled>
-                  </li>
-                </ul>
+              <div class="row own-row">
+                <div class="col-xs-5">
+                  vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like1" size="7"/><br/>
+                  vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like2" size="7"/><br/>
+                  vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like3" size="7"/><br/> <br/>
+                </div>
+                <div class="col-xs-7">
+                  <div class="like_h" ng-show="adding.vk_likes && !adding.smbdy">
+                    C вами хотели бы работать:
+                    <ul>
+                      <li ng-repeat="user in adding.vk_likes">
+                        <img ng-src="{{user.photo_50}}"/> <input type="text" disabled ng-model="user.domain" size="{{(user.domain).length}}"> {{user.first_name}} {{user.last_name}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-</div></div>              
             </li>              
             
             <li> <i>С кем бы вы НЕ хотели работать?</i> (до 3х человек, будет видно только комсоставу)<br/>

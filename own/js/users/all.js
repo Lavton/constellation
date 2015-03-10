@@ -139,64 +139,47 @@ $('#page-container').on('click', ".get-all", function() {
       $(".vCard-start").show("slow");
       $("table.common-contacts").removeClass("hidden");
       if (window.fighters.angular_conroller == null) {
-      loadScript("/standart/js/checklist-model.js", function() {
-        window.fighters.angular_conroller = angular.module('common_c_app', ["checklist-model"], function($httpProvider)
-        { //магия, чтобы PHP понимал запрос
-          // Используем x-www-form-urlencoded Content-Type
-          $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-         
-          // Переопределяем дефолтный transformRequest в $http-сервисе
-          $httpProvider.defaults.transformRequest = [function(data)
-          {
-            var param = function(obj)
-            {
-              var query = '';
-              var name, value, fullSubName, subValue, innerObj, i;
-              
-              for(name in obj)
-              {
-                value = obj[name];
-                
-                if(value instanceof Array)
-                {
-                  for(i=0; i<value.length; ++i)
-                  {
-                    subValue = value[i];
-                    fullSubName = name + '[' + i + ']';
-                    innerObj = {};
-                    innerObj[fullSubName] = subValue;
-                    query += param(innerObj) + '&';
+        loadScript("/standart/js/checklist-model.js", function() {
+          window.fighters.angular_conroller = angular.module('common_c_app', ["checklist-model"], function($httpProvider) { //магия, чтобы PHP понимал запрос
+            // Используем x-www-form-urlencoded Content-Type
+            $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+            // Переопределяем дефолтный transformRequest в $http-сервисе
+            $httpProvider.defaults.transformRequest = [function(data) {
+              var param = function(obj) {
+                var query = '';
+                var name, value, fullSubName, subValue, innerObj, i;
+                for(name in obj) {
+                  value = obj[name];
+                  if(value instanceof Array) {
+                    for(i=0; i<value.length; ++i) {
+                      subValue = value[i];
+                      fullSubName = name + '[' + i + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  } else if(value instanceof Object) {
+                    for(subName in value) {
+                      subValue = value[subName];
+                      fullSubName = name + '[' + subName + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  } else if(value !== undefined && value !== null) {
+                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
                   }
-                }
-                else if(value instanceof Object)
-                {
-                  for(subName in value)
-                  {
-                    subValue = value[subName];
-                    fullSubName = name + '[' + subName + ']';
-                    innerObj = {};
-                    innerObj[fullSubName] = subValue;
-                    query += param(innerObj) + '&';
-                  }
-                }
-                else if(value !== undefined && value !== null)
-                {
-                  query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-                }
-              }
-              
-              return query.length ? query.substr(0, query.length - 1) : query;
-            };
-            
-            return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-          }];
+                }              
+                return query.length ? query.substr(0, query.length - 1) : query;
+              };
+              return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+            }];
+          });
+          //запускаем ангулар
+          window.fighters.angular_conroller.controller('fightersApp', ['$scope', '$http', init_angular_f_c]);
+          angular.bootstrap(document, ['common_c_app']);
+          window.fighters.was_init = true;
         });
-
-        //запускаем ангулар
-        window.fighters.angular_conroller.controller('fightersApp', ['$scope', '$http', init_angular_f_c]);
-        angular.bootstrap(document, ['common_c_app']);
-        window.fighters.was_init = true;
-      });
       }
       if (window.fighters.was_init && isNaN(parseInt($("table.common-contacts tbody tr").attr("class")))) {
         angular.bootstrap(document, ['common_c_app']);

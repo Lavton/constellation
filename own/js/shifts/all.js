@@ -7,7 +7,7 @@ if (window.shifts.angular_conroller == undefined) {
 }
   var intID = setInterval(function(){
   if (typeof(angular) !== "undefined") {
-    if (window.shifts.angular_conroller == null) {
+    if ((window.location.pathname == "/events/shifts") && (window.shifts.angular_conroller == null)) {
       $('#page-container').on('click', ".pre-add-s-new", function() {
         console.log("adding shift");
         var today = new Date();
@@ -25,70 +25,54 @@ if (window.shifts.angular_conroller == undefined) {
           data:  $.param(data)
         }).done(function(response) {
           console.log(response)
-          debugger;
           if (response.result == "Success") {
             window.location="/events/shifts/"+response.id;
           }
         });
-
-
       });
-      window.shifts.angular_conroller = angular.module('common_sc_app', [], function($httpProvider)
-      { //магия, чтобы PHP понимал запрос
+      if (window.shifts.angular_conroller == null) {      
+        window.shifts.angular_conroller = angular.module('common_sc_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
           // Используем x-www-form-urlencoded Content-Type
-        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-         
-        // Переопределяем дефолтный transformRequest в $http-сервисе
-        $httpProvider.defaults.transformRequest = [function(data)
-        {
-          var param = function(obj)
-          {
-            var query = '';
-            var name, value, fullSubName, subValue, innerObj, i;
-              
-            for(name in obj)
-            {
-              value = obj[name];
-                
-              if(value instanceof Array)
-              {
-                for(i=0; i<value.length; ++i)
-                {
-                  subValue = value[i];
-                  fullSubName = name + '[' + i + ']';
-                  innerObj = {};
-                  innerObj[fullSubName] = subValue;
-                  query += param(innerObj) + '&';
+          $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+          // Переопределяем дефолтный transformRequest в $http-сервисе
+          $httpProvider.defaults.transformRequest = [function(data) {
+            var param = function(obj) {
+              var query = '';
+              var name, value, fullSubName, subValue, innerObj, i;
+              for(name in obj) {
+                value = obj[name];
+                if(value instanceof Array) {
+                  for(i=0; i<value.length; ++i) {
+                    subValue = value[i];
+                    fullSubName = name + '[' + i + ']';
+                    innerObj = {};
+                    innerObj[fullSubName] = subValue;
+                    query += param(innerObj) + '&';
+                  }
+                } else if(value instanceof Object) {
+                  for(subName in value) {
+                    subValue = value[subName];
+                    fullSubName = name + '[' + subName + ']';
+                    innerObj = {};
+                    innerObj[fullSubName] = subValue;
+                    query += param(innerObj) + '&';
+                  }
+                } else if(value !== undefined && value !== null) {
+                  query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
                 }
-              }
-              else if(value instanceof Object)
-              {
-                for(subName in value)
-                {
-                  subValue = value[subName];
-                  fullSubName = name + '[' + subName + ']';
-                  innerObj = {};
-                  innerObj[fullSubName] = subValue;
-                  query += param(innerObj) + '&';
-                }
-              }
-              else if(value !== undefined && value !== null)
-              {
-                query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-              }
-            }
-             
-            return query.length ? query.substr(0, query.length - 1) : query;
-          };
-            
-          return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-        }];
-      });
+              }              
+              return query.length ? query.substr(0, query.length - 1) : query;
+            };
+            return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+          }];
+        });
 
-        //запускаем ангулар
-      window.shifts.angular_conroller.controller('shiftsApp', ['$scope', '$http', init_angular_s_c]);
-      angular.bootstrap(document, ['common_sc_app']);
-      window.shifts.was_init = true;
+
+          //запускаем ангулар
+        window.shifts.angular_conroller.controller('shiftsApp', ['$scope', '$http', init_angular_s_c]);
+        angular.bootstrap(document, ['common_sc_app']);
+        window.shifts.was_init = true;
+      }
     }
     clearInterval(intID);
   }
