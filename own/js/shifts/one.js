@@ -77,6 +77,33 @@ function get_shift(shiftid) {
       $(".shift-edit").toggleClass("hidden");
       $scope.master = angular.copy($scope.shift); 
     };
+
+    $scope.deleteGuess = function(delid) {
+      console.log("Delete", delid);
+      if (confirm("удалить заявку?")) {
+        var data = {};
+        data.action = "del_from_shift";
+        data.shift_id = $scope.shift.id;
+        if (delid) {
+          data.vk_id = delid;
+        }
+        _.each(data, function(element, index, list){
+          if (!element) {
+            data[index] = null;
+          }
+        })
+        $.ajax({
+          type: "POST",
+          url: "/handlers/shift.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(json) {
+          window.location.href = window.location.href;
+        });
+        console.log("submite")
+      }
+    }
+
     $scope.tableToAdd = function() {
       if ($scope.show_add){
         $(".show_button").text("Записаться на смену")

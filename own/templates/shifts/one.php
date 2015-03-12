@@ -144,7 +144,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <hr>
 
 <!-- выписываем инфу про себя -->
-<table class="table-bordered">
+<table class="table-bordered" ng-show="myself.vk_id">
   <thead>
   <tr>
     <th></th>
@@ -162,7 +162,11 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <tbody>
   <tr>
     <td><a href={{"//vk.com/"+myself.domain}} target="_blank"> <img ng-src="{{myself.photo_50}}"/></a> <br/> 
-      ред&nbsp;-&nbsp;вать<br> удалить
+        ред&nbsp;-&nbsp;вать
+      <br> 
+      <a ng-click="deleteGuess()" target="_blank">
+        удалить
+      </a>
     </td>
     <td>{{myself.first_name}}<br/> {{myself.last_name}} &nbsp;</td>
     <td>
@@ -270,7 +274,11 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
   <tr ng-repeat="want in all_apply">
     <td><a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a> <br/> 
     <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>      
-      ред&nbsp;-&nbsp;вать<br> удалить
+        ред&nbsp;-&nbsp;вать
+      <br> 
+      <a ng-click="deleteGuess(want.vk_id)" target="_blank">
+        удалить
+      </a>
     <?php } ?>
 
     </td>

@@ -10,6 +10,7 @@ if (is_ajax()) {
       case "kill_shift": kill_shift(); break;
       case "add_new_shift": add_new_shift(); break;
       case "apply_to_shift": apply_to_shift(); break;
+      case "del_from_shift": del_from_shift(); break;
 		}
 	}
 }
@@ -320,7 +321,35 @@ function apply_to_shift() {
     $result["result"] = "Success";
     echo json_encode($result);
   }
+}
 
+function del_from_shift() {
+  check_session();
+  session_start();
+  if (isset($_SESSION["current_group"])) {
+    if (isset($_POST["vk_id"])) { 
+      if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+        echo json_encode(array('result' =>  "Fail"));
+        return;
+      }
+    } else {
+      $_POST["vk_id"] = $_SESSION["vk_id"];
+    }
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+    $query = "DELETE FROM guess_shift WHERE vk_id=".$_POST["vk_id"].";";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["result"] = "Success";
+    echo json_encode($result);
+  }
 }
 
 ?>
