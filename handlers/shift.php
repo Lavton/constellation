@@ -81,10 +81,20 @@ function get_one_info() {
       array_push($result["like_h"], $line);
     }
 
-    $query = "SELECT * FROM guess_shift where vk_id=".$_POST["vk_id"].";";
+    $query = "SELECT * FROM guess_shift where (vk_id=".$_POST["vk_id"]." AND shift_id=".$_POST["id"].");";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["myself"] = mysql_fetch_array($rt, MYSQL_ASSOC);
 
+    if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+      $query = "SELECT * FROM guess_shift where (vk_id!=".$_POST["vk_id"]." AND shift_id=".$_POST["id"].") ORDER BY cr_time DESC;";
+    } else {
+      $query = "SELECT vk_id, shift_id, fighter_id, probability, social, profile, min_age, max_age, comments, cr_time FROM guess_shift where (vk_id!=".$_POST["vk_id"]." AND shift_id=".$_POST["id"].") ORDER BY cr_time DESC;";
+    }
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["all_apply"] = array();
+    while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+      array_push($result["all_apply"], $line);
+    }
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
       $result["shift"] = array();
     }

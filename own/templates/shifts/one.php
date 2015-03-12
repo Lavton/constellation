@@ -26,9 +26,10 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
         </ul>
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
-        <h3>Записаться на смену</h3>
-        <details ng-open="open2">
-           <summary>Записаться</summary>
+        <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id">Записаться на смену</button>
+        <div ng-show="show_add">
+        <!-- <details ng-open="open2"> -->
+           <!-- <summary>Записаться</summary> -->
         <form ng-submit="guessAdd()">
         <input type="submit" class="btn btn-primary text-right" value="Записаться"></input>
 
@@ -98,7 +99,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
             </li>
           </ul>
         </form>
-        </details>
+        </div><!-- </details> -->
       </div>
     </div>
   </div>
@@ -141,6 +142,8 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 }
 ?>
 <hr>
+
+<!-- выписываем инфу про себя -->
 <table class="table-bordered">
   <thead>
   <tr>
@@ -154,7 +157,6 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     <th ng-show="myself.dislike_one || myself.dislike_two || myself.dislike_three">не хочет работать с</th>
     <th>Комментарии</th>
     <th>Последнее <br> обновление</th>
-
   </tr>
   </thead>
 <tbody>
@@ -241,6 +243,121 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 
 </tbody>
 </table>
+
+
+<hr>
+
+<!-- выписываем инфу про других -->
+<table class="table-bordered">
+  <thead>
+  <tr>
+    <th></th>
+    <th>ФИО</th>
+    <th>Статус</th>
+    <th>Вер.<br>поехать</th>
+    <th>Хочет <br> работать<br>на</th>
+    <th>Возраст</th>
+    
+    <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+    <th>Хочет работать с</th>
+    <th>не хочет работать с</th>
+    <th>Комментарии</th>
+    <?php } ?>
+    <th>Последнее <br> обновление</th>
+  </tr>
+  </thead>
+<tbody>
+  <tr ng-repeat="want in all_apply">
+    <td><a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a> <br/> 
+    <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>      
+      ред&nbsp;-&nbsp;вать<br> удалить
+    <?php } ?>
+
+    </td>
+    <td>{{want.first_name}}<br/> {{want.last_name}} &nbsp;</td>
+    <td>
+      <span ng-show="want.fighter_id">
+        <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) { ?>
+        <a href={{"/about/users/"+want.fighter_id}}>
+          <?php } ?>
+          боец
+        <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) { ?>
+        </a>
+          <?php } ?>
+      </span>
+      <span ng-hide="want.fighter_id">кандидат</span> &nbsp;
+    </td>
+    <td>{{want.probability}}%</td>
+    <td>
+      <span ng-show="want.social/2">социальные</span><br>
+      <span ng-show="want.social%2">домашние</span><br>
+      <span ng-show="want.profile/2">профильные</span><br>
+      <span ng-show="want.profile%2">непрофильные</span><br>
+    </td>
+    <td>от {{want.min_age}} до {{want.max_age}}</td>
+    <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+    <td>
+      <table>
+        <tr ng-show="want.like_one">
+          <td><img ng-src="{{want.like_1.photo_50}}"/>&nbsp; </td>
+          <td>
+            <a href={{"//vk.com/"+want.like_1.domain}} target="_blank">vk.com/</a><input type="text" disabled ng-model="want.like_1.domain" size="{{(want.like_1.domain).length}}"> <br> 
+            {{want.like_1.first_name}} {{want.like_1.last_name}} 
+          </td>
+        </tr>
+        <tr ng-show="want.like_two">
+          <td><img ng-src="{{want.like_2.photo_50}}"/>&nbsp; </td>
+          <td>
+            <a href={{"//vk.com/"+want.like_2.domain}} target="_blank">vk.com/</a><input type="text" disabled ng-model="want.like_2.domain" size="{{(want.like_2.domain).length}}"> <br> 
+            {{want.like_2.first_name}} {{want.like_2.last_name}} 
+          </td>
+        </tr>
+        <tr ng-show="want.like_three">
+          <td><img ng-src="{{want.like_3.photo_50}}"/>&nbsp; </td>
+          <td>
+            <a href={{"//vk.com/"+want.like_3.domain}} target="_blank">vk.com/</a><input type="text" disabled ng-model="want.like_3.domain" size="{{(want.like_3.domain).length}}"> <br> 
+            {{want.like_3.first_name}} {{want.like_3.last_name}} 
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr ng-show="want.dislike_one">
+          <td><img ng-src="{{want.dislike_1.photo_50}}"/>&nbsp; </td>
+          <td>
+            <a href={{"//vk.com/"+want.dislike_1.domain}} target="_blank">vk.com/</a><input type="text" disabled ng-model="want.dislike_1.domain" size="{{(want.dislike_1.domain).length}}"> <br> 
+            {{want.dislike_1.first_name}} {{want.dislike_1.last_name}} 
+          </td>
+        </tr>
+        <tr ng-show="want.dislike_two">
+          <td><img ng-src="{{want.dislike_2.photo_50}}"/>&nbsp; </td>
+          <td>
+            <a href={{"//vk.com/"+want.dislike_2.domain}} target="_blank">vk.com/</a><input type="text" disabled ng-model="want.dislike_2.domain" size="{{(want.dislike_2.domain).length}}"> <br> 
+            {{want.dislike_2.first_name}} {{want.dislike_2.last_name}} 
+          </td>
+        </tr>
+        <tr ng-show="want.dislike_three">
+          <td><img ng-src="{{want.dislike_3.photo_50}}"/>&nbsp; </td>
+          <td>
+            <a href={{"//vk.com/"+want.dislike_3.domain}} target="_blank">vk.com/</a><input type="text" disabled ng-model="want.dislike_3.domain" size="{{(want.dislike_3.domain).length}}"> <br> 
+            {{want.dislike_3.first_name}} {{want.dislike_3.last_name}} 
+          </td>
+        </tr>
+      </table>
+    </td>
+
+    <td>
+      <textarea disabled ng-model="want.comments"></textarea>
+    </td>
+    <?php } ?>
+    <td>{{want.cr_time}} </td>
+  </tr>
+
+</tbody>
+</table>
+
+
 </div>
 
 <br/><br/><a href="#" class="shift_priv"><<предыдщая</a> &nbsp; &nbsp;

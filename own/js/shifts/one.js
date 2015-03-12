@@ -77,6 +77,14 @@ function get_shift(shiftid) {
       $(".shift-edit").toggleClass("hidden");
       $scope.master = angular.copy($scope.shift); 
     };
+    $scope.tableToAdd = function() {
+      if ($scope.show_add){
+        $(".show_button").text("Записаться на смену")
+      } else {
+        $(".show_button").text("Скрыть запись")
+      }
+      $scope.show_add = !$scope.show_add;
+    }
     $(".shift-info").removeClass("hidden")
      var inthrefID = setInterval(function(){
       var fid=window.location.href.split("/")
@@ -96,6 +104,9 @@ function get_shift(shiftid) {
           console.log("Получили с сервера "+shiftid + " "+window.location.href)
           console.log(json);
           $scope.myself = json.myself;
+          $scope.all_apply = json.all_apply;
+
+          //формируем запрос сразу для всех нужных id
           var vk_ids = []
           _.each(json.like_h, function(element, index, list) {
             vk_ids.push(element.vk_id);
@@ -107,6 +118,15 @@ function get_shift(shiftid) {
           vk_ids.push($scope.myself.dislike_one)
           vk_ids.push($scope.myself.dislike_two)
           vk_ids.push($scope.myself.dislike_three)
+          _.each($scope.all_apply, function(element, index, list){
+            vk_ids.push(element.vk_id)
+            vk_ids.push(element.like_one)
+            vk_ids.push(element.like_two)
+            vk_ids.push(element.like_three)
+            vk_ids.push(element.dislike_one)
+            vk_ids.push(element.dislike_two)
+            vk_ids.push(element.dislike_three)            
+          })
           var data_vk = {user_ids: vk_ids, fields: ["domain", "photo_50"]}
           $.ajax({
             type: "GET",
@@ -116,6 +136,7 @@ function get_shift(shiftid) {
           }).done(function(response) {
             console.log("get vk like ", response.response);
             $scope.vk_info = response.response;
+            // ищем тех, кому нравится данный человек
             $scope.adding.vk_likes = [];
             _.each(json.like_h, function(element, index, list) {
               var vk_d = _.findWhere($scope.vk_info, {uid: element.vk_id*1});
@@ -126,6 +147,7 @@ function get_shift(shiftid) {
             });
             $scope.adding.vk_likes = json.like_h;
 
+            // ищем инфу для данного человека
             var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
             _.each(vk_d, function(element2, index, list){
               $scope.myself[index] = vk_d[index];
@@ -162,6 +184,48 @@ function get_shift(shiftid) {
             _.each(vk_d, function(element2, index, list){
               $scope.myself.dislike_3[index] = vk_d[index];
             })
+
+            //ищем инфу для всех записавшихся людей
+            _.each($scope.all_apply, function(app_el, index, list){
+              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.vk_id*1});
+              _.each(vk_d, function(element2, index, list){
+                app_el[index] = vk_d[index];
+              })
+
+              app_el.like_1 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.like_one*1});
+              _.each(vk_d, function(element2, index, list){
+                app_el.like_1[index] = vk_d[index];
+              })
+              app_el.like_2 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.like_two*1});
+              _.each(vk_d, function(element2, index, list){
+                app_el.like_2[index] = vk_d[index];
+              })
+              app_el.like_3 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.like_three*1});
+              _.each(vk_d, function(element2, index, list){
+                app_el.like_3[index] = vk_d[index];
+              })
+
+              app_el.dislike_1 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.dislike_one*1});
+              _.each(vk_d, function(element2, index, list){
+                app_el.dislike_1[index] = vk_d[index];
+              })
+              app_el.dislike_2 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.dislike_two*1});
+              _.each(vk_d, function(element2, index, list){
+                app_el.dislike_2[index] = vk_d[index];
+              })
+              app_el.dislike_3 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.dislike_three*1});
+              _.each(vk_d, function(element2, index, list){
+                app_el.dislike_3[index] = vk_d[index];
+              })
+            })
+
+
 
             $scope.$apply();
             console.log($scope.adding.vk_likes)
