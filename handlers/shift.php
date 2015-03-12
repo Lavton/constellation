@@ -10,6 +10,7 @@ if (is_ajax()) {
       case "kill_shift": kill_shift(); break;
       case "add_new_shift": add_new_shift(); break;
       case "apply_to_shift": apply_to_shift(); break;
+      case "edit_appliing": edit_appliing(); break;
       case "del_from_shift": del_from_shift(); break;
 		}
 	}
@@ -345,11 +346,117 @@ function del_from_shift() {
     @mysql_query("Set character_set_connection = utf8");
     @mysql_query("Set character_set_results = utf8");
     @mysql_query("Set collation_connection = utf8_general_ci");
-    $query = "DELETE FROM guess_shift WHERE vk_id=".$_POST["vk_id"].";";
+    $query = "DELETE FROM guess_shift WHERE (vk_id=".$_POST["vk_id"]." AND shift_id=".$_POST["shift_id"].");";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["result"] = "Success";
     echo json_encode($result);
   }
+}
+
+function edit_appliing() {
+  check_session();
+  session_start();
+  if (isset($_SESSION["current_group"])) {
+    if (isset($_POST["vk_id"])) { 
+      if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+        echo json_encode(array('result' =>  "Fail"));
+        return;
+      }
+    } else {
+      $_POST["vk_id"] = $_SESSION["vk_id"];
+    }
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+
+    $names = array();
+    $values = array();
+    if (isset($_POST["vk_id"])) {
+      array_push($names, "vk_id");
+      array_push($values, "'".$_POST["vk_id"]."'");
+    }
+    if (isset($_POST["shift_id"])) {
+      array_push($names, "shift_id");
+      array_push($values, "'".$_POST["shift_id"]."'");
+    }
+    if (isset($_POST["prob"])) {
+      array_push($names, "probability");
+      array_push($values, "'".$_POST["prob"]."'");
+    }
+    if (isset($_POST["social"])) {
+      array_push($names, "social");
+      array_push($values, "'".$_POST["social"]."'");
+    }
+    if (isset($_POST["profile"])) {
+      array_push($names, "profile");
+      array_push($values, "'".$_POST["profile"]."'");
+    }
+
+    if (isset($_POST["min_age"])) {
+      array_push($names, "min_age");
+      array_push($values, "'".$_POST["min_age"]."'");
+    }
+    if (isset($_POST["max_age"])) {
+      array_push($names, "max_age");
+      array_push($values, "'".$_POST["max_age"]."'");
+    }
+    
+    if (isset($_POST["like_one"])) {
+      array_push($names, "like_one");
+      array_push($values, "'".$_POST["like_one"]."'");
+    }
+    if (isset($_POST["like_two"])) {
+      array_push($names, "like_two");
+      array_push($values, "'".$_POST["like_two"]."'");
+    }
+    if (isset($_POST["like_three"])) {
+      array_push($names, "like_three");
+      array_push($values, "'".$_POST["like_three"]."'");
+    }
+    if (isset($_POST["dislike_one"])) {
+      array_push($names, "dislike_one");
+      array_push($values, "'".$_POST["dislike_one"]."'");
+    }
+    if (isset($_POST["dislike_two"])) {
+      array_push($names, "dislike_two");
+      array_push($values, "'".$_POST["dislike_two"]."'");
+    }
+    if (isset($_POST["dislike_three"])) {
+      array_push($names, "dislike_three");
+      array_push($values, "'".$_POST["dislike_three"]."'");
+    }    
+    if (isset($_POST["comments"])) {
+      array_push($names, "comments");
+      array_push($values, "'".$_POST["comments"]."'");
+    }
+    array_push($names, "cr_time");
+    array_push($values, "'".date('Y-m-d H:i:s',time())."'");
+    // cначала проверим, боец ли этот человек
+    $query = "SELECT id FROM fighters where vk_id=".$_POST["vk_id"].";";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $line = mysql_fetch_array($rt, MYSQL_ASSOC);
+    if (isset($line["id"])) {
+      array_push($names, "fighter_id");
+      array_push($values, "'".$line["id"]."'");
+    }
+    $conc = array();
+    foreach ($names as $key => $value) {
+      array_push($conc, "".$value."=".$values[$key]);
+    }
+    $conc = implode(", ", $conc);
+    $query = "UPDATE guess_shift SET ".$conc." WHERE (vk_id='".$_POST['vk_id']."' AND shift_id=".$_POST["shift_id"].");";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["result"] = "Success";
+    echo json_encode($result);
+  }
+
 }
 
 ?>

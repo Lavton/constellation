@@ -7,7 +7,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     <div class="col-xs-12">
       <h2>{{shift.name}}
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
-        <button type="button" class="btn btn-primary text-right" ng-click="editShiftInfo()">Редактировать</button>
+        <button type="button" class="btn btn-primary text-right" ng-click="editShiftInfo()">Редактировать описание смены</button>
         <?php } ?>
       </h2>
       <hr>
@@ -22,16 +22,19 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
           <li ng-show="shift.visibility"><strong>Виден для: </strong>{{shift.visibility}} ({{groups[shift.visibility]}})</li>
           <?php } ?>   
-          <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> {{shift.comments}} </li>     
+          <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> <textarea ng-model="shift.comments" cols=50 rows=5 disabled></textarea> </li>     
         </ul>
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
         <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id">Записаться на смену</button>
-        <div ng-show="show_add">
+        <button class="btn" ng-click="show_edit=false" ng-init="show_add=false" ng-show="show_edit">Скрыть редактирование</button>
+
+        <div ng-show="show_add || show_edit" ng-init="show_edit=false">
         <!-- <details ng-open="open2"> -->
            <!-- <summary>Записаться</summary> -->
-        <form ng-submit="guessAdd()">
-        <input type="submit" class="btn btn-primary text-right" value="Записаться"></input>
+        <form ng-submit="guessAdd(show_edit)">
+        <input type="submit" class="btn btn-primary text-right" value="Записаться" ng-hide="show_edit"></input>
+        <input type="submit" class="btn btn-primary text-right" value="Сохранить изменения" ng-show="show_edit"></input>
 
           <ul>
             <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
@@ -98,6 +101,9 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
               <textarea ng-model="adding.comments" cols=50 rows=5></textarea>
             </li>
           </ul>
+        <input type="submit" class="btn btn-primary text-right" value="Записаться" ng-hide="show_edit"></input>
+        <input type="submit" class="btn btn-primary text-right" value="Сохранить изменения" ng-show="show_edit"></input>
+
         </form>
         </div><!-- </details> -->
       </div>
@@ -138,6 +144,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
   /*удалить из БД*/
 ?>
 <button type="button" class="btn btn-danger kill-shift" ng-click="killShift()" >Удалить смену</button> 
+<button type="button" class="btn btn-danger" ng-click="killappsShift()" >Удалить все заявки на смену</button> 
 <?php
 }
 ?>
@@ -162,9 +169,11 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <tbody>
   <tr>
     <td><a href={{"//vk.com/"+myself.domain}} target="_blank"> <img ng-src="{{myself.photo_50}}"/></a> <br/> 
+      <a ng-click="editGuess(myself, false)" target="_blank" href="javascript:void(0);">
         ред&nbsp;-&nbsp;вать
+      </a>
       <br> 
-      <a ng-click="deleteGuess()" target="_blank">
+      <a ng-click="deleteGuess()" target="_blank" href="javascript:void(0);">
         удалить
       </a>
     </td>
@@ -183,9 +192,9 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     </td>
     <td>{{myself.probability}}%</td>
     <td>
-      <span ng-show="myself.social/2">социальные</span><br>
+      <span ng-show="myself.social > 1">социальные</span><br>
       <span ng-show="myself.social%2">домашние</span><br>
-      <span ng-show="myself.profile/2">профильные</span><br>
+      <span ng-show="myself.profile > 1">профильные</span><br>
       <span ng-show="myself.profile%2">непрофильные</span><br>
     </td>
     <td>от {{myself.min_age}} до {{myself.max_age}}</td>
@@ -252,7 +261,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <hr>
 
 <!-- выписываем инфу про других -->
-<table class="table-bordered">
+<table class="table-bordered" ng-show="all_apply">
   <thead>
   <tr>
     <th></th>
@@ -274,9 +283,11 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
   <tr ng-repeat="want in all_apply">
     <td><a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a> <br/> 
     <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>      
+      <a ng-click="editGuess(want, true)" target="_blank" href="javascript:void(0);">
         ред&nbsp;-&nbsp;вать
+      </a>
       <br> 
-      <a ng-click="deleteGuess(want.vk_id)" target="_blank">
+      <a ng-click="deleteGuess(want.vk_id)" target="_blank" href="javascript:void(0);">
         удалить
       </a>
     <?php } ?>
@@ -297,9 +308,9 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     </td>
     <td>{{want.probability}}%</td>
     <td>
-      <span ng-show="want.social/2">социальные</span><br>
+      <span ng-show="want.social > 1">социальные</span><br>
       <span ng-show="want.social%2">домашние</span><br>
-      <span ng-show="want.profile/2">профильные</span><br>
+      <span ng-show="want.profile > 1">профильные</span><br>
       <span ng-show="want.profile%2">непрофильные</span><br>
     </td>
     <td>от {{want.min_age}} до {{want.max_age}}</td>
@@ -368,7 +379,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 
 </div>
 
-<br/><br/><a href="#" class="shift_priv"><<предыдщая</a> &nbsp; &nbsp;
+<br/><br/><a href="#" class="shift_priv"><<предыдущая</a> &nbsp; &nbsp;
 <a href="#" class="shift_next pull-right">следующая>></a>
 
 

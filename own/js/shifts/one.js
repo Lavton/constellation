@@ -104,6 +104,34 @@ function get_shift(shiftid) {
       }
     }
 
+    $scope.editGuess = function(who, is_smbdy) {
+      console.log(who, is_smbdy)
+      if ($scope.show_add) {
+        $scope.tableToAdd();
+      }
+      $scope.show_edit = true;
+      var paste_data =  angular.copy(who);
+      if (is_smbdy) {
+        $scope.adding.smbdy=paste_data.domain;
+      }
+      $scope.adding.prob = paste_data.probability;
+      $scope.adding.soc = paste_data.social > 1;
+      $scope.adding.nonsoc = paste_data.social%2 ? true : false;
+      $scope.adding.prof = paste_data.profile > 1;
+      $scope.adding.nonprof = paste_data.profile%2 ? true : false;
+      $scope.adding.min_age = paste_data.min_age;
+      $scope.adding.max_age = paste_data.max_age;
+      $scope.adding.like1 = paste_data.like_1.domain;
+      $scope.adding.like2 = paste_data.like_2.domain;
+      $scope.adding.like3 = paste_data.like_3.domain;
+      $scope.adding.dislike1 = paste_data.dislike_1.domain;
+      $scope.adding.dislike2 = paste_data.dislike_2.domain;
+      $scope.adding.dislike3 = paste_data.dislike_3.domain;
+      $scope.adding.comments = paste_data.comments;
+      console.log("pd", paste_data);
+      console.log("add", $scope.adding);
+    }
+
     $scope.tableToAdd = function() {
       if ($scope.show_add){
         $(".show_button").text("Записаться на смену")
@@ -111,6 +139,7 @@ function get_shift(shiftid) {
         $(".show_button").text("Скрыть запись")
       }
       $scope.show_add = !$scope.show_add;
+      $scope.show_edit = false;
     }
     $(".shift-info").removeClass("hidden")
      var inthrefID = setInterval(function(){
@@ -314,10 +343,17 @@ function get_shift(shiftid) {
         });
       }
     }, 100);
-    $scope.guessAdd = function() {
-      if (confirm("Записаться на смену?")) {
-        var data = $scope.adding;
+    $scope.guessAdd = function(is_edit) {
+      var data = $scope.adding;
+      var qw;
+      if (is_edit) {
+        qw = "Редактировать запись?"
+        data.action = "edit_appliing";
+      } else { 
+        qw = "Записаться на смену?"
         data.action = "apply_to_shift";
+      }
+      if (confirm(qw)) {
         _.each(data, function(element, index, list){
           if (!element) {
             data[index] = null;
@@ -372,6 +408,45 @@ function get_shift(shiftid) {
         });
         console.log("submite")
       }
+    }
+
+    $scope.killappsShift = function() {
+      if (confirm("Точно удалить все заявки на поездку? (сама смена не удалиться)")) {
+        var data = {};
+        data.action = "del_from_shift";
+        data.shift_id = $scope.shift.id;
+        _.each(data, function(element, index, list){
+          if (!element) {
+            data[index] = null;
+          }
+        })
+        $.ajax({
+          type: "POST",
+          url: "/handlers/shift.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(json) {
+        });
+        _.each($scope.all_apply, function(element, index, list){
+          var data = {};
+          data.action = "del_from_shift";
+          data.shift_id = $scope.shift.id;
+          data.vk_id = element.vk_id;
+          _.each(data, function(element, index, list){
+            if (!element) {
+              data[index] = null;
+            }
+          })
+          $.ajax({
+            type: "POST",
+            url: "/handlers/shift.php",
+            dataType: "json",
+            data:  $.param(data)
+          }).done(function(json) {
+          });
+        })
+      }
+      window.location.href = window.location.href;
     }
 
     $scope.submit = function() {
