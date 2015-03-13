@@ -27,6 +27,10 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
         <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id">Записаться на смену</button>
+        <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+        <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-show="myself.vk_id">Записать на смену</button>
+        <?php } ?>
+
         <button class="btn" ng-click="show_edit=false" ng-init="show_add=false" ng-show="show_edit">Скрыть редактирование</button>
 
         <div ng-show="show_add || show_edit" ng-init="show_edit=false">

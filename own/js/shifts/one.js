@@ -282,7 +282,7 @@ function get_shift(shiftid) {
             })
 
 
-
+console.log($scope)
             $scope.$apply();
             console.log($scope.adding.vk_likes)
           });
@@ -339,6 +339,7 @@ function get_shift(shiftid) {
             $scope.groups = group_json;
             $scope.$apply();
           });
+          console.log($scope)
           $scope.$apply();
         });
       }
