@@ -98,7 +98,11 @@ function get_shift(shiftid) {
           dataType: "json",
           data:  $.param(data)
         }).done(function(json) {
-          window.location.href = window.location.href;
+          var lnk = document.createElement("a");
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
+          // window.location.href = window.location.href;
         });
         console.log("submite")
       }
@@ -403,7 +407,11 @@ console.log($scope)
             $(saved).stop(true, true);
             $(saved).fadeIn("slow");
             $(saved).fadeOut("slow");
-            window.location.href = window.location.href;
+             var lnk = document.createElement("a");
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
+            // window.location.href = window.location.href;
           });
 
         });
@@ -447,7 +455,12 @@ console.log($scope)
           });
         })
       }
-      window.location.href = window.location.href;
+       var lnk = document.createElement("a");
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click");
+          console.log($(lnk))
+      // window.location.href = window.location.href;
     }
 
     $scope.submit = function() {
