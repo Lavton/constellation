@@ -22,7 +22,9 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
           <li ng-show="shift.visibility"><strong>Виден для: </strong>{{shift.visibility}} ({{groups[shift.visibility]}})</li>
           <?php } ?>   
-          <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> <textarea ng-model="shift.comments" cols=50 rows=5 disabled></textarea> </li>     
+          <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> 
+            <div class="table-bordered" ng-bind-html="shift.bbcomments" ng-show="shift.bbcomments"></div>
+            <textarea ng-model="shift.bbcomments" cols=50 rows=5 disabled></textarea> </li>     
         </ul>
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
@@ -102,7 +104,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
               vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike3"/><br/>
             </li>
             <li> <i>Комментарии</i> (любые. Про шанс поехать, про детей, про напарников. Будет видно только комсоставу) <br/>
-              <textarea ng-model="adding.comments" cols=50 rows=5></textarea>
+              <textarea ng-model="adding.comments" class="bbcode" cols=50 rows=5></textarea>
             </li>
           </ul>
         <input type="submit" class="btn btn-primary text-right" value="Записаться" ng-hide="show_edit"></input>
@@ -136,7 +138,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
             <li><strong>Дата окончания:</strong> <input type="date" ng-model="shift.finish_date" size="{{(shift.finish_date).length}}" /> </li>
             <li><strong>Место:</strong> <input type="text" ng-model="shift.place" size="{{(shift.place).length}}" /> </li>
             <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="shift.visibility" size="{{(shift.visibility).length}}" /> ({{groups[shift.visibility]}})</li>
-            <li><strong>Комментарии:</strong><br/> <textarea ng-model="shift.comments" cols=50 rows=5></textarea>  </li>
+            <li><strong>Комментарии:</strong><br/> <textarea ng-model="shift.comments" class="bbcode" cols="20" rows="5"></textarea>  </li>
           </ul>
         </div>
       </div>
@@ -173,11 +175,11 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <tbody>
   <tr>
     <td><a href={{"//vk.com/"+myself.domain}} target="_blank"> <img ng-src="{{myself.photo_50}}"/></a> <br/> 
-      <a ng-click="editGuess(myself, false)" target="_blank" href="javascript:void(0);">
+      <a ng-click="editGuess(myself, false)" href="">
         ред&nbsp;-&nbsp;вать
       </a>
       <br> 
-      <a ng-click="deleteGuess()" target="_blank" href="javascript:void(0);">
+      <a ng-click="deleteGuess()" href="">
         удалить
       </a>
     </td>
@@ -185,7 +187,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     <td>
       <span ng-show="myself.fighter_id">
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) { ?>
-        <a href={{"/about/users/"+myself.fighter_id}}>
+        <a href={{"/about/users/"+myself.fighter_id}} class="ajax-nav">
           <?php } ?>
           боец
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) { ?>
@@ -253,6 +255,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
       </table>
     </td>
     <td>
+      <div  class="table-bordered" ng-bind-html="myself.bbcomments" ng-show="myself.comments"></div>
       <textarea disabled ng-model="myself.comments"></textarea>
     </td>
     <td>{{myself.cr_time}} </td>
@@ -287,11 +290,11 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
   <tr ng-repeat="want in all_apply">
     <td><a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a> <br/> 
     <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>      
-      <a ng-click="editGuess(want, true)" target="_blank" href="javascript:void(0);">
+      <a ng-click="editGuess(want, true)" href="">
         ред&nbsp;-&nbsp;вать
       </a>
       <br> 
-      <a ng-click="deleteGuess(want.vk_id)" target="_blank" href="javascript:void(0);">
+      <a ng-click="deleteGuess(want.vk_id)" href="">
         удалить
       </a>
     <?php } ?>
@@ -301,7 +304,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     <td>
       <span ng-show="want.fighter_id">
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) { ?>
-        <a href={{"/about/users/"+want.fighter_id}}>
+        <a href={{"/about/users/"+want.fighter_id}} class="ajax-nav">
           <?php } ?>
           боец
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) { ?>
@@ -371,6 +374,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     </td>
 
     <td>
+      <div  class="table-bordered" ng-bind-html="want.bbcomments" ng-show="want.comments"></div>
       <textarea disabled ng-model="want.comments"></textarea>
     </td>
     <?php } ?>
@@ -383,8 +387,8 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 
 </div>
 
-<br/><br/><a href="#" class="shift_priv"><<предыдущая</a> &nbsp; &nbsp;
-<a href="#" class="shift_next pull-right">следующая>></a>
+<br/><br/><a href="#" class="shift_priv" class="ajax-nav"><<предыдущая</a> &nbsp; &nbsp;
+<a href="#" class="shift_next pull-right" class="ajax-nav">следующая>></a>
 
 
 <?php

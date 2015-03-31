@@ -126,13 +126,23 @@ function BBCode2Html($text) {
 	
 	return $text;
 }
+
+function BBCodes2Html($codes) {
+    $result = array();
+    foreach ($codes as $key => $value) {
+      array_push($result, array("vk_id" => $value["vk_id"], "bbcomment" => BBCode2Html($value["comment"])));
+    }
+    echo json_encode($result);
+}
+
 // echo "$_POST";
 if (isset($_POST["ownaction"]) && !empty($_POST["ownaction"])) { //Checks if action value exists
 	$action = $_POST["ownaction"];
 	// echo $action;
 	switch($action) {
-		case "bbcodeToHtml": 
-			echo BBCode2Html($_POST["bbcode"]); 
+		case "bbcodeToHtml": echo BBCode2Html($_POST["bbcode"]); 
+			break;
+		case "bbcodesToHtml": BBCodes2Html($_POST["bbcode"]); 
 			break;
 	}
 } else {

@@ -25,7 +25,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
     </thead>
     <tbody>
       <tr ng-repeat="fighter in fighters | filter:query" class="{{fighter.id}}">
-        <td class="ids {{hidden_ids}}"><a href='users/{{fighter.id}}'>{{fighter.id}}</a></td>
+        <td class="ids {{hidden_ids}}"><a href='users/{{fighter.id}}' class="ajax-nav">{{fighter.id}}</a></td>
         <td class="inputs {{hidden_inputs}}"> 
           <input type="checkbox" checklist-model="fighters.selected_f" checklist-value="fighter" ng-click="checkClicked()">
         </td>
@@ -44,7 +44,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
     </thead>
     <tbody>
       <tr ng-repeat="fighter in fighters.selected_f | orderBy:id" class="{{fighter.id}}">
-        <td><a href='users/{{fighter.id}}'>{{fighter.id}}</a></td>
+        <td><a href='users/{{fighter.id}}' class="ajax-nav">{{fighter.id}}</a></td>
         <td><img ng-src="{{fighter.photo_100}}" /></td>
         <td>
           <ul>

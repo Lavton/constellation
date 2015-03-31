@@ -10,30 +10,30 @@
 // Feel free to add more tags
 // ----------------------------------------------------------------------------
 mySettings = {
-	previewParserPath:	"markitup/sets/bbcode/parser.php", // path to your BBCode parser
+	previewParserPath:	"/markitup/sets/bbcode/parser.php", // path to your BBCode parser
 	markupSet: [
-		{name:'Bold', key:'B', openWith:'[b]', closeWith:'[/b]'},
-		{name:'Italic', key:'I', openWith:'[i]', closeWith:'[/i]'},
-		{name:'Underline', key:'U', openWith:'[u]', closeWith:'[/u]'},
+		{name:'Полужирный', key:'B', openWith:'[b]', closeWith:'[/b]'},
+		{name:'Курсив', key:'I', openWith:'[i]', closeWith:'[/i]'},
+		{name:'Подчёркивание', key:'U', openWith:'[u]', closeWith:'[/u]'},
 		{separator:'---------------' },
-		{name:'Picture', key:'P', replaceWith:'[img][![Url]!][/img]'},
-		{name:'Link', key:'L', openWith:'[url=[![Url]!]]', closeWith:'[/url]', placeHolder:'Your text to link here...'},
+		{name:'Картинка', key:'P', replaceWith:'[img][![Url]!][/img]'},
+		{name:'Ссылка', key:'L', openWith:'[url=[![Url]!]]', closeWith:'[/url]', placeHolder:'Your text to link here...'},
 		{separator:'---------------' },
-		{name:'Size', key:'S', openWith:'[size=[![Text size]!]]', closeWith:'[/size]',
+		{name:'Размер', key:'S', openWith:'[size=[![Text size]!]]', closeWith:'[/size]',
 		dropMenu :[
-			{name:'Big', openWith:'[size=200]', closeWith:'[/size]' },
-			{name:'Normal', openWith:'[size=100]', closeWith:'[/size]' },
-			{name:'Small', openWith:'[size=50]', closeWith:'[/size]' }
+			{name:'Большой', openWith:'[size=200]', closeWith:'[/size]' },
+			{name:'Нормальный', openWith:'[size=100]', closeWith:'[/size]' },
+			{name:'Маленький', openWith:'[size=50]', closeWith:'[/size]' }
 		]},
 		{separator:'---------------' },
-		{name:'Bulleted list', openWith:'[list]\n', closeWith:'\n[/list]'},
-		{name:'Numeric list', openWith:'[list=[![Starting number]!]]\n', closeWith:'\n[/list]'}, 
-		{name:'List item', openWith:'[*] '},
+		{name:'Ненумерованный список', openWith:'[list]\n', closeWith:'\n[/list]'},
+		{name:'Нумерованный список', openWith:'[list=[![Starting number]!]]\n', closeWith:'\n[/list]'}, 
+		{name:'Пункт списка', openWith:'[*] '},
 		{separator:'---------------' },
-		{name:'Quotes', openWith:'[quote]', closeWith:'[/quote]'},
-		{name:'Code', openWith:'[code]', closeWith:'[/code]'}, 
+		{name:'Цитата', openWith:'[quote]', closeWith:'[/quote]'},
+		{name:'Вставить код', openWith:'[code]', closeWith:'[/code]'}, 
 		{separator:'---------------' },
-		{name:'Clean', className:"clean", replaceWith:function(markitup) { return markitup.selection.replace(/\[(.*?)\]/g, "") } },
-		{name:'Preview', className:"preview", call:'preview' }
+		{name:'Удалить теги', className:"clean", replaceWith:function(markitup) { return markitup.selection.replace(/\[(.*?)\]/g, "") } },
+		{name:'Предпросмотр', className:"preview", call:'preview' }
 	]
 }

@@ -19,14 +19,14 @@
       не только развлекать, но и отвечать за детей.
     </p>
     <ul>
-      <li><a href="mustdo">к лагерю необходимо сделать</a></li>
-      <li><a href="mustbe">правовая основа</a></li>
-      <li><a href="musthave">чемодан вожатого</a></li>
-      <li><a href="map">территория и люди</a></li>
-      <li><a href="time">распорядок, периоды и мероприятия</a></li>
-      <li><a href="age">возрастные особенности</a></li>
+      <li><a href="mustdo" class="ajax-nav">к лагерю необходимо сделать</a></li>
+      <li><a href="mustbe" class="ajax-nav">правовая основа</a></li>
+      <li><a href="musthave" class="ajax-nav">чемодан вожатого</a></li>
+      <li><a href="map" class="ajax-nav">территория и люди</a></li>
+      <li><a href="time" class="ajax-nav">распорядок, периоды и мероприятия</a></li>
+      <li><a href="age" class="ajax-nav">возрастные особенности</a></li>
       <hr>
-      <li><a href="knowledges">источники знаний</a></li>
+      <li><a href="knowledges" class="ajax-nav">источники знаний</a></li>
     </ul>
   </div> <!-- /container -->
 

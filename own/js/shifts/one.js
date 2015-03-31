@@ -14,7 +14,7 @@ function get_shift(shiftid) {
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
       if ((typeof(angular) !== "undefined") && (shiftid != "users")) {
         if (window.shifts.one_angular_conroller == null) {
-          window.shifts.one_angular_conroller = angular.module('one_sc_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
+          window.shifts.one_angular_conroller = angular.module('one_sc_app', ["ngSanitize"], function($httpProvider) { //магия, чтобы PHP понимал запрос
             // Используем x-www-form-urlencoded Content-Type
             $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
             // Переопределяем дефолтный transformRequest в $http-сервисе
@@ -165,6 +165,25 @@ function get_shift(shiftid) {
           console.log(json);
           $scope.myself = json.myself;
           $scope.all_apply = json.all_apply;
+          var comments = [{vk_id: json.myself.vk_id, comment: json.myself.comments}]
+          _.each(json.all_apply, function(element, index, list) {
+            comments.push({vk_id: element.vk_id, comment: element.comments});
+          });
+          var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
+          $.ajax({
+            type: "POST",
+            url: "/markitup/sets/bbcode/parser.php",
+            dataType: 'json',
+            global: false,
+            data: $.param(bbdata)
+          }).done(function(rdata) {
+            $scope.myself.bbcomments = _.findWhere(rdata, {vk_id: $scope.myself.vk_id}).bbcomment;
+            _.each($scope.all_apply, function(element, index, list) {
+              element.bbcomments = _.findWhere(rdata, {vk_id: element.vk_id}).bbcomment;
+            });
+            $scope.$apply();
+          });
+
 
           //формируем запрос сразу для всех нужных id
           var vk_ids = []
@@ -286,7 +305,6 @@ function get_shift(shiftid) {
             })
 
 
-console.log($scope)
             $scope.$apply();
             console.log($scope.adding.vk_likes)
           });
@@ -343,6 +361,19 @@ console.log($scope)
             $scope.groups = group_json;
             $scope.$apply();
           });
+
+          var bbdata =  {bbcode: $scope.shift.comments, ownaction: "bbcodeToHtml"};
+          $.ajax({
+            type: "POST",
+            url: "/markitup/sets/bbcode/parser.php",
+            dataType: 'text',
+            global: false,
+            data: $.param(bbdata)
+          }).done(function(rdata) {
+            $scope.shift.bbcomments = rdata,
+            $scope.$apply();
+          });
+
           console.log($scope)
           $scope.$apply();
         });
@@ -457,6 +488,7 @@ console.log($scope)
       }
        var lnk = document.createElement("a");
           $(lnk).attr("href", window.location.href);
+          $(lnk).attr("class", "ajax-nav");
           $("#page-container").append(lnk);
           $(lnk).trigger("click");
           console.log($(lnk))
@@ -503,6 +535,20 @@ console.log($scope)
           data[index] = null;
         }
       })
+
+          var bbdata =  {bbcode: $scope.shift.comments, ownaction: "bbcodeToHtml"};
+          $.ajax({
+            type: "POST",
+            url: "/markitup/sets/bbcode/parser.php",
+            dataType: 'text',
+            global: false,
+            data: $.param(bbdata)
+          }).done(function(rdata) {
+            $scope.shift.bbcomments = rdata,
+            $scope.$apply();
+          });
+
+
       console.log(data)
       $http.post('/handlers/shift.php', data).success(function(response) {
         console.log(response)

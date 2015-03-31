@@ -48,7 +48,9 @@
   <?php
   }
   ?>
-
+  <script type="text/javascript">
+  $('.bbcode').markItUp(mySettings);
+  </script>
 </div>
 </body>
 </html>

@@ -9,24 +9,24 @@
       <div class="row">
         <div class="col-xs-9">
           <div class="logo-cell">
-            <a href="/">
+            <a href="/" class="ajax-nav">
               <div class="logo-container">
                 СПО "СОзвездие"
               </div>
             </a>
           </div>
           <ul>
-            <a href="/method/" class="method index">
+            <a href="/method/" class="method index ajax-nav">
               <li class=""> 
                 База знаний <i class="fa fa-caret-down"></i>
               </li>
             </a>
-            <a href="/events/" class="events index">
+            <a href="/events/" class="events index ajax-nav">
               <li class="">
                 Мероприятия <i class="fa fa-caret-down"></i>
               </li>
             </a>
-            <a href="/about" class="about index">
+            <a href="/about" class="about index ajax-nav">
               <li class="about-us">
                 О нас <i class="fa fa-caret-down"></i>
               </li>
@@ -39,11 +39,11 @@
             check_session();
             session_start();
             if (isset($_SESSION["user"])) {
-              echo '<a href="/about/users/0">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
+              echo '<a href="/about/users/0" class="ajax-nav">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } elseif (isset($_SESSION["vk_id"])) {
-               echo '<a href="/about/users/0"><img src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
+               echo '<a href="/about/users/0" class="ajax-nav"><img src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } else {
-              echo '<a href="/login">Войти</a>';
+              echo '<a href="/login" class="ajax-nav">Войти</a>';
             }
             ?>
             </span>
@@ -61,17 +61,17 @@
             <div class="col-xs-12">
               <div class="logo-cell"></div>
               <ul>
-                <a href="/about/glossary">
+                <a href="/about/glossary" class="ajax-nav">
                   <li class="">
                     Об отрядах
                   </li>
                 </a>
-                <a href="/about/history">
+                <a href="/about/history" class="ajax-nav">
                   <li class="">
                     Наша история
                   </li>
                 </a>
-                <a href="/about/users" class="about faces">
+                <a href="/about/users" class="about faces ajax-nav">
                   <li class="">
                     Отряд в лицах
                   </li>
@@ -89,12 +89,12 @@
             <div class="col-xs-12">
               <div class="logo-cell"></div>
               <ul>
-                <a href="/events/" class="events index-t">
+                <a href="/events/" class="events index-t ajax-nav">
                   <li class="events index-t">
                     Мероприятия
                   </li>
                 </a>
-                <a href="/events/shifts" class="events shifts">
+                <a href="/events/shifts" class="events shifts ajax-nav">
                   <li class="">
                     Смены
                   </li>
@@ -112,12 +112,12 @@
             <div class="col-xs-12">
               <div class="logo-cell"></div>
               <ul>
-                <a href="/method/" class="method index-t">
+                <a href="/method/" class="method index-t ajax-nav">
                   <li class="method index-t">
                     Наработки
                   </li>
                 </a>
-                <a href="/method/games" class="method shifts">
+                <a href="/method/games" class="method shifts ajax-nav">
                   <li class="">
                     Игры и Развлечения
                   </li>

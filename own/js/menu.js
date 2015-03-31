@@ -7,7 +7,7 @@ if (typeof String.prototype.startsWith != 'function') {
 (function() {
 
 	if (history.pushState) { // если поддерживает HTML5 History API
-	    $('body').on('click', 'a', function(event) // вешаем обработчик на все ссылки, даже созданные после загрузки страницы
+	    $('body').on('click', 'a.ajax-nav', function(event) // вешаем обработчик на все ссылки, даже созданные после загрузки страницы
 	    {
 	    	if ($(this).attr('target') != "_blank") {
 		    	var url = $(this).attr('href');
