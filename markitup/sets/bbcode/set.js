@@ -16,22 +16,23 @@ mySettings = {
 		{name:'Курсив', key:'I', openWith:'[i]', closeWith:'[/i]'},
 		{name:'Подчёркивание', key:'U', openWith:'[u]', closeWith:'[/u]'},
 		{separator:'---------------' },
-		{name:'Картинка', key:'P', replaceWith:'[img][![Url]!][/img]'},
+		// {name:'Картинка', key:'P', replaceWith:'[img][![Url]!][/img]'},
 		{name:'Ссылка', key:'L', openWith:'[url=[![Url]!]]', closeWith:'[/url]', placeHolder:'Your text to link here...'},
 		{separator:'---------------' },
-		{name:'Размер', key:'S', openWith:'[size=[![Text size]!]]', closeWith:'[/size]',
+/*		{name:'Размер', key:'S', openWith:'[size=[![Text size]!]]', closeWith:'[/size]',
 		dropMenu :[
 			{name:'Большой', openWith:'[size=200]', closeWith:'[/size]' },
 			{name:'Нормальный', openWith:'[size=100]', closeWith:'[/size]' },
 			{name:'Маленький', openWith:'[size=50]', closeWith:'[/size]' }
 		]},
 		{separator:'---------------' },
-		{name:'Ненумерованный список', openWith:'[list]\n', closeWith:'\n[/list]'},
+*/		{name:'Ненумерованный список', openWith:'[list]\n', closeWith:'\n[/list]'},
 		{name:'Нумерованный список', openWith:'[list=[![Starting number]!]]\n', closeWith:'\n[/list]'}, 
 		{name:'Пункт списка', openWith:'[*] '},
-		{separator:'---------------' },
+/*		{separator:'---------------' },
 		{name:'Цитата', openWith:'[quote]', closeWith:'[/quote]'},
 		{name:'Вставить код', openWith:'[code]', closeWith:'[/code]'}, 
+*/
 		{separator:'---------------' },
 		{name:'Удалить теги', className:"clean", replaceWith:function(markitup) { return markitup.selection.replace(/\[(.*?)\]/g, "") } },
 		{name:'Предпросмотр', className:"preview", call:'preview' }

@@ -177,7 +177,9 @@ function get_shift(shiftid) {
             global: false,
             data: $.param(bbdata)
           }).done(function(rdata) {
-            $scope.myself.bbcomments = _.findWhere(rdata, {vk_id: $scope.myself.vk_id}).bbcomment;
+            if ($scope.myself) {
+              $scope.myself.bbcomments = _.findWhere(rdata, {vk_id: $scope.myself.vk_id}).bbcomment;
+            }
             _.each($scope.all_apply, function(element, index, list) {
               element.bbcomments = _.findWhere(rdata, {vk_id: element.vk_id}).bbcomment;
             });

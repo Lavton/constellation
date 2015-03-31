@@ -24,7 +24,6 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
           <?php } ?>   
           <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> 
             <div class="table-bordered" ng-bind-html="shift.bbcomments" ng-show="shift.bbcomments"></div>
-            <textarea ng-model="shift.bbcomments" cols=50 rows=5 disabled></textarea> </li>     
         </ul>
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
@@ -256,7 +255,6 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     </td>
     <td>
       <div  class="table-bordered" ng-bind-html="myself.bbcomments" ng-show="myself.comments"></div>
-      <textarea disabled ng-model="myself.comments"></textarea>
     </td>
     <td>{{myself.cr_time}} </td>
   </tr>
@@ -375,7 +373,6 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 
     <td>
       <div  class="table-bordered" ng-bind-html="want.bbcomments" ng-show="want.comments"></div>
-      <textarea disabled ng-model="want.comments"></textarea>
     </td>
     <?php } ?>
     <td>{{want.cr_time}} </td>
