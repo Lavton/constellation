@@ -99,6 +99,7 @@ function get_shift(shiftid) {
           data:  $.param(data)
         }).done(function(json) {
           var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
           $(lnk).attr("href", window.location.href);
           $("#page-container").append(lnk);
           $(lnk).trigger("click")
@@ -375,7 +376,7 @@ function get_shift(shiftid) {
             $scope.shift.bbcomments = rdata,
             $scope.$apply();
           });
-
+          //TODO make works all html. (jquery?)
           console.log($scope)
           $scope.$apply();
         });
@@ -441,6 +442,7 @@ function get_shift(shiftid) {
             $(saved).fadeIn("slow");
             $(saved).fadeOut("slow");
              var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
           $(lnk).attr("href", window.location.href);
           $("#page-container").append(lnk);
           $(lnk).trigger("click")
@@ -489,8 +491,9 @@ function get_shift(shiftid) {
         })
       }
        var lnk = document.createElement("a");
+       lnk.setAttribute("class", "ajax-nav")
           $(lnk).attr("href", window.location.href);
-          $(lnk).attr("class", "ajax-nav");
+          
           $("#page-container").append(lnk);
           $(lnk).trigger("click");
           console.log($(lnk))
