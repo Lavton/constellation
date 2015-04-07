@@ -574,9 +574,20 @@ function get_shift(shiftid) {
       comments: ""
 
     };
+    $scope.newdetachment.fieldKeys = [];
+
+    $scope.newdetachment.setFieldKeys = function() {
+        var keys = [];
+        for (var i = ($scope.newdetachment.people).length - 1; i >= 0; i--) {
+          keys.push(i);
+        };
+        $scope.newdetachment.fieldKeys = keys;
+    }
+    $scope.newdetachment.setFieldKeys();
 
     $scope.addNewPersonDetach = function() {
       $scope.newdetachment.people.push("");
+      $scope.newdetachment.setFieldKeys();
     }
 
     $scope.addDetachment = function() {
@@ -586,6 +597,40 @@ function get_shift(shiftid) {
         $(".addDetachment").text("Скрыть добавление")
       }
       $scope.add_det = !$scope.add_det;      
+    }
+
+    $scope.addDetachmentSubmit = function() {
+      console.log($scope.newdetachment)
+      var data_vk = {user_ids: $scope.newdetachment.people, fields: ["domain"]}
+          $.ajax({
+            type: "GET",
+            url: "https://api.vk.com/method/users.get",
+            dataType: "jsonp",
+            data:  $.param(data_vk)
+          }).done(function(response) {
+            console.log(response.response);
+            _.each(response.response, function(element, index, list){
+              var idxxx = -1;
+              _.find($scope.newdetachment.people, function(p, pind){if (p==element.domain) {idxxx = pind}; return p==element.domain})
+              if (idxxx != -1) {
+               $scope.newdetachment.people[idxxx] = element.uid;
+              }
+            })
+            var new_people = [];
+            for (var i=0; i < $scope.newdetachment.people.length; i++) {
+              if ($scope.newdetachment.people[i]) {
+                new_people.push($scope.newdetachment.people[i])
+              }
+            };
+            var data = {
+              comments: $scope.newdetachment.comments,
+              people: new_people.join("$"),
+              action: "addDetachment",
+              shift: $scope.shift.id
+            }
+            console.log(data);
+            $scope.$apply();
+          });
     }
 
     $scope.resetInfo = function() {

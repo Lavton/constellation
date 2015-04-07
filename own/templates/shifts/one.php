@@ -15,7 +15,8 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     </div>
     <div class="row own-row">
       <div class="col-xs-5 info-str">
-        <ul>
+
+        <ul ng-hide="add_det">
           <li ng-show="shift.start_date"><strong>Дата начала:</strong> {{shift.start_date | date: 'dd.MM.yyyy'}} </li>
           <li ng-show="shift.finish_date"><strong>Дата окончания:</strong> {{shift.finish_date | date: 'dd.MM.yyyy'}} </li>
           <li ng-show="shift.place"><strong>Место:</strong> {{shift.place}} </li>
@@ -25,6 +26,23 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
           <li ng-show="shift.comments"><strong>Комментарии:</strong><br/> 
             <div class="table-bordered" ng-bind-html="shift.bbcomments" ng-show="shift.bbcomments"></div>
         </ul>
+
+        <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+        <ul ng-show="add_det">
+          <li ng-show="myself.vk_id"> 
+            <a href={{"//vk.com/"+myself.domain}} target="_blank"> <img ng-src="{{myself.photo_50}}"/></a>
+            {{myself.first_name}} {{myself.last_name}}; vk.com/<input type="text" placeholder="домен VK" ng-model="myself.domain" disabled size="{{(myself.domain).length}}"/>
+          </li>
+
+          <li ng-repeat="want in all_apply">
+            <a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a>
+            {{want.first_name}} {{want.last_name}}; vk.com/<input type="text" placeholder="домен VK" ng-model="want.domain" disabled size="{{(want.domain).length}}"/>
+          </li>
+
+        </ul>
+        <?php } ?>
+
+
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
         <div class="table-bordered"> 
@@ -34,15 +52,17 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
             <?php } ?>
           </h2>
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
-          <div ng-show="add_det">
+          <form ng-show="add_det">
+          <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()">Создать расстановку</button>
+
             <button ng-click="addNewPersonDetach()">добавить человека</button><br>
             <i>Вставьте домен ВК или имя человека, если он не из со*</i><br>
-            <span ng-repeat="person in newdetachment.people">
-              vk.com/<input type="text" ng-model="person" placeholder="домен VK"/> <br>
+            <span ng-repeat="key in newdetachment.fieldKeys">
+              vk.com/<input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <br>
             </span>
             какие дети, комментарии, дополнения и т.п.<br>
             <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
-          </div>
+          </form>
           <?php } ?>
  
         </div><!-- расстановка -->
