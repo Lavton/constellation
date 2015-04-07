@@ -27,6 +27,26 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
         </ul>
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
+        <div class="table-bordered"> 
+          <h2>Расстановка 
+            <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+              <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
+            <?php } ?>
+          </h2>
+          <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+          <div ng-show="add_det">
+            <button ng-click="addNewPersonDetach()">добавить человека</button><br>
+            <i>Вставьте домен ВК или имя человека, если он не из со*</i><br>
+            <span ng-repeat="person in newdetachment.people">
+              vk.com/<input type="text" ng-model="person" placeholder="домен VK"/> <br>
+            </span>
+            какие дети, комментарии, дополнения и т.п.<br>
+            <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
+          </div>
+          <?php } ?>
+ 
+        </div><!-- расстановка -->
+
         <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id">Записаться на смену</button>
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
         <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-show="myself.vk_id">Записать на смену</button>

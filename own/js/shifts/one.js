@@ -382,6 +382,8 @@ function get_shift(shiftid) {
         });
       }
     }, 100);
+
+
     $scope.guessAdd = function(is_edit) {
       var data = $scope.adding;
       var qw;
@@ -565,6 +567,27 @@ function get_shift(shiftid) {
       console.log("submite")
 
     }
+
+    $scope.detachment = [];
+    $scope.newdetachment = {
+      people: ["", ],
+      comments: ""
+
+    };
+
+    $scope.addNewPersonDetach = function() {
+      $scope.newdetachment.people.push("");
+    }
+
+    $scope.addDetachment = function() {
+      if ($scope.add_det) {
+        $(".addDetachment").text("добавить отряд в расстановку")
+      } else {
+        $(".addDetachment").text("Скрыть добавление")
+      }
+      $scope.add_det = !$scope.add_det;      
+    }
+
     $scope.resetInfo = function() {
       $scope.shift = angular.copy($scope.master);
     }
