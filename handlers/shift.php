@@ -12,6 +12,7 @@ if (is_ajax()) {
       case "apply_to_shift": apply_to_shift(); break;
       case "edit_appliing": edit_appliing(); break;
       case "del_from_shift": del_from_shift(); break;
+      case "add_detachment": add_detachment(); break;
 		}
 	}
 }
@@ -97,8 +98,15 @@ function get_one_info() {
     while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
       array_push($result["all_apply"], $line);
     }
+
+    $query = "SELECT * FROM detachments ORDER BY id;";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["detachments"] = array();
+    while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+      array_push($result["detachments"], $line);
+    }
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
-      $result["shift"] = array();
+      $result = array();
     }
 
     $result["result"] = "Success";
@@ -181,7 +189,7 @@ function kill_shift() {
   }
 }
 
-//добавляет пользователя
+//добавляет cмену
 function add_new_shift() {
   check_session();
   session_start();
@@ -452,6 +460,48 @@ function edit_appliing() {
     }
     $conc = implode(", ", $conc);
     $query = "UPDATE guess_shift SET ".$conc." WHERE (vk_id='".$_POST['vk_id']."' AND shift_id=".$_POST["shift_id"].");";
+    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $result["result"] = "Success";
+    echo json_encode($result);
+  }
+
+}
+
+function add_detachment() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
+      or die('Не удалось соединиться: ' . mysql_error());
+    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
+    // Выполняем SQL-запрос
+    @mysql_query("Set charset utf8");
+    @mysql_query("Set character_set_client = utf8");
+    @mysql_query("Set character_set_connection = utf8");
+    @mysql_query("Set character_set_results = utf8");
+    @mysql_query("Set collation_connection = utf8_general_ci");
+
+    $names = array();
+    $values = array();
+    if (isset($_POST["shift_id"])) {
+      array_push($names, "shift_id");
+      array_push($values, "'".$_POST["shift_id"]."'");
+    }
+    if (isset($_POST["people"])) {
+      array_push($names, "people");
+      array_push($values, "'".$_POST["people"]."'");
+    }
+    if (isset($_POST["comments"])) {
+      array_push($names, "comments");
+      array_push($values, "'".$_POST["comments"]."'");
+    }
+
+
+    $names = implode(", ", $names);
+    $values = implode(", ", $values);
+    $query = "INSERT INTO detachments (".$names.") VALUES (".$values.");";
+    // $result["qw"] = $query;
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["result"] = "Success";
     echo json_encode($result);

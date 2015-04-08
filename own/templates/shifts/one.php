@@ -45,7 +45,11 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 
       </div>
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
+        <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
         <div class="table-bordered"> 
+        <?php } else { ?>
+        <div class="table-bordered" ng-show="detachments.length"> 
+        <?php } ?>
           <h2>Расстановка 
             <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>

@@ -166,6 +166,7 @@ function get_shift(shiftid) {
           console.log(json);
           $scope.myself = json.myself;
           $scope.all_apply = json.all_apply;
+          $scope.detachments = json.detachments;
           var comments = [{vk_id: json.myself.vk_id, comment: json.myself.comments}]
           _.each(json.all_apply, function(element, index, list) {
             comments.push({vk_id: element.vk_id, comment: element.comments});
@@ -187,6 +188,24 @@ function get_shift(shiftid) {
             $scope.$apply();
           });
 
+          $scope.detachments = json.detachments;
+          var comments = []
+          _.each(json.detachments, function(element, index, list) {
+            comments.push({in_id: element.in_id, comment: element.comments});
+          });
+          var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
+          $.ajax({
+            type: "POST",
+            url: "/markitup/sets/bbcode/parser.php",
+            dataType: 'json',
+            global: false,
+            data: $.param(bbdata)
+          }).done(function(rdata) {
+            _.each($scope.detachments, function(element, index, list) {
+              element.bbcomments = _.findWhere(rdata, {in_id: element.in_id}).bbcomment;
+            });
+            $scope.$apply();
+          });
 
           //формируем запрос сразу для всех нужных id
           var vk_ids = []
@@ -625,10 +644,23 @@ function get_shift(shiftid) {
             var data = {
               comments: $scope.newdetachment.comments,
               people: new_people.join("$"),
-              action: "addDetachment",
-              shift: $scope.shift.id
+              action: "add_detachment",
+              shift_id: $scope.shift.id
             }
-            console.log(data);
+            console.log("lets go!")
+            console.log(data)
+            $.ajax({ //TODO: make with angular
+              type: "POST",
+              url: "/handlers/shift.php",
+              dataType: "json",
+              data:  $.param(data)
+            }).done(function(json) {
+              var lnk = document.createElement("a");
+              lnk.setAttribute("class", "ajax-nav")
+              $(lnk).attr("href", window.location.href);
+              $("#page-container").append(lnk);
+              $(lnk).trigger("click")
+            });
             $scope.$apply();
           });
     }

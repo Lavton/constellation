@@ -6,17 +6,18 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) |
 <div class="starter-template">
   <div class="row own-row">
     <div class="col-xs-4">
-      <div class="vk-g"><div id="vk_groups"></div></div>
+      <div class="in-w"><iframe src='/inwidget/index.php?view=16&inline=4' scrolling='no' frameborder='no' style='border:none;width:260px;height:400px;overflow:hidden;'></iframe>
+      </div>
     </div>
     <div class="col-xs-4">
       <h1>CПО "СОзвездие"</h1>
       <p class="lead">Мы - 
         <ul>
-      	<u>
-      		<li><b>С</b>туденческий - большинство из нас студенты ВУЗов</li>
+        <u>
+          <li><b>С</b>туденческий - большинство из нас студенты ВУЗов</li>
           <li><b>П</b>едагогический - мы ездим в лагеря вожатыми и воспитателями</li>
           <li><b>О</b>тряд - вместе не только в лагере, но весь год!</li>
-      	</u>
+        </u>
         </ul>
       </p>
       <p class="lead">Хочешь к нам? приходи на ШВМы! 
@@ -25,8 +26,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) |
       <p class="lead"> Если вы - представитель лагеря и ищете молодых и активных вожатых - пишите <a href="https://vk.com/page-19748633_38662439" target="blank">сюда</a> </p>
     </div>
     <div class="col-xs-4">
-      <div class="in-w"><iframe src='/inwidget/index.php?view=16&inline=4' scrolling='no' frameborder='no' style='border:none;width:260px;height:400px;overflow:hidden;'></iframe>
-      </div>
+      <div class="vk-g"><div id="vk_groups"></div></div>
     </div>
   </div>
 </div>
