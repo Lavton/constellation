@@ -99,7 +99,7 @@ function get_one_info() {
       array_push($result["all_apply"], $line);
     }
 
-    $query = "SELECT * FROM detachments ORDER BY id;";
+    $query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='".$_POST['id']."') ORDER BY id;";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["detachments"] = array();
     while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {

@@ -38,7 +38,6 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
             <a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a>
             {{want.first_name}} {{want.last_name}}; vk.com/<input type="text" placeholder="домен VK" ng-model="want.domain" disabled size="{{(want.domain).length}}"/>
           </li>
-
         </ul>
         <?php } ?>
 
@@ -55,6 +54,23 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
             <?php } ?>
           </h2>
+          <ul>
+            <li ng-repeat="(key, detachment) in detachments">
+              <!-- {{detachment | json}} -->
+              {{key+1}}
+              <ul>
+                <li ng-repeat="person in detachment.people">
+                  <span ng-show="person.uid">
+                    <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
+                  {{person.first_name}} {{person.last_name}}
+                  </span> <span ng-hide="person.uid">{{person}}</span>
+                </li>
+              </ul>
+              <div  class="table-bordered" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
+
+            </li>
+          </ul>
+
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
           <form ng-show="add_det">
           <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()">Создать расстановку</button>

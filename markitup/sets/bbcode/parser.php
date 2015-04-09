@@ -130,7 +130,7 @@ function BBCode2Html($text) {
 function BBCodes2Html($codes) {
     $result = array();
     foreach ($codes as $key => $value) {
-      array_push($result, array("vk_id" => $value["vk_id"], "bbcomment" => BBCode2Html($value["comment"])));
+      array_push($result, array("id" => $value["id"], "bbcomment" => BBCode2Html($value["comment"])));
     }
     echo json_encode($result);
 }

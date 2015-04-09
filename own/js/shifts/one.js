@@ -167,9 +167,9 @@ function get_shift(shiftid) {
           $scope.myself = json.myself;
           $scope.all_apply = json.all_apply;
           $scope.detachments = json.detachments;
-          var comments = [{vk_id: json.myself.vk_id, comment: json.myself.comments}]
+          var comments = [{id: json.myself.vk_id, comment: json.myself.comments}]
           _.each(json.all_apply, function(element, index, list) {
-            comments.push({vk_id: element.vk_id, comment: element.comments});
+            comments.push({id: element.vk_id, comment: element.comments});
           });
           var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
           $.ajax({
@@ -180,10 +180,10 @@ function get_shift(shiftid) {
             data: $.param(bbdata)
           }).done(function(rdata) {
             if ($scope.myself) {
-              $scope.myself.bbcomments = _.findWhere(rdata, {vk_id: $scope.myself.vk_id}).bbcomment;
+              $scope.myself.bbcomments = _.findWhere(rdata, {id: $scope.myself.vk_id}).bbcomment;
             }
             _.each($scope.all_apply, function(element, index, list) {
-              element.bbcomments = _.findWhere(rdata, {vk_id: element.vk_id}).bbcomment;
+              element.bbcomments = _.findWhere(rdata, {id: element.vk_id}).bbcomment;
             });
             $scope.$apply();
           });
@@ -191,8 +191,10 @@ function get_shift(shiftid) {
           $scope.detachments = json.detachments;
           var comments = []
           _.each(json.detachments, function(element, index, list) {
-            comments.push({in_id: element.in_id, comment: element.comments});
+            comments.push({id: element.in_id, comment: element.comments});
           });
+          //формируем запрос сразу для всех нужных id
+          var vk_ids = []
           var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
           $.ajax({
             type: "POST",
@@ -202,13 +204,13 @@ function get_shift(shiftid) {
             data: $.param(bbdata)
           }).done(function(rdata) {
             _.each($scope.detachments, function(element, index, list) {
-              element.bbcomments = _.findWhere(rdata, {in_id: element.in_id}).bbcomment;
+              element.bbcomments = _.findWhere(rdata, {id: element.in_id}).bbcomment;
+              element.people = element.people.split("$");
+              vk_ids.concat(element.people);
             });
             $scope.$apply();
           });
 
-          //формируем запрос сразу для всех нужных id
-          var vk_ids = []
           _.each(json.like_h, function(element, index, list) {
             vk_ids.push(element.vk_id);
           });
@@ -228,7 +230,8 @@ function get_shift(shiftid) {
             vk_ids.push(element.dislike_two)
             vk_ids.push(element.dislike_three)            
           })
-          var data_vk = {user_ids: vk_ids, fields: ["domain", "photo_50"]}
+
+          var data_vk = {user_ids: _.unique(vk_ids), fields: ["domain", "photo_50"]}
           $.ajax({
             type: "GET",
             url: "https://api.vk.com/method/users.get",
@@ -247,6 +250,25 @@ function get_shift(shiftid) {
               element.fighter = element.fighter_id;
             });
             $scope.adding.vk_likes = json.like_h;
+
+            _.each($scope.detachments, function(detachment, index, list){
+              _.each(detachment.people, function(person, index_p, list){
+                var vk_d = _.findWhere($scope.vk_info, {uid: person*1});
+                // _.each(vk_d, function(element2, index, list){
+                //   person[index] = vk_d[index];
+                // })
+                if (vk_d) {
+                  detachment.people[index_p] = vk_d;
+                }
+                // $scope.myself[index] = vk_d[index];
+              })
+
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself[index] = vk_d[index];
+              })
+              $scope.myself[index] = vk_d[index];
+            })
 
             // ищем инфу для данного человека
             var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
