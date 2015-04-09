@@ -46,7 +46,6 @@ $('#page-container').on('click', ".pre-add-new", function() {
       data:  $.param(data)
     }).done(function(response) {
       id_and_uid = response.ids;
-      console.log(response)
       $(".add-new-fighter-id").val(response.ids[response.ids.length-1].id*1+1);
       $(".add-new-fighter-id").addClass("own-valid")
       setInterval(function(){
@@ -69,7 +68,6 @@ $('#page-container').on('click', ".pre-add-new", function() {
       data:  $.param(data)
     }).done(function(vk_response) {
       if (vk_response.response) {
-        console.log(vk_response.response[0].uid);
         $(".add-new-fighter-d").addClass("own-valid")
         $(".add-new-fighter-d").removeClass("own-invalid")
         if (_.findWhere(id_and_uid, {vk_id: vk_response.response[0].uid+""})) {

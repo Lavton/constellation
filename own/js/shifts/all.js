@@ -9,7 +9,6 @@ if (window.shifts.angular_conroller == undefined) {
   if (typeof(angular) !== "undefined") {
     if ((window.location.pathname == "/events/shifts") && (window.shifts.angular_conroller == null)) {
       $('#page-container').on('click', ".pre-add-s-new", function() {
-        console.log("adding shift");
         var today = new Date();
         var start_date = today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate();
         var finish_date = today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate();
@@ -24,7 +23,6 @@ if (window.shifts.angular_conroller == undefined) {
           dataType: "json",
           data:  $.param(data)
         }).done(function(response) {
-          console.log(response)
           if (response.result == "Success") {
             window.location="/events/shifts/"+response.id;
           }
@@ -82,7 +80,6 @@ if (window.shifts.angular_conroller == undefined) {
 function init_angular_s_c ($scope, $http) {
   var data =  {action: "all",};
   $http.post('/handlers/shift.php', data).success(function(response) {
-    console.log(response);
     $scope.shifts = {}
     var today = new Date();
     window.shifts.scope = $scope

@@ -4,7 +4,6 @@
   /*убираем инфу с сессии и возвращаемся на страницу логина*/
   session_start();
   $_SESSION = array();
-  // @unset($_COOKIE[session_name()]);
     setcookie ("vk_id", "", time() - 10, "/");
     setcookie ("hash", "", time() - 10, "/");
     setcookie ("photo", "", time() - 10, "/");
@@ -13,7 +12,6 @@
    session_destroy();
 
 
-    // exit();
   ?>
   <meta http-equiv="Refresh" content="0; URL=/login">
 </head>

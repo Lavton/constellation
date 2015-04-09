@@ -345,7 +345,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     <th>Хочет <br> работать<br>на</th>
     <th>Возраст</th>
     
-    <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+    <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == COMMAND_STAFF)) { ?>
     <th>Хочет работать с</th>
     <th>не хочет работать с</th>
     <th>Комментарии</th>
@@ -388,7 +388,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
       <span ng-show="want.profile%2">непрофильные</span><br>
     </td>
     <td>от {{want.min_age}} до {{want.max_age}}</td>
-    <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+    <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == COMMAND_STAFF)) { ?>
     <td>
       <table>
         <tr ng-show="want.like_one">

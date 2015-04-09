@@ -65,7 +65,6 @@ function get_shift(shiftid) {
   }
   /*логика ангулара*/
   function init_angular_o_s_c ($scope, $http, $locale) {
-    console.log("hello")
     $scope.id = shiftid;
     $scope.shift = {};
     $scope.adding = {};
@@ -79,7 +78,6 @@ function get_shift(shiftid) {
     };
 
     $scope.deleteGuess = function(delid) {
-      console.log("Delete", delid);
       if (confirm("удалить заявку?")) {
         var data = {};
         data.action = "del_from_shift";
@@ -103,14 +101,11 @@ function get_shift(shiftid) {
           $(lnk).attr("href", window.location.href);
           $("#page-container").append(lnk);
           $(lnk).trigger("click")
-          // window.location.href = window.location.href;
         });
-        console.log("submite")
       }
     }
 
     $scope.editGuess = function(who, is_smbdy) {
-      console.log(who, is_smbdy)
       if ($scope.show_add) {
         $scope.tableToAdd();
       }
@@ -133,8 +128,6 @@ function get_shift(shiftid) {
       $scope.adding.dislike2 = paste_data.dislike_2.domain;
       $scope.adding.dislike3 = paste_data.dislike_3.domain;
       $scope.adding.comments = paste_data.comments;
-      console.log("pd", paste_data);
-      console.log("add", $scope.adding);
     }
 
     $scope.tableToAdd = function() {
@@ -153,7 +146,6 @@ function get_shift(shiftid) {
       if (shiftid != "users") {
         clearInterval(inthrefID);
         var data = {action: "get_one_info", id: shiftid}
-        console.log(data + " " + shiftid + " " + fid)
         // debugger;
         $scope.shift.photo_200 = "http://vk.com/images/camera_b.gif"
         $.ajax({
@@ -162,8 +154,6 @@ function get_shift(shiftid) {
           dataType: "json",
           data:  $.param(data)
         }).done(function(json) {
-          console.log("Получили с сервера "+shiftid + " "+window.location.href)
-          console.log(json);
           $scope.myself = json.myself;
           $scope.all_apply = json.all_apply;
           $scope.detachments = json.detachments;
@@ -238,7 +228,6 @@ function get_shift(shiftid) {
             dataType: "jsonp",
             data:  $.param(data_vk)
           }).done(function(response) {
-            console.log("get vk like ", response.response);
             $scope.vk_info = response.response;
             // ищем тех, кому нравится данный человек
             $scope.adding.vk_likes = [];
@@ -346,7 +335,6 @@ function get_shift(shiftid) {
 
 
             $scope.$apply();
-            console.log($scope.adding.vk_likes)
           });
 
 
@@ -389,12 +377,10 @@ function get_shift(shiftid) {
           $("a.shift_next").attr("href", json.next.mid)
           if (!json.prev.mid) {
             $("a.shift_priv").hide();
-            console.log("hide prev");
           }
 
           if (!json.next.mid) {
             $("a.shift_next").hide();
-            console.log("hide next");
           }
 
           $.getJSON("/own/group_names.json", function(group_json){
@@ -414,7 +400,6 @@ function get_shift(shiftid) {
             $scope.$apply();
           });
           //TODO make works all html. (jquery?)
-          console.log($scope)
           $scope.$apply();
         });
       }
@@ -475,7 +460,6 @@ function get_shift(shiftid) {
             dataType: "json",
             data:  $.param(data)
           }).done(function(json) {
-            console.log(json)
             var saved = $(".saved");
             $(saved).stop(true, true);
             $(saved).fadeIn("slow");
@@ -485,11 +469,9 @@ function get_shift(shiftid) {
           $(lnk).attr("href", window.location.href);
           $("#page-container").append(lnk);
           $(lnk).trigger("click")
-            // window.location.href = window.location.href;
           });
 
         });
-        console.log("submite")
       }
     }
 
@@ -535,8 +517,6 @@ function get_shift(shiftid) {
           
           $("#page-container").append(lnk);
           $(lnk).trigger("click");
-          console.log($(lnk))
-      // window.location.href = window.location.href;
     }
 
     $scope.submit = function() {
@@ -593,16 +573,12 @@ function get_shift(shiftid) {
           });
 
 
-      console.log(data)
       $http.post('/handlers/shift.php', data).success(function(response) {
-        console.log(response)
         var saved = $(".saved");
         $(saved).stop(true, true);
         $(saved).fadeIn("slow");
         $(saved).fadeOut("slow");
       });      
-      console.log("submite")
-
     }
 
     $scope.detachment = [];
@@ -637,7 +613,6 @@ function get_shift(shiftid) {
     }
 
     $scope.addDetachmentSubmit = function() {
-      console.log($scope.newdetachment)
       var data_vk = {user_ids: $scope.newdetachment.people, fields: ["domain"]}
           $.ajax({
             type: "GET",
@@ -645,7 +620,6 @@ function get_shift(shiftid) {
             dataType: "jsonp",
             data:  $.param(data_vk)
           }).done(function(response) {
-            console.log(response.response);
             _.each(response.response, function(element, index, list){
               var idxxx = -1;
               _.find($scope.newdetachment.people, function(p, pind){if (p==element.domain) {idxxx = pind}; return p==element.domain})
@@ -665,8 +639,6 @@ function get_shift(shiftid) {
               action: "add_detachment",
               shift_id: $scope.shift.id
             }
-            console.log("lets go!")
-            console.log(data)
             $.ajax({ //TODO: make with angular
               type: "POST",
               url: "/handlers/shift.php",

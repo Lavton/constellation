@@ -65,7 +65,6 @@ function get_user_info(userid) {
   }
   /*логика ангулара*/
   function init_angular_o_f_c ($scope, $http, $locale) {
-    console.log("hello")
     $locale.id = 'ru-ru' //TODO make it works(
     $scope.goodView = function(tel) {
       return tel ? "+7 ("+tel[0]+tel[1]+tel[2]+") "+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+"-"+tel[8]+tel[9] : ""
@@ -84,7 +83,6 @@ function get_user_info(userid) {
       if (userid != "users") {
         clearInterval(inthrefID);
         var data = {action: "get_one_info", id: userid}
-        console.log(data + " " + userid + " " + fid)
         // debugger;
         $scope.fighter.photo_200 = "http://vk.com/images/camera_b.gif"
         $.ajax({
@@ -93,22 +91,17 @@ function get_user_info(userid) {
           dataType: "json",
           data:  $.param(data)
         }).done(function(json) {
-          console.log("Получили с сервера "+userid + " "+window.location.href)
-          console.log(json);
           $scope.fighter = json.user;
           $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
           $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
-          console.log("start")
           $("a.profile_priv").attr("href", json.prev.mid)
           $("a.profile_next").attr("href", json.next.mid)
           if (!json.prev.mid) {
             $("a.profile_priv").hide();
-            console.log("hide prev");
           }
 
           if (!json.next.mid) {
             $("a.profile_next").hide();
-            console.log("hide next");
           }
           $.getJSON("/own/group_names.json", function(group_json){
             $scope.groups = group_json;
@@ -132,15 +125,12 @@ function get_user_info(userid) {
           data[index] = null;
         }
       })
-      console.log(data)
       $http.post('/handlers/user.php', data).success(function(response) {
-        console.log(response)
         var saved = $(".saved");
         $(saved).stop(true, true);
         $(saved).fadeIn("slow");
         $(saved).fadeOut("slow");
       });      
-      console.log("submite")
       });
     }
     $scope.resetInfo = function() {
@@ -166,7 +156,6 @@ function get_user_info(userid) {
     }
 
     $("#page-container").on("focusout", "input.vk-domain", function() {
-      console.log("out");
       get_vk()
     });
 
@@ -180,7 +169,6 @@ function get_user_info(userid) {
         dataType: "jsonp",
         data:  $.param(data_vk)
       }).done(function(json2) {
-        console.log("Получили с VK")
         if ((json2 !== undefined) && (json2.error == undefined)) {
          var user_vk = json2.response[0];
         }
@@ -191,7 +179,6 @@ function get_user_info(userid) {
           }
           
         }
-        console.log(user_vk);
         $scope.fighter.domain = user_vk.domain
         $scope.fighter.photo_200 = user_vk.photo_200;
         $scope.fighter.vk_id = user_vk.uid;

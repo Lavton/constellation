@@ -10,7 +10,6 @@ $("#page-container").on('change', 'input[type=radio][name=group_r]', function() 
       data:  $.param(data)
     }).done(function(json) {
       if (json.result == "Success") {
-        console.log(json);
         /*всплывающая надпись, что всё ОК*/
         var saved = $(".saved");
         $(saved).stop(true, true);

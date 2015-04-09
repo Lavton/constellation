@@ -14,19 +14,7 @@
   ?>
 
   <div id="page-container">
-    <!-- Put this script tag to the <head> of your page -->
-
-<!-- Put this div tag to the place, where Auth block will be -->
-<div id="auth_wrapper"><div id="vk_auth"></div></div>
-
-    <form class="form-signin" role="form">
-      <h2 class="form-signin-heading">Please sign in</h2>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputUser" class="form-control" placeholder="Username" required="" autofocus="">
-<!--       <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
- -->      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+    <div id="auth_wrapper"><div id="vk_auth"></div></div>
   </div>
 
 <?php
@@ -42,51 +30,21 @@
       if (typeof VK !== "undefined") {
         VK.init({apiId: 4602552});
         VK.Widgets.Auth("vk_auth", {width: "300px", onAuth: function(data) {
-          console.log(data);
-          // alert('user '+data['uid']+' authorized');
           var odata = _.pick(data, 'uid', 'hash', 'first_name', 'last_name', 'photo_rec');
           odata.action = "vk_auth";
-          console.log(odata)
           $.ajax({
             type: "POST",
             url: "/handlers/login.php",
             dataType: "json",
             data:  $.param(odata)
           }).done(function(json) {
-            console.log(json);
             window.location = "/";
           });
         }
        });
-        // debugger;
-        // $("#vk_auth").attr("style") = "";
         clearInterval(intID);
       }
     }, 50);
-  </script>
-
-  <script>
-  /*отправляем Ajax при заполнении формы.*/
-  $(".btn").click(function() {
-    var data =  {username: $("#inputUser").val(),};
-    data.action = "simple_auc";
-    $.ajax({
-      type: "POST",
-      url: "/handlers/login.php",
-      dataType: "json",
-      data:  $.param(data)
-    }).done(function(json) {
-      if (json.result == "Success") {
-        console.log(json);
-        $(".menu_login").html('<a href="/users/'+json.user_id+'">&nbsp;'+json.name+'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>');
-        window.location = "/";
-      } else {
-        alert("No user with such data.");
-      }
-    }).fail(function() {
-      alert("No user with such data.");
-    });
-  });
   </script>
 </div>
 </body>
