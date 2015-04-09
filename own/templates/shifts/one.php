@@ -54,23 +54,6 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
             <?php } ?>
           </h2>
-          <ul>
-            <li ng-repeat="(key, detachment) in detachments">
-              <!-- {{detachment | json}} -->
-              {{key+1}}
-              <ul>
-                <li ng-repeat="person in detachment.people">
-                  <span ng-show="person.uid">
-                    <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
-                  {{person.first_name}} {{person.last_name}}
-                  </span> <span ng-hide="person.uid">{{person}}</span>
-                </li>
-              </ul>
-              <div  class="table-bordered" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
-
-            </li>
-          </ul>
-
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
           <form ng-show="add_det">
           <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()">Создать расстановку</button>
@@ -84,7 +67,33 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
             <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
           </form>
           <?php } ?>
- 
+          <div  ng-show="edit_detachment.in_id">
+            <textarea class="bbcode" ng-model="edit_detachment.comments"></textarea>
+            <button ng-click="saveDetachComment()">сохранить комментарий</button>
+          </div>
+           <ul>
+            <li ng-repeat="(key, detachment) in detachments">
+              {{key+1}}
+              <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
+                  <a ng-click="editDetachment(key)" href="">
+                  редактировать комментарий
+                </a> | 
+                <a ng-click="deleteDetachment(key)" href="">
+                  удалить отряд
+                </a>
+              <?php } ?>
+              <ul>
+                <li ng-repeat="person in detachment.people">
+                  <span ng-show="person.uid">
+                    <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
+                  {{person.first_name}} {{person.last_name}}
+                  </span> <span ng-hide="person.uid">{{person}}</span>
+                </li>
+              </ul>
+              <div  class="table-bordered" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
+            </li>
+          </ul>
+
         </div><!-- расстановка -->
 
         <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id">Записаться на смену</button>

@@ -254,13 +254,9 @@ function get_shift(shiftid) {
             _.each($scope.detachments, function(detachment, index, list){
               _.each(detachment.people, function(person, index_p, list){
                 var vk_d = _.findWhere($scope.vk_info, {uid: person*1});
-                // _.each(vk_d, function(element2, index, list){
-                //   person[index] = vk_d[index];
-                // })
                 if (vk_d) {
                   detachment.people[index_p] = vk_d;
                 }
-                // $scope.myself[index] = vk_d[index];
               })
 
               var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
@@ -685,6 +681,51 @@ function get_shift(shiftid) {
             });
             $scope.$apply();
           });
+    }
+
+    $scope.editDetachment = function(key) {
+      $scope.edit_detachment = $scope.detachments[key];
+    }
+
+    $scope.saveDetachComment = function() {
+      if (confirm("редактировать комментарий?")) {
+        var data = {};
+        data.action = "edit_detach_comment";
+        data.in_id = $scope.edit_detachment.in_id;
+        data.comments = $scope.edit_detachment.comments;
+        $.ajax({
+          type: "POST",
+          url: "/handlers/shift.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(json) {
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
+        });
+      }      
+    }
+
+    $scope.deleteDetachment = function(key) {
+      if (confirm("удалить отряд?")) {
+        var data = {};
+        data.action = "del_detach_shift";
+        data.in_id = $scope.detachments[key].in_id;
+        $.ajax({
+          type: "POST",
+          url: "/handlers/shift.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(json) {
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
+        });
+      }
     }
 
     $scope.resetInfo = function() {
