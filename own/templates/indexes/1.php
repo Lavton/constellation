@@ -3,7 +3,7 @@
 
 if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["vk_id"])))) {
 ?>
-<div class="starter-template">
+<div class="starter-template" style="width:900px">
   <div class="row own-row">
     <div class="col-xs-4">
       <div class="in-w"><iframe src='/inwidget/index.php?view=16&inline=4' scrolling='no' frameborder='no' style='border:none;width:260px;height:400px;overflow:hidden;'></iframe>

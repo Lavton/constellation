@@ -117,11 +117,15 @@
                     Наработки
                   </li>
                 </a>
+                  <?php
+                      if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))) {
+                  ?>
                 <a href="/method/games" class="method shifts ajax-nav">
                   <li class="">
                     Игры и Развлечения
                   </li>
                 </a>
+                <?php } ?>
               </ul>
             </div>
           </div>
