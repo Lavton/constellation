@@ -37,7 +37,9 @@
   Ждём, пока это не произойдёт в цикле.*/
     var intID = setInterval(function(){
       if (typeof VK !== "undefined") {
-        VK.Widgets.Group("vk_groups", {mode: 0, width: "260", height: "400", color1: 'FFFFFF', color2: '2B587A', color3: '333'}, 19748633);
+        if ($("#vk_groups")[0] != undefined) {
+          VK.Widgets.Group("vk_groups", {mode: 0, width: "260", height: "400", color1: 'FFFFFF', color2: '2B587A', color3: '333'}, 19748633);
+        }
         clearInterval(intID);
       }
     }, 50);

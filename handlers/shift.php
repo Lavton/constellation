@@ -79,7 +79,7 @@ function get_one_info() {
     $result["prev"] = mysql_fetch_array($rt, MYSQL_ASSOC);
 
     $_POST["vk_id"] = $_SESSION["vk_id"];
-    $query = "SELECT vk_id, fighter_id FROM guess_shift where (like_one=".$_POST["vk_id"]." OR like_two=".$_POST["vk_id"]." OR like_three=".$_POST["vk_id"].");";
+    $query = "SELECT vk_id, fighter_id FROM guess_shift where (shift_id=".$_POST["id"]." AND (like_one=".$_POST["vk_id"]." OR like_two=".$_POST["vk_id"]." OR like_three=".$_POST["vk_id"]."));";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["like_h"] = array();
     while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
@@ -101,7 +101,7 @@ function get_one_info() {
       array_push($result["all_apply"], $line);
     }
 
-    $query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='".$_POST['id']."') ORDER BY id;";
+    $query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='".$_POST['id']."') ORDER BY in_id;";
     $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
     $result["detachments"] = array();
     while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
@@ -110,7 +110,7 @@ function get_one_info() {
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
       $result = array();
     }
-
+    $result["qw"] = $query;
     $result["result"] = "Success";
     echo json_encode($result);
   }

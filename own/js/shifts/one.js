@@ -139,14 +139,13 @@ function get_shift(shiftid) {
       $scope.show_add = !$scope.show_add;
       $scope.show_edit = false;
     }
-    $(".shift-info").removeClass("hidden")
-     var inthrefID = setInterval(function(){
+      $(".shift-info").removeClass("hidden")
+      var inthrefID = setInterval(function(){
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-      if (shiftid != "users") {
+      if (shiftid != "shifts") {
         clearInterval(inthrefID);
         var data = {action: "get_one_info", id: shiftid}
-        // debugger;
         $scope.shift.photo_200 = "http://vk.com/images/camera_b.gif"
         $.ajax({
           type: "POST",
