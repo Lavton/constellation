@@ -209,7 +209,7 @@ $('#page-container').on('click', ".get-all", function() {
 
 /*логика ангулара*/
 function init_angular_f_c ($scope, $http) {
-
+  // $scope.fighters = {};
   /*выбрать всех*/
   $scope.checkAll = function() {
     $scope.fighters.selected_f = angular.copy($scope.fighters);
@@ -223,6 +223,7 @@ function init_angular_f_c ($scope, $http) {
 
   /*аякс запрос методом ангулара*/
   var data =  {action: "all",};
+
   $http.post('/handlers/user.php', data).success(function(response) {
     window.fighters.scope = $scope
     $scope.fighters = response.users;

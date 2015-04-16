@@ -28,20 +28,16 @@
   Ждём, пока это не произойдёт в цикле.*/
     var intID = setInterval(function(){
       if (typeof VK !== "undefined") {
-        // console.error("getvk");
         VK.init({apiId: 4602552});
-        // console.error("initvk")
         VK.Widgets.Auth("vk_auth", {width: "300px", onAuth: function(data) {
           var odata = _.pick(data, 'uid', 'hash', 'first_name', 'last_name', 'photo_rec');
-          // odata.action = "vk_auth";
-          // console.error("Send request");
+          odata.action = "vk_auth";
           $.ajax({
             type: "POST",
             url: "/handlers/login.php",
             dataType: "json",
             data:  $.param(odata)
           }).done(function(json) {
-            // console.error(json)
             window.location = "/";
           });
         }

@@ -32,19 +32,22 @@
 				if ($ownMd5 == $_COOKIE["hash"]) {
 					$_SESSION["vk_id"] = $_COOKIE["vk_id"];
 					$_SESSION["photo"] = $_COOKIE["photo"];
-					$link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-				    or die('Не удалось соединиться: ' . mysql_error());
-					mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-					// Выполняем SQL-запрос
-					@mysql_query("Set charset utf8");
-					@mysql_query("Set character_set_client = utf8");
-					@mysql_query("Set character_set_connection = utf8");
-					@mysql_query("Set character_set_results = utf8");
-					@mysql_query("Set collation_connection = utf8_general_ci");
+					$link = mysqli_connect( 
+			            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+			            Passwords::$db_user,       /* Имя пользователя */ 
+			            Passwords::$db_pass,   /* Используемый пароль */ 
+			            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+					if (!$link) { 
+					   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+					   exit; 
+					}    
+					$link->set_charset("utf8");
+
 					// поиск юзера
 					$query = 'SELECT group_of_rights FROM fighters where vk_id=\''.$_COOKIE["vk_id"].'\';';
-					$result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-					$result = mysql_fetch_array($result, MYSQL_ASSOC);
+					$result = mysqli_query($link, $query) or die('Запрос не удался: ');
+					$result = mysqli_fetch_array($result, MYSQL_ASSOC);
 					$_SESSION["group"] = $result["group_of_rights"];
 					if (is_null($_SESSION["group"])) {
 						$_SESSION["group"] = 2;

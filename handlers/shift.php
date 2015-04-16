@@ -25,21 +25,23 @@ function get_all() {
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
   	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-  	// Выполняем SQL-запрос
-  	@mysql_query("Set charset utf8");
-  	@mysql_query("Set character_set_client = utf8");
-  	@mysql_query("Set character_set_connection = utf8");
-  	@mysql_query("Set character_set_results = utf8");
-  	@mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
   	// поиск юзера
   	$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts ORDER BY start_date;';
-  	$rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+  	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   	$result["shifts"] = array();
 
-  	while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+  	while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
       if (($line["visibility"]+0) <= ($_SESSION["current_group"]+0)) {
     		array_push($result["shifts"], $line);
       }
@@ -55,56 +57,58 @@ function get_one_info() {
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
 
     // поиск смены
     $query = "SELECT * FROM shifts WHERE id='".$_POST['id']."' ORDER BY id;";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-    $result["shift"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["shift"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
     $st = "'".$result["shift"]["start_date"]."'";
     $query = "SELECT min(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date > ".$st." OR (start_date = ".$st." AND id > ".$_POST['id']."));";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-    $result["next"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
     $query = "SELECT max(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND (start_date < ".$st." OR (start_date = ".$st." AND id < ".$_POST['id']."));";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-    $result["prev"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
     $_POST["vk_id"] = $_SESSION["vk_id"];
     $query = "SELECT vk_id, fighter_id FROM guess_shift where (shift_id=".$_POST["id"]." AND (like_one=".$_POST["vk_id"]." OR like_two=".$_POST["vk_id"]." OR like_three=".$_POST["vk_id"]."));";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["like_h"] = array();
-    while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
       array_push($result["like_h"], $line);
     }
 
     $query = "SELECT * FROM guess_shift where (vk_id=".$_POST["vk_id"]." AND shift_id=".$_POST["id"].");";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-    $result["myself"] = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
     if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
       $query = "SELECT * FROM guess_shift where (vk_id!=".$_POST["vk_id"]." AND shift_id=".$_POST["id"].") ORDER BY cr_time DESC;";
     } else {
       $query = "SELECT vk_id, shift_id, fighter_id, probability, social, profile, min_age, max_age, comments, cr_time FROM guess_shift where (vk_id!=".$_POST["vk_id"]." AND shift_id=".$_POST["id"].") ORDER BY cr_time DESC;";
     }
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["all_apply"] = array();
-    while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
       array_push($result["all_apply"], $line);
     }
 
     $query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='".$_POST['id']."') ORDER BY in_id;";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["detachments"] = array();
-    while ($line = mysql_fetch_array($rt, MYSQL_ASSOC)) {
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
       array_push($result["detachments"], $line);
     }
     if (($result["shift"]["visibility"]+0) > ($_SESSION["current_group"]+0)) {
@@ -121,15 +125,17 @@ function set_new_data() {
   session_start();
   if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
 
     $names = array();
     $values = array();
@@ -159,7 +165,7 @@ function set_new_data() {
     }
     $conc = implode(", ", $conc);
     $query = "UPDATE shifts SET ".$conc." WHERE id='".$_POST['id']."';";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     $result["query"] = $query;
     echo json_encode($result);
@@ -173,19 +179,21 @@ function kill_shift() {
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
 
     //удаляем смену по id
     $query = "DELETE FROM shifts WHERE id=".$_POST["id"].";";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     echo json_encode($result);
   }
@@ -197,15 +205,17 @@ function add_new_shift() {
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
 
     $names = array();
     $values = array();
@@ -222,11 +232,11 @@ function add_new_shift() {
     $names = implode(", ", $names);
     $values = implode(", ", $values);
     $query = "INSERT INTO shifts (".$names.") VALUES (".$values.");";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     $query = "select max(id) as id FROM shifts;";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-    $line = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $line = mysqli_fetch_array($rt, MYSQL_ASSOC);
     $result["id"] = $line["id"];
     echo json_encode($result);
   }
@@ -245,15 +255,17 @@ function apply_to_shift() {
       $_POST["vk_id"] = $_SESSION["vk_id"];
     }
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+ $link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
 
     $names = array();
     $values = array();
@@ -317,8 +329,8 @@ function apply_to_shift() {
     }
     // cначала проверим, боец ли этот человек
     $query = "SELECT id FROM fighters where vk_id=".$_POST["vk_id"].";";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-    $line = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $line = mysqli_fetch_array($rt, MYSQL_ASSOC);
     if (isset($line["id"])) {
       array_push($names, "fighter_id");
       array_push($values, "'".$line["id"]."'");
@@ -326,7 +338,7 @@ function apply_to_shift() {
     $names = implode(", ", $names);
     $values = implode(", ", $values);
     $query = "INSERT INTO guess_shift (".$names.") VALUES (".$values.");";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   
 
     $result["result"] = "Success";
@@ -347,17 +359,19 @@ function del_from_shift() {
       $_POST["vk_id"] = $_SESSION["vk_id"];
     }
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+ $link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
     $query = "DELETE FROM guess_shift WHERE (vk_id=".$_POST["vk_id"]." AND shift_id=".$_POST["shift_id"].");";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     echo json_encode($result);
   }
@@ -376,15 +390,17 @@ function edit_appliing() {
       $_POST["vk_id"] = $_SESSION["vk_id"];
     }
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
 
     $names = array();
     $values = array();
@@ -450,8 +466,8 @@ function edit_appliing() {
     array_push($values, "'".date('Y-m-d H:i:s',time())."'");
     // cначала проверим, боец ли этот человек
     $query = "SELECT id FROM fighters where vk_id=".$_POST["vk_id"].";";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-    $line = mysql_fetch_array($rt, MYSQL_ASSOC);
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $line = mysqli_fetch_array($rt, MYSQL_ASSOC);
     if (isset($line["id"])) {
       array_push($names, "fighter_id");
       array_push($values, "'".$line["id"]."'");
@@ -462,7 +478,7 @@ function edit_appliing() {
     }
     $conc = implode(", ", $conc);
     $query = "UPDATE guess_shift SET ".$conc." WHERE (vk_id='".$_POST['vk_id']."' AND shift_id=".$_POST["shift_id"].");";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     echo json_encode($result);
   }
@@ -474,15 +490,17 @@ function add_detachment() {
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
 
     $names = array();
     $values = array();
@@ -504,7 +522,7 @@ function add_detachment() {
     $values = implode(", ", $values);
     $query = "INSERT INTO detachments (".$names.") VALUES (".$values.");";
     // $result["qw"] = $query;
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     echo json_encode($result);
   }
@@ -516,17 +534,19 @@ function del_detach_shift() {
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
     $query = "DELETE FROM detachments WHERE (in_id=".$_POST["in_id"].");";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     echo json_encode($result);
   }
@@ -537,15 +557,17 @@ function edit_detach_comment() {
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
-    $link = mysql_connect('127.0.0.1', 'lavton', Passwords::$db_pass)
-      or die('Не удалось соединиться: ' . mysql_error());
-    mysql_select_db('constellation') or die('Не удалось выбрать базу данных');
-    // Выполняем SQL-запрос
-    @mysql_query("Set charset utf8");
-    @mysql_query("Set character_set_client = utf8");
-    @mysql_query("Set character_set_connection = utf8");
-    @mysql_query("Set character_set_results = utf8");
-    @mysql_query("Set collation_connection = utf8_general_ci");
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
     $names = array();
     $values = array();
     array_push($names, "comments");
@@ -556,7 +578,7 @@ function edit_detach_comment() {
     }
     $conc = implode(", ", $conc);
     $query = "UPDATE detachments SET ".$conc." WHERE (in_id='".$_POST['in_id']."');";
-    $rt = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     echo json_encode($result);
   }
