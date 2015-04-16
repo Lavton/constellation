@@ -156,7 +156,10 @@ function get_shift(shiftid) {
           $scope.myself = json.myself;
           $scope.all_apply = json.all_apply;
           $scope.detachments = json.detachments;
-          var comments = [{id: json.myself.vk_id, comment: json.myself.comments}]
+          var comments = [];
+          if (json.myself) {
+            comments.push({id: json.myself.vk_id, comment: json.myself.comments});
+          }
           _.each(json.all_apply, function(element, index, list) {
             comments.push({id: element.vk_id, comment: element.comments});
           });
@@ -203,13 +206,15 @@ function get_shift(shiftid) {
           _.each(json.like_h, function(element, index, list) {
             vk_ids.push(element.vk_id);
           });
-          vk_ids.push($scope.myself.vk_id)
-          vk_ids.push($scope.myself.like_one)
-          vk_ids.push($scope.myself.like_two)
-          vk_ids.push($scope.myself.like_three)
-          vk_ids.push($scope.myself.dislike_one)
-          vk_ids.push($scope.myself.dislike_two)
-          vk_ids.push($scope.myself.dislike_three)
+          if ($scope.myself) {
+            vk_ids.push($scope.myself.vk_id)
+            vk_ids.push($scope.myself.like_one)
+            vk_ids.push($scope.myself.like_two)
+            vk_ids.push($scope.myself.like_three)
+            vk_ids.push($scope.myself.dislike_one)
+            vk_ids.push($scope.myself.dislike_two)
+            vk_ids.push($scope.myself.dislike_three)
+          }
           _.each($scope.all_apply, function(element, index, list){
             vk_ids.push(element.vk_id)
             vk_ids.push(element.like_one)
@@ -254,43 +259,45 @@ function get_shift(shiftid) {
               $scope.myself[index] = vk_d[index];
             })
 
-            // ищем инфу для данного человека
-            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
-            _.each(vk_d, function(element2, index, list){
-              $scope.myself[index] = vk_d[index];
-            })
+            if ($scope.myself) {
+              // ищем инфу для данного человека
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself[index] = vk_d[index];
+              })
 
-            $scope.myself.like_1 = {}
-            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_one*1});
-            _.each(vk_d, function(element2, index, list){
-              $scope.myself.like_1[index] = vk_d[index];
-            })
-            $scope.myself.like_2 = {}
-            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_two*1});
-            _.each(vk_d, function(element2, index, list){
-              $scope.myself.like_2[index] = vk_d[index];
-            })
-            $scope.myself.like_3 = {}
-            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_three*1});
-            _.each(vk_d, function(element2, index, list){
-              $scope.myself.like_3[index] = vk_d[index];
-            })
+              $scope.myself.like_1 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_one*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself.like_1[index] = vk_d[index];
+              })
+              $scope.myself.like_2 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_two*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself.like_2[index] = vk_d[index];
+              })
+              $scope.myself.like_3 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_three*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself.like_3[index] = vk_d[index];
+              })
 
-            $scope.myself.dislike_1 = {}
-            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_one*1});
-            _.each(vk_d, function(element2, index, list){
-              $scope.myself.dislike_1[index] = vk_d[index];
-            })
-            $scope.myself.dislike_2 = {}
-            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_two*1});
-            _.each(vk_d, function(element2, index, list){
-              $scope.myself.dislike_2[index] = vk_d[index];
-            })
-            $scope.myself.dislike_3 = {}
-            var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_three*1});
-            _.each(vk_d, function(element2, index, list){
-              $scope.myself.dislike_3[index] = vk_d[index];
-            })
+              $scope.myself.dislike_1 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_one*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself.dislike_1[index] = vk_d[index];
+              })
+              $scope.myself.dislike_2 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_two*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself.dislike_2[index] = vk_d[index];
+              })
+              $scope.myself.dislike_3 = {}
+              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_three*1});
+              _.each(vk_d, function(element2, index, list){
+                $scope.myself.dislike_3[index] = vk_d[index];
+              })
+            }
 
             //ищем инфу для всех записавшихся людей
             _.each($scope.all_apply, function(app_el, index, list){
