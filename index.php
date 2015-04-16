@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-  <title>CПО "СОзвездие" | будущий сайт отряда</title>
+  <title>CПО "СОзвездие" | сайт отряда</title>
   <?php
     include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/header.php');
     include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php');
@@ -45,7 +45,7 @@
     }, 50);
   </script>
   <script type="text/javascript">
-      document.title = 'CПО "СОзвездие" | будущий сайт отряда';
+      document.title = 'CПО "СОзвездие" | сайт отряда';
   </script>
 </div>
 </body>
