@@ -59,6 +59,7 @@
 					setcookie ("hash", $_COOKIE["hash"], time() + 60*60*24*100, "/");
 					setcookie ("photo", $_COOKIE["photo"], time() + 60*60*24*100, "/");
 					setcookie ("current_group", $_COOKIE["current_group"], time() + 60*60*24*100, "/");
+					mysqli_close($link);
 				}
 			}
 		}

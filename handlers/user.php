@@ -27,7 +27,7 @@ function change_group(){
 		setcookie ("current_group", $_SESSION["current_group"], time() + 60*60*24*100, "/");
 		echo json_encode(Array('result' => 'Success'));
 	} else {
-		echo json_encode(Array('result' => 'Fail'));
+    echo json_encode(Array('result' => 'Fail'));
 	}
 }
 
@@ -58,7 +58,8 @@ $link->set_charset("utf8");
   		array_push($result["users"], $line);
       }
   	$result["result"] = "Success";
-  	echo json_encode($result);
+  	mysqli_close($link);
+    echo json_encode($result);
   }
 }
 
@@ -93,7 +94,8 @@ $link->set_charset("utf8");
   		array_push($result["users"], $line);
       }
   	$result["result"] = "Success";
-  	echo json_encode($result);
+  	mysqli_close($link);
+    echo json_encode($result);
   }
 }
 
@@ -129,7 +131,8 @@ $link->set_charset("utf8");
 
     // $result["q"] = $query;
   	$result["result"] = "Success";
-  	echo json_encode($result);
+  	mysqli_close($link);
+    echo json_encode($result);
   }
 }
 
@@ -207,8 +210,10 @@ $link->set_charset("utf8");
   //	$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
   	$result["result"] = "Success";
   	$result["query"] = $query;
-  	echo json_encode($result);
+  	mysqli_close($link);
+    echo json_encode($result);
   } else {
+    mysqli_close($link);
     echo json_encode(Array('result' => 'Fail'));
   }
 }
@@ -239,6 +244,7 @@ $link->set_charset("utf8");
       array_push($result["ids"], $line);
     }
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -302,6 +308,7 @@ $link->set_charset("utf8");
     $query = "INSERT INTO fighters (".$names.") VALUES (".$values.");";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -328,6 +335,7 @@ $link->set_charset("utf8");
     $query = "DELETE FROM fighters WHERE id=".$_POST["id"].";";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }

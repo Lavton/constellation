@@ -47,7 +47,8 @@ $link->set_charset("utf8");
       }
     }
   	$result["result"] = "Success";
-  	echo json_encode($result);
+    mysqli_close($link);
+    echo json_encode($result);
   }
 }
 
@@ -116,6 +117,7 @@ $link->set_charset("utf8");
     }
     $result["qw"] = $query;
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -168,6 +170,7 @@ $link->set_charset("utf8");
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     $result["query"] = $query;
+    mysqli_close($link);
     echo json_encode($result);
   } else {
     echo json_encode(Array('result' => 'Fail'));
@@ -195,6 +198,7 @@ $link->set_charset("utf8");
     $query = "DELETE FROM shifts WHERE id=".$_POST["id"].";";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -238,6 +242,7 @@ $link->set_charset("utf8");
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $line = mysqli_fetch_array($rt, MYSQL_ASSOC);
     $result["id"] = $line["id"];
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -342,6 +347,7 @@ $link->set_charset("utf8");
   
 
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -373,6 +379,7 @@ $link->set_charset("utf8");
     $query = "DELETE FROM guess_shift WHERE (vk_id=".$_POST["vk_id"]." AND shift_id=".$_POST["shift_id"].");";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -480,6 +487,7 @@ $link->set_charset("utf8");
     $query = "UPDATE guess_shift SET ".$conc." WHERE (vk_id='".$_POST['vk_id']."' AND shift_id=".$_POST["shift_id"].");";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 
@@ -524,6 +532,7 @@ $link->set_charset("utf8");
     // $result["qw"] = $query;
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -548,6 +557,7 @@ $link->set_charset("utf8");
     $query = "DELETE FROM detachments WHERE (in_id=".$_POST["in_id"].");";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }
@@ -580,6 +590,7 @@ $link->set_charset("utf8");
     $query = "UPDATE detachments SET ".$conc." WHERE (in_id='".$_POST['in_id']."');";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    mysqli_close($link);
     echo json_encode($result);
   }
 }

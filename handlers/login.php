@@ -57,6 +57,7 @@ $link->set_charset("utf8");
 	setcookie ("hash", $_POST["hash"], time() + 60*60*24*100, "/");
 	setcookie ("photo", $_SESSION["photo"], time() + 60*60*24*100, "/");
 	setcookie ("current_group", $_SESSION["current_group"], time() + 60*60*24*100, "/");
+	mysqli_close($link);
 }
 
 ?>
