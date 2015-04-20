@@ -21,6 +21,11 @@
       }
 
     ?>
+    <?php
+      if (!isset($_GET["id"])){
+        include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/all.php');
+      }
+    ?>
   </div>
   <div class="info_wall"></div>
 <?php
@@ -31,6 +36,7 @@
   <script type="text/javascript">
       document.title = 'мероприятия | CПО "СОзвездие"';
   </script>
+  <script type="text/javascript" src="/own/js/events/all.js"></script>
 </div>
 <?php    
   }
