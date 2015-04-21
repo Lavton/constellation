@@ -41,7 +41,7 @@
             if (isset($_SESSION["user"])) {
               echo '<a href="/about/users/0" class="ajax-nav">&nbsp;'.$_SESSION["user"].'&nbsp;</a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } elseif (isset($_SESSION["vk_id"])) {
-               echo '<a href="/about/users/0" class="ajax-nav"><img src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
+               echo '<a href="/about/users/0" class="ajax-nav"><img class="user_ava" src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } else {
               echo '<a href="/login" class="ajax-nav">Войти</a>';
             }

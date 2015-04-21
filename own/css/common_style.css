@@ -113,21 +113,21 @@ footer {
 }
 
 .header .login {
-  line-height: 40px;
+  line-height: 50px;
   font-family: sans-serif;
   font-weight: bolder;
   text-align: right;
 }
 
 .header.lvl1 {
-  height: 40px;
+  height: 50px;
   color: white;
 }
 
 
 .header-lvl2-container {
   position: relative;
-  height: 40px; 
+  height: 50px; 
   display: none;
 }
 
@@ -137,10 +137,11 @@ footer {
 
 .header.lvl2 {
   width: 100%;
-  height: 40px;
+  height: 50px;
   color: white;
   display: none;
   position: absolute;
+  top: 0px;
   z-index: -1;
 }
 
@@ -154,7 +155,9 @@ footer {
   background-color: #333;
 }
 
-
+.user_ava {
+  height: 100% !important;
+}
 /*конец меню*/
 
 
@@ -166,42 +169,6 @@ footer {
   margin: 0 auto;
 }
 
-.form-signin {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
-}
-
-  .form-signin .form-signin-heading,
-  .form-signin .checkbox {
-    margin-bottom: 10px;
-  }
-
-  .form-signin .checkbox {
-    font-weight: normal;
-  }
-  .form-signin .form-control {
-    position: relative;
-    height: auto;
-    -webkit-box-sizing: border-box;
-       -moz-box-sizing: border-box;
-            box-sizing: border-box;
-    padding: 10px;
-    font-size: 16px;
-  }
-  .form-signin .form-control:focus {
-    z-index: 2;
-  }
-  .form-signin input[type="email"] {
-    margin-bottom: -1px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-  .form-signin input[type="password"] {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
 /*конец авторизации*/
 
 
