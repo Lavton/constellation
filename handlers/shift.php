@@ -5,6 +5,7 @@ if (is_ajax()) {
 		$action = $_POST["action"];
 		switch($action) {
 			case "all": get_all(); break;
+      case "arhive": arhive(); break;
       case "get_one_info": get_one_info(); break;
       case 'set_new_data': set_new_data(); break;
       case "kill_shift": kill_shift(); break;
@@ -37,7 +38,7 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
   	// поиск смены
-  	$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts ORDER BY start_date;';
+  	$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts WHERE (finish_date >= CURRENT_DATE) ORDER BY start_date;';
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   	$result["shifts"] = array();
 
@@ -52,6 +53,38 @@ $link->set_charset("utf8");
   }
 }
 
+function arhive() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+    // поиск смены
+    $query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts WHERE (finish_date < CURRENT_DATE AND start_date>="'.$_POST["year"].'-01-01") ORDER BY start_date;';
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["shifts"] = array();
+
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+      if (($line["visibility"]+0) <= ($_SESSION["current_group"]+0)) {
+        array_push($result["shifts"], $line);
+      }
+    }
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  }
+
+}
 
 function get_one_info() {
   check_session();

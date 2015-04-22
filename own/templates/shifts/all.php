@@ -16,14 +16,17 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDA
     </li>
   </ul>
 
-  <hr ng-show="shifts.prev">
-  <h2 ng-show="shifts.prev">Прошедшие</h2>
-  <ul>
-    <li ng-repeat="shift in shifts.prev">
-      <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.name}}</a>
-    </li>
-  </ul>
-
+  <hr>
+  <button class="btn" ng-click="get_arhive(shifts.arhive_year)">Архив</button> с <input type="number" ng-model="shifts.arhive_year" size="4" min="2010" max="{{shifts.max_arhive}}"/>
+  <!-- <input type="month"> -->
+  <!-- <div ng-show=""> -->
+    <h2 ng-show="shifts.prev">Прошедшие</h2>
+    <ul>
+      <li ng-repeat="shift in shifts.prev">
+        <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.name}}</a>
+      </li>
+    </ul>
+  <!-- </div> -->
 </div>
 <?php } ?>
 <?php /*комсостав+ может добавлять новые смены*/
