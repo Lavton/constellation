@@ -85,6 +85,18 @@ if (typeof String.prototype.startsWith != 'function') {
   				}
   			}, 50);
 		}
+
+		if (locat == "/events/") {
+			var eveID = setInterval(function(){
+ 				if (typeof(angular) !== "undefined") {
+					if ((window.events) && (window.events.was_init) && (! $(".events-container").is(":visible"))) {
+						angular.bootstrap(document, ['common_ec_app']);
+				    }
+				    clearInterval(eveID);
+  				}
+  			}, 50);
+		}
+
 		if (locat == "/method/games") {
 			var gmID = setInterval(function(){
  				if (typeof(angular) !== "undefined") {

@@ -10,6 +10,8 @@ RewriteEngine on
 #переделываем в человекочитаемый url
 RewriteRule ^(.*)users/([0-9]+)$ /about/users.php?id=$2 [QSA]
 RewriteRule ^(.*)shifts/([0-9]+)$ /events/shifts.php?id=$2 [QSA]
+RewriteRule ^(.*)events/([0-9]+)$ /events/index.php?id=$2 [QSA]
+
 
 #Hostinger don't understand DirectoryIndex((
 RewriteRule ^(.*)/$ /$1/index.php [QSA] 

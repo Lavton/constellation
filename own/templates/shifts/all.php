@@ -5,7 +5,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDA
   <h2 ng-show="shifts.future">Грядущие</h2>
   <ul>
     <li ng-repeat="shift in shifts.future">
-      <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.name}}</a>
+      <p><a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.name}}</a><br></p>
     </li>
   </ul>
 
