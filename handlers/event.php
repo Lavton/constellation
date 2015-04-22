@@ -6,6 +6,7 @@ if (is_ajax()) {
 		switch($action) {
 	      case "add_new_event": add_new_event(); break;
 	      case "all": get_all(); break;
+        case "arhive": arhive(); break;
 		}
 	}
 }
@@ -67,7 +68,7 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
   	// поиск мероприятий
-  	$query = 'SELECT * FROM events ORDER BY start_time;';
+  	$query = 'SELECT * FROM events WHERE (end_time >= CURRENT_TIMESTAMP) ORDER BY start_time;';
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   	$result["events"] = array();
 
@@ -77,6 +78,39 @@ $link->set_charset("utf8");
       }
     }
   	$result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  }
+}
+
+//get arhive events base info
+function arhive() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+    // поиск мероприятий
+    $query = 'SELECT * FROM events WHERE (end_time < CURRENT_TIMESTAMP AND start_time >= "'.$_POST["month"].'-01 00:00:00") ORDER BY start_time;';
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["events"] = array();
+
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+      if (($line["visibility"]+0) <= ($_SESSION["current_group"]+0)) {
+        array_push($result["events"], $line);
+      }
+    }
+    $result["result"] = "Success";
     mysqli_close($link);
     echo json_encode($result);
   }

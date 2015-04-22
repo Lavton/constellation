@@ -1,6 +1,7 @@
+<br>
 <?php /*комсостав+ может добавлять новые мероприятия. Но пока видно лишь админу))*/
 if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))) {
-
+?>
 <div class="events-container" ng-cloak ng-controller="eventsApp">
   <h2 ng-show="events.future">Грядущие</h2>
   <ul>
@@ -16,7 +17,9 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))
     </li>
   </ul>
 
-  <hr ng-show="events.prev">
+  <hr>
+  <button class="btn" ng-click="get_arhive(events.arhive_month)">Архив</button> с <input type="month" ng-model="events.arhive_month">
+
   <h2 ng-show="events.prev">Прошедшие</h2>
   <ul>
     <li ng-repeat="event in events.prev">
@@ -29,7 +32,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))
 
 
 
-?><br/><br/><br/>
+<br/><br/><br/>
   <button type="button" class="btn btn-warning pre-add-new-event" >Создать мероприятие?</button> 
  <div class="add-new-input-w hidden">	
  название: <input type="text" class="add-new-event-name" placeholder="название мероприятия" size=50 /> <br>
