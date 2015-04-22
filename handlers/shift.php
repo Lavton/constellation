@@ -19,7 +19,7 @@ if (is_ajax()) {
 	}
 }
 
-//get all users base info
+//get all shifts base info
 function get_all() {
   check_session();
   session_start();
@@ -36,7 +36,7 @@ if (!$link) {
    exit; 
 }    
 $link->set_charset("utf8");
-  	// поиск юзера
+  	// поиск смены
   	$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts ORDER BY start_date;';
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   	$result["shifts"] = array();

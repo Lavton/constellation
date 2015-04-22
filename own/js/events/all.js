@@ -1,49 +1,3 @@
-$('#page-container').on('click', ".pre-add-new-event", function() {
-  var auto_date = null;
-  if (! $(".pre-add-new-event").hasClass("clicked")) {
-    $(".add-new-input-w").removeClass("hidden")
-    $(".pre-add-new-event").addClass("clicked")
-    $(".pre-add-new-event").text("Добавить")
-    auto_date = setInterval(function(){
-      var start_date = $(".add-new-event-start-date").val();
-      var end_date = $(".add-new-event-end-date").val();
-      if (end_date == "") {
-        if (start_date != "") {
-          $(".add-new-event-end-date").val(start_date);
-        }
-      } else {
-        clearInterval(auto_date);
-      }
-    }, 750);
-
-  } else {
-    var name = $(".add-new-event-name").val();
-    var start_date = $(".add-new-event-start-date").val();
-    var start_time = $(".add-new-event-start-time").val();
-    var end_date = $(".add-new-event-end-date").val();
-    var end_time = $(".add-new-event-end-time").val();
-    // debugger;
-    var send_data = {
-      action: "add_new_event", 
-      name: name,
-      start_time: start_date+ " "+start_time+":00",
-      end_time: end_date+ " "+end_time+":00"
-    }
-    $.ajax({ //TODO: make with angular
-      type: "POST",
-      url: "/handlers/event.php",
-      dataType: "json",
-      data:  $.param(send_data)
-    }).done(function(response) {
-      if (response.result == "Success") {
-        console.log("yeah!")
-        // window.location="/about/users/"+$(".add-new-fighter-id").val();
-      }
-    });
-  }
-});
-
-
 'use strict';
 if (window.events == undefined) {
   window.events = {}
@@ -54,28 +8,52 @@ if (window.events.angular_conroller == undefined) {
   var intID = setInterval(function(){
   if (typeof(angular) !== "undefined") {
     if ((window.location.pathname == "/events/") && (window.events.angular_conroller == null)) {
-      $('#page-container').on('click', ".pre-add-s-new", function() {
-        var today = new Date();
-        var start_date = today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate();
-        var finish_date = today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate();
-        var data = {
-          action: "add_new_shift", 
-          start_date: start_date,
-          finish_date: finish_date
-        }
-        $.ajax({ //TODO: make with angular
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data:  $.param(data)
-        }).done(function(response) {
-          if (response.result == "Success") {
-            window.location="/events/events/"+response.id;
+      $('#page-container').on('click', ".pre-add-new-event", function() {
+        var auto_date = null;
+        if (! $(".pre-add-new-event").hasClass("clicked")) {
+          $(".add-new-input-w").removeClass("hidden")
+          $(".pre-add-new-event").addClass("clicked")
+          $(".pre-add-new-event").text("Добавить")
+          auto_date = setInterval(function(){
+            var start_date = $(".add-new-event-start-date").val();
+            var end_date = $(".add-new-event-end-date").val();
+            if (end_date == "") {
+              if (start_date != "") {
+                $(".add-new-event-end-date").val(start_date);
+              }
+            } else {
+              clearInterval(auto_date);
+            }
+          }, 750);
+
+        } else {
+          var name = $(".add-new-event-name").val();
+          var start_date = $(".add-new-event-start-date").val();
+          var start_time = $(".add-new-event-start-time").val();
+          var end_date = $(".add-new-event-end-date").val();
+          var end_time = $(".add-new-event-end-time").val();
+          // debugger;
+          var send_data = {
+            action: "add_new_event", 
+            name: name,
+            start_time: start_date+ " "+start_time+":00",
+            end_time: end_date+ " "+end_time+":00"
           }
-        });
+          $.ajax({ //TODO: make with angular
+            type: "POST",
+            url: "/handlers/event.php",
+            dataType: "json",
+            data:  $.param(send_data)
+          }).done(function(response) {
+            if (response.result == "Success") {
+              console.log("yeah!")
+              // window.location="/events/"+response.id;
+            }
+          });
+        }
       });
       if (window.events.angular_conroller == null) {      
-        window.events.angular_conroller = angular.module('common_sc_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
+        window.events.angular_conroller = angular.module('common_ec_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
           // Используем x-www-form-urlencoded Content-Type
           $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
           // Переопределяем дефолтный transformRequest в $http-сервисе
@@ -113,8 +91,8 @@ if (window.events.angular_conroller == undefined) {
 
 
           //запускаем ангулар
-        window.events.angular_conroller.controller('eventsApp', ['$scope', '$http', init_angular_s_c]);
-        angular.bootstrap(document, ['common_sc_app']);
+        window.events.angular_conroller.controller('eventsApp', ['$scope', '$http', init_angular_e_c]);
+        angular.bootstrap(document, ['common_ec_app']);
         window.events.was_init = true;
       }
     }
@@ -123,9 +101,10 @@ if (window.events.angular_conroller == undefined) {
 }, 50);
 
 /*логика ангулара*/
-function init_angular_s_c ($scope, $http) {
+function init_angular_e_c ($scope, $http) {
   var data =  {action: "all",};
-  $http.post('/handlers/shift.php', data).success(function(response) {
+  $http.post('/handlers/event.php', data).success(function(response) {
+    // debugger;
     $scope.events = {}
     var today = new Date();
     window.events.scope = $scope
