@@ -8,6 +8,8 @@ if (is_ajax()) {
 	      case "all": get_all(); break;
         case "arhive": arhive(); break;
         case "get_one_info": get_one_info(); break;
+        case "set_new_data": set_new_data(); break;
+        case "kill_event": kill_event(); break;
 		}
 	}
 }
@@ -138,16 +140,100 @@ $link->set_charset("utf8");
     $query = "SELECT * FROM events WHERE id='".$_POST['id']."';";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["event"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-    $st = "'".$result["shift"]["start_time"]."'";
-    $query = "SELECT min(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND start_time > ".$st.";";
+    $st = "'".$result["event"]["start_time"]."'";
+    $query = "SELECT min(id) as mid FROM events where visibility <= ".$_SESSION["current_group"]." AND start_time > ".$st.";";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-
-    $query = "SELECT max(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND start_time < ".$st.";";
+    $query = "SELECT max(id) as mid FROM events where visibility <= ".$_SESSION["current_group"]." AND start_time < ".$st.";";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
     mysqli_close($link);
     echo json_encode($result);
   }
 }
+
+function set_new_data() {
+  check_session();
+  session_start();
+  if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+
+    $names = array();
+    $values = array();
+    if (isset($_POST["parent_id"])) {
+      array_push($names, "parent_id");
+      array_push($values, "'".$_POST["parent_id"]."'");
+    }
+    if (isset($_POST["name"])) {
+      array_push($names, "name");
+      array_push($values, "'".$_POST["name"]."'");
+    }
+    if (isset($_POST["start_time"])) {
+      array_push($names, "start_time");
+      array_push($values, "'".$_POST["start_time"]."'");
+    }
+    if (isset($_POST["end_time"])) {
+      array_push($names, "end_time");
+      array_push($values, "'".$_POST["end_time"]."'");
+    }
+    if (isset($_POST["visibility"])) {
+      array_push($names, "visibility");
+      array_push($values, "'".$_POST["visibility"]."'");
+    }
+    if (isset($_POST["comments"])) {
+      array_push($names, "comments");
+      array_push($values, "'".$_POST["comments"]."'");
+    }
+    $conc = array();
+    foreach ($names as $key => $value) {
+      array_push($conc, "".$value."=".$values[$key]);
+    }
+    $conc = implode(", ", $conc);
+    $query = "UPDATE events SET ".$conc." WHERE id='".$_POST['id']."';";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  } else {
+    echo json_encode(Array('result' => 'Fail'));
+  }
+}
+
+function kill_event() {
+    check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+
+    //удаляем мероприятие по id
+    $query = "DELETE FROM events WHERE id=".$_POST["id"].";";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  }
+}
+
 ?>

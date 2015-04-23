@@ -12,7 +12,7 @@ function get_shift(shiftid) {
   var intID = setInterval(function(){
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-      if ((typeof(angular) !== "undefined") && (shiftid != "users")) {
+      if ((typeof(angular) !== "undefined") && (shiftid != "shifts")) {
         if (window.shifts.one_angular_conroller == null) {
           window.shifts.one_angular_conroller = angular.module('one_sc_app', ["ngSanitize"], function($httpProvider) { //магия, чтобы PHP понимал запрос
             // Используем x-www-form-urlencoded Content-Type

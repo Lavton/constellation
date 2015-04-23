@@ -49,8 +49,9 @@ function get_event(eventid) {
               return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
             }];
           });
+
           //запускаем ангулар
-          window.events.one_angular_conroller.controller('oneEventApp', ['$scope', '$http', '$locale', init_angular_o_e_c]);
+          window.events.one_angular_conroller.controller('oneEventApp', ['$scope', '$http', init_angular_o_e_c]);
           angular.bootstrap(document, ['one_eo_app']);
           window.events.was_init_one = true;
         
@@ -63,7 +64,7 @@ function get_event(eventid) {
   } else {
      angular.bootstrap(document, ['one_eo_app']);
   }
-  /*логика ангулара*/
+  // логика ангулара
   function init_angular_o_e_c ($scope, $http, $locale) {
     $scope.id = eventid;
     $scope.event = {};
@@ -74,18 +75,105 @@ function get_event(eventid) {
     if (eventid != "events") {
       clearInterval(inthrefID);
       var data = {action: "get_one_info", id: eventid}
-      console.log("send")
       $.ajax({
         type: "POST",
         url: "/handlers/event.php",
         dataType: "json",
         data:  $.param(data)
       }).done(function(json) {
-        debugger;
+        $scope.event = json.event;
+        $scope.event.visibility = $scope.event.visibility*1;
+        var bbdata =  {bbcode: $scope.event.comments, ownaction: "bbcodeToHtml"};
+        $.ajax({
+          type: "POST",
+          url: "/markitup/sets/bbcode/parser.php",
+          dataType: 'text',
+          global: false,
+          data: $.param(bbdata)
+        }).done(function(rdata) {
+          $scope.event.bbcomments = rdata,
+          $scope.$apply();
+        });
+        // debugger;
           //TODO make works all html. (jquery?)
           $scope.$apply();
         });
       }
     }, 100);
+    $.getJSON("/own/group_names.json", function(group_json){
+      $scope.groups = group_json;
+      $scope.$apply();
+    });
+
+    $scope.editEventInfo = function(flag) {
+      $(".event-info").toggleClass("hidden");
+      $(".event-edit").toggleClass("hidden");
+      $scope.master = angular.copy($scope.event); 
+
+      if (flag) {
+        var spl =$scope.event.start_time.split(" ");
+        $scope.event.start_date=spl[0];
+        var time = spl[1].split(":");
+        $scope.event.start_ttime=time[0]+":"+time[1];
+
+        spl =$scope.event.end_time.split(" ");
+        $scope.event.end_date=spl[0];
+        $scope.event.end_ttime=spl[1];
+        var time = spl[1].split(":");
+        $scope.event.end_ttime=time[0]+":"+time[1];
+      } 
+    }
+    $scope.resetInfo = function() {
+      $scope.shift = angular.copy($scope.master);
+    }
+
+    $scope.submit = function() {
+      $scope.event.start_time = $scope.event.start_date+" "+$scope.event.start_ttime+":00";
+      $scope.event.end_time = $scope.event.end_date+" "+$scope.event.end_ttime+":00";
+      var data =  angular.copy($scope.event);
+      data.action = "set_new_data"
+      _.each(data, function(element, index, list){
+        if (!element) {
+          data[index] = null;
+        }
+      })
+
+      var bbdata =  {bbcode: $scope.event.comments, ownaction: "bbcodeToHtml"};
+      $.ajax({
+        type: "POST",
+        url: "/markitup/sets/bbcode/parser.php",
+        dataType: 'text',
+        global: false,
+        data: $.param(bbdata)
+      }).done(function(rdata) {
+        $scope.event.bbcomments = rdata,
+        $scope.$apply();
+      });
+
+      $http.post('/handlers/event.php', data).success(function(response) {
+        var saved = $(".saved");
+        $(saved).stop(true, true);
+        $(saved).fadeIn("slow");
+        $(saved).fadeOut("slow");
+      });
+    }
+
+    $scope.killEvent = function() {
+      var fid=window.location.href.split("/")
+      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+      if (confirm("Точно удалить смену со всей информацией?")) {
+        var data = {action: "kill_event", id: eventid}
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/event.php",
+          dataType: "json",
+          data:  $.param(data)
+        }).done(function(response) {
+          if (response.result == "Success") {
+            window.location="/";
+          }
+        });
+      }
+    }
   }
 }

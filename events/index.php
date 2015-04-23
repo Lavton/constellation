@@ -27,7 +27,7 @@
       if (!isset($_GET["id"])){
         include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/all.php');
       } else {
-        // include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/one.php');
+        include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/one.php');
       }
     ?>
   </div>
@@ -42,9 +42,16 @@
   </script>
   <script type="text/javascript" src="/own/js/events/all.js"></script>
     <script type="text/javascript" src="/own/js/events/one.js"></script> 
+
+  <?php
+  if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+  ?>
   <script type="text/javascript">
-    // get_event(<?=$_GET["id"]?>);
+    get_event(<?=$_GET["id"]?>);
   </script>
+  <?php
+  }
+  ?>
   <script type="text/javascript">
   $('.bbcode').markItUp(mySettings);
   </script>

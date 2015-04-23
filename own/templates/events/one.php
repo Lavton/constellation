@@ -3,11 +3,13 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
   /*просмотр мероприятия*/
 ?>
 <div ng-cloak ng-controller="oneEventApp">
+  <br>
+
   <div class="event-info hidden">
     <div class="col-xs-12">
       <h2>{{event.name}}
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
-        <button type="button" class="btn btn-primary text-right" ng-click="editEventInfo()">Редактировать описание мероприятия</button>
+        <button type="button" class="btn btn-primary text-right" ng-click="editEventInfo(true)">Редактировать описание мероприятия</button>
         <?php } ?>
       </h2>
       <hr>
@@ -49,8 +51,8 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
       <div class="row own-row">
         <div class="col-xs-5 info-str">
           <ul>
-          <li>дата и время начала: <input type="date" ng-model="event.start_date"/> <input type="time" ng-model="event.start_time" /></li>
-          <li>дата и время конца: <input type="date" ng-model="event.end_date" /> <input type="time" ng-model="event.end_time"/></li>
+          <li>дата и время начала: <input type="date" ng-model="event.start_date"/> <input type="time" ng-model="event.start_ttime" /></li>
+          <li>дата и время конца: <input type="date" ng-model="event.end_date" /> <input type="time" ng-model="event.end_ttime"/> </li>
           <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="event.visibility" size="{{(event.visibility).length}}" /> ({{groups[event.visibility]}})</li>
           <li><strong>Комментарии:</strong><br/> <textarea ng-model="event.comments" class="bbcode" cols="20" rows="5"></textarea>  </li>
           </ul>

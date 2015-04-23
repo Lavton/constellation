@@ -202,14 +202,13 @@ $link->set_charset("utf8");
     $query = "UPDATE shifts SET ".$conc." WHERE id='".$_POST['id']."';";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
-    $result["query"] = $query;
     mysqli_close($link);
     echo json_encode($result);
   } else {
     echo json_encode(Array('result' => 'Fail'));
   }
 }
-// удаляет пользователя
+// удаляет смену
 function kill_shift() {
   check_session();
   session_start();
