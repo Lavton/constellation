@@ -13,17 +13,21 @@
     Станьте бойцами и узнаете
     <?php
       } else {
+        if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] < ADMIN)) {
     ?>
 <iframe src="https://www.google.com/calendar/embed?src=kn2p9ovqid67tekk0ecbbnutsc%40group.calendar.google.com&ctz=Europe/Moscow" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-
+<br>
 
     <?php
+      }
       }
 
     ?>
     <?php
       if (!isset($_GET["id"])){
         include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/all.php');
+      } else {
+        // include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/one.php');
       }
     ?>
   </div>
@@ -37,6 +41,14 @@
       document.title = 'мероприятия | CПО "СОзвездие"';
   </script>
   <script type="text/javascript" src="/own/js/events/all.js"></script>
+    <script type="text/javascript" src="/own/js/events/one.js"></script> 
+  <script type="text/javascript">
+    // get_event(<?=$_GET["id"]?>);
+  </script>
+  <script type="text/javascript">
+  $('.bbcode').markItUp(mySettings);
+  </script>
+  
 </div>
 <?php    
   }

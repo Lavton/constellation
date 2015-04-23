@@ -1,5 +1,5 @@
 <?php
-if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
   /*просмотр смены*/
 ?>
 <div ng-cloak ng-controller="oneShiftApp">

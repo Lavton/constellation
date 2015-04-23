@@ -7,6 +7,7 @@ if (is_ajax()) {
 	      case "add_new_event": add_new_event(); break;
 	      case "all": get_all(); break;
         case "arhive": arhive(); break;
+        case "get_one_info": get_one_info(); break;
 		}
 	}
 }
@@ -116,5 +117,37 @@ $link->set_charset("utf8");
   }
 }
 
+function get_one_info() {
+    check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
 
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+
+    // поиск мероприятия
+    $query = "SELECT * FROM events WHERE id='".$_POST['id']."';";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["event"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    $st = "'".$result["shift"]["start_time"]."'";
+    $query = "SELECT min(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND start_time > ".$st.";";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+    $query = "SELECT max(id) as mid FROM shifts where visibility <= ".$_SESSION["current_group"]." AND start_time < ".$st.";";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    mysqli_close($link);
+    echo json_encode($result);
+  }
+}
 ?>

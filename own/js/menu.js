@@ -85,7 +85,7 @@ if (typeof String.prototype.startsWith != 'function') {
   				}
   			}, 50);
 		}
-
+		
 		if (locat == "/events/") {
 			var eveID = setInterval(function(){
  				if (typeof(angular) !== "undefined") {
@@ -117,7 +117,10 @@ if (typeof String.prototype.startsWith != 'function') {
 			}
 			if (locat.startsWith("/events/shifts")) {
 				locat = "/events/shifts";
+			} else if (locat.startsWith("/events/") ) {
+				locat = "/events/";
 			}
+
 			$("nav a[href='"+locat+"'] li").addClass("current");
 			if (locat.startsWith("/about")) {
 				$("nav a.about.index li").addClass("current");
