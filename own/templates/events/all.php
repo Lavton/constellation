@@ -38,5 +38,5 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))
  название: <input type="text" class="add-new-event-name" placeholder="название мероприятия" size=50 /> <br>
  дата и время начала: <input type="date" class="add-new-event-start-date" /> <input type="time" class="add-new-event-start-time"/><br><br>
  дата и время конца: <input type="date" class="add-new-event-end-date" /> <input type="time" class="add-new-event-end-time"/><br>
-  </div>
+ </div>
 <?php } ?>  

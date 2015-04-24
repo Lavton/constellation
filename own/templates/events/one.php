@@ -19,6 +19,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <div class="col-xs-5 info-str">
 
         <ul>
+          <li ng-show="parent_event"><strong>Головное мероприятие:</strong> <a target="_blank" href="{{'/events/'+parent_event.id}}">{{parent_event.name}}</a> </li>
           <li ng-show="event.start_time"><strong>Начало:</strong> {{event.start_time}} </li>
           <li ng-show="event.end_time"><strong>Дата окончания:</strong> {{event.end_time}} </li>
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
@@ -70,3 +71,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
 }
 }
 ?>
+</div>
+
+<br/><br/><a href="#" class="event_priv ajax-nav"><<предыдщий</a> &nbsp; &nbsp;
+<a href="#" class="event_next pull-right ajax-nav">следующий>></a>

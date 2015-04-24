@@ -48,6 +48,11 @@ $link->set_charset("utf8");
     $query = "INSERT INTO events (".$names.") VALUES (".$values.");";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    $query = "select max(id) as id FROM events;";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $line = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    $result["id"] = $line["id"];
+    
     mysqli_close($link);
     echo json_encode($result);
   }
@@ -71,7 +76,7 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
   	// поиск мероприятий
-  	$query = 'SELECT * FROM events WHERE (end_time >= CURRENT_TIMESTAMP) ORDER BY start_time;';
+  	$query = 'SELECT id, parent_id, name, start_time, end_time, visibility FROM events WHERE (end_time >= CURRENT_TIMESTAMP) ORDER BY start_time;';
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   	$result["events"] = array();
 
@@ -147,6 +152,12 @@ $link->set_charset("utf8");
     $query = "SELECT max(id) as mid FROM events where visibility <= ".$_SESSION["current_group"]." AND start_time < ".$st.";";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    /*поиск родительского мероприятия*/
+    if (isset($result["event"]["parent_id"])) {
+      $query = "SELECT id, name FROM events where visibility <= ".$_SESSION["current_group"]." AND id=".$result["event"]["parent_id"].";";
+    }
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["parent_event"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
     mysqli_close($link);
     echo json_encode($result);
   }

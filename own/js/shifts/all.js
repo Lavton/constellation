@@ -86,7 +86,7 @@ function init_angular_s_c ($scope, $http) {
     $scope.shifts.all = response.shifts;
     $scope.shifts.actual = [];
     $scope.shifts.future = [];
-    $scope.shifts.max_arhive = (new Date()).getFullYear();
+    $scope.shifts.max_arhive = ((new Date()).getFullYear())*1;
     $scope.shifts.arhive_year = $scope.shifts.max_arhive;
     _.each($scope.shifts.all, function(element, index, list) {
       element.st_date = new Date(element.start_date);

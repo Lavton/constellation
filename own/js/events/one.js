@@ -83,6 +83,7 @@ function get_event(eventid) {
       }).done(function(json) {
         $scope.event = json.event;
         $scope.event.visibility = $scope.event.visibility*1;
+        $scope.parent_event = json.parent_event;
         var bbdata =  {bbcode: $scope.event.comments, ownaction: "bbcodeToHtml"};
         $.ajax({
           type: "POST",
@@ -96,6 +97,16 @@ function get_event(eventid) {
         });
         // debugger;
           //TODO make works all html. (jquery?)
+
+        $("a.event_priv").attr("href", json.prev.mid)
+        $("a.event_next").attr("href", json.next.mid)
+        if (!json.prev.mid) {
+          $("a.event_priv").hide();
+        }
+        if (!json.next.mid) {
+          $("a.event_next").hide();
+        }
+
           $scope.$apply();
         });
       }
@@ -161,7 +172,7 @@ function get_event(eventid) {
     $scope.killEvent = function() {
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-      if (confirm("Точно удалить смену со всей информацией?")) {
+      if (confirm("Точно удалить мероприятие со всей информацией?")) {
         var data = {action: "kill_event", id: eventid}
         $.ajax({ //TODO: make with angular
           type: "POST",

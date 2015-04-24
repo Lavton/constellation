@@ -46,8 +46,7 @@ if (window.events.angular_conroller == undefined) {
             data:  $.param(send_data)
           }).done(function(response) {
             if (response.result == "Success") {
-              console.log("yeah!")
-              // window.location="/events/"+response.id;
+              window.location="/events/"+response.id;
             }
           });
         }
