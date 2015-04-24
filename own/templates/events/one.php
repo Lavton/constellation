@@ -17,9 +17,8 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
     </div>
     <div class="row own-row">
       <div class="col-xs-5 info-str">
-
         <ul>
-          <li ng-show="parent_event"><strong>Головное мероприятие:</strong> <a target="_blank" href="{{'/events/'+parent_event.id}}">{{parent_event.name}}</a> </li>
+          <li ng-show="parent_event.name"><strong>Головное мероприятие:</strong> <a target="_blank" href="{{'/events/'+parent_event.id}}">{{parent_event.name}}</a> </li>
           <li ng-show="event.start_time"><strong>Начало:</strong> {{event.start_time}} </li>
           <li ng-show="event.end_time"><strong>Дата окончания:</strong> {{event.end_time}} </li>
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
@@ -41,7 +40,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
   <div class="event-edit hidden">
     <form ng-submit="submit()">
       <div class="col-xs-12">
-        <h2><input type="text" ng-model="event.name"/>
+        <h2><input type="text" ng-model="event.name"/> 
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
           <input type="submit" class="btn btn-primary text-right" ng-click="editEventInfo()" value="Сохранить"></input>
             <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editEventInfo()" >Отменить</input>
@@ -52,6 +51,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
       <div class="row own-row">
         <div class="col-xs-5 info-str">
           <ul>
+          <li>Головное мероприятие: <select ng-model="event.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select></li>
           <li>дата и время начала: <input type="date" ng-model="event.start_date"/> <input type="time" ng-model="event.start_ttime" /></li>
           <li>дата и время конца: <input type="date" ng-model="event.end_date" /> <input type="time" ng-model="event.end_ttime"/> </li>
           <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="event.visibility" size="{{(event.visibility).length}}" /> ({{groups[event.visibility]}})</li>

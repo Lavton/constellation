@@ -121,7 +121,7 @@ function get_event(eventid) {
       $(".event-edit").toggleClass("hidden");
       $scope.master = angular.copy($scope.event); 
 
-      if (flag) {
+      if (flag) { // начинаем редактировать
         var spl =$scope.event.start_time.split(" ");
         $scope.event.start_date=spl[0];
         var time = spl[1].split(":");
@@ -132,6 +132,16 @@ function get_event(eventid) {
         $scope.event.end_ttime=spl[1];
         var time = spl[1].split(":");
         $scope.event.end_ttime=time[0]+":"+time[1];
+
+        //Если ещё не редактировали до этого, найдём все мероприятия в кандидаты в родители
+        if (!$scope.pos_parents) {
+          var data = {action: "get_reproduct", visibility: $scope.event.visibility}
+          $http.post('/handlers/event.php', data).success(function(response) {
+            $scope.pos_parents = response.pos_parents;
+            $scope.pos_parents.push({id: null, name: "--нет--"})
+        });
+         
+        }
       } 
     }
     $scope.resetInfo = function() {
@@ -148,6 +158,11 @@ function get_event(eventid) {
           data[index] = null;
         }
       })
+      if (!$scope.parent_event) {
+        $scope.parent_event = {}
+      }
+      $scope.parent_event.id = $scope.event.parent_id;
+      $scope.parent_event.name = _.findWhere($scope.pos_parents, {id: $scope.event.parent_id}).name;
 
       var bbdata =  {bbcode: $scope.event.comments, ownaction: "bbcodeToHtml"};
       $.ajax({

@@ -10,6 +10,7 @@ if (is_ajax()) {
         case "get_one_info": get_one_info(); break;
         case "set_new_data": set_new_data(); break;
         case "kill_event": kill_event(); break;
+        case "get_reproduct": get_reproduct(); break;
 		}
 	}
 }
@@ -182,10 +183,13 @@ $link->set_charset("utf8");
 
     $names = array();
     $values = array();
-    if (isset($_POST["parent_id"])) {
-      array_push($names, "parent_id");
+    array_push($names, "parent_id");
+    if ($_POST["parent_id"] == 0) {
+      array_push($values, "NULL");
+    } else {
       array_push($values, "'".$_POST["parent_id"]."'");
     }
+
     if (isset($_POST["name"])) {
       array_push($names, "name");
       array_push($values, "'".$_POST["name"]."'");
@@ -214,6 +218,7 @@ $link->set_charset("utf8");
     $query = "UPDATE events SET ".$conc." WHERE id='".$_POST['id']."';";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
+    $result["qw"] = $query;
     mysqli_close($link);
     echo json_encode($result);
   } else {
@@ -247,4 +252,38 @@ $link->set_charset("utf8");
   }
 }
 
+/* выдаёт всех возможных родителей - события, которые сами не дети*/
+function get_reproduct() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+    if (!$link) { 
+       printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+       exit; 
+    }    
+    $link->set_charset("utf8");
+    // поиск мероприятий
+    $query = 'SELECT id, name, start_time, end_time FROM events WHERE (visibility <= '.$_POST["visibility"].' AND parent_id IS NULL AND end_time >= CURRENT_TIMESTAMP) ORDER BY start_time;';
+
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["pos_parents"] = array();
+
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+      if (($line["visibility"]+0) <= ($_SESSION["current_group"]+0)) {
+        array_push($result["pos_parents"], $line);
+      }
+    }
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  }
+
+}
 ?>
