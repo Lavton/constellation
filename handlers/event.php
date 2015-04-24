@@ -270,7 +270,7 @@ function get_reproduct() {
     }    
     $link->set_charset("utf8");
     // поиск мероприятий
-    $query = 'SELECT id, name, start_time, end_time FROM events WHERE (visibility <= '.$_POST["visibility"].' AND parent_id IS NULL AND end_time >= CURRENT_TIMESTAMP) ORDER BY start_time;';
+    $query = 'SELECT id, name, start_time, end_time FROM events WHERE (visibility <= '.$_POST["visibility"].' AND parent_id IS NULL AND end_time >= CURRENT_TIMESTAMP AND start_time >= '.$_POST["end_time"].') ORDER BY start_time;';
 
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["pos_parents"] = array();

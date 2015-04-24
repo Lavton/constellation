@@ -6,14 +6,14 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))
   <h2 ng-show="events.future">Грядущие</h2>
   <ul>
     <li ng-repeat="event in events.future">
-       <p>{{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.name}}</a><br></p>
+       <p>{{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.name}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a><br></p>
     </li>
   </ul>
 
   <h2 ng-show="events.actual">Текущие</h2>
   <ul>
     <li ng-repeat="event in events.actual">
-      {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.name}}</a>
+      {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.name}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
     </li>
   </ul>
 
@@ -23,7 +23,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))
   <h2 ng-show="events.prev">Прошедшие</h2>
   <ul>
     <li ng-repeat="event in events.prev">
-      {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.name}}</a>
+      {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.name}}</a> <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
     </li>
   </ul>
 

@@ -110,6 +110,9 @@ function init_angular_e_c ($scope, $http) {
     $scope.events.actual = [];
     $scope.events.future = [];
     _.each($scope.events.all, function(element, index, list) {
+      if (element.parent_id) {
+        element.parent_name = _.findWhere($scope.events.all, {id: element.parent_id}).name;
+      }
       element.st_date = new Date(element.start_time);
       element.fn_date = new Date(element.end_time);
       if (element.st_date > today) {
@@ -124,9 +127,18 @@ function init_angular_e_c ($scope, $http) {
     var data =  {action: "arhive", month: month};
     $http.post('/handlers/event.php', data).success(function(response) {
       var today = new Date();
-      $scope.events.all = response.events;
+      $scope.events.oall = response.events;
       $scope.events.prev = [];
-      _.each($scope.events.all, function(element, index, list) {
+      _.each($scope.events.oall, function(element, index, list) {
+        if (element.parent_id) {
+          element.parent_name = _.findWhere($scope.events.oall, {id: element.parent_id});
+          if (element.parent_name) {
+            element.parent_name = element.parent_name.name;
+          } else {
+            element.parent_name = _.findWhere($scope.events.all, {id: element.parent_id}).name;
+          }
+        }
+
         element.st_date = new Date(element.start_time);
         element.fn_date = new Date(element.end_time);
         $scope.events.prev.push(element);
