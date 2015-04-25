@@ -473,30 +473,24 @@ $link->set_charset("utf8");
       array_push($values, "'".$_POST["max_age"]."'");
     }
     
-    if (isset($_POST["like_one"])) {
       array_push($names, "like_one");
       array_push($values, "'".$_POST["like_one"]."'");
-    }
-    if (isset($_POST["like_two"])) {
       array_push($names, "like_two");
       array_push($values, "'".$_POST["like_two"]."'");
-    }
-    if (isset($_POST["like_three"])) {
       array_push($names, "like_three");
       array_push($values, "'".$_POST["like_three"]."'");
-    }
-    if (isset($_POST["dislike_one"])) {
       array_push($names, "dislike_one");
       array_push($values, "'".$_POST["dislike_one"]."'");
-    }
-    if (isset($_POST["dislike_two"])) {
       array_push($names, "dislike_two");
       array_push($values, "'".$_POST["dislike_two"]."'");
-    }
-    if (isset($_POST["dislike_three"])) {
       array_push($names, "dislike_three");
       array_push($values, "'".$_POST["dislike_three"]."'");
-    }    
+      foreach ($values as $key => $value) {
+        if ($value =="''") {
+          $values[$key] = "NULL";
+        }
+      }
+
     if (isset($_POST["comments"])) {
       array_push($names, "comments");
       array_push($values, "'".$_POST["comments"]."'");

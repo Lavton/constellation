@@ -21,6 +21,7 @@
     <ul>
     </ul>
     <ul><li><a href="resources/oldest.pdf" target="_blank"> про старших детей</a></li>
+      <li><a href="resources/diff_ages.pdf" target="_blank">про разновозрастных детей</a></li>
     </ul>
     <?php /*смотрим всех*/
     if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= OLD_FIGHTER))) {
