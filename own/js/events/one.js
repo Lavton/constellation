@@ -137,7 +137,10 @@ function get_event(eventid) {
         if (!$scope.pos_parents) {
           var data = {action: "get_reproduct", visibility: $scope.event.visibility, end_time:$scope.event.end_time}
           $http.post('/handlers/event.php', data).success(function(response) {
-            $scope.pos_parents = response.pos_parents;
+            $scope.pos_parents = [];
+            if (response.pos_parents) {
+              $scope.pos_parents = response.pos_parents;
+            }
             $scope.pos_parents.push({id: null, name: "--нет--"})
         });
          

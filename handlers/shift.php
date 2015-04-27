@@ -226,6 +226,12 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
 
+    //удаляем все foreign keys
+    $query = "DELETE FROM detachments WHERE shift_id=".$_POST["id"].";";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $query = "DELETE FROM guess_shift WHERE shift_id=".$_POST["id"].";";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+
     //удаляем смену по id
     $query = "DELETE FROM shifts WHERE id=".$_POST["id"].";";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
