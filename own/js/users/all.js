@@ -331,6 +331,15 @@ function init_angular_f_c ($scope, $http) {
             $scope.$apply();
             }, 10);
 
+            $scope.makeVK = function () {
+              $scope.vk_l = [];
+              _.each($scope.fighters.selected_f, function(element, index, list) {
+                $scope.vk_l.push("*"+element.vk_domain+" ("+element.name+") ")
+              })
+              $scope.vk_l = $scope.vk_l.join(",");
+
+            }
+
             /*генерим vCard*/
             $scope.makeCard = function() { //TODO make code more clear
               var json = response

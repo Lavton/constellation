@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-  <title>CПО "СОзвездие" | будущий сайт отряда</title>
+  <title>CПО "СОзвездие" | логин</title>
   <?php
     include('own/templates/header.php');
   ?>

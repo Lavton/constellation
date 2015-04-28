@@ -13,6 +13,14 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
     <input type="text" class="vCard-category" placeholder="назначить группу для контактов" size=30 /> <br/>
     <span title="Не все программы корректно отображают формат записи без отчества и девичьей фамилии и норовят вставить их при наличии">Добавить доп инфу? <input type="checkbox" ng-model="fighters.has_second" /></span>
     <button type="button" class="btn btn-success vCard-make" ng-click="makeCard()">импорт в <abbr title='формат записной книжки для Android, iPhone и т.д.'>vCard</abbr></button>
+<?php /*редактируют лишь ком состав и админ*/
+if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= OLD_FIGHTER)) { 
+?>
+    <button type="button" class="btn btn-success vk-make" ng-click="makeVK()">Создать строку упоминаний VK</button>
+    <input ng-model="vk_l" ng-show="vk_l" readonly>
+<?php 
+} 
+?>    
   </div>
   <div class="search_wrap hidden"> Search: <input class="search" ng-model="query"></div>
   <table class="table common-contacts hidden table-bordered">
