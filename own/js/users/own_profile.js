@@ -117,6 +117,7 @@ function get_own_info() {
           dataType: "json",
           data:  $.param(data)
         }).done(function(json) {
+          // console.log(json);
           $scope.fighter = json.user;
           $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
           $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;

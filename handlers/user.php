@@ -199,8 +199,8 @@ $link->set_charset("utf8");
   		array_push($names, "email");
   		array_push($values, "'".$_POST["email"]."'");
   	}
-      array_push($names, "instagram_id");
-      array_push($values, "'".$_POST["instagram_id"]."'");
+      array_push($names, "Instagram_id");
+      array_push($values, "'".$_POST["Instagram_id"]."'");
 
   	if (isset($_POST["birthdate"])) {
   		array_push($names, "birthdate");
@@ -213,7 +213,15 @@ $link->set_charset("utf8");
   	$conc = implode(", ", $conc);
     $query = "";
     if ($_POST["id"] == 0) {
-      $query = "UPDATE fighters SET ".$conc." WHERE id='".$_SESSION['fighter_id']."';";
+if (!(isset($_SESSION["fighter_id"]))) {
+    
+      $query = 'SELECT id FROM fighters where vk_id=\''.$_SESSION["vk_id"].'\';';
+      $_SESSION["fighter_id"] = mysqli_query($link, $query) or die('Запрос не удался: ');
+      $_SESSION["fighter_id"] = mysqli_fetch_array($_SESSION["fighter_id"], MYSQL_ASSOC);
+      $_SESSION["fighter_id"] = $_SESSION["fighter_id"]["id"];
+
+  }
+        $query = "UPDATE fighters SET ".$conc." WHERE id='".$_SESSION['fighter_id']."';";
     }else{
   	  $query = "UPDATE fighters SET ".$conc." WHERE id='".$_POST['id']."';";
     }
@@ -367,12 +375,19 @@ if (!$link) {
    exit; 
 }    
 $link->set_charset("utf8");
-
+  if (!(isset($_SESSION["fighter_id"]))) {
+    
+      $query = 'SELECT id FROM fighters where vk_id=\''.$_SESSION["vk_id"].'\';';
+      $_SESSION["fighter_id"] = mysqli_query($link, $query) or die('Запрос не удался: ');
+      $_SESSION["fighter_id"] = mysqli_fetch_array($_SESSION["fighter_id"], MYSQL_ASSOC);
+      $_SESSION["fighter_id"] = $_SESSION["fighter_id"]["id"];
+  }
     // поиск юзера
     $query = "SELECT * FROM fighters WHERE id='".$_SESSION['fighter_id']."' ORDER BY id;";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
     $result["result"] = "Success";
+    // $result["session"] = $_SESSION;
     mysqli_close($link);
     echo json_encode($result);
 }

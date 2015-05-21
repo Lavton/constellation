@@ -23,7 +23,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
           <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
           <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
           <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
-          <li ng-show="fighter.instagram_id"><strong>id в Instagram:</strong><a href='https://instagram.com/{{fighter.instagram_id}}'  target="_blank"> {{fighter.instagram_id}} </a></li>
+          <li ng-show="fighter.Instagram_id"><strong>id в Instagram:</strong><a href='https://instagram.com/{{fighter.Instagram_id}}'  target="_blank"> {{fighter.Instagram_id}} </a></li>
           <li ng-show="fighter.birthdate"><strong>День рождения: </strong>{{fighter.birthdate | date: 'dd.MM.yyyy'}}</li>
           <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
@@ -59,7 +59,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
             <li><strong>Телефон:</strong> +7<input type="text" ng-model="fighter.phone" size="{{(fighter.phone).length}}" />  <em>(цифрами)</em></li>
             <li><strong>Второй телефон:</strong> +7<input type="text" class="change-s-phone" ng-model="fighter.second_phone" size="{{(fighter.second_phone).length}}" /> </li>
             <li><strong>e-mail:</strong> <input type="email" ng-model="fighter.email" size="{{(fighter.email).length}}" /></li>
-            <li><strong>id в Instagram:</strong> <input ng-model="fighter.instagram_id" size="{{(fighter.intagram_id).length}}" /></li>
+            <li><strong>id в Instagram:</strong> <input ng-model="fighter.Instagram_id" size="{{(fighter.intagram_id).length}}" /></li>
             <li><strong>День рождения: </strong><input type="date" ng-model="fighter.birthdate" size="{{(fighter.birthdate).length}}" /></li>
             <li><strong>Год вступления в отряд: </strong><input type="number" min="2000" max="3000" ng-model="fighter.year_of_entrance" size="{{(fighter.year_of_entrance).length}}" /></li>
             <li><strong>Права доступа: </strong><input type="number" min="1" max="7" ng-model="fighter.group_of_rights" size="{{(fighter.group_of_rights).length}}" /> ({{groups[fighter.group_of_rights]}})</li>

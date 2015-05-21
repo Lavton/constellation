@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-  <title>CПО "СОзвездие" | будущий сайт отряда</title>
+  <title>CПО "СОзвездие" | сайт отряда</title>
   <?php
     include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/header.php');
   ?>
