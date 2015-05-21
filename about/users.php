@@ -78,6 +78,20 @@
   <?php
   }
   ?>
+  <?php
+  if (isset($_GET["id"]) && ($_GET["id"] == 0)) {
+  ?>
+  <script type="text/javascript">
+    var intofID = setInterval(function(){
+      if ((typeof(get_own_info) != "undefined") && (get_own_info != undefined)) {
+        clearInterval(intofID);
+        get_own_info(<?=$_SESSION["fighter_id"]?>);
+      }
+    }, 50);
+  </script>
+  <?php
+  }
+  ?>
 
 </div>
 </body>

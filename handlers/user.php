@@ -13,6 +13,8 @@ if (is_ajax()) {
       case "get_all_ids": get_all_ids(); break;
       case "add_new_fighter": add_new_fighter(); break;
       case "kill_fighter": kill_fighter(); break;
+
+      case "get_own_info": get_own_info(); break;
 		}
 	}
 }
@@ -25,7 +27,7 @@ function change_group(){
 	if ($_SESSION["group"] >= $_POST["new_group"]) {
 		$_SESSION["current_group"] = $_POST["new_group"];
 		setcookie ("current_group", $_SESSION["current_group"], time() + 60*60*24*100, "/");
-		echo json_encode(Array('result' => 'Success'));
+		echo json_encode(Array('result' => 'Success', 'ss' => $_SESSION));
 	} else {
     echo json_encode(Array('result' => 'Fail'));
 	}
@@ -339,4 +341,34 @@ $link->set_charset("utf8");
     echo json_encode($result);
   }
 }
+
+
+function get_own_info() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+ $link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+
+    // поиск юзера
+    $query = "SELECT * FROM fighters WHERE id='".$_SESSION['fighter_id']."' ORDER BY id;";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  }
+}
+
+
 ?>
