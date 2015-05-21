@@ -20,7 +20,9 @@
     <p><em>когда-нибудь тут появятся ещё интеллект-карты</em></p>
     <ul>
     </ul>
-    <ul><li><a href="resources/oldest.pdf" target="_blank"> про старших детей</a></li>
+    <ul>
+      <li><a href="resources/small.pdf" target="_blank">про младших и младше-средних</a></li>
+      <li><a href="resources/oldest.pdf" target="_blank"> про старших детей</a></li>
       <li><a href="resources/diff_ages.pdf" target="_blank">про разновозрастных детей</a></li>
     </ul>
     <?php /*смотрим всех*/
