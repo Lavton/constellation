@@ -11,7 +11,7 @@ $CONFIG = array(
 	// Get pictures from WORLDWIDE by tag name. 
 	// Use this options only if you want show pictures of other users. 
 	// Important! Profile avatar and statistic will be hidden.
-	'HASHTAG' => '',
+	'HASHTAG' => '#спо_созвездие',
 
 	// Random order of pictures [ true / false ]
 	'imgRandom' => true,

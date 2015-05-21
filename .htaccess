@@ -11,6 +11,7 @@ RewriteEngine on
 RewriteRule ^(.*)users/([0-9]+)$ /about/users.php?id=$2 [QSA]
 RewriteRule ^(.*)shifts/([0-9]+)$ /events/shifts.php?id=$2 [QSA]
 RewriteRule ^(.*)events/([0-9]+)$ /events/index.php?id=$2 [QSA]
+RewriteRule ^(.*).ics$ $1.php [QSA]
 
 
 #Hostinger don't understand DirectoryIndex((

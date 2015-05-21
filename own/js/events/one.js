@@ -82,6 +82,7 @@ function get_event(eventid) {
         data:  $.param(data)
       }).done(function(json) {
         $scope.event = json.event;
+        console.log(json.event);
         $scope.event.visibility = $scope.event.visibility*1;
         $scope.parent_event = json.parent_event;
         var bbdata =  {bbcode: $scope.event.comments, ownaction: "bbcodeToHtml"};
@@ -155,6 +156,7 @@ function get_event(eventid) {
       $scope.event.start_time = $scope.event.start_date+" "+$scope.event.start_ttime+":00";
       $scope.event.end_time = $scope.event.end_date+" "+$scope.event.end_ttime+":00";
       var data =  angular.copy($scope.event);
+      data.editor_user = null;
       data.action = "set_new_data"
       _.each(data, function(element, index, list){
         if (!element) {
@@ -192,17 +194,62 @@ function get_event(eventid) {
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
       if (confirm("Точно удалить мероприятие со всей информацией?")) {
         var data = {action: "kill_event", id: eventid}
+        // console.log(data);
         $.ajax({ //TODO: make with angular
           type: "POST",
           url: "/handlers/event.php",
           dataType: "json",
           data:  $.param(data)
         }).done(function(response) {
-          if (response.result == "Success") {
-            window.location="/";
-          }
+          // console.log(response)
+          window.location="/events/";
         });
       }
     }
+
+    $scope.setContactMe = function() {
+      var data = {action: "getMe"}
+      $.ajax({ //TODO: make with angular
+        type: "POST",
+        url: "/handlers/event.php",
+        dataType: "json",
+        data:  $.param(data)
+      }).done(function(response) {
+        $scope.event.contact = response.me.name+" "+response.me.surname;
+        if (response.me.phone) {
+          $scope.event.contact += ", +7"+response.me.phone;
+        }
+        if (response.me.second_phone) {
+          $scope.event.contact += ", +7"+response.me.second_phone;
+        }
+
+        $scope.$apply();
+
+        $.ajax({ //TODO: make with angular
+          type: "GET",
+          url: "https://api.vk.com/method/users.get",
+          dataType: "jsonp",
+          data:  $.param({user_ids: response.me.vk_id, fields:["domain"]})
+        }).done(function(vk_response) {
+          $scope.event.contact = response.me.name+" "+response.me.surname + " ( https://vk.com/"+vk_response.response[0].domain+" )";
+          if (response.me.phone) {
+            $scope.event.contact += ", +7"+response.me.phone;
+          }
+          if (response.me.second_phone) {
+            $scope.event.contact += ", +7"+response.me.second_phone;
+          }
+
+          $scope.$apply();
+
+        });
+
+      });
+
+    }
+
+    $scope.exportToVK = function() {
+      $scope.vk_export = "sadsad";
+    }
+
   }
 }

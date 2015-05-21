@@ -1,7 +1,4 @@
 <br>
-<?php /*комсостав+ может добавлять новые мероприятия. Но пока видно лишь админу))*/
-if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))) {
-?>
 <div class="events-container" ng-cloak ng-controller="eventsApp">
   <h2 ng-show="events.future">Грядущие</h2>
   <ul>
@@ -31,6 +28,9 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))
 
 
 
+<?php /*комсостав+ может добавлять новые мероприятия. Но пока видно лишь админу))*/
+if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+?>
 
 <br/><br/><br/>
   <button type="button" class="btn btn-warning pre-add-new-event" >Создать мероприятие?</button> 
@@ -40,3 +40,22 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= ADMIN))
  дата и время конца: <input type="date" class="add-new-event-end-date" /> <input type="time" class="add-new-event-end-time"/><br>
  </div>
 <?php } ?>  
+<hr>
+<?php /*,бойцам виден соотв. календарь .ics*/
+if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+?>
+<p>Ссылка на .ics календарь для импорта в Google.Calendar 
+<input readonly size="60" value="http://spo-sozvezdie.hol.es/events/so82fighter.ics?nocache"> <br>
+Не давайте эту ссылку кандидатам, так как на ней нет проверки на то, боец ли вы (иначе Google не сможет импортировать)</p>
+
+<?php
+} elseif ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == CANDIDATE))) {
+?>
+<p>Ссылка на .ics календарь для импорта в Google.Calendar 
+<input readonly size="60" value="http://spo-sozvezdie.hol.es/events/candidats.ics?nocache"> <br></p>
+
+<?php
+}
+?>
+Для импорта откройте <a href="https://www.google.com/calendar/render" target="_blank">календарь</a>, и в "других календарях", в выпадающем меню выберите "добавить по URL".<br>
+После этого, чтобы добавить синхронизацию с приложением Календарь под Android, нажмите на "обновить" в правом верхнем углу, затем в меню->настройки, выберите импортированный календарь и установите флаг на "Синхронизация"

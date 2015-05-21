@@ -11,6 +11,7 @@ if (is_ajax()) {
         case "set_new_data": set_new_data(); break;
         case "kill_event": kill_event(); break;
         case "get_reproduct": get_reproduct(); break;
+        case "getMe": getMe(); break;
 		}
 	}
 }
@@ -35,6 +36,15 @@ $link->set_charset("utf8");
 
     $names = array();
     $values = array();
+
+    //find editor
+    $query = 'SELECT id FROM fighters where vk_id=\''.$_SESSION["vk_id"].'\';';
+    $result = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result = mysqli_fetch_array($result, MYSQL_ASSOC);
+    array_push($names, "editor");
+    array_push($values, $result["id"]);
+
+    
       array_push($names, "name");
       array_push($values, "'".$_POST["name"]."'");
 
@@ -159,6 +169,20 @@ $link->set_charset("utf8");
     }
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["parent_event"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+    $query = "SELECT id, name, surname FROM fighters WHERE id='".$result["event"]["editor"]."' ORDER BY id;";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["event"]["editor_user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+    $query = "SELECT id FROM fighters WHERE vk_id='".$_SESSION["vk_id"]."';";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+    $result["event"]["editable"] = canEditEvent($link, $userId, $_POST["id"]);
+    if (!isset($result["event"]["id"])) {
+      $result = Array();
+    }
+
     mysqli_close($link);
     echo json_encode($result);
   }
@@ -167,7 +191,6 @@ $link->set_charset("utf8");
 function set_new_data() {
   check_session();
   session_start();
-  if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
 $link = mysqli_connect( 
             Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
@@ -181,8 +204,17 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
 
+    $query = "SELECT id FROM fighters WHERE vk_id='".$_SESSION["vk_id"]."';";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+  if (canEditEvent($link, $userId, $_POST["id"])) {
     $names = array();
     $values = array();
+
+    array_push($names, "contact");
+    array_push($values, "'".$_POST["contact"]."'");
+
     array_push($names, "parent_id");
     if ($_POST["parent_id"] == 0) {
       array_push($values, "NULL");
@@ -194,6 +226,8 @@ $link->set_charset("utf8");
       array_push($names, "name");
       array_push($values, "'".$_POST["name"]."'");
     }
+      array_push($names, "place");
+      array_push($values, "'".$_POST["place"]."'");
     if (isset($_POST["start_time"])) {
       array_push($names, "start_time");
       array_push($values, "'".$_POST["start_time"]."'");
@@ -206,10 +240,8 @@ $link->set_charset("utf8");
       array_push($names, "visibility");
       array_push($values, "'".$_POST["visibility"]."'");
     }
-    if (isset($_POST["comments"])) {
       array_push($names, "comments");
       array_push($values, "'".$_POST["comments"]."'");
-    }
     $conc = array();
     foreach ($names as $key => $value) {
       array_push($conc, "".$value."=".$values[$key]);
@@ -218,7 +250,6 @@ $link->set_charset("utf8");
     $query = "UPDATE events SET ".$conc." WHERE id='".$_POST['id']."';";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
-    $result["qw"] = $query;
     mysqli_close($link);
     echo json_encode($result);
   } else {
@@ -229,7 +260,6 @@ $link->set_charset("utf8");
 function kill_event() {
     check_session();
   session_start();
-  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
 $link = mysqli_connect( 
             Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
@@ -242,9 +272,14 @@ if (!$link) {
    exit; 
 }    
 $link->set_charset("utf8");
+    $query = "SELECT id FROM fighters WHERE vk_id='".$_SESSION["vk_id"]."';";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
-    //удаляем мероприятие по id
-    $query = "DELETE FROM events WHERE id=".$_POST["id"].";";
+  if (canEditEvent($link, $userId, $_POST["id"])) {
+
+    //удаляем мероприятие по id и всех потомков
+    $query = "DELETE FROM events WHERE (id=".$_POST["id"]." OR parent_id=".$_POST["id"].");";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
     mysqli_close($link);
@@ -283,6 +318,43 @@ function get_reproduct() {
     $result["result"] = "Success";
     mysqli_close($link);
     echo json_encode($result);
+  }
+
+}
+
+function getMe() {
+  check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+    $link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+    if (!$link) { 
+       printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+       exit; 
+    }    
+    $link->set_charset("utf8");
+    // поиск мероприятий
+    $query = "SELECT name, surname, vk_id, phone, second_phone FROM fighters WHERE vk_id='".$_SESSION["vk_id"]."';";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["me"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  }
+
+}
+
+
+function canEditEvent($link, $userId, $eventId) {
+  if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
+    return true;
+  } else {
+    return false;
   }
 
 }

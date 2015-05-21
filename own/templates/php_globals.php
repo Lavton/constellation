@@ -32,6 +32,7 @@
 				if ($ownMd5 == $_COOKIE["hash"]) {
 					$_SESSION["vk_id"] = $_COOKIE["vk_id"];
 					$_SESSION["photo"] = $_COOKIE["photo"];
+					
 					$link = mysqli_connect( 
 			            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
 			            Passwords::$db_user,       /* Имя пользователя */ 
@@ -45,10 +46,11 @@
 					$link->set_charset("utf8");
 
 					// поиск юзера
-					$query = 'SELECT group_of_rights FROM fighters where vk_id=\''.$_COOKIE["vk_id"].'\';';
+					$query = 'SELECT id, group_of_rights FROM fighters where vk_id=\''.$_COOKIE["vk_id"].'\';';
 					$result = mysqli_query($link, $query) or die('Запрос не удался: ');
 					$result = mysqli_fetch_array($result, MYSQL_ASSOC);
 					$_SESSION["group"] = $result["group_of_rights"];
+					$_SESSION["fighter_id"] = $result["id"];
 					if (is_null($_SESSION["group"])) {
 						$_SESSION["group"] = 2;
 					} else {
@@ -56,6 +58,7 @@
 					}
 					$_SESSION["current_group"] = $_COOKIE["current_group"] <= $_SESSION["group"] ? $_COOKIE["current_group"] : $_SESSION["group"];
 					setcookie ("vk_id", $_COOKIE["vk_id"], time() + 60*60*24*100, "/");
+					setcookie ("fighter_id", $_COOKIE["fighter_id"], time() + 60*60*24*100, "/");
 					setcookie ("hash", $_COOKIE["hash"], time() + 60*60*24*100, "/");
 					setcookie ("photo", $_COOKIE["photo"], time() + 60*60*24*100, "/");
 					setcookie ("current_group", $_COOKIE["current_group"], time() + 60*60*24*100, "/");

@@ -43,23 +43,6 @@ function BBCode2Html($text) {
 		}	
 	}
 	$text = preg_replace_callback('/\[code\](.*?)\[\/code\]/ms', "escape", $text);
-	// Smileys to find...
-	$in = array( 	 ':)', 	
-					 ':D',
-					 ':o',
-					 ':p',
-					 ':(',
-					 ';)'
-	);
-	// And replace them by...
-	$out = array(	 '<img alt=":)" src="'.EMOTICONS_DIR.'emoticon-happy.png" />',
-					 '<img alt=":D" src="'.EMOTICONS_DIR.'emoticon-smile.png" />',
-					 '<img alt=":o" src="'.EMOTICONS_DIR.'emoticon-surprised.png" />',
-					 '<img alt=":p" src="'.EMOTICONS_DIR.'emoticon-tongue.png" />',
-					 '<img alt=":(" src="'.EMOTICONS_DIR.'emoticon-unhappy.png" />',
-					 '<img alt=";)" src="'.EMOTICONS_DIR.'emoticon-wink.png" />'
-	);
-	$text = str_replace($in, $out, $text);
 	
 	$in = array(
 		'</',
