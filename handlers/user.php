@@ -155,33 +155,38 @@ if (!$link) {
    exit; 
 }    
 $link->set_charset("utf8");
-
-  	$names = array();
-  	$values = array();
-  	if (isset($_POST["vk_id"])) {
-  		array_push($names, "vk_id");
-  		array_push($values, "'".$_POST["vk_id"]."'");
-  	}
-  	if (isset($_POST["group_of_rights"])) {
-  		array_push($names, "group_of_rights");
-  		array_push($values, "'".$_POST["group_of_rights"]."'");
-  	}
-  	if (isset($_POST["name"])) {
-  		array_push($names, "name");
-  		array_push($values, "'".$_POST["name"]."'");
-  	}
-  	if (isset($_POST["second_name"])) {
-  		array_push($names, "second_name");
-  		array_push($values, "'".$_POST["second_name"]."'");
-  	}
-  	if (isset($_POST["surname"])) {
-  		array_push($names, "surname");
-  		array_push($values, "'".$_POST["surname"]."'");
-  	}
-  	if (isset($_POST["maiden_name"])) {
-  		array_push($names, "maiden_name");
-  		array_push($values, "'".$_POST["maiden_name"]."'");
-  	}
+    $names = array();
+    $values = array();
+    if ($_POST["id"] != 0) {
+    	if (isset($_POST["vk_id"])) {
+    		array_push($names, "vk_id");
+    		array_push($values, "'".$_POST["vk_id"]."'");
+    	}
+    	if (isset($_POST["group_of_rights"])) {
+    		array_push($names, "group_of_rights");
+    		array_push($values, "'".$_POST["group_of_rights"]."'");
+    	}
+    	if (isset($_POST["name"])) {
+    		array_push($names, "name");
+    		array_push($values, "'".$_POST["name"]."'");
+    	}
+    	if (isset($_POST["second_name"])) {
+    		array_push($names, "second_name");
+    		array_push($values, "'".$_POST["second_name"]."'");
+    	}
+    	if (isset($_POST["surname"])) {
+    		array_push($names, "surname");
+    		array_push($values, "'".$_POST["surname"]."'");
+    	}
+    	if (isset($_POST["maiden_name"])) {
+    		array_push($names, "maiden_name");
+    		array_push($values, "'".$_POST["maiden_name"]."'");
+    	}
+      if (isset($_POST["year_of_entrance"])) {
+        array_push($names, "year_of_entrance");
+        array_push($values, "'".$_POST["year_of_entrance"]."'");
+      }      
+    }
   	if (isset($_POST["phone"])) {
   		array_push($names, "phone");
   		array_push($values, "'".$_POST["phone"]."'");
@@ -198,16 +203,17 @@ $link->set_charset("utf8");
   		array_push($names, "birthdate");
   		array_push($values, "'".$_POST["birthdate"]."'");
   	}
-  	if (isset($_POST["year_of_entrance"])) {
-  		array_push($names, "year_of_entrance");
-  		array_push($values, "'".$_POST["year_of_entrance"]."'");
-  	}
   	$conc = array();
   	foreach ($names as $key => $value) {
   		array_push($conc, "".$value."=".$values[$key]);
   	}
   	$conc = implode(", ", $conc);
-  	$query = "UPDATE fighters SET ".$conc." WHERE id='".$_POST['id']."';";
+    $query = "";
+    if ($_POST["id"] == 0) {
+      $query = "UPDATE fighters SET ".$conc." WHERE id='".$_SESSION['fighter_id']."';";
+    }else{
+  	  $query = "UPDATE fighters SET ".$conc." WHERE id='".$_POST['id']."';";
+    }
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   //	$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
   	$result["result"] = "Success";

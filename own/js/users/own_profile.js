@@ -31,13 +31,13 @@ function get_own_info() {
   }
   window.fighters.own_angular_conroller = null;
   var fid=window.location.href.split("/")
-  var userid=fid[fid.length-1] //TODO сделать тут нормально!
+  var userid=0 //TODO сделать тут нормально!
 
   if (! window.fighters.own_script ) {
     window.fighters.own_script = true;
   var intID = setInterval(function(){
       var fid=window.location.href.split("/")
-      var userid=fid[fid.length-1] //TODO сделать тут нормально!
+      var userid=0
     if ((typeof(angular) !== "undefined") && (userid != "users")) {
         if (window.fighters.own_angular_conroller == null) {
           window.fighters.own_angular_conroller = angular.module('own_c_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
@@ -105,7 +105,7 @@ function get_own_info() {
     $(".user-info").removeClass("hidden")
      var inthrefID = setInterval(function(){
       var fid=window.location.href.split("/")
-      var userid=fid[fid.length-1] //TODO сделать тут нормально!
+      var userid=0
       if (userid != "users") {
         clearInterval(inthrefID);
         var data = {action: "get_own_info", id: userid}
@@ -152,24 +152,6 @@ function get_own_info() {
     }
     $scope.resetInfo = function() {
       $scope.fighter = angular.copy($scope.master);
-    }
-
-    $scope.killFighter = function() {
-      var fid=window.location.href.split("/")
-      var userid=fid[fid.length-1] //TODO сделать тут нормально!
-      if (confirm("Точно удалить профиль?")) {
-        var data = {action: "kill_fighter", id: userid}
-        $.ajax({ //TODO: make with angular
-          type: "POST",
-          url: "/handlers/user.php",
-          dataType: "json",
-          data:  $.param(data)
-        }).done(function(response) {
-          if (response.result == "Success") {
-            window.location="/";
-          }
-        });
-      }
     }
 
     $("#page-container").on("focusout", "input.vk-domain", function() {
