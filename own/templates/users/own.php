@@ -17,6 +17,7 @@
           <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
           <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
           <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
+          <li ng-show="fighter.instagram_id"><strong>id в Instagram:</strong><a href='https://instagram.com/{{fighter.instagram_id}}' target="_blank"> {{fighter.instagram_id}} </a></li>
           <li ng-show="fighter.birthdate"><strong>День рождения: </strong>{{fighter.birthdate | date: 'dd.MM.yyyy'}}</li>
           <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
           <li ng-show="fighter.group_of_rights"><strong>Права доступа: </strong>{{fighter.group_of_rights}} ({{groups[fighter.group_of_rights]}})</li>
@@ -43,6 +44,7 @@
             <li><strong>Телефон:</strong> +7<input type="text" ng-model="fighter.phone" size="{{(fighter.phone).length}}" /> <em>(цифрами)</em></li>
             <li><strong>Второй телефон:</strong> +7<input type="text" class="change-s-phone" ng-model="fighter.second_phone" size="{{(fighter.second_phone).length}}" /> </li>
             <li><strong>e-mail:</strong> <input type="email" ng-model="fighter.email" size="{{(fighter.email).length}}" /></li>
+            <li><strong>id в Instagram:</strong> <input ng-model="fighter.instagram_id" size="{{(fighter.intagram_id).length}}" /></li>
             <li><strong>День рождения: </strong><input type="date" ng-model="fighter.birthdate" size="{{(fighter.birthdate).length}}" /></li>
             <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
             <li ng-show="fighter.group_of_rights"><strong>Права доступа: </strong>{{fighter.group_of_rights}} ({{groups[fighter.group_of_rights]}})</li>

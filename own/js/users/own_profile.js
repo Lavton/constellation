@@ -135,8 +135,8 @@ function get_own_info() {
     $scope.submit = function() {
       get_vk(function() {
       var data =  angular.copy($scope.fighter);
-      data.vk_id = ""+data.vk_id;
       data.action = "set_new_data"
+      data.id = 0;
       _.each(data, function(element, index, list){
         if (!element) {
           data[index] = null;
@@ -147,17 +147,13 @@ function get_own_info() {
         $(saved).stop(true, true);
         $(saved).fadeIn("slow");
         $(saved).fadeOut("slow");
+        console.log(response)
       });      
       });
     }
     $scope.resetInfo = function() {
       $scope.fighter = angular.copy($scope.master);
     }
-
-    $("#page-container").on("focusout", "input.vk-domain", function() {
-      get_vk()
-    });
-
 
 
     function get_vk(callback) {

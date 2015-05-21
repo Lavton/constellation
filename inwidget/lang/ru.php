@@ -16,7 +16,7 @@
  */
 
 $LANG = array(
-	'title'			=> 'Мы в Instagram:',
+	'title'			=> 'Мы в Instagram: #спо_созвездие',
 	'buttonFollow' 	=> 'Посмотреть',
 	'statPosts' 	=> 'посты',
 	'statFollowers'	=> 'подписчики',

@@ -142,7 +142,7 @@ $link->set_charset("utf8");
 function set_new_data() {
   check_session();
   session_start();
-  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) || ($_POST==0)) {
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) || ($_POST["id"]==0)) {
   	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
  $link = mysqli_connect( 
             Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
@@ -199,6 +199,9 @@ $link->set_charset("utf8");
   		array_push($names, "email");
   		array_push($values, "'".$_POST["email"]."'");
   	}
+      array_push($names, "instagram_id");
+      array_push($values, "'".$_POST["instagram_id"]."'");
+
   	if (isset($_POST["birthdate"])) {
   		array_push($names, "birthdate");
   		array_push($values, "'".$_POST["birthdate"]."'");
@@ -217,7 +220,7 @@ $link->set_charset("utf8");
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   //	$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
   	$result["result"] = "Success";
-  	$result["query"] = $query;
+  	// $result["query"] = $query;
   	mysqli_close($link);
     echo json_encode($result);
   } else {
