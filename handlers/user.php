@@ -142,7 +142,7 @@ $link->set_charset("utf8");
 function set_new_data() {
   check_session();
   session_start();
-  if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) || ($_POST==0)) {
   	require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
  $link = mysqli_connect( 
             Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
@@ -352,7 +352,6 @@ $link->set_charset("utf8");
 function get_own_info() {
   check_session();
   session_start();
-  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
  $link = mysqli_connect( 
             Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
@@ -373,7 +372,6 @@ $link->set_charset("utf8");
     $result["result"] = "Success";
     mysqli_close($link);
     echo json_encode($result);
-  }
 }
 
 
