@@ -10,7 +10,7 @@
 // Feel free to add more tags
 // ----------------------------------------------------------------------------
 mySettings = {
-	previewParserPath:	"/markitup/sets/bbcode/parser.php", // path to your BBCode parser
+	previewParserPath:	"/standart/markitup/sets/bbcode/parser.php", // path to your BBCode parser
 	markupSet: [
 		{name:'Полужирный', key:'B', openWith:'[b]', closeWith:'[/b]'},
 		{name:'Курсив', key:'I', openWith:'[i]', closeWith:'[/i]'},

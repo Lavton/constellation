@@ -166,7 +166,7 @@ function get_shift(shiftid) {
           var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'json',
             global: false,
             data: $.param(bbdata)
@@ -190,7 +190,7 @@ function get_shift(shiftid) {
           var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'json',
             global: false,
             data: $.param(bbdata)
@@ -397,7 +397,7 @@ function get_shift(shiftid) {
           var bbdata =  {bbcode: $scope.shift.comments, ownaction: "bbcodeToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'text',
             global: false,
             data: $.param(bbdata)
@@ -569,7 +569,7 @@ function get_shift(shiftid) {
           var bbdata =  {bbcode: $scope.shift.comments, ownaction: "bbcodeToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'text',
             global: false,
             data: $.param(bbdata)
