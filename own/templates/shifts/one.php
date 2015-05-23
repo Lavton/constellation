@@ -338,6 +338,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <table class="table-bordered" ng-show="all_apply">
   <thead>
   <tr>
+    <th>№</th>
     <th></th>
     <th>ФИО</th>
     <th>Статус</th>
@@ -354,7 +355,8 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
   </tr>
   </thead>
 <tbody>
-  <tr ng-repeat="want in all_apply">
+  <tr ng-repeat="(ind, want) in all_apply">
+    <td>{{ind+1}}</td>
     <td><a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a> <br/> 
     <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>      
       <a ng-click="editGuess(want, true)" href="">
