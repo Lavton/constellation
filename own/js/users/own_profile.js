@@ -161,13 +161,6 @@ function get_own_info() {
       getVkData($scope.fighter.domain, ["photo_200", "domain"], 
         function(response) {
           var user_vk = response[$scope.fighter.domain];
-          if (user_vk == undefined) {
-            user_vk = {photo_200: "http://vk.com/images/camera_b.gif",
-              domain: json.user.vk_id,
-              uid: 0
-            }
-            
-          }
           $scope.fighter.domain = user_vk.domain
           $scope.fighter.photo_200 = user_vk.photo_200;
           $scope.fighter.vk_id = user_vk.uid;

@@ -163,31 +163,19 @@ function get_user_info(userid) {
 
     function get_vk(callback) {
       var data_vk = {user_ids: $scope.fighter.domain, fields: ["photo_200", "domain"]}
-      $.ajax({
-        type: "GET",
-        url: "https://api.vk.com/method/users.get",
-        dataType: "jsonp",
-        data:  $.param(data_vk)
-      }).done(function(json2) {
-        if ((json2 !== undefined) && (json2.error == undefined)) {
-         var user_vk = json2.response[0];
-        }
-        if (user_vk == undefined) {
-          user_vk = {photo_200: "http://vk.com/images/camera_b.gif",
-            domain: json.user.vk_id,
-            uid: 0
-          }
-          
-        }
-        $scope.fighter.domain = user_vk.domain
-        $scope.fighter.photo_200 = user_vk.photo_200;
-        $scope.fighter.vk_id = user_vk.uid;
+      getVkData($scope.fighter.domain, ["photo_200", "domain"], 
+        function(response) {
+          var user_vk = response[$scope.fighter.domain];
+          $scope.fighter.domain = user_vk.domain
+          $scope.fighter.photo_200 = user_vk.photo_200;
+          $scope.fighter.vk_id = user_vk.uid;
 
-        $scope.$apply();
-        if (callback) {
-          callback();
+          $scope.$apply();
+          if (callback) {
+            callback();
+          }
         }
-      });
+      );
     }
   }
 }

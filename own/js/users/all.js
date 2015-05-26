@@ -60,68 +60,62 @@ $('#page-container').on('click', ".pre-add-new", function() {
       }, 750);
     });
   } else {
-    var data = {user_ids: $(".add-new-fighter-d").val(), fields: ["contacts", "bdate"]}
-    $.ajax({ //TODO: make with angular
-      type: "GET",
-      url: "https://api.vk.com/method/users.get",
-      dataType: "jsonp",
-      data:  $.param(data)
-    }).done(function(vk_response) {
-      if (vk_response.response) {
+    if (! getVkData($(".add-new-fighter-d").val(), ["contacts", "bdate"], 
+      function(response) {
         $(".add-new-fighter-d").addClass("own-valid")
         $(".add-new-fighter-d").removeClass("own-invalid")
-        if (_.findWhere(id_and_uid, {vk_id: vk_response.response[0].uid+""})) {
+        if (_.findWhere(id_and_uid, {vk_id: response[$(".add-new-fighter-d").val()].uid+""})) {
           $(".add-new-fighter-d").addClass("own-invalid")
           $(".add-new-fighter-d").removeClass("own-valid")
+          return;
         } else {
           $(".add-new-fighter-d").addClass("own-valid")
           $(".add-new-fighter-d").removeClass("own-invalid")
         }
 
-      } else {
-        $(".add-new-fighter-d").addClass("own-invalid")
-        $(".add-new-fighter-d").removeClass("own-valid")
-      }
-
-      //добавляем нового пользователя лишь если данные корректны
-      if ($(".add-new-fighter-d").hasClass("own-valid") && $(".add-new-fighter-id").hasClass("own-valid")) {
-        var vk_user = vk_response.response[0];
-        var bd = [];
-        if (vk_user.bdate){
-          vk_user.bdate.split(".");
-        }
-        if (!bd[0]) {
-          bd[0] = "01"
-        }
-        if (!bd[1]) {
-          bd[1] = "01"
-        }
-        if (!bd[2]) {
-          bd[2] = "0001"
-        }
-        bd = bd[2]+"-"+bd[1]+"-"+bd[0]; 
-        var send_data = {
-          action: "add_new_fighter", 
-          id: $(".add-new-fighter-id").val()*1, 
-          vk_id: vk_user.uid+"",
-          name: vk_user.first_name,
-          surname: vk_user.last_name,
-          birthdate: bd,
-          year_of_entrance: (new Date()).getFullYear(),
-          group_of_rights: 3
-        }
-        $.ajax({ //TODO: make with angular
-          type: "POST",
-          url: "/handlers/user.php",
-          dataType: "json",
-          data:  $.param(send_data)
-        }).done(function(response) {
-          if (response.result == "Success") {
-            window.location="/about/users/"+$(".add-new-fighter-id").val();
+        if ($(".add-new-fighter-d").hasClass("own-valid") && $(".add-new-fighter-id").hasClass("own-valid")) {
+          var vk_user = response[$(".add-new-fighter-d").val()];
+          var bd = [];
+          if (vk_user.bdate){
+            vk_user.bdate.split(".");
           }
-        });
+          if (!bd[0]) {
+            bd[0] = "01"
+          }
+          if (!bd[1]) {
+            bd[1] = "01"
+          }
+          if (!bd[2]) {
+            bd[2] = "0001"
+          }
+          bd = bd[2]+"-"+bd[1]+"-"+bd[0]; 
+          var send_data = {
+            action: "add_new_fighter", 
+            id: $(".add-new-fighter-id").val()*1, 
+            vk_id: vk_user.uid+"",
+            name: vk_user.first_name,
+            surname: vk_user.last_name,
+            birthdate: bd,
+            year_of_entrance: (new Date()).getFullYear(),
+            group_of_rights: 3
+          }
+          $.ajax({ //TODO: make with angular
+            type: "POST",
+            url: "/handlers/user.php",
+            dataType: "json",
+            data:  $.param(send_data)
+          }).done(function(response) {
+            if (response.result == "Success") {
+              window.location="/about/users/"+$(".add-new-fighter-id").val();
+            }
+          });
+        }
       }
-    });
+    )
+    ) {
+      $(".add-new-fighter-d").addClass("own-invalid")
+      $(".add-new-fighter-d").removeClass("own-valid")
+    }
   }
 });
 
@@ -315,91 +309,86 @@ function init_angular_f_c ($scope, $http) {
             user_ids.push(element.vk_id);
           });
 
-          var data2 = {user_ids: user_ids, fields: ["photo_100", "photo_200", "domain"]}
-          $.ajax({ //TODO: make with angular
-            type: "GET",
-            url: "https://api.vk.com/method/users.get",
-            dataType: "jsonp",
-            data:  $.param(data2)
-          }).done(function(vk_response) {
-            setTimeout(function(){
-            _.each($scope.fighters.selected_f, function(element, index, list) {
-              var this_fighter = _.findWhere(vk_response.response, {uid: element.vk_id*1});
-              element.vk_domain = this_fighter ? this_fighter.domain : ("id"+element.vk_id);
-              element.photo_100 = this_fighter ? this_fighter.photo_100 : element.photo_100;
-            });
-            $scope.$apply();
-            }, 10);
-
-            $scope.makeVK = function () {
-              $scope.vk_l = [];
+          getVkData(user_ids, ["photo_100", "photo_200", "domain"], 
+            function(vk_response) {
+              setTimeout(function(){
               _.each($scope.fighters.selected_f, function(element, index, list) {
-                $scope.vk_l.push("*"+element.vk_domain+" ("+element.name+") ")
-              })
-              $scope.vk_l = $scope.vk_l.join(",");
-
-            }
-
-            /*генерим vCard*/
-            $scope.makeCard = function() { //TODO make code more clear
-              var json = response
-              var json2 = vk_response
-              var card = "";
-              _.each(json.users, function(element, index, list) {
-                var this_card = "";
-                this_card += "BEGIN:VCARD\n";
-                this_card += "VERSION:3.0\n";
-                     
-                this_card += "FN:" + element.name + " " + element.surname + "\n";
-                this_card += "N:" + element.surname;
-                if ((element.maiden_name != null)  && ($scope.fighters.has_second)) {
-                  this_card += ","+element.maiden_name;
-                }
-                this_card += ";"+element.name+";";
-                if ((element.second_name != null) && ($scope.fighters.has_second)) {
-                  this_card += element.second_name;
-                }
-                this_card +=";;\n";
-                
-                var vk_data=_.findWhere(json2.response, {domain: element.vk_id});
-                if (vk_data != undefined) { //TODO: not works
-                  this_card += "PHOTO;VALUE=uri:"+vk_data.photo_200+"\n";
-                }
-
-                if (element.birthdate != null) {
-                  this_card += "BDAY:"+element.birthdate+"\n";
-                }
-
-                if (element.phone != null) {
-                  var tel = element.phone;
-                  this_card += "TEL;TYPE=MAIN:"+
-                  "+7-"+tel[0]+tel[1]+tel[2]+"-"+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+tel[8]+tel[9]+
-                  "\n";
-                }
-                if (element.second_phone != null) {
-                  var tel = element.second_phone;
-                  this_card += "TEL;TYPE=CELL:"+
-                  "+7-"+tel[0]+tel[1]+tel[2]+"-"+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+tel[8]+tel[9]+
-                  "\n";
-                }
-
-                if (element.email != null) {
-                  this_card += "EMAIL;TYPE=INTERNET:"+element.email+"\n";
-                }
-
-                if ($(".vCard-category").val() != "") {
-                  this_card += "CATEGORIES:"+$(".vCard-category").val()+"\n";
-                }
-                this_card += "END:VCARD\n\n";
-                card += this_card;
+                var this_fighter = vk_users[element.vk_id*1];
+                element.vk_domain = this_fighter ? this_fighter.domain : ("id"+element.vk_id);
+                element.photo_100 = this_fighter ? this_fighter.photo_100 : element.photo_100;
               });
+              $scope.$apply();
+              }, 10);
 
-              /*запись полученной строки в файл*/
-              var blob = new Blob([card], {type: "text/plain;charset=utf-8"});
-              saveAs(blob, "contacts.vcf");
+              $scope.makeVK = function () {
+                $scope.vk_l = [];
+                _.each($scope.fighters.selected_f, function(element, index, list) {
+                  $scope.vk_l.push("*"+element.vk_domain+" ("+element.name+") ")
+                })
+                $scope.vk_l = $scope.vk_l.join(",");
+
+              }
+
+              /*генерим vCard*/
+              $scope.makeCard = function() { //TODO make code more clear
+                var json = response
+                var json2 = vk_response
+                var card = "";
+                _.each(json.users, function(element, index, list) {
+                  var this_card = "";
+                  this_card += "BEGIN:VCARD\n";
+                  this_card += "VERSION:3.0\n";
+                       
+                  this_card += "FN:" + element.name + " " + element.surname + "\n";
+                  this_card += "N:" + element.surname;
+                  if ((element.maiden_name != null)  && ($scope.fighters.has_second)) {
+                    this_card += ","+element.maiden_name;
+                  }
+                  this_card += ";"+element.name+";";
+                  if ((element.second_name != null) && ($scope.fighters.has_second)) {
+                    this_card += element.second_name;
+                  }
+                  this_card +=";;\n";
+                  
+                  var vk_data=_.findWhere(json2, {domain: element.vk_id});
+                  if (vk_data != undefined) { //TODO: not works
+                    this_card += "PHOTO;VALUE=uri:"+vk_data.photo_200+"\n";
+                  }
+
+                  if (element.birthdate != null) {
+                    this_card += "BDAY:"+element.birthdate+"\n";
+                  }
+
+                  if (element.phone != null) {
+                    var tel = element.phone;
+                    this_card += "TEL;TYPE=MAIN:"+
+                    "+7-"+tel[0]+tel[1]+tel[2]+"-"+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+tel[8]+tel[9]+
+                    "\n";
+                  }
+                  if (element.second_phone != null) {
+                    var tel = element.second_phone;
+                    this_card += "TEL;TYPE=CELL:"+
+                    "+7-"+tel[0]+tel[1]+tel[2]+"-"+tel[3]+tel[4]+tel[5]+"-"+tel[6]+tel[7]+tel[8]+tel[9]+
+                    "\n";
+                  }
+
+                  if (element.email != null) {
+                    this_card += "EMAIL;TYPE=INTERNET:"+element.email+"\n";
+                  }
+
+                  if ($(".vCard-category").val() != "") {
+                    this_card += "CATEGORIES:"+$(".vCard-category").val()+"\n";
+                  }
+                  this_card += "END:VCARD\n\n";
+                  card += this_card;
+                });
+
+                /*запись полученной строки в файл*/
+                var blob = new Blob([card], {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "contacts.vcf");
+              }
             }
-
-          });
+          );
         });
       }
     } else {

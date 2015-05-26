@@ -104,6 +104,7 @@ function getVkData (ids, fields, callback) {
       if (callback) {
         callback(result)
       };
+      return true;
     } else {
       console.log("error");
       return false;
