@@ -25,4 +25,5 @@
   <script type="text/javascript" src="/standart/markitup/jquery.markitup.js"></script>
   <script type="text/javascript" src="/standart/markitup/sets/bbcode/set.js"></script>
   <script type="text/javascript" src="/standart/js/sanitaze.js"></script>
+  <script type="text/javascript" src="/own/js/helper.js"></script>
 </div>
