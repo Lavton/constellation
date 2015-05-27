@@ -39,9 +39,10 @@ function getVkData (ids, fields, callback) {
     dataType: "jsonp",
     data:  $.param(data_vk)
   }).done(function(json) {
-    console.log("go to VK. Get")
+    console.log("go to VK.")
     if (json.error == undefined) {
-      console.log(json.response);
+      console.log("Get")
+      // console.log(json.response);
       for (var i = 0; i < json.response.length; i++) {
         var vk_user = json.response[i];
 

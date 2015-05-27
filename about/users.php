@@ -47,7 +47,7 @@
           <?php
         } else {
         /*иначе - смотри людей)*/
-          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/users/all.php');
+          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/users/all_fighters.php');
         }
       }
     ?>
@@ -61,7 +61,7 @@
   </script>
   <!-- скрипт для сохранения файла из js -->
   <script src="/standart/js/FileSaver.js"></script>
-  <script type="text/javascript" src="/own/js/users/all.js"></script>
+  <script type="text/javascript" src="/own/js/users/all_fighters.js"></script>
   <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
   <script type="text/javascript" src="/own/js/users/one_fighter.js"></script>
   <?php

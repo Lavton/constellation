@@ -6,7 +6,7 @@ if (is_ajax()) {
 		switch($action) {
 			/*если просят менять группу доступа - сделаем это!*/
 			case "change_group": change_group(); break;
-			case "all": get_all(); break;
+			case "all": get_all_fighters(); break;
 			case 'get_full_info': get_full_info(); break;
 			case "get_one_info": get_one_info(); break;
 			case 'set_new_data': set_new_data(); break;
@@ -34,7 +34,7 @@ function change_group(){
 }
 
 //get all users base info
-function get_all() {
+function get_all_fighters() {
   check_session();
   session_start();
   if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
@@ -52,7 +52,7 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
   	// поиск юзера
-  	$query = 'SELECT id, name, surname, maiden_name, nickname, year_of_entrance FROM fighters ORDER BY id;';
+  	$query = 'SELECT  id, vk_id, name, second_name, surname, maiden_name, birthdate, phone, second_phone, email, Instagram_id FROM fighters ORDER BY id;';
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   	$result["users"] = array();
 

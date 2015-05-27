@@ -97,6 +97,18 @@ if (typeof String.prototype.startsWith != 'function') {
   			}, 50);
 		}
 
+		if (locat == "/about/users") {
+			var usersID = setInterval(function(){
+ 				if (typeof(angular) !== "undefined") {
+					if ((window.fighters) && (window.fighters.was_init) && (! $(".table-container").is(":visible"))) {
+						angular.bootstrap(document, ['common_fc_app']);
+				    }
+				    clearInterval(usersID);
+  				}
+  			}, 50);
+		}
+
+
 		if (locat == "/method/games") {
 			var gmID = setInterval(function(){
  				if (typeof(angular) !== "undefined") {
