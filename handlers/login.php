@@ -43,10 +43,11 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
 	// поиск юзера
-	$query = 'SELECT group_of_rights FROM fighters where vk_id=\''.$_POST["uid"].'\';';
+	$query = 'SELECT id, group_of_rights FROM fighters where vk_id=\''.$_POST["uid"].'\';';
 	$result = mysqli_query($link, $query) or die('Запрос не удался: ');
 	$result = mysqli_fetch_array($result, MYSQL_ASSOC);
 	$_SESSION["group"] = $result["group_of_rights"];
+	$_SESSION["fighter_id"] = $result["id"];
 	if (is_null($_SESSION["group"])) {
 		$_SESSION["group"] = 2;
 	} else {
@@ -57,6 +58,7 @@ $link->set_charset("utf8");
 	setcookie ("hash", $_POST["hash"], time() + 60*60*24*100, "/");
 	setcookie ("photo", $_SESSION["photo"], time() + 60*60*24*100, "/");
 	setcookie ("current_group", $_SESSION["current_group"], time() + 60*60*24*100, "/");
+	setcookie ("fighter_id", $_SESSION["fighter_id"], time() + 60*60*24*100, "/");
 	mysqli_close($link);
 }
 

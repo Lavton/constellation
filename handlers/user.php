@@ -26,6 +26,8 @@ if (is_ajax()) {
       case "get_one_candidate_info": get_one_candidate_info(); break;
       case "set_new_cand_data": set_new_cand_data(); break;
       case "kill_candidate": kill_candidate(); break;
+
+      case "own_add_candidate": own_add_candidate(); break;
 		}
 	}
 }
@@ -435,17 +437,11 @@ $link->set_charset("utf8");
       array_push($names, "birthdate");
       array_push($values, "'".$_POST["birthdate"]."'");
     }
-    if (isset($_POST["year_of_entrance"])) {
-      array_push($names, "year_of_entrance");
-      array_push($values, "'".$_POST["year_of_entrance"]."'");
-    }
-
     $names = implode(", ", $names);
     $values = implode(", ", $values);
     $query = "INSERT INTO candidats (".$names.") VALUES (".$values.");";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["result"] = "Success";
-    $result["qw"] = $query;
     mysqli_close($link);
     echo json_encode($result);
   }
@@ -609,5 +605,57 @@ $link->set_charset("utf8");
     echo json_encode($result);
   }
 
+}
+
+/*кандидат сам вносит себя в БД со страницы с логином*/
+function own_add_candidate() {
+  check_session();
+  session_start();
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+$query = "SELECT 1 from candidats WHERE vk_id=".$_POST["vk_id"].";";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+  $check = array();
+  while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+    array_push($check, $line);
+  }
+  /*если ещё нет в БД*/
+  if (sizeof($check)==0) {
+
+    $names = array();
+    $values = array();
+    if (isset($_POST["vk_id"])) {
+      array_push($names, "vk_id");
+      array_push($values, "'".$_POST["vk_id"]."'");
+    }
+    if (isset($_POST["birthdate"])) {
+      array_push($names, "birthdate");
+      array_push($values, "'".$_POST["birthdate"]."'");
+    }
+    if (isset($_POST["phone"])) {
+      array_push($names, "phone");
+      array_push($values, "'".$_POST["phone"]."'");
+    }
+
+
+    $names = implode(", ", $names);
+    $values = implode(", ", $values);
+    $query = "INSERT INTO candidats (".$names.") VALUES (".$values.");";
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+  }
+
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
 }
 ?>
