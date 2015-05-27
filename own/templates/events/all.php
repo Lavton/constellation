@@ -28,13 +28,18 @@
 
 
 
-<?php /*комсостав+ может добавлять новые мероприятия. Но пока видно лишь админу))*/
-if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+<?php /*Все бойцы могут добавлять мероприятия (согласовав с комсоставом)*/
+if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
 ?>
 
-<br/><br/><br/>
+<br/><br/>
+<br/>
   <button type="button" class="btn btn-warning pre-add-new-event" >Создать мероприятие?</button> 
  <div class="add-new-input-w hidden">	
+  <em>Все поля обязательны для заполнения. Если вы не знаете, что ставить - поставьте что-нибудь :)<br>
+Если вы не в комсоставе, вы можете создавать мероприятия только для других бойцов. Попросите комсостав, чтобы он изменил область видимости созданного вами мероприятия, если вы хотите, чтобы оно было видно кандидатам
+</em>
+<br>
  название: <input type="text" class="add-new-event-name" placeholder="название мероприятия" size=50 /> <br>
  дата и время начала: <input type="date" class="add-new-event-start-date" /> <input type="time" class="add-new-event-start-time"/><br><br>
  дата и время конца: <input type="date" class="add-new-event-end-date" /> <input type="time" class="add-new-event-end-time"/><br>

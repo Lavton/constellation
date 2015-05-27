@@ -19,7 +19,7 @@ if (is_ajax()) {
 function add_new_event(){
   check_session();
   session_start();
-  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
     require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
 $link = mysqli_connect( 
             Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
@@ -53,7 +53,10 @@ $link->set_charset("utf8");
 
       array_push($names, "end_time");
       array_push($values, "'".$_POST["end_time"]."'");
-
+      
+      array_push($names, "visibility");
+      array_push($values, "'3'");
+    
     $names = implode(", ", $names);
     $values = implode(", ", $values);
     $query = "INSERT INTO events (".$names.") VALUES (".$values.");";
@@ -177,6 +180,7 @@ $link->set_charset("utf8");
     $query = "SELECT id FROM fighters WHERE vk_id='".$_SESSION["vk_id"]."';";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    $userId = $userId["id"];
 
     $result["event"]["editable"] = canEditEvent($link, $userId, $_POST["id"]);
     if (!isset($result["event"]["id"])) {
@@ -207,6 +211,7 @@ $link->set_charset("utf8");
     $query = "SELECT id FROM fighters WHERE vk_id='".$_SESSION["vk_id"]."';";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    $userId = $userId["id"];
 
   if (canEditEvent($link, $userId, $_POST["id"])) {
     $names = array();
@@ -275,6 +280,7 @@ $link->set_charset("utf8");
     $query = "SELECT id FROM fighters WHERE vk_id='".$_SESSION["vk_id"]."';";
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    $userId = $userId["id"];
 
   if (canEditEvent($link, $userId, $_POST["id"])) {
 
@@ -353,9 +359,27 @@ function getMe() {
 function canEditEvent($link, $userId, $eventId) {
   if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
     return true;
+  } elseif (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) {
+    $query = 'SELECT id, parent_id, editor FROM events WHERE (id='.$eventId.');';
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $event = mysqli_fetch_array($rt, MYSQL_ASSOC);
+    /*Если создал мероприятие*/
+    if ($event["editor"]*1 == $userId*1) {
+      return true;
+    }
+    
+    if (isset($event["parent_id"])) {
+      $query = 'SELECT id, editor FROM events WHERE (id='.$event["parent_id"].');';
+      $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+      $event = mysqli_fetch_array($rt, MYSQL_ASSOC);
+      /*Если создал родительское мероприятие*/
+      if ($event["editor"]*1 == $userId*1) {
+        return true;
+      }
+    }
+    return false;
   } else {
     return false;
   }
-
 }
 ?>

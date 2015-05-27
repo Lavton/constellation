@@ -20,9 +20,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <li ng-show="event.place"><strong>Место:</strong> {{event.place}}</li>
           <li ng-show="event.start_time"><strong>Начало:</strong> {{event.start_time}} </li>
           <li ng-show="event.end_time"><strong>Дата окончания:</strong> {{event.end_time}} </li>
-          <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
           <li ng-show="event.visibility"><strong>Виден для: </strong>{{event.visibility}} ({{groups[event.visibility]}})</li>
-          <?php } ?> 
           <li ng-show="event.contact"><strong>Контактное лицо:</strong> {{event.contact}} </li> 
           <li ng-show="event.lastUpdated"><strong>Последнее обновление</strong> {{event.lastUpdated}}</li>
           <li ng-show="event.editor"><strong>Создал </strong> {{event.editor_user.name}} {{event.editor_user.surname}}</li>
@@ -45,10 +43,8 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
     <form ng-submit="submit()">
       <div class="col-xs-12">
         <h2><input type="text" ng-model="event.name"/> 
-          <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
           <input type="submit" class="btn btn-primary text-right" ng-click="editEventInfo()" value="Сохранить"></input>
             <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editEventInfo()" >Отменить</input>
-          <?php } ?>
         </h2>        
         <hr>
       </div>
@@ -59,9 +55,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <li>Место: <input ng-model="event.place"></li>
           <li>дата и время начала: <input type="date" ng-model="event.start_date"/> <input type="time" ng-model="event.start_ttime" /></li>
           <li>дата и время конца: <input type="date" ng-model="event.end_date" /> <input type="time" ng-model="event.end_ttime"/> </li>
-          <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
-          <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="event.visibility" size="{{(event.visibility).length}}" /> ({{groups[event.visibility]}})</li>
-          <?php } ?> 
+          <li ng-show="event.visibility"><strong>Виден для: </strong>{{event.visibility}} ({{groups[event.visibility]}})</li>
           <li>Контактное лицо: <input type="text" ng-model="event.contact" size="{{(event.contact).length}}"/> <a href="" ng-click="setContactMe()">Я</a></li>
           <li><strong>Комментарии:</strong><br/> <textarea ng-model="event.comments" class="bbcode" cols="20" rows="5"></textarea>  </li>
           </ul>
