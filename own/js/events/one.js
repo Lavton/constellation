@@ -224,25 +224,19 @@ function get_event(eventid) {
         }
 
         $scope.$apply();
+        getVkData(response.me.vk_id, ["domain"], 
+          function(vk_response) {
+            $scope.event.contact = response.me.name+" "+response.me.surname + " ( https://vk.com/"+vk_response[response.me.vk_id].domain+" )";
+            if (response.me.phone) {
+              $scope.event.contact += ", +7"+response.me.phone;
+            }
+            if (response.me.second_phone) {
+              $scope.event.contact += ", +7"+response.me.second_phone;
+            }
 
-        $.ajax({ //TODO: make with angular
-          type: "GET",
-          url: "https://api.vk.com/method/users.get",
-          dataType: "jsonp",
-          data:  $.param({user_ids: response.me.vk_id, fields:["domain"]})
-        }).done(function(vk_response) {
-          $scope.event.contact = response.me.name+" "+response.me.surname + " ( https://vk.com/"+vk_response.response[0].domain+" )";
-          if (response.me.phone) {
-            $scope.event.contact += ", +7"+response.me.phone;
+            $scope.$apply();
           }
-          if (response.me.second_phone) {
-            $scope.event.contact += ", +7"+response.me.second_phone;
-          }
-
-          $scope.$apply();
-
-        });
-
+        );
       });
 
     }

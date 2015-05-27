@@ -89,7 +89,7 @@ $link->set_charset("utf8");
   	}
   	$ids = implode(", ", $ids);
   	/*поиск юзера*/
-  	$query = "SELECT id, vk_id, name, second_name, surname, maiden_name, birthdate, phone, second_phone, email FROM fighters WHERE id IN ($ids) ORDER BY id;";
+  	$query = "SELECT id, vk_id, name, second_name, surname, maiden_name, birthdate, phone, second_phone, email, Instagram_id FROM fighters WHERE id IN ($ids) ORDER BY id;";
   	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
   	$result["users"] = array();
   	while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {

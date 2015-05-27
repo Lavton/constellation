@@ -306,6 +306,7 @@ function init_angular_f_c ($scope, $http) {
             element.second_phone = this_fighter.second_phone;
             element.email = this_fighter.email;
             element.vk_id = this_fighter.vk_id;
+            element.Instagram_id = this_fighter.Instagram_id;
             user_ids.push(element.vk_id);
           });
 
