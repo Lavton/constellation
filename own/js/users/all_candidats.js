@@ -1,25 +1,27 @@
 /*логика ангулара*/
-function init_angular_f_c ($scope, $http) {
+function init_angular_cand_c ($scope, $http) {
   /*инициализация*/
   /*сначала - данные с сервера*/
-  var data =  {action: "all",};
+  var data =  {action: "all_candidats",};
   $http.post('/handlers/user.php', data).success(function(response) {
-    $scope.fighters = response.users;
-    _.each($scope.fighters, function(element, index, list) {
+    $scope.candidats = response.users;
+    _.each($scope.candidats, function(element, index, list) {
       element.fi = element.name + " " + element.surname;
       element.vk_domain = "id"+element.vk_id;
       element.photo_100 = "http://vk.com/images/camera_b.gif";
     });
     /*после - данные с ВК*/
     var all_vk_ids = [];
-    _.each($scope.fighters, function(element, index, list) {
+    _.each($scope.candidats, function(element, index, list) {
       all_vk_ids.push(element.vk_id);
     });
     getVkData(all_vk_ids, ["photo_100", "photo_200", "domain"], 
       function(response) {
-        _.each($scope.fighters, function(element, index, list) {
+        _.each($scope.candidats, function(element, index, list) {
           element.vk_domain = response[element.vk_id].domain;
           element.photo_100 = response[element.vk_id].photo_100;
+          element.second_name = response[element.vk_id].last_name;
+          element.first_name = response[element.vk_id].first_name;
         });
         $scope.$apply();
       }
@@ -35,50 +37,54 @@ function init_angular_f_c ($scope, $http) {
 }
 
 
-/*добавить нового бойца*/
+/*добавить нового кандидата*/
 var id_and_uid = null;
-$('#page-container').on('click', ".pre-add-new", function() {
-  if (! $(".pre-add-new").hasClass("clicked")) {
-    $(".add-new-input-w").removeClass("hidden")
-    $(".pre-add-new").addClass("clicked")
-    $(".pre-add-new").text("Добавить")
-    var data = {action: "get_all_ids"}
+$('#page-container').on('click', ".pre-add-new-cand", function() {
+  if (! $(".pre-add-new-cand").hasClass("clicked")) {
+    $(".add-new-input-cand-w").removeClass("hidden")
+    $(".pre-add-new-cand").addClass("clicked")
+    $(".pre-add-new-cand").text("Добавить")
+    var data = {action: "get_all_candidats_ids"}
     $.ajax({ //TODO: make with angular
       type: "POST",
       url: "/handlers/user.php",
       dataType: "json",
       data:  $.param(data)
     }).done(function(response) {
+      if ((response.ids).length == 0) {
+        (response.ids).push({"id": 0, "vk_id": "0"});
+      }
       id_and_uid = response.ids;
-      $(".add-new-fighter-id").val(response.ids[response.ids.length-1].id*1+1);
-      $(".add-new-fighter-id").addClass("own-valid")
+      $(".add-new-candidate-id").val(response.ids[response.ids.length-1].id*1+1);
+      $(".add-new-candidate-id").addClass("own-valid")
       setInterval(function(){
-        var new_val = $(".add-new-fighter-id").val()
+        var new_val = $(".add-new-candidate-id").val()
         if (_.findWhere(response.ids, {id: new_val+""})) {
-          $(".add-new-fighter-id").addClass("own-invalid")
-          $(".add-new-fighter-id").removeClass("own-valid")
+          $(".add-new-candidate-id").addClass("own-invalid")
+          $(".add-new-candidate-id").removeClass("own-valid")
         } else {
-          $(".add-new-fighter-id").addClass("own-valid")
-          $(".add-new-fighter-id").removeClass("own-invalid")
+          $(".add-new-candidate-id").addClass("own-valid")
+          $(".add-new-candidate-id").removeClass("own-invalid")
         }
       }, 750);
     });
   } else {
-    if (! getVkData($(".add-new-fighter-d").val(), ["contacts", "bdate"], 
+    console.log($(".add-new-candidate-d").val());
+    if (! getVkData($(".add-new-candidate-d").val(), ["contacts", "bdate"], 
       function(response) {
-        $(".add-new-fighter-d").addClass("own-valid")
-        $(".add-new-fighter-d").removeClass("own-invalid")
-        if (_.findWhere(id_and_uid, {vk_id: response[$(".add-new-fighter-d").val()].uid+""})) {
-          $(".add-new-fighter-d").addClass("own-invalid")
-          $(".add-new-fighter-d").removeClass("own-valid")
+        $(".add-new-candidate-d").addClass("own-valid")
+        $(".add-new-candidate-d").removeClass("own-invalid")
+        if (_.findWhere(id_and_uid, {vk_id: response[$(".add-new-candidate-d").val()].uid+""})) {
+          $(".add-new-candidate-d").addClass("own-invalid")
+          $(".add-new-candidate-d").removeClass("own-valid")
           return;
         } else {
-          $(".add-new-fighter-d").addClass("own-valid")
-          $(".add-new-fighter-d").removeClass("own-invalid")
+          $(".add-new-candidate-d").addClass("own-valid")
+          $(".add-new-candidate-d").removeClass("own-invalid")
         }
 
-        if ($(".add-new-fighter-d").hasClass("own-valid") && $(".add-new-fighter-id").hasClass("own-valid")) {
-          var vk_user = response[$(".add-new-fighter-d").val()];
+        if ($(".add-new-candidate-d").hasClass("own-valid") && $(".add-new-candidate-id").hasClass("own-valid")) {
+          var vk_user = response[$(".add-new-candidate-d").val()];
           var bd = [];
           if (vk_user.bdate){
             vk_user.bdate.split(".");
@@ -94,14 +100,10 @@ $('#page-container').on('click', ".pre-add-new", function() {
           }
           bd = bd[2]+"-"+bd[1]+"-"+bd[0]; 
           var send_data = {
-            action: "add_new_fighter", 
-            id: $(".add-new-fighter-id").val()*1, 
+            action: "add_new_candidate", 
+            id: $(".add-new-candidate-id").val()*1, 
             vk_id: vk_user.uid+"",
-            name: vk_user.first_name,
-            surname: vk_user.last_name,
             birthdate: bd,
-            year_of_entrance: (new Date()).getFullYear(),
-            group_of_rights: 3
           }
           $.ajax({ //TODO: make with angular
             type: "POST",
@@ -110,15 +112,15 @@ $('#page-container').on('click', ".pre-add-new", function() {
             data:  $.param(send_data)
           }).done(function(response) {
             if (response.result == "Success") {
-              window.location="/about/users/"+$(".add-new-fighter-id").val();
+              window.location="/about/candidats/"+$(".add-new-candidate-id").val();
             }
           });
         }
       }
     )
     ) {
-      $(".add-new-fighter-d").addClass("own-invalid")
-      $(".add-new-fighter-d").removeClass("own-valid")
+      $(".add-new-candidate-d").addClass("own-invalid")
+      $(".add-new-candidate-d").removeClass("own-valid")
     }
   }
 });
@@ -127,17 +129,17 @@ $('#page-container').on('click', ".pre-add-new", function() {
 
 'use strict';
 /*магия, чтобы ангулар нормально работал*/
-if (window.fighters == undefined) {
-  window.fighters = {}
+if (window.candidats == undefined) {
+  window.candidats = {}
 }
-if (window.fighters.angular_conroller == undefined) {
-  window.fighters.angular_conroller = null;
+if (window.candidats.angular_conroller == undefined) {
+  window.candidats.angular_conroller = null;
 }
   var intID = setInterval(function(){
   if (typeof(angular) !== "undefined") {
-    if ((window.location.pathname == "/about/users") && (window.fighters.angular_conroller == null)) {
-      if (window.fighters.angular_conroller == null) {      
-        window.fighters.angular_conroller = angular.module('common_fc_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
+    if ((window.location.pathname == "/about/candidats") && (window.candidats.angular_conroller == null)) {
+      if (window.candidats.angular_conroller == null) {      
+        window.candidats.angular_conroller = angular.module('common_candc_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
           // Используем x-www-form-urlencoded Content-Type
           $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
           // Переопределяем дефолтный transformRequest в $http-сервисе
@@ -175,9 +177,9 @@ if (window.fighters.angular_conroller == undefined) {
 
 
           //запускаем ангулар
-        window.fighters.angular_conroller.controller('fightersApp', ['$scope', '$http', init_angular_f_c]);
-        angular.bootstrap(document, ['common_fc_app']);
-        window.fighters.was_init = true;
+        window.candidats.angular_conroller.controller('candidatsApp', ['$scope', '$http', init_angular_cand_c]);
+        angular.bootstrap(document, ['common_candc_app']);
+        window.candidats.was_init = true;
       }
     }
     clearInterval(intID);

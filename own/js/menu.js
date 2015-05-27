@@ -108,6 +108,17 @@ if (typeof String.prototype.startsWith != 'function') {
   			}, 50);
 		}
 
+		if (locat == "/about/candidats") {
+			var usersID = setInterval(function(){
+ 				if (typeof(angular) !== "undefined") {
+					if ((window.candidats) && (window.candidats.was_init) && (! $(".table-container").is(":visible"))) {
+						angular.bootstrap(document, ['common_candc_app']);
+				    }
+				    clearInterval(usersID);
+  				}
+  			}, 50);
+		}
+
 
 		if (locat == "/method/games") {
 			var gmID = setInterval(function(){
@@ -127,6 +138,9 @@ if (typeof String.prototype.startsWith != 'function') {
 			if (locat.startsWith("/about/users")) {
 				locat = "/about/users";
 			}
+			if (locat.startsWith("/about/candidats")) {
+				locat = "/about/candidats";
+			}			
 			if (locat.startsWith("/events/shifts")) {
 				locat = "/events/shifts";
 			} else if (locat.startsWith("/events/") ) {

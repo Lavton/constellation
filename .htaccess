@@ -9,6 +9,7 @@ RewriteEngine on
 
 #переделываем в человекочитаемый url
 RewriteRule ^(.*)users/([0-9]+)$ /about/users.php?id=$2 [QSA]
+RewriteRule ^(.*)candidats/([0-9]+)$ /about/candidats.php?id=$2 [QSA]
 RewriteRule ^(.*)shifts/([0-9]+)$ /events/shifts.php?id=$2 [QSA]
 RewriteRule ^(.*)events/([0-9]+)$ /events/index.php?id=$2 [QSA]
 RewriteRule ^(.*).ics$ $1.php [QSA]

@@ -12,6 +12,9 @@ function getVkData (ids, fields, callback) {
     ids = [ids];
   }
 
+  if ((_.filter(fields, function(field){ return field == "domain"; }).length) == 0) {
+    fields.push("domain")
+  }
 /*  var exist = true;
   _.each(ids, function(element, index, list){
     if (vk_request_response[element]) {
@@ -45,7 +48,6 @@ function getVkData (ids, fields, callback) {
       // console.log(json.response);
       for (var i = 0; i < json.response.length; i++) {
         var vk_user = json.response[i];
-
         /* Если мы спросили фотку, но не получили - ставим заглушку*/
         var leng = _.filter(fields, function(field){ return field == "photo_200"; }).length;
         if ((leng) && (vk_user["photo_200"] == undefined)) {
@@ -101,7 +103,6 @@ function getVkData (ids, fields, callback) {
           }
         }
       })
-
       if (callback) {
         callback(result)
       };

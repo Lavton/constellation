@@ -76,6 +76,16 @@
                     Отряд в лицах
                   </li>
                 </a>
+                  <?php
+                      if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+                  ?>
+                <a href="/about/candidats" class="about cand-faces ajax-nav">
+                  <li class="">
+                    Наши кандидаты
+                  </li>
+                </a>
+                <?php } ?>
+
               </ul>
             </div>
           </div>
