@@ -55,7 +55,11 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <li>Место: <input ng-model="event.place"></li>
           <li>дата и время начала: <input type="date" ng-model="event.start_date"/> <input type="time" ng-model="event.start_ttime" /></li>
           <li>дата и время конца: <input type="date" ng-model="event.end_date" /> <input type="time" ng-model="event.end_ttime"/> </li>
-          <li ng-show="event.visibility"><strong>Виден для: </strong>{{event.visibility}} ({{groups[event.visibility]}})</li>
+          <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
+            <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="event.visibility" size="{{(event.visibility).length}}" /> ({{groups[event.visibility]}})</li>
+          <?php } else { ?> 
+            <li ng-show="event.visibility"><strong>Виден для: </strong>{{event.visibility}} ({{groups[event.visibility]}})</li>
+          <?php } ?>
           <li>Контактное лицо: <input type="text" ng-model="event.contact" size="{{(event.contact).length}}"/> <a href="" ng-click="setContactMe()">Я</a></li>
           <li><strong>Комментарии:</strong><br/> <textarea ng-model="event.comments" class="bbcode" cols="20" rows="5"></textarea>  </li>
           </ul>
