@@ -35,7 +35,7 @@ function getVkData (ids, fields, callback) {
   }
 */
 
-	var data_vk = {"user_ids": ids, "fields": fields}
+	var data_vk = {"user_ids": _.unique(ids), "fields": fields}
   $.ajax({
     type: "GET",
     url: "https://api.vk.com/method/users.get",
