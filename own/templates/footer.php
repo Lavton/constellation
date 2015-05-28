@@ -17,9 +17,12 @@
 
 <div id="footer-js">
 	  <script type="text/javascript" src="/standart/js/jquery.js"></script>
+    <script type="text/javascript" src="//vk.com/js/api/openapi.js?116"></script>
    <!-- // <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script> -->
-   <script type="text/javascript" src="/standart/js/angular.js"></script>
-  <!-- // <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script> -->
+    <script type="text/javascript">
+    VK.init({apiId: 4602552, onlyWidgets: true});
+    </script>
+
 	<script type="text/javascript" src="/standart/js/underscore.js"></script>
 	<script type="text/javascript" src="/own/js/menu.js"></script>
   <script type="text/javascript" src="/standart/markitup/jquery.markitup.js"></script>

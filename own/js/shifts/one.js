@@ -1,68 +1,5 @@
 'use strict';
 function get_shift(shiftid) {
-  if (window.shifts == undefined) {
-    window.shifts = {}
-  }
-  window.shifts.one_angular_conroller = null;
-  var fid=window.location.href.split("/")
-  var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-
-  if (! window.shifts.one_script ) {
-    window.shifts.one_script = true;
-  var intID = setInterval(function(){
-      var fid=window.location.href.split("/")
-      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-      if ((typeof(angular) !== "undefined") && (shiftid != "shifts")) {
-        if (window.shifts.one_angular_conroller == null) {
-          window.shifts.one_angular_conroller = angular.module('one_sc_app', ["ngSanitize"], function($httpProvider) { //магия, чтобы PHP понимал запрос
-            // Используем x-www-form-urlencoded Content-Type
-            $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-            // Переопределяем дефолтный transformRequest в $http-сервисе
-            $httpProvider.defaults.transformRequest = [function(data) {
-              var param = function(obj) {
-                var query = '';
-                var name, value, fullSubName, subValue, innerObj, i;
-                for(name in obj) {
-                  value = obj[name];
-                  if(value instanceof Array) {
-                    for(i=0; i<value.length; ++i) {
-                      subValue = value[i];
-                      fullSubName = name + '[' + i + ']';
-                      innerObj = {};
-                      innerObj[fullSubName] = subValue;
-                      query += param(innerObj) + '&';
-                    }
-                  } else if(value instanceof Object) {
-                    for(subName in value) {
-                      subValue = value[subName];
-                      fullSubName = name + '[' + subName + ']';
-                      innerObj = {};
-                      innerObj[fullSubName] = subValue;
-                      query += param(innerObj) + '&';
-                    }
-                  } else if(value !== undefined && value !== null) {
-                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-                  }
-                }              
-                return query.length ? query.substr(0, query.length - 1) : query;
-              };
-              return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-            }];
-          });
-          //запускаем ангулар
-          window.shifts.one_angular_conroller.controller('oneShiftApp', ['$scope', '$http', '$locale', init_angular_o_s_c]);
-          angular.bootstrap(document, ['one_sc_app']);
-          window.shifts.was_init_one = true;
-        
-        } else {
-          angular.bootstrap(document, ['one_sc_app']);
-        }
-        clearInterval(intID);
-    }
-  }, 50);
-  } else {
-     angular.bootstrap(document, ['one_sc_app']);
-  }
   /*логика ангулара*/
   function init_angular_o_s_c ($scope, $http, $locale) {
     $scope.id = shiftid;
@@ -225,7 +162,7 @@ function get_shift(shiftid) {
             vk_ids.push(element.dislike_three)            
           })
 
-          var data_vk = {user_ids: _.unique(vk_ids), fields: ["domain", "photo_50"]}
+          var data_vk = {user_ids: vk_ids, fields: ["domain", "photo_50"]}
           $.ajax({
             type: "GET",
             url: "https://api.vk.com/method/users.get",
@@ -412,6 +349,8 @@ function get_shift(shiftid) {
     }, 100);
 
 
+  /*добавляем(ся) на смену. Или редактируем.
+  Что делает - зависит от is_edit*/
     $scope.guessAdd = function(is_edit) {
       var data = $scope.adding;
       var qw;
@@ -429,36 +368,33 @@ function get_shift(shiftid) {
           }
         })
         data.shift_id = $scope.shift.id;
+        /*преобразуем доп. поля*/
         data.social = data.soc*1+data.nonsoc*2;
         data.profile = data.prof*1+data.nonprof*2;
-        var data_vk = {user_ids: [data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], fields: ["domain"]}
-        $.ajax({
-          type: "GET",
-          url: "https://api.vk.com/method/users.get",
-          dataType: "jsonp",
-          data:  $.param(data_vk)
-        }).done(function(response) {
-          if(data.smbdy) {
-            data.vk_id = _.findWhere(response.response, {domain: data.smbdy}).uid
+        /*заменяем введённые домены на uid*/
+        getVkData([data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], ["domain"], 
+        function(response) {
+          if(data.smbdy) { // мы комсостав и хотим добавить другого человека
+            data.vk_id = response[data.smbdy].uid;
           }
           if(data.like1) {
-            data.like_one = _.findWhere(response.response, {domain: data.like1}).uid
+            data.like_one = response[data.like1].uid;
           }
           if(data.like2) {
-            data.like_two = _.findWhere(response.response, {domain: data.like2}).uid
+            data.like_two = response[data.like2].uid;
           }
           if(data.like3) {
-            data.like_three = _.findWhere(response.response, {domain: data.like3}).uid
+            data.like_three = response[data.like3].uid;
           }
 
           if(data.dislike1) {
-            data.dislike_one = _.findWhere(response.response, {domain: data.dislike1}).uid
+            data.dislike_one = response[data.dislike1].uid;
           }
           if(data.dislike2) {
-            data.dislike_two = _.findWhere(response.response, {domain: data.dislike2}).uid
+            data.dislike_two = response[data.dislike2].uid;
           }
           if(data.dislike3) {
-            data.dislike_three = _.findWhere(response.response, {domain: data.dislike3}).uid
+            data.dislike_three = response[data.dislike3].uid;
           }
           $.ajax({
             type: "POST",
@@ -618,27 +554,23 @@ function get_shift(shiftid) {
       $scope.add_det = !$scope.add_det;      
     }
 
+    /*создаёт расстановку*/
     $scope.addDetachmentSubmit = function() {
-      var data_vk = {user_ids: $scope.newdetachment.people, fields: ["domain"]}
-          $.ajax({
-            type: "GET",
-            url: "https://api.vk.com/method/users.get",
-            dataType: "jsonp",
-            data:  $.param(data_vk)
-          }).done(function(response) {
-            _.each(response.response, function(element, index, list){
-              var idxxx = -1;
-              _.find($scope.newdetachment.people, function(p, pind){if (p==element.domain) {idxxx = pind}; return p==element.domain})
-              if (idxxx != -1) {
-               $scope.newdetachment.people[idxxx] = element.uid;
-              }
-            })
+      getVkData($scope.newdetachment.people, ["domain"], 
+        function(response) {
+          /*если передали имя ВК - заменяем на uid*/
+          for (var i = 0; i < $scope.newdetachment.people.length; i++) {
+            if (response[$scope.newdetachment.people[i]]) {
+              $scope.newdetachment.people[i] = response[$scope.newdetachment.people[i]].uid;
+            }
+          };
             var new_people = [];
             for (var i=0; i < $scope.newdetachment.people.length; i++) {
               if ($scope.newdetachment.people[i]) {
                 new_people.push($scope.newdetachment.people[i])
               }
             };
+            /*пушим в БД, конкатинируя имена*/
             var data = {
               comments: $scope.newdetachment.comments,
               people: new_people.join("$"),
@@ -728,6 +660,76 @@ function get_shift(shiftid) {
       }
     }
   }
+
+
+
+
+  /*магия, чтобы ангулар работал*/
+  if (window.shifts == undefined) {
+    window.shifts = {}
+  }
+  window.shifts.one_angular_conroller = null;
+  var fid=window.location.href.split("/")
+  var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+
+  if (! window.shifts.one_script ) {
+    window.shifts.one_script = true;
+  var intID = setInterval(function(){
+      var fid=window.location.href.split("/")
+      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+      if ((typeof(angular) !== "undefined") && (shiftid != "shifts")) {
+        if (window.shifts.one_angular_conroller == null) {
+          window.shifts.one_angular_conroller = angular.module('one_sc_app', ["ngSanitize"], function($httpProvider) { //магия, чтобы PHP понимал запрос
+            // Используем x-www-form-urlencoded Content-Type
+            $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+            // Переопределяем дефолтный transformRequest в $http-сервисе
+            $httpProvider.defaults.transformRequest = [function(data) {
+              var param = function(obj) {
+                var query = '';
+                var name, value, fullSubName, subValue, innerObj, i;
+                for(name in obj) {
+                  value = obj[name];
+                  if(value instanceof Array) {
+                    for(i=0; i<value.length; ++i) {
+                      subValue = value[i];
+                      fullSubName = name + '[' + i + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  } else if(value instanceof Object) {
+                    for(subName in value) {
+                      subValue = value[subName];
+                      fullSubName = name + '[' + subName + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  } else if(value !== undefined && value !== null) {
+                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+                  }
+                }              
+                return query.length ? query.substr(0, query.length - 1) : query;
+              };
+              return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+            }];
+          });
+          //запускаем ангулар
+          window.shifts.one_angular_conroller.controller('oneShiftApp', ['$scope', '$http', '$locale', init_angular_o_s_c]);
+          angular.bootstrap(document, ['one_sc_app']);
+          window.shifts.was_init_one = true;
+        
+        } else {
+          angular.bootstrap(document, ['one_sc_app']);
+        }
+        clearInterval(intID);
+    }
+  }, 50);
+  } else {
+     angular.bootstrap(document, ['one_sc_app']);
+  }
+
+
 }
 
 //TODO phone input

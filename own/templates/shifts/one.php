@@ -17,6 +17,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <div class="col-xs-5 info-str">
 
         <ul ng-hide="add_det">
+          <!-- информация по смене -->
           <li ng-show="shift.start_date"><strong>Дата начала:</strong> {{shift.start_date | date: 'dd.MM.yyyy'}} </li>
           <li ng-show="shift.finish_date"><strong>Дата окончания:</strong> {{shift.finish_date | date: 'dd.MM.yyyy'}} </li>
           <li ng-show="shift.place"><strong>Место:</strong> {{shift.place}} </li>
@@ -43,6 +44,8 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
 
 
       </div>
+
+      <!-- добавиться (добавить) на смену -->
       <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
         <div class="table-bordered"> 
@@ -67,6 +70,8 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
             <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
           </form>
           <?php } ?>
+
+          <!-- создание расстановки по отрядам -->
           <div  ng-show="edit_detachment.in_id">
             <textarea class="bbcode" ng-model="edit_detachment.comments"></textarea>
             <button ng-click="saveDetachComment()">сохранить комментарий</button>

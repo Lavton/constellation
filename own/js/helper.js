@@ -81,25 +81,27 @@ function getVkData (ids, fields, callback) {
       /*сопоставим ответ и исходный запрос*/
       var result = {};
       _.each(ids, function(element, index, list){
-        /*считаем, что передали доменное имя*/
-        result[element] = _.findWhere(json.response, {"domain": element});
-        /*если нет - наверно строку вида id1*/
-        if (result[element] == undefined) {
-          if (element.search("id") == 0) {
-            result[element] = _.findWhere(json.response, {"uid": element.split("id")[1]*1});
+        if (element) {
+          /*считаем, что передали доменное имя*/
+          result[element] = _.findWhere(json.response, {"domain": element});
+          /*если нет - наверно строку вида id1*/
+          if (result[element] == undefined) {
+            if (element.search("id") == 0) {
+              result[element] = _.findWhere(json.response, {"uid": element.split("id")[1]*1});
+            }
           }
-        }
-        /*если нет - может чистый id?*/
-        if (result[element] == undefined) {
-          result[element] = _.findWhere(json.response, {"uid": element*1});
-        }
+          /*если нет - может чистый id?*/
+          if (result[element] == undefined) {
+            result[element] = _.findWhere(json.response, {"uid": element*1});
+          }
 
-        /*Сопоставим запросу uid*/
-        if (result[element]) {
-          vk_request_response[element] = result[element].uid;
-          vk_request_response[result[element].uid] = result[element].uid;
-          if (result[element].domain) {
-            vk_request_response[result[element].domain] = result[element].uid;
+          /*Сопоставим запросу uid*/
+          if (result[element]) {
+            vk_request_response[element] = result[element].uid;
+            vk_request_response[result[element].uid] = result[element].uid;
+            if (result[element].domain) {
+              vk_request_response[result[element].domain] = result[element].uid;
+            }
           }
         }
       })
@@ -109,6 +111,14 @@ function getVkData (ids, fields, callback) {
       return true;
     } else {
       console.log("error");
+      var result = {};
+      _.each(ids, function(element, index, list){
+        /*считаем, что передали доменное имя*/
+        result[element] = undefined;
+      });
+      if (callback) {
+        callback(result)
+      };
       return false;
     }
   });
