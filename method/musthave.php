@@ -26,12 +26,24 @@
     </p>
     <a href="resources/camod.png" target="_blank">(клик)</a>
     <img src="resources/camod_check.png" class="camod" width=150%>
+      <div style="width: 665px;
+  margin: 0 auto;"> <br><hr>
+    <div id="vk_like"></div>
+    <div id="vk_comments"></div>
+  </div>
   </div> <!-- /container -->
 
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
 ?>
 <div id="after-js-container">
+  <script type="text/javascript">
+VK.Widgets.Like("vk_like", {type: "fill"}, 7845634)
+</script>
+<script type="text/javascript">
+VK.Widgets.Comments("vk_comments", {limit: 10, width: "665", attach: "*", autoPublish: "0"}, 7845634);
+</script>
+
   <script type="text/javascript" src="/own/js/camod.js"></script>
 </div>
 </body>

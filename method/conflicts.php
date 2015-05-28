@@ -142,12 +142,24 @@
       </ul>
       &copy; <a href="http://summercamp.ru/%D0%A1%D0%B2%D0%B5%D1%87%D0%BA%D0%B0" target="_blank">Summercamp: свечки</a>
     </div>
+        <div style="width: 665px;
+  margin: 0 auto;"> <br><hr>
+  <div id="vk_like"></div>
+    <div id="vk_comments"></div>
+  </div>
   </div> <!-- /container -->
 
 <?php
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
 ?>
 <div id="after-js-container">
+      <script type="text/javascript">
+VK.Widgets.Like("vk_like", {type: "fill"},786453)
+</script>
+<script type="text/javascript">
+VK.Widgets.Comments("vk_comments", {limit: 10, width: "665", attach: "*", autoPublish: "0"}, 786453);
+</script>
+
 </div>
 </body>
 </html>

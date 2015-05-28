@@ -188,12 +188,13 @@ function get_shift(shiftid) {
                   detachment.people[index_p] = vk_d;
                 }
               })
-
+            if ($scope.myself) {
               var vk_d = response[$scope.myself.vk_id]
               _.each(vk_d, function(element2, index, list){
                 $scope.myself[index] = vk_d[index];
               })
               $scope.myself[index] = vk_d[index];
+            }
             })
 
             if ($scope.myself) {
