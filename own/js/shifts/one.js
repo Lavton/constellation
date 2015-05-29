@@ -135,18 +135,33 @@ function get_shift(shiftid) {
             data: $.param(bbdata)
           }).done(function(comment_data) {
             //формируем запрос сразу для всех нужных id для ВКонтакте
-            var vk_ids = []
+            var vk_idsD = []
             _.each($scope.detachments, function(element, index, list) {
               element.bbcomments = _.findWhere(comment_data, {id: element.in_id}).bbcomment;
               element.people = element.people.split("$");
-              vk_ids = vk_ids.concat(element.people);
+              vk_idsD = vk_idsD.concat(element.people);
+            });
+            getVkData(vk_idsD, ["domain", "photo_50"], 
+            function(response) {
+              _.each($scope.detachments, function(detachment, index, list){
+                _.each(detachment.people, function(person, index_p, list){
+                  var vk_d = response[person];
+                  if (vk_d) {
+                    detachment.people[index_p] = vk_d;
+                  }
+                })
+              })
+              $scope.$apply();
             });
             $scope.$apply();
-            console.log(vk_ids);
 
+          });
+            //формируем запрос сразу для всех нужных id для ВКонтакте
+            var vk_ids = []
           _.each(json.like_h, function(element, index, list) {
             vk_ids.push(element.vk_id);
           });
+          var vk_ids = []
           if ($scope.myself) {
             vk_ids.push($scope.myself.vk_id)
             vk_ids.push($scope.myself.like_one)
@@ -165,10 +180,8 @@ function get_shift(shiftid) {
             vk_ids.push(element.dislike_two)
             vk_ids.push(element.dislike_three)            
           })
-          console.log(vk_ids);
           getVkData(vk_ids, ["domain", "photo_50"], 
           function(response) {
-            console.log(response);
             $scope.vk_info = response;
             // ищем тех, кому нравится данный человек
             $scope.adding.vk_likes = [];
@@ -181,21 +194,7 @@ function get_shift(shiftid) {
             });
             $scope.adding.vk_likes = json.like_h;
 
-            _.each($scope.detachments, function(detachment, index, list){
-              _.each(detachment.people, function(person, index_p, list){
-                var vk_d = response[person];
-                if (vk_d) {
-                  detachment.people[index_p] = vk_d;
-                }
-              })
-            if ($scope.myself) {
-              var vk_d = response[$scope.myself.vk_id]
-              _.each(vk_d, function(element2, index, list){
-                $scope.myself[index] = vk_d[index];
-              })
-              $scope.myself[index] = vk_d[index];
-            }
-            })
+
 
             if ($scope.myself) {
               // ищем инфу для данного человека
@@ -279,7 +278,6 @@ function get_shift(shiftid) {
 
 
             $scope.$apply();
-          });
           });
           /*конец обращения к ВК*/
 
