@@ -25,6 +25,7 @@
       Но, чтобы иметь хоть небольшое представление о том, что это "всё" включает - воспользуйтесь нашем "Чемоданчиком вожатого"
     </p>
     <a href="resources/camod.png" target="_blank">(клик)</a>
+    <br>Кликайте на картинку и будет счастье! <br>
     <img src="resources/camod_check.png" class="camod" width=150%>
       <div style="width: 665px;
   margin: 0 auto;"> <br><hr>

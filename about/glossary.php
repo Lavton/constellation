@@ -26,7 +26,7 @@
         <li><a href="#hist">история отрядов</a></li>
       </ul>
       <hr>
-      <a name="str"></a>
+      <a name="str"></a>Кликайте на картинку и будет счастье! <br>
       <a href="images/stroevka/stro.png" target="_blank">(клик)</a>
       <img src="images/stroevka/stro.png" class="stro"><br>
         <a href="images/stroevka/stro_selected.png" target="_blank">кликабельные элементы можно посмотреть тут</a>
