@@ -33,7 +33,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
     <form ng-submit="submit()">
       <div class="col-xs-12">
         <h2>
-      <h2>{{candidate.first_name}} {{candidate.second_name}} {{candidate.last_name}}
+      <h2>{{candidate.first_name}} <input type="text" ng-model="candidate.second_name"  size="{{(candidate.second_name).length}}+1" /> {{candidate.last_name}}
           <input type="submit" class="btn btn-primary text-right" ng-click="editPerson()" value="Сохранить"></input>
           <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editPerson()" >Отменить</input>
         </h2>

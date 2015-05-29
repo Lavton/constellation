@@ -540,6 +540,10 @@ $link->set_charset("utf8");
         array_push($values, "'".$_POST["vk_id"]."'");
       }
     }
+    if (isset($_POST["second_name"])) {
+      array_push($names, "second_name");
+      array_push($values, "'".$_POST["second_name"]."'");
+    }
     if (isset($_POST["phone"])) {
       array_push($names, "phone");
       array_push($values, "'".$_POST["phone"]."'");

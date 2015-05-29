@@ -40,7 +40,7 @@
           var odata = _.pick(data, 'uid', 'hash', 'first_name', 'last_name', 'photo_rec');
           odata.action = "vk_auth";
 
-          if (($(".tel_num").val() != "") && ($(".brday").val() != "")) {
+          if (($(".tel_num").val()) && ($(".brday").val())) {
             var cand_data = {
               "action": "own_add_candidate",
               "vk_id": data.uid,
