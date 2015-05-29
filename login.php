@@ -15,14 +15,15 @@
 
   <div id="page-container">
     <div id="auth_wrapper"><div id="vk_auth"></div></div>
+    <br><br><hr>
+    <div><em>Если вы <u><b>КАНДИДАТ</b></u>, и ещё этого не делали - запишите своё отчество телефон и дату рождения в поля ниже
+    <br> Если вы указали что-то неправильно, попросите комсостав, чтобы он исправил данные. И уже после этого войдите через ВКонтакте <br>
+    </em>
+    <strong>Отчество:</strong> <input class="second_n"><br> 
+    <strong>Телефон:</strong> +7 <input type="number" size="10" class="tel_num"> <em>(Цифрами)</em><br>
+    <strong>Дата рождения:</strong> <input type="date" class="brday"><br> 
+    </div>
   </div>
-<br><br><hr>
-<div><em>Если вы кандидат, и ещё этого не делали - запишите свой телефон и дату рождения в поля ниже
-<br> Если вы указали что-то неправильно, попросите комсостав, чтобы он исправил данные. И уже после этого войдите через ВКонтакте <br>
-</em>
-<strong>Телефон:</strong> +7 <input type="number" size="10" class="tel_num"> <em>(Цифрами)</em><br>
-<strong>Дата рождения:</strong> <input type="date" class="brday"><br> 
-</div>
 <?php
   include('own/templates/footer.php');
 ?>
@@ -43,6 +44,7 @@
             var cand_data = {
               "action": "own_add_candidate",
               "vk_id": data.uid,
+              "second_name": $(".second_n").val(),
               "phone": $(".tel_num").val(),
               "birthdate": $(".brday").val()
             }

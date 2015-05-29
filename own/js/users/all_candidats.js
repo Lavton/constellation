@@ -20,7 +20,7 @@ function init_angular_cand_c ($scope, $http) {
         _.each($scope.candidats, function(element, index, list) {
           element.vk_domain = response[element.vk_id].domain;
           element.photo_100 = response[element.vk_id].photo_100;
-          element.second_name = response[element.vk_id].last_name;
+          element.last_name = response[element.vk_id].last_name;
           element.first_name = response[element.vk_id].first_name;
         });
         $scope.$apply();

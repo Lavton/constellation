@@ -190,10 +190,8 @@ $link->set_charset("utf8");
       array_push($names, "visibility");
       array_push($values, "'".$_POST["visibility"]."'");
     }
-    if (isset($_POST["comments"])) {
       array_push($names, "comments");
       array_push($values, "'".$_POST["comments"]."'");
-    }
     $conc = array();
     foreach ($names as $key => $value) {
       array_push($conc, "".$value."=".$values[$key]);

@@ -465,7 +465,7 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
     // поиск юзера
-    $query = 'SELECT id, vk_id, birthdate, phone FROM candidats ORDER BY id;';
+    $query = 'SELECT id, vk_id, birthdate, phone, second_name FROM candidats ORDER BY id;';
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["users"] = array();
 
@@ -637,6 +637,10 @@ $query = "SELECT 1 from candidats WHERE vk_id=".$_POST["vk_id"].";";
     if (isset($_POST["vk_id"])) {
       array_push($names, "vk_id");
       array_push($values, "'".$_POST["vk_id"]."'");
+    }
+    if (isset($_POST["second_name"])) {
+      array_push($names, "second_name");
+      array_push($values, "'".$_POST["second_name"]."'");
     }
     if (isset($_POST["birthdate"])) {
       array_push($names, "birthdate");

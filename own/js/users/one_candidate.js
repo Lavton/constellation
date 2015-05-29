@@ -29,6 +29,7 @@ function get_candidate_info(userid) {
           data:  $.param(data)
         }).done(function(json) {
           $scope.candidate = json.user;
+          console.log($scope.candidate);
           $("a.profile_priv").attr("href", json.prev.mid)
           $("a.profile_next").attr("href", json.next.mid)
           if (!json.prev.mid) {

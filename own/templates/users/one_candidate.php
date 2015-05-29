@@ -5,7 +5,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <div ng-cloak ng-controller="oneCandidateApp">
   <div class="user-info hidden">
     <div class="col-xs-12">
-      <h2>{{candidate.first_name}} {{candidate.last_name}}
+      <h2>{{candidate.first_name}} {{candidate.second_name}} {{candidate.last_name}}
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
         <button type="button" class="btn btn-primary text-right" ng-click="editPerson()">Редактировать</button>
         <?php } ?>
@@ -33,7 +33,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
     <form ng-submit="submit()">
       <div class="col-xs-12">
         <h2>
-      <h2>{{candidate.first_name}} {{candidate.last_name}}
+      <h2>{{candidate.first_name}} {{candidate.second_name}} {{candidate.last_name}}
           <input type="submit" class="btn btn-primary text-right" ng-click="editPerson()" value="Сохранить"></input>
           <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editPerson()" >Отменить</input>
         </h2>
