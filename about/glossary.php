@@ -14,7 +14,26 @@
       
 
     <div id="page-container">
-      <style type="text/css">
+      <div style="position:fixed; background-color: white; left:150; top:50; z-index:4; display:none; border: 4px outset green" class="show_div_stro">
+        <button class="OK_stro_button">OK</button><br>
+        <div>
+        </div>
+      </div>
+
+      На этой странице:
+      <ul>
+        <li><a href="#str">строевка</a></li>
+        <li><a href="#hist">история отрядов</a></li>
+      </ul>
+      <hr>
+      <a name="str"></a>
+      <a href="images/stroevka/stro.png" target="_blank">(клик)</a>
+      <img src="images/stroevka/stro.png" class="stro"><br>
+        <a href="images/stroevka/stro_selected.png" target="_blank">кликабельные элементы можно посмотреть тут</a>
+    <div id="vk_like_str"></div>        
+      <br>
+      <hr>
+      <a name="hist"></a> <style type="text/css">
   @page {  }
   table { border-collapse:collapse; border-spacing:0; empty-cells:show }
   td, th { vertical-align:top; font-size:12pt;}
@@ -54,7 +73,11 @@ VK.Widgets.Like("vk_like", {type: "fill"}, 90)
 </script>
 <script type="text/javascript">
 VK.Widgets.Comments("vk_comments", {limit: 10, width: "665", attach: "*", autoPublish: "0"}, 90);
+VK.Widgets.Like("vk_like_str", {type: "fill"}, 91)
+
 </script>
+<script type="text/javascript" src="/own/js/stro.js"></script>
+
 </div>
 </body>
 </html>

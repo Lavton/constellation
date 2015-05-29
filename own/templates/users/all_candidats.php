@@ -24,7 +24,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
             <li><strong>ФИО:</strong> {{candidate.last_name}} {{candidate.first_name}} {{candidate.second_name}}</li>
             <li ng-show="candidate.phone"><strong>Телефон:</strong><a href='tel:+7{{candidate.phone}}'> {{goodView(candidate.phone)}} </a></li>
             <li ng-show="candidate.vk_domain"><strong>vk:</strong> <a target='_blank' href='//vk.com/{{candidate.vk_domain}}'>vk.com/{{candidate.vk_domain}}</a></li>
-            <li ng-show="candidate.birthdate"><strong>ДР:</strong> {{candidate.birthdate}} </li>
+            <li ng-show="candidate.birthdate"><strong>ДР:</strong> {{candidate.birthdate | date: 'dd.MM.yyyy'}} </li>
           </ul>
         </td>
       </tr>

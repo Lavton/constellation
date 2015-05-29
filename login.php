@@ -16,8 +16,10 @@
   <div id="page-container">
     <div id="auth_wrapper"><div id="vk_auth"></div></div>
     <br><br><hr>
-    <div><em>Если вы <u><b>КАНДИДАТ</b></u>, и ещё этого не делали - запишите своё отчество телефон и дату рождения в поля ниже
-    <br> Если вы указали что-то неправильно, попросите комсостав, чтобы он исправил данные. И уже после этого войдите через ВКонтакте <br>
+    <div><em>Если вы <u><b>КАНДИДАТ</b></u>, и ещё этого не делали - запишите своё отчество, телефон и дату рождения в поля ниже.
+    <br><br> После заполнения формы нажмите <u>"войти через ВКонтакте"</u> и ваши данные будут отправлены <br>
+Если вы указали что-то неправильно, попросите комсостав, чтобы он исправил данные. <br>
+
     </em>
     <strong>Отчество:</strong> <input class="second_n"><br> 
     <strong>Телефон:</strong> +7 <input type="number" size="10" class="tel_num"> <em>(Цифрами)</em><br>
@@ -41,29 +43,35 @@
           odata.action = "vk_auth";
 
           if (($(".tel_num").val()) && ($(".brday").val())) {
-            var cand_data = {
-              "action": "own_add_candidate",
-              "vk_id": data.uid,
-              "second_name": $(".second_n").val(),
-              "phone": $(".tel_num").val(),
-              "birthdate": $(".brday").val()
-            }
-            console.log(cand_data)
-            $.ajax({
-              type: "POST",
-              url: "/handlers/user.php",
-              dataType: "json",
-              data:  $.param(cand_data)
-            }).done(function(post_json) {
+            if (confirm("отчество: "+$(".second_n").val()
+              +"\nтелефон: +7"+$(".tel_num").val()
+              +"\nдень рождения: "+$(".brday").val())
+              ) {
+
+              var cand_data = {
+                "action": "own_add_candidate",
+                "vk_id": data.uid,
+                "second_name": $(".second_n").val(),
+                "phone": $(".tel_num").val(),
+                "birthdate": $(".brday").val()
+              }
+              console.log(cand_data)
               $.ajax({
                 type: "POST",
-                url: "/handlers/login.php",
+                url: "/handlers/user.php",
                 dataType: "json",
-                data:  $.param(odata)
-              }).done(function(json) {
-                window.location = "/";
+                data:  $.param(cand_data)
+              }).done(function(post_json) {
+                $.ajax({
+                  type: "POST",
+                  url: "/handlers/login.php",
+                  dataType: "json",
+                  data:  $.param(odata)
+                }).done(function(json) {
+                  window.location = "/";
+                });
               });
-            });
+            }
           } else {          
             $.ajax({
               type: "POST",
