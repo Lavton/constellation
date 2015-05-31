@@ -35,7 +35,15 @@ function getVkData (ids, fields, callback) {
   }
 */
 
-	var data_vk = {"user_ids": _.unique(ids), "fields": fields}
+  /*позволяем добавлять адрес типа https://vk.com/lavton */
+  var without_vk_com = [];
+  _.each(ids, function(element, index_f, list_f){
+    if (element) {
+      /*домен всегда в последнем элементе*/
+      without_vk_com.push(element.split("vk.com/")[element.split("vk.com/").length-1])
+    }
+  })   
+	var data_vk = {"user_ids": _.unique(without_vk_com), "fields": fields}
   $.ajax({
     type: "GET",
     url: "https://api.vk.com/method/users.get",
@@ -82,17 +90,18 @@ function getVkData (ids, fields, callback) {
       var result = {};
       _.each(ids, function(element, index, list){
         if (element) {
+          var clear_el = element.split("vk.com/")[element.split("vk.com/").length-1];
           /*считаем, что передали доменное имя*/
-          result[element] = _.findWhere(json.response, {"domain": element});
+          result[element] = _.findWhere(json.response, {"domain": clear_el});
           /*если нет - наверно строку вида id1*/
           if (result[element] == undefined) {
             if (element.search("id") == 0) {
-              result[element] = _.findWhere(json.response, {"uid": element.split("id")[1]*1});
+              result[element] = _.findWhere(json.response, {"uid": clear_el.split("id")[1]*1});
             }
           }
           /*если нет - может чистый id?*/
           if (result[element] == undefined) {
-            result[element] = _.findWhere(json.response, {"uid": element*1});
+            result[element] = _.findWhere(json.response, {"uid": clear_el*1});
           }
 
           /*Сопоставим запросу uid*/

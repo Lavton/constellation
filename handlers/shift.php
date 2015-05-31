@@ -43,6 +43,17 @@ $link->set_charset("utf8");
   	$result["shifts"] = array();
 
   	while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+      /*сколько людей записалось*/
+      $queryt = 'SELECT SUM(1) as sm FROM guess_shift WHERE shift_id='.$line["id"].';';
+      $rt_p = mysqli_query($link, $queryt) or die('Запрос не удался: ');
+      $line["common"] = mysqli_fetch_array($rt_p, MYSQL_ASSOC);
+      $line["common"] = $line["common"]["sm"];
+      /*cколько бойцов записалось*/
+      $queryt = 'SELECT SUM(1) as sm FROM guess_shift WHERE (shift_id='.$line["id"].' AND fighter_id IS NOT NULL);';
+      $rt_p = mysqli_query($link, $queryt) or die('Запрос не удался: ');
+      $line["common_f"] = mysqli_fetch_array($rt_p, MYSQL_ASSOC);
+      $line["common_f"] = $line["common_f"]["sm"];
+
       if (($line["visibility"]+0) <= ($_SESSION["current_group"]+0)) {
     		array_push($result["shifts"], $line);
       }

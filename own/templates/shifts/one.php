@@ -46,7 +46,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       </div>
 
       <!-- добавиться (добавить) на смену -->
-      <div class="col-xs-7 info-str" ng-show="(shift.today <= shift.st_date)">
+      <div class="col-xs-7 info-str">
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
         <div class="table-bordered"> 
         <?php } else { ?>
@@ -101,7 +101,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
 
         </div><!-- расстановка -->
 
-        <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id">Записаться на смену</button>
+        <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id || (shift.today > shift.st_date)" >Записаться на смену</button>
         <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
         <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-show="myself.vk_id">Записать на смену</button>
         <?php } ?>
