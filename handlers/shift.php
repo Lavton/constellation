@@ -58,6 +58,19 @@ $link->set_charset("utf8");
     		array_push($result["shifts"], $line);
       }
     }
+
+    /*выведем сводную таблицу по людям*/
+    $query = 'SELECT vk_id, shift_id, fighter_id, probability FROM `guess_shift` WHERE shift_id IN (SELECT id from shifts WHERE (start_date >= CURRENT_DATE AND visibility <= '.$_SESSION["current_group"].'));';
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["people"] = array();
+
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+      /*группируем по людям сразу*/
+      if (!isset($result["people"][$line["vk_id"]])) {
+        $result["people"][$line["vk_id"]] = array();
+      }
+      array_push($result["people"][$line["vk_id"]], $line);
+    }    
   	$result["result"] = "Success";
     mysqli_close($link);
     echo json_encode($result);

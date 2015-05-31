@@ -84,8 +84,11 @@ function init_angular_s_c ($scope, $http) {
     var today = new Date();
     window.shifts.scope = $scope
     $scope.shifts.all = response.shifts;
+    console.log(response);
+    $scope.shifts.people = response.people;
     $scope.shifts.actual = [];
     $scope.shifts.future = [];
+    $scope.Object = Object;
     $scope.shifts.max_arhive = ((new Date()).getFullYear())*1;
     $scope.shifts.arhive_year = $scope.shifts.max_arhive;
     _.each($scope.shifts.all, function(element, index, list) {
@@ -125,8 +128,27 @@ function init_angular_s_c ($scope, $http) {
       } else {
         $scope.shifts.actual.push(element);
       }
+    }); /*end _.each*/
+    var vk_ids = [];
+    _.each(response.people, function(element, index, list) {
+      vk_ids.push(index);
     });
-  });
+    getVkData(vk_ids, ["photo_50", "domain"], 
+      function(vk_response) {
+        _.each(response.people, function(element, index, list) {
+          _.each(vk_response[index], function(j_element, j_index, list) {
+            element[0][j_index] = j_element;
+          });
+
+          /*имя смены тут же записываем:*/
+          _.each(element, function(sh_element, sh_index, list) {
+            sh_element["shift_name"] = _.findWhere($scope.shifts.all, {id: sh_element.shift_id}).name;
+          });
+        });
+      $scope.$apply();
+      }
+    ); /*end vk*/
+  }); /*end http*/
   $scope.get_arhive = function(year) {
     var data =  {action: "arhive", year: year};
     $http.post('/handlers/shift.php', data).success(function(response) {

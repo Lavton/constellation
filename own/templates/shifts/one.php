@@ -230,7 +230,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <hr>
 
 <!-- выписываем инфу про себя -->
-<table class="table-bordered" ng-show="myself.vk_id">
+<table class="table-bordered" ng-show="myself.vk_id" width="100%">
   <thead>
   <tr>
     <th></th>
@@ -340,7 +340,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
 <hr>
 
 <!-- выписываем инфу про других -->
-<table class="table-bordered" ng-show="all_apply">
+<table class="table-bordered" ng-show="all_apply" width="100%">
   <thead>
   <tr>
     <th>№</th>
