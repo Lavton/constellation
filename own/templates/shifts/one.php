@@ -64,7 +64,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
             <button ng-click="addNewPersonDetach()">добавить человека</button><br>
             <i>Вставьте домен ВК или имя человека, если он не из со*</i><br>
             <span ng-repeat="key in newdetachment.fieldKeys">
-              vk.com/<input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <br>
+              ссылка ВК: <input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <br>
             </span>
             какие дети, комментарии, дополнения и т.п.<br>
             <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
@@ -118,21 +118,21 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <ul>
             <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?>
             <li><b>Кого добавить?</b> (как комсостав, можно добавить другого. Хотите добавиться сами - просто проигнорируйте поле) <br/>
-              vk.com/<input type="text" ng-model="adding.smbdy" placeholder="домен VK"/> 
+              ссылка ВК: <input type="text" ng-model="adding.smbdy" placeholder="домен VK"/> 
             </li>
             <?php }?>
             <li> <i>С какой вероятностью вы поедете на смену?</i>  (будет видно всем)<br/>
               {{adding.prob}} <input type="range" ng-model="adding.prob" ng-init="adding.prob=100" min="0" max="100" scale="1" style="width: 70%"/><br/>
             </li>
 
-            <li> <i>Социальный статус детей</i> (будет видно всем) <br/>
+<!--             <li> <i>Социальный статус детей</i> (будет видно всем) <br/>
               Социалка: <input type="checkbox" ng-model="adding.soc" ng-init="adding.soc=true"> &nbsp; <br/> 
               Домашние: <input type="checkbox" ng-model="adding.nonsoc" ng-init="adding.nonsoc=true">
             </li>
             <li> <i>Работа на профильных детях</i> (будет видно всем)<br/>
               Профильники: <input type="checkbox" ng-model="adding.prof" ng-init="adding.prof=true"> &nbsp; <br/> 
               Непрофильники: <input type="checkbox" ng-model="adding.nonprof" ng-init="adding.nonprof=true">
-            </li>
+            </li> -->
             <li> <i>Желаемый возраст детей</i> (будет видно всем)<br/>
               От: {{adding.min_age}} <input type="range" ng-model="adding.min_age" ng-init="adding.min_age=4" min="4" max={{adding.max_age}} scale="1" style="width: 40%"/><br/>
               До: {{adding.max_age}} <input type="range" ng-model="adding.max_age" ng-init="adding.max_age=17" min={{adding.min_age}} max="17" scale="1" style="width: 40%"/>
@@ -141,9 +141,9 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
               <i>С кем бы вы хотели работать?</i> (до 3х человек, будет видно комсоставу и тому, кого вы указали)<br/>
               <div class="row own-row">
                 <div class="col-xs-5">
-                  vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like1" size="7"/><br/>
-                  vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like2" size="7"/><br/>
-                  vk.com/<input type="text" placeholder="домен VK" ng-model="adding.like3" size="7"/><br/> <br/>
+                  ссылка ВК: <input type="text" placeholder="домен VK" ng-model="adding.like1" size="7"/><br/>
+                  ссылка ВК: <input type="text" placeholder="домен VK" ng-model="adding.like2" size="7"/><br/>
+                  ссылка ВК: <input type="text" placeholder="домен VK" ng-model="adding.like3" size="7"/><br/> <br/>
                 </div>
                 <div class="col-xs-7">
                   <div class="like_h" ng-show="adding.vk_likes && !adding.smbdy">
@@ -172,9 +172,9 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
             </li>              
             
             <li> <i>С кем бы вы НЕ хотели работать?</i> (до 3х человек, будет видно только комсоставу)<br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike1"/><br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike2"/><br/>
-              vk.com/<input type="text" placeholder="домен VK" ng-model="adding.dislike3"/><br/>
+              ссылка ВК: <input type="text" placeholder="домен VK" ng-model="adding.dislike1"/><br/>
+              ссылка ВК: <input type="text" placeholder="домен VK" ng-model="adding.dislike2"/><br/>
+              ссылка ВК: <input type="text" placeholder="домен VK" ng-model="adding.dislike3"/><br/>
             </li>
             <li> <i>Комментарии</i> (любые. Про шанс поехать, про детей, про напарников. Будет видно только комсоставу) <br/>
               <textarea ng-model="adding.comments" class="bbcode" cols=50 rows=5></textarea>
@@ -237,7 +237,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     <th>ФИО</th>
     <th>Статус</th>
     <th>Вер.<br>поехать</th>
-    <th>Хочет <br> работать<br>на</th>
+    <!-- <th>Хочет <br> работать<br>на</th> -->
     <th>Возраст</th>
     <th ng-show="myself.like_one || myself.like_two || myself.like_three">Хочет работать с</th>
     <th ng-show="myself.dislike_one || myself.dislike_two || myself.dislike_three">не хочет работать с</th>
@@ -270,12 +270,12 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
       <span ng-hide="myself.fighter_id">кандидат</span> &nbsp;
     </td>
     <td>{{myself.probability}}%</td>
-    <td>
+<!--     <td>
       <span ng-show="myself.social > 1">социальные</span><br>
       <span ng-show="myself.social%2">домашние</span><br>
       <span ng-show="myself.profile > 1">профильные</span><br>
       <span ng-show="myself.profile%2">непрофильные</span><br>
-    </td>
+    </td> -->
     <td>от {{myself.min_age}} до {{myself.max_age}}</td>
     <td ng-show="myself.like_one || myself.like_two || myself.like_three">
       <table>
@@ -348,7 +348,7 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
     <th>ФИО</th>
     <th>Статус</th>
     <th>Вер.<br>поехать</th>
-    <th>Хочет <br> работать<br>на</th>
+    <!-- <th>Хочет <br> работать<br>на</th> -->
     <th>Возраст</th>
     
     <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == COMMAND_STAFF)) { ?>
@@ -388,12 +388,12 @@ if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"
       <span ng-hide="want.fighter_id">кандидат</span> &nbsp;
     </td>
     <td>{{want.probability}}%</td>
-    <td>
+<!--     <td>
       <span ng-show="want.social > 1">социальные</span><br>
       <span ng-show="want.social%2">домашние</span><br>
       <span ng-show="want.profile > 1">профильные</span><br>
       <span ng-show="want.profile%2">непрофильные</span><br>
-    </td>
+    </td> -->
     <td>от {{want.min_age}} до {{want.max_age}}</td>
     <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == COMMAND_STAFF)) { ?>
     <td>
