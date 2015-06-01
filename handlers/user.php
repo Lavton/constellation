@@ -28,6 +28,9 @@ if (is_ajax()) {
       case "kill_candidate": kill_candidate(); break;
 
       case "own_add_candidate": own_add_candidate(); break;
+
+      /*общая инфа о всех*/
+      case "get_common_inf": get_common_inf(); break;
 		}
 	}
 }
@@ -665,5 +668,46 @@ $query = "SELECT 1 from candidats WHERE vk_id=".$_POST["vk_id"].";";
     $result["result"] = "Success";
     mysqli_close($link);
     echo json_encode($result);
+}
+
+/*базовая информация о пользователях. Будем её кэшировать.*/
+function get_common_inf() {
+    check_session();
+  session_start();
+  if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/own/passwords.php';
+
+$link = mysqli_connect( 
+            Passwords::$db_host,  /* Хост, к которому мы подключаемся */ 
+            Passwords::$db_user,       /* Имя пользователя */ 
+            Passwords::$db_pass,   /* Используемый пароль */ 
+            Passwords::$db_name);     /* База данных для запросов по умолчанию */ 
+
+if (!$link) { 
+   printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error()); 
+   exit; 
+}    
+$link->set_charset("utf8");
+    // берём всех бойцов
+    $query = 'SELECT id, vk_id as uid, name as first_name, surname as last_name FROM fighters ORDER BY id;';
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["fighters"] = array();
+
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+      array_push($result["fighters"], $line);
+    }
+
+    // все кандидаты
+    $query = 'SELECT id, vk_id as uid FROM candidats ORDER BY id;';
+    $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+    $result["candidats"] = array();
+
+    while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+      array_push($result["candidats"], $line);
+    }
+    $result["result"] = "Success";
+    mysqli_close($link);
+    echo json_encode($result);
+  }
 }
 ?>

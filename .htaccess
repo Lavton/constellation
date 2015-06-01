@@ -20,3 +20,10 @@ RewriteRule ^(.*)/$ /$1/index.php [QSA]
 
 #Убираем расширение файла из URL
 RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php 
+
+#appCache
+AddType text/cache-manifest .manifest
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/cache-manifest "access plus 0 seconds"
+</IfModule>

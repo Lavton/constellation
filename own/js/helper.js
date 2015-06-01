@@ -1,5 +1,84 @@
 /*функции, часто используемые везде, вынесенны сюда*/
 
+/*закачивает базовую информацию о бойцах и кандидатах в localStorage и локальную переменную*/
+function setPeople(callback) {
+  window.people = [];
+  function supports_html5_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+      return false;
+    }
+  }
+  var hasLocal = supports_html5_storage();
+    var expire_time = 1000*60; // в мс
+    if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people_ts") || (parseInt(window.localStorage.getItem("people_ts")) < (Date.now() - expire_time)))) {
+      if (hasLocal) {
+        window.localStorage.setItem("people_ts", Date.now());
+      }
+      var data = {"action": "get_common_inf"}
+      $.ajax({
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data:  $.param(data)
+      }).done(function(json) {
+        vk_ids = [];
+        _.each(json.candidats, function(element, index, list) {
+          vk_ids.push(element.uid);
+        });
+        _.each(json.fighters, function(element, index, list) {
+          vk_ids.push(element.uid);
+        });
+        getVkData(vk_ids, ["photo_50", "domain"], 
+        function(response) {
+          _.each(response, function(element, index, list) {
+            /*получаем инфу о человеке*/
+            var user = _.pick(element, 'uid', "domain", "first_name", "last_name", "photo_50");
+            /*дописываем специфичную для кандидата*/
+            var special = _.findWhere(json.candidats, {uid: user.uid+""})
+            if (special) {
+              user.isFigter = false;
+              user.id = special.id;
+            }
+            /*дописываем инфу как бойцов. (перезаписываем значения по умолчанию)*/
+            var special = _.findWhere(json.fighters, {uid: user.uid+""})
+            if (special) {
+              user.isFigter = true;
+              user.id = special.id;
+              user.first_name = special.first_name;
+              user.last_name = special.last_name;
+            }
+
+            /*строковое представление понадобится для поиска*/
+            user.IF = user.first_name + " " + user.last_name;
+            user.FI = user.last_name + " " + user.first_name;
+            window.people.push(user);
+          });
+          if (hasLocal) {
+            window.localStorage.setItem("people", JSON.stringify(window.people))
+          }
+          if (callback) {
+            callback();
+          }
+        });
+      });
+    } else {
+      if (hasLocal) {
+        console.log("cached")
+        window.people = JSON.parse(window.localStorage.getItem("people"))
+        if (callback) {
+          callback();
+        }
+      }
+    }
+}
+setPeople();
+function clearPeople() {
+  delete window.people;
+  window.localStorage.removeItem("people_ts");
+  window.localStorage.removeItem("people");
+}
 /*блок взаимодействия с ВКонтакте*/
 
 var vk_users = {};
