@@ -2,16 +2,14 @@
 function init_angular_f_c ($scope, $http) {
   /*инициализация*/
   $scope.fighters = [];
-  window.setPeople(function() {
+  window.setPeople(function(flag) {
     $scope.fighters = _.chain(window.people)
         .filter(function(person) {return person.isFighter})
         .sortBy(function(person) {return person.id})
         .map(function(person) {return _.clone(person)})
         .value();
-    try {
+    if (flag) {
       $scope.$apply();
-    } catch (ignored) {
-      //do nothing
     }
   });
   /*конец инициализации*/

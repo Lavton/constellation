@@ -11,7 +11,7 @@ function setPeople(callback) {
     }
   }
   var hasLocal = supports_html5_storage();
-    var expire_time = 1000*60; // в мс
+    var expire_time = 1000*60*60*24; // в мс
     if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people_ts") || (parseInt(window.localStorage.getItem("people_ts")) < (_.now() - expire_time)))) {
       if (hasLocal) {
         window.localStorage.setItem("people_ts", _.now());
@@ -60,7 +60,7 @@ function setPeople(callback) {
             window.localStorage.setItem("people", JSON.stringify(window.people))
           }
           if (callback) {
-            callback();
+            callback(true);
           }
         });
       });
@@ -69,7 +69,7 @@ function setPeople(callback) {
         console.log("cached")
         window.people = JSON.parse(window.localStorage.getItem("people"))
         if (callback) {
-          callback();
+          callback(false);
         }
       }
     }

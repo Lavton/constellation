@@ -6,7 +6,8 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
 <!-- поиск по бойцам -->  
   <div class="search_wrap"> Search: <input class="search" ng-model="query"></div>
 
-<!-- табличка, в которой будут все контакты бойцов -->
+<!-- табличка, в которой будут все контакты кандидатов -->
+<button ng-click="getMoreInfo()">Получить подробную информацию</button>
   <table class="table common-contacts">
     <thead>
       <tr>
@@ -18,12 +19,12 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
     <tbody>
       <tr ng-repeat="candidate in candidats | filter:query" class="{{candidate.id}}">
         <td><a href='candidats/{{candidate.id}}' class="ajax-nav">{{candidate.id}}</a></td>
-        <td><img ng-src="{{candidate.photo_100}}" /></td>
+        <td><img ng-src="{{candidate.photo}}" /></td>
         <td>
           <ul>
             <li><strong>ФИО:</strong> {{candidate.last_name}} {{candidate.first_name}} {{candidate.second_name}}</li>
             <li ng-show="candidate.phone"><strong>Телефон:</strong><a href='tel:+7{{candidate.phone}}'> {{goodView(candidate.phone)}} </a></li>
-            <li ng-show="candidate.vk_domain"><strong>vk:</strong> <a target='_blank' href='//vk.com/{{candidate.vk_domain}}'>vk.com/{{candidate.vk_domain}}</a></li>
+            <li ng-show="candidate.domain"><strong>vk:</strong> <a target='_blank' href='//vk.com/{{candidate.domain}}'>vk.com/{{candidate.domain}}</a></li>
             <li ng-show="candidate.birthdate"><strong>ДР:</strong> {{candidate.birthdate | date: 'dd.MM.yyyy'}} </li>
           </ul>
         </td>
