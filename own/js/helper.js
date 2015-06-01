@@ -12,9 +12,9 @@ function setPeople(callback) {
   }
   var hasLocal = supports_html5_storage();
     var expire_time = 1000*60; // в мс
-    if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people_ts") || (parseInt(window.localStorage.getItem("people_ts")) < (Date.now() - expire_time)))) {
+    if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people_ts") || (parseInt(window.localStorage.getItem("people_ts")) < (_.now() - expire_time)))) {
       if (hasLocal) {
-        window.localStorage.setItem("people_ts", Date.now());
+        window.localStorage.setItem("people_ts", _.now());
       }
       var data = {"action": "get_common_inf"}
       $.ajax({
@@ -38,14 +38,14 @@ function setPeople(callback) {
             /*дописываем специфичную для кандидата*/
             var special = _.findWhere(json.candidats, {uid: user.uid+""})
             if (special) {
-              user.isFigter = false;
-              user.id = special.id;
+              user.isFighter = false;
+              user.id = special.id*1;
             }
             /*дописываем инфу как бойцов. (перезаписываем значения по умолчанию)*/
             var special = _.findWhere(json.fighters, {uid: user.uid+""})
             if (special) {
-              user.isFigter = true;
-              user.id = special.id;
+              user.isFighter = true;
+              user.id = special.id*1;
               user.first_name = special.first_name;
               user.last_name = special.last_name;
             }
@@ -53,6 +53,7 @@ function setPeople(callback) {
             /*строковое представление понадобится для поиска*/
             user.IF = user.first_name + " " + user.last_name;
             user.FI = user.last_name + " " + user.first_name;
+            user.photo = user.photo_50;
             window.people.push(user);
           });
           if (hasLocal) {
@@ -73,7 +74,9 @@ function setPeople(callback) {
       }
     }
 }
-setPeople();
+
+window.setPeople = setPeople;
+// setPeople(function() {console.log(_.now()-tl)});
 function clearPeople() {
   delete window.people;
   window.localStorage.removeItem("people_ts");

@@ -1,31 +1,45 @@
 /*логика ангулара*/
 function init_angular_f_c ($scope, $http) {
   /*инициализация*/
-  /*сначала - данные с сервера*/
-  var data =  {action: "all",};
-  $http.post('/handlers/user.php', data).success(function(response) {
-    $scope.fighters = response.users;
-    _.each($scope.fighters, function(element, index, list) {
-      element.fi = element.name + " " + element.surname;
-      element.vk_domain = "id"+element.vk_id;
-      element.photo_100 = "http://vk.com/images/camera_b.gif";
-    });
-    /*после - данные с ВК*/
-    var all_vk_ids = [];
-    _.each($scope.fighters, function(element, index, list) {
-      all_vk_ids.push(element.vk_id);
-    });
-    getVkData(all_vk_ids, ["photo_100", "photo_200", "domain"], 
-      function(response) {
-        _.each($scope.fighters, function(element, index, list) {
-          element.vk_domain = response[element.vk_id].domain;
-          element.photo_100 = response[element.vk_id].photo_100;
-        });
-        $scope.$apply();
-      }
-    );
+  $scope.fighters = [];
+  window.setPeople(function() {
+    $scope.fighters = _.chain(window.people)
+        .filter(function(person) {return person.isFighter})
+        .sortBy(function(person) {return person.id})
+        .map(function(person) {return _.clone(person)})
+        .value();
+    try {
+      $scope.$apply();
+    } catch (ignored) {
+      //do nothing
+    }
   });
   /*конец инициализации*/
+
+  /*получаем информацию по-подробнее*/
+  $scope.getMoreInfo = function() {
+  /*сначала - данные с сервера*/
+    var data =  {action: "all",};
+    $http.post('/handlers/user.php', data).success(function(response) {
+      _.each($scope.fighters, function(element, index, list) {
+        element.photo_100 = "http://vk.com/images/camera_b.gif";
+        _.extend(element, _.findWhere(response.users, {id: element.id+""}))
+      });
+      /*после - данные с ВК*/
+      var all_vk_ids = [];
+      _.each($scope.fighters, function(element, index, list) {
+        all_vk_ids.push(element.vk_id);
+      });
+      getVkData(all_vk_ids, ["photo_100", "photo_200", "domain"], 
+        function(response) {
+          _.each($scope.fighters, function(element, index, list) {
+            element.photo = response[element.vk_id].photo_100;
+          });
+          $scope.$apply();
+        }
+      );
+    });
+  }
 
   /*просто изменение формата вывода телефона*/
   $scope.goodView = function(tel) {
