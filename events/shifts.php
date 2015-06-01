@@ -20,12 +20,17 @@
       if (isset($_GET["id"])) {
         if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
           include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one.php');
+        } else {
+          echo "Вы не авторизованы. <a href='/login'>Войдите</a>";
         }
 
       } else {
         if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
           include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/all.php');
+        } else {
+          echo "Вы не авторизованы. <a href='/login'>Войдите</a>";
         }
+
       }
     ?>
   </div><!-- page-container -->
