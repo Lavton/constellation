@@ -122,6 +122,7 @@ function getVkData (ids, fields, callback) {
   _.each(ids, function(element, index_f, list_f){
     if (element) {
       /*домен всегда в последнем элементе*/
+      element += "";
       without_vk_com.push(element.split("vk.com/")[element.split("vk.com/").length-1])
     }
   })   
@@ -172,6 +173,7 @@ function getVkData (ids, fields, callback) {
       var result = {};
       _.each(ids, function(element, index, list){
         if (element) {
+          element += ""
           var clear_el = element.split("vk.com/")[element.split("vk.com/").length-1];
           /*считаем, что передали доменное имя*/
           result[element] = _.findWhere(json.response, {"domain": clear_el});

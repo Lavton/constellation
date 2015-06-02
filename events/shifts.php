@@ -18,10 +18,14 @@
       check_session();
       session_start();
       if (isset($_GET["id"])) {
-        if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
-          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one.php');
+        if (isset($_GET["edit"])) {
+          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/detach_edit.php');
         } else {
-          echo "Вы не авторизованы. <a href='/login'>Войдите</a>";
+          if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
+            include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one.php');
+          } else {
+            echo "Вы не авторизованы. <a href='/login'>Войдите</a>";
+          }
         }
 
       } else {
@@ -44,13 +48,20 @@
   </script>
   <script type="text/javascript" src="/own/js/shifts/all.js"></script>
   <script type="text/javascript" src="/own/js/shifts/one.js"></script>
+  <script type="text/javascript" src="/own/js/shifts/detach_edit.js"></script>
   <?php
   if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+    if (isset($_GET["edit"])) {
   ?>
+  <script type="text/javascript">
+    get_shift_edit(<?=$_GET["id"]?>);
+  </script>
+  <?php } else { ?>
   <script type="text/javascript">
     get_shift(<?=$_GET["id"]?>);
   </script>
   <?php
+  }
   }
   ?>
   <script type="text/javascript">

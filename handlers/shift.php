@@ -163,7 +163,10 @@ $link->set_charset("utf8");
       array_push($result["all_apply"], $line);
     }
 
-    $query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='".$_POST['id']."') ORDER BY in_id;";
+    $query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='".$_POST['id']."' AND ranking IS NULL) ORDER BY in_id;";
+    if (isset($_POST["edit"])) {
+      $query = "SELECT in_id, people, comments, ranking FROM detachments WHERE (shift_id='".$_POST['id']."' AND ranking IS NOT NULL) ORDER BY in_id;";
+    }
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     $result["detachments"] = array();
     while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
@@ -578,7 +581,10 @@ $link->set_charset("utf8");
       array_push($names, "comments");
       array_push($values, "'".$_POST["comments"]."'");
     }
-
+    if (isset($_POST["ranking"])) {
+      array_push($names, "ranking");
+      array_push($values, "'".$_POST["ranking"]."'");
+    }
 
     $names = implode(", ", $names);
     $values = implode(", ", $values);
