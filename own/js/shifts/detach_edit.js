@@ -55,6 +55,9 @@ function get_shift_edit(shiftid) {
             $scope.rankings = _.groupBy($scope.detachments, function(detach) {return detach.ranking;})
             console.log($scope.rankings)
             $scope.max_rank = _.chain($scope.rankings).keys().map(function(key){return key*1}).max().value()
+            if (! _.isFinite($scope.max_rank)) {
+              $scope.max_rank = 0
+            }
             $scope.$apply();
           });
 
