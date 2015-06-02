@@ -17,7 +17,7 @@
       
 
 <div id="page-container">
-  <div class="text-center" style="font-family:Times New Roman; font-size:14pt;">
+  <div class="text-center" style="font-family:Times New Roman; font-size:14pt; margin-left:2cm; margin-right:2cm;">
     <h1>История СПО "СОзвездие"</h1>
       <h2>2009</h2>
 В далёком ещё 2009-ом году в голову бойцов из СПО «Алые паруса» пришла идея о создании нового студенческого педагогического отряда на базе Политеха: университет был и есть одним и самых крупных, а отряд педагогический тогда был всего один.<br>
@@ -66,6 +66,11 @@
 Весна 2015 года – впервые в истории отряда успехи в спорте: первое место среди отрядов Санкт-Петербурга в турнире по волейболу.<br>
 Май 2015 года – первый мини-юбилей отряда, 5 лет. Растите дальше!<br>
   </div> <!-- centering -->
+    <div style="width: 665px;
+  margin: 0 auto;"> <br><hr>
+    <div id="vk_like"></div>
+    <div id="vk_comments"></div>
+  </div>
 </div> <!-- page -->
 
 
@@ -73,7 +78,12 @@
   include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/footer.php');
 ?>
 <div id="after-js-container">
-
+<script type="text/javascript">
+VK.Widgets.Like("vk_like", {type: "fill"}, 94)
+</script>
+<script type="text/javascript">
+VK.Widgets.Comments("vk_comments", {limit: 10, width: "665", attach: "*", autoPublish: "0"}, 94);
+</script>
 </div>
 
 </body>

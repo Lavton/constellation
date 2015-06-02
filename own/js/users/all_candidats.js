@@ -9,7 +9,6 @@ function init_angular_cand_c ($scope, $http) {
         .sortBy(function(person) {return person.id})
         .map(function(person) {return _.clone(person)})
         .value();
-      console.log($scope.candidats)
     if (flag) {
       $scope.$apply();
     }
@@ -40,35 +39,6 @@ function init_angular_cand_c ($scope, $http) {
       );
     });
   }
-
-  /*инициализация*/
-  /*сначала - данные с сервера*/
-  // var data =  {action: "all_candidats",};
-  // $http.post('/handlers/user.php', data).success(function(response) {
-  //   $scope.candidats = response.users;
-  //   _.each($scope.candidats, function(element, index, list) {
-  //     element.fi = element.name + " " + element.surname;
-  //     element.vk_domain = "id"+element.vk_id;
-  //     element.photo_100 = "http://vk.com/images/camera_b.gif";
-  //   });
-  //   /*после - данные с ВК*/
-  //   var all_vk_ids = [];
-  //   _.each($scope.candidats, function(element, index, list) {
-  //     all_vk_ids.push(element.vk_id);
-  //   });
-  //   getVkData(all_vk_ids, ["photo_100", "photo_200", "domain"], 
-  //     function(response) {
-  //       _.each($scope.candidats, function(element, index, list) {
-  //         element.vk_domain = response[element.vk_id].domain;
-  //         element.photo_100 = response[element.vk_id].photo_100;
-  //         element.last_name = response[element.vk_id].last_name;
-  //         element.first_name = response[element.vk_id].first_name;
-  //       });
-  //       $scope.$apply();
-  //     }
-  //   );
-  // });
-  /*конец инициализации*/
 
   /*просто изменение формата вывода телефона*/
   $scope.goodView = function(tel) {
