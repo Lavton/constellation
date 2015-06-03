@@ -91,6 +91,22 @@
         "was_loaded": false,
         "title": "история | СПО \"СОзвездие\""
       }
+    },
+    "method": {
+      "index": {
+        "js": [],
+        "was_loaded": false,
+        "title": "методическая база | СПО \"СОзвездие\""
+      },
+      "camod": {
+        "js": [
+          "/own/js/on_click_show.js",
+          "/own/js/camod.js"
+        ],
+        "was_loaded": false,
+        "title": "чемодан вожатого | методическая база | СПО \"СОзвездие\""
+      }
+
     }
   }
 
@@ -101,7 +117,8 @@
     "/own/js/users/one_fighter.js": false,
     "/own/js/users/one_candidate.js": false,
     "/own/js/on_click_show.js": false,
-    "/own/js/stro.js": false
+    "/own/js/stro.js": false,
+    "/own/js/camod.js": false
   }
   window.locs = [
     [
@@ -121,6 +138,12 @@
     ],
     [
       /^\/about\/history$/, window.state.about.history
+    ],
+    [
+      /^\/method\/$/, window.state.method.index
+    ],
+    [
+      /^\/method\/musthave$/, window.state.method.camod
     ],
   ]
   window.angular_inits = {};
