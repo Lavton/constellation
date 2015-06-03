@@ -47,7 +47,7 @@
           <?php
         } else {
         /*иначе - смотри людей)*/
-          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/users/all_candidats.php');
+          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/users/all_candidats.html');
         }
       }
     ?>

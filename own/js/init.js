@@ -1,13 +1,43 @@
 (function() {
 
   window.visibilities = {
-    "1": "Незарегистрированный пользователь",
-    "2": "Кандидат",
-    "3": "Боец",
-    "4": "Старик отряда",
-    "5": "Экс-комсостав",
-    "6": "Комсостав",
-    "7": "Администратор"
+    "1": "UNREG",
+    "2": "CANDIDATE",
+    "3": "FIGHTER",
+    "4": "OLD_FIGHTER",
+    "5": "EX_COMMAND_STAFF",
+    "6": "COMMAND_STAFF",
+    "7": "ADMIN"
+  }
+  window.groups = {
+    "UNREG": {
+      "num": 1,
+      "rus": "Незарегистрированный пользователь",
+    },
+    "CANDIDATE": {
+      "num": 2,
+      "rus": "Кандидат",
+    },
+    "FIGHTER": {
+      "num": 3,
+      "rus": "Боец",
+    },
+    "OLD_FIGHTER": {
+      "num": 4,
+      "rus": "Старик отряда",
+    },
+    "EX_COMMAND_STAFF": {
+      "num": 5,
+      "rus": "Экс-комсостав",
+    },
+    "COMMAND_STAFF": {
+      "num": 6,
+      "rus": "Комсостав",
+    },
+    "ADMIN": {
+      "num": 7,
+      "rus": "Администратор",
+    }
   }
 
   window.state = {
@@ -91,4 +121,6 @@
     angular_conroller.controller(controller, ['$scope', '$http', init_f]);
     angular.bootstrap(document.getElementById(el), ['constellation']);
   }
+
+  window.current_group = getCookie("current_group") * 1 || 1
 })();

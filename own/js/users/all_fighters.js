@@ -1,6 +1,7 @@
 (function() {
   /*логика ангулара*/
   function init_angular_f_c($scope, $http) {
+    $scope.window = window;
     /*инициализация*/
     $scope.fighters = [];
     window.setPeople(function(flag) {

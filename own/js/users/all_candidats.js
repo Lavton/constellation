@@ -1,7 +1,7 @@
 (function() {
   /*логика ангулара*/
   function init_angular_cand_c($scope, $http) {
-
+    $scope.window = window;
     /*инициализация*/
     $scope.candidats = [];
     window.setPeople(function(flag) {

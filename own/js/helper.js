@@ -1,10 +1,20 @@
 /*функции, часто используемые везде, вынесенны сюда*/
+/*преобразовать номер телефона в нормальный виж*/
 window.goodTelephoneView = function(tel) {
   if (tel) {
     tel += ""
   }
   return tel ? "+7 (" + tel[0] + tel[1] + tel[2] + ") " + tel[3] + tel[4] + tel[5] + "-" + tel[6] + tel[7] + "-" + tel[8] + tel[9] : ""
 }
+
+/*вернуть куки по имени*/
+function getCookie(name) {
+  var matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ))
+  return matches ? decodeURIComponent(matches[1]) : undefined
+}
+
 
 /*закачивает базовую информацию о бойцах и кандидатах в localStorage и локальную переменную*/
 function setPeople(callback) {
