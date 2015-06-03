@@ -106,7 +106,17 @@
         "was_loaded": false,
         "title": "чемодан вожатого | методическая база | СПО \"СОзвездие\""
       }
-
+    },
+    "events": {
+      "shifts": {
+        "all": {
+          "js": [
+            "/own/js/shifts/all.js",
+          ],
+          "was_loaded": false,
+          "title": "смены | СПО \"СОзвездие\""
+        }
+      }
     }
   }
 
@@ -118,7 +128,8 @@
     "/own/js/users/one_candidate.js": false,
     "/own/js/on_click_show.js": false,
     "/own/js/stro.js": false,
-    "/own/js/camod.js": false
+    "/own/js/camod.js": false,
+    "/own/js/shifts/all.js": false
   }
   window.locs = [
     [
@@ -145,8 +156,10 @@
     [
       /^\/method\/musthave$/, window.state.method.camod
     ],
+    [
+      /^\/events\/shifts$/, window.state.events.shifts.all
+    ],
   ]
-  window.angular_inits = {};
 
   var angular_conroller = angular.module('constellation', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
     // Используем x-www-form-urlencoded Content-Type

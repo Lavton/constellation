@@ -43,10 +43,6 @@
 ?>
 
 <div id="after-js-container">
-  <script type="text/javascript">
-    document.title = 'Смены | CПО "СОзвездие"';
-  </script>
-  <script type="text/javascript" src="/own/js/shifts/all.js"></script>
   <script type="text/javascript" src="/own/js/shifts/one.js"></script>
   <script type="text/javascript" src="/own/js/shifts/detach_edit.js"></script>
   <?php
