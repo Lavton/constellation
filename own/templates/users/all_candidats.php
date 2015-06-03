@@ -37,11 +37,13 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
 <?php /*комсостав+ может добавлять новых кандидатов*/
 if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
 ?><br/><br/><br/>
-  <button type="button" class="btn btn-warning pre-add-new-cand" >Добавить нового кандидата?</button> 
- <span class="add-new-input-cand-w hidden">  vk.com/<input type="text" class="add-new-candidate-d" placeholder="введите домен вконтакте" size=30 />
-         id: <input type="number" class="add-new-candidate-id" />
+<div class="add-new-candidate">
+  <button type="button" class="btn btn-warning pre-add-new">Добавить нового кандидата?</button>
+  <span class="add-new-input-w hidden">  vk.com/<input type="text" class="add-new-d" placeholder="введите домен вконтакте" size=30 />
+    id: <input type="number" class="add-new-id" />
 
   </span>
+</div>
 <?php } ?>
 
 
