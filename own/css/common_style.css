@@ -216,3 +216,13 @@ footer .social a:hover {
   border: 2px outset green !important;
   /*color: green;*/
 }
+
+.show_div {
+  position: fixed;
+  background-color: white;
+  left: 150;
+  top: 100px;
+  z-index: 4;
+  display: none;
+  border: 4px outset green
+}

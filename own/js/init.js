@@ -77,6 +77,19 @@
             "title": "кандидаты | отряд в лицах | СПО \"СОзвездие\""
           }
         }
+      },
+      "glossary": {
+        "js": [
+          "/own/js/on_click_show.js",
+          "/own/js/stro.js"
+        ],
+        "was_loaded": false,
+        "title": "об отрядах | СПО \"СОзвездие\""
+      },
+      "history": {
+        "js": [],
+        "was_loaded": false,
+        "title": "история | СПО \"СОзвездие\""
       }
     }
   }
@@ -87,6 +100,8 @@
     "/own/js/users/all_in_common.js": false,
     "/own/js/users/one_fighter.js": false,
     "/own/js/users/one_candidate.js": false,
+    "/own/js/on_click_show.js": false,
+    "/own/js/stro.js": false
   }
   window.locs = [
     [
@@ -100,7 +115,13 @@
     ],
     [
       /^\/about\/candidats\/[1-9][0-9]*$/, window.state.about.users.candidats.one
-    ]
+    ],
+    [
+      /^\/about\/glossary$/, window.state.about.glossary
+    ],
+    [
+      /^\/about\/history$/, window.state.about.history
+    ],
   ]
   window.angular_inits = {};
 
