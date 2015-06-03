@@ -18,48 +18,48 @@
     });
 
     function initialize() {
-        $scope.app2 = _.after(2, $scope.$apply)
-          /*c cервера*/
-        var data = {
-          action: "get_one_info",
-          id: userid
-        }
-        $.ajax({
-          type: "POST",
-          url: "/handlers/user.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(json) {
-          _.extend($scope.fighter, json.user);
-
-          $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
-          $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
-          $("a.profile_priv").attr("href", json.prev.mid)
-          $("a.profile_next").attr("href", json.next.mid)
-          if (!json.prev.mid) {
-            $("a.profile_priv").hide();
-          }
-
-          if (!json.next.mid) {
-            $("a.profile_next").hide();
-          }
-          $scope.app2();
-          console.log($scope.fighter)
-          console.log(json.user)
-        });
-        /*с ВК*/
-        var data_vk = {
-          user_ids: $scope.fighter.domain,
-          fields: ["photo_200", "domain"]
-        }
-        getVkData($scope.fighter.domain, ["photo_200", "domain"],
-          function(response) {
-            $scope.fighter.photo = response[$scope.fighter.domain].photo_200;
-            $scope.app2();
-          }
-        );
+      $scope.app2 = _.after(2, $scope.$apply)
+        /*c cервера*/
+      var data = {
+        action: "get_one_info",
+        id: userid
       }
-      /*конец инициализации*/
+      $.ajax({
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        _.extend($scope.fighter, json.user);
+
+        $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
+        $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
+        $("a.profile_priv").attr("href", json.prev.mid)
+        $("a.profile_next").attr("href", json.next.mid)
+        if (!json.prev.mid) {
+          $("a.profile_priv").hide();
+        }
+
+        if (!json.next.mid) {
+          $("a.profile_next").hide();
+        }
+        $scope.app2();
+      });
+      /*с ВК*/
+      var data_vk = {
+        user_ids: $scope.fighter.domain,
+        fields: ["photo_200", "domain"]
+      }
+      getVkData($scope.fighter.domain, ["photo_200", "domain"],
+        function(response) {
+          $scope.fighter.photo = response[$scope.fighter.domain].photo_200;
+          $scope.app2();
+        }
+      );
+    }
+
+    /*конец инициализации*/
+
     $scope.goodView = window.goodTelephoneView;
 
     /* меняет местами просмотр и редактирование*/
@@ -76,10 +76,10 @@
         data.uid = "" + data.uid;
         data.action = "fighter_modify"
         _.each(data, function(element, index, list) {
-            if (!element) {
-              data[index] = null;
-            }
-          })
+          if (!element) {
+            data[index] = null;
+          }
+        })
         $http.post('/handlers/user.php', data).success(function(response) {
           var saved = $(".saved");
           $(saved).stop(true, true);

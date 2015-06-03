@@ -59,9 +59,6 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/footer.php';
   <script type="text/javascript">
       document.title = 'Отряд в лицах | СПО "СОзвездие"';
   </script>
-  <!-- скрипт для сохранения файла из js -->
-  <script src="/standart/js/FileSaver.js"></script>
-  <!-- // <script type="text/javascript" src="/own/js/users/all_fighters.js"></script> -->
   <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
 
   <?php

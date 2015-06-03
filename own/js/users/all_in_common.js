@@ -87,6 +87,7 @@ allPeople.addNewPerson = function (actId, actPost, initSel, path) {
                 data: $.param(send_data)
               }).done(function(response) {
                 if (response.result == "Success") {
+                  window.clearPeople();
                   window.location = path + $(initSel + " .add-new-id").val();
                 }
               });
