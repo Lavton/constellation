@@ -23,7 +23,7 @@ if (isset($_GET["id"]) && $_GET["id"] == 0) {
 
 	/*смотрим на чужой профиль (доступно >=бойцам)*/
 } elseif (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
-	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_fighter.php';
+	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_fighter.html';
 	/*не боец попытался посмотреть профиль*/
 } elseif (isset($_GET["id"])) {
 	echo "Access denied";
@@ -63,21 +63,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/footer.php';
   <script src="/standart/js/FileSaver.js"></script>
   <!-- // <script type="text/javascript" src="/own/js/users/all_fighters.js"></script> -->
   <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
-  <script type="text/javascript" src="/own/js/users/one_fighter.js"></script>
-  <?php
-if (isset($_GET["id"]) && ($_GET["id"] != 0) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
-	?>
-  <script type="text/javascript">
-    var intofID = setInterval(function(){
-      if ((typeof(get_user_info) != "undefined") && (get_user_info != undefined)) {
-        clearInterval(intofID);
-        get_user_info(<?=$_GET["id"]?>);
-      }
-    }, 50);
-  </script>
-  <?php
-}
-?>
+
   <?php
 if (isset($_GET["id"]) && ($_GET["id"] == 0)) {
 	?>

@@ -101,11 +101,13 @@ function setPeople(callback) {
 window.setPeople = setPeople;
 // setPeople(function() {console.log(_.now()-tl)});
 function clearPeople() {
-    delete window.people;
-    window.localStorage.removeItem("people_ts");
-    window.localStorage.removeItem("people");
-  }
-  /*блок взаимодействия с ВКонтакте*/
+  delete window.people;
+  window.localStorage.removeItem("people_ts");
+  window.localStorage.removeItem("people");
+}
+window.clearPeople = clearPeople;
+
+/*блок взаимодействия с ВКонтакте*/
 
 var vk_users = {};
 var vk_request_response = {};

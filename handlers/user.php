@@ -12,7 +12,7 @@ if (is_ajax()) {
 				break;
 			case "get_one_info":get_one_info();
 				break;
-			case 'set_new_data':set_new_data();
+			case 'fighter_modify':fighter_modify();
 				break;
 			case "get_all_ids":get_all_ids();
 				break;
@@ -115,7 +115,7 @@ function get_one_info() {
 		$link->set_charset("utf8");
 
 		// поиск юзера
-		$query = "SELECT * FROM fighters WHERE id='" . $_POST['id'] . "' ORDER BY id;";
+		$query = "SELECT id, vk_id as uid, name as first_name, second_name, surname as last_name, maiden_name, nickname, phone, second_phone, email, birthdate, year_of_entrance, group_of_rights, Instagram_id FROM fighters WHERE id='" . $_POST['id'] . "' ORDER BY id;";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
@@ -134,7 +134,7 @@ function get_one_info() {
 }
 
 //change one user info in profile
-function set_new_data() {
+function fighter_modify() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) || ($_POST["id"] == 0)) {
@@ -153,53 +153,53 @@ function set_new_data() {
 		$names = array();
 		$values = array();
 		if ($_POST["id"] != 0) {
-			if (isset($_POST["vk_id"])) {
+			if (isset($_POST["uid"])) {
+				array_push($values, "'" . $_POST["uid"] . "'");
 				array_push($names, "vk_id");
-				array_push($values, "'" . $_POST["vk_id"] . "'");
 			}
 			if (isset($_POST["group_of_rights"])) {
-				array_push($names, "group_of_rights");
 				array_push($values, "'" . $_POST["group_of_rights"] . "'");
+				array_push($names, "group_of_rights");
 			}
-			if (isset($_POST["name"])) {
+			if (isset($_POST["first_name"])) {
+				array_push($values, "'" . $_POST["first_name"] . "'");
 				array_push($names, "name");
-				array_push($values, "'" . $_POST["name"] . "'");
 			}
 			if (isset($_POST["second_name"])) {
-				array_push($names, "second_name");
 				array_push($values, "'" . $_POST["second_name"] . "'");
+				array_push($names, "second_name");
 			}
-			if (isset($_POST["surname"])) {
+			if (isset($_POST["last_name"])) {
+				array_push($values, "'" . $_POST["last_name"] . "'");
 				array_push($names, "surname");
-				array_push($values, "'" . $_POST["surname"] . "'");
 			}
 			if (isset($_POST["maiden_name"])) {
-				array_push($names, "maiden_name");
 				array_push($values, "'" . $_POST["maiden_name"] . "'");
+				array_push($names, "maiden_name");
 			}
 			if (isset($_POST["year_of_entrance"])) {
-				array_push($names, "year_of_entrance");
 				array_push($values, "'" . $_POST["year_of_entrance"] . "'");
+				array_push($names, "year_of_entrance");
 			}
 		}
 		if (isset($_POST["phone"])) {
-			array_push($names, "phone");
 			array_push($values, "'" . $_POST["phone"] . "'");
+			array_push($names, "phone");
 		}
 		if (isset($_POST["second_phone"])) {
-			array_push($names, "second_phone");
 			array_push($values, "'" . $_POST["second_phone"] . "'");
+			array_push($names, "second_phone");
 		}
 		if (isset($_POST["email"])) {
-			array_push($names, "email");
 			array_push($values, "'" . $_POST["email"] . "'");
+			array_push($names, "email");
 		}
-		array_push($names, "Instagram_id");
 		array_push($values, "'" . $_POST["Instagram_id"] . "'");
+		array_push($names, "Instagram_id");
 
 		if (isset($_POST["birthdate"])) {
-			array_push($names, "birthdate");
 			array_push($values, "'" . $_POST["birthdate"] . "'");
+			array_push($names, "birthdate");
 		}
 		$conc = array();
 		foreach ($names as $key => $value) {
