@@ -1,3 +1,4 @@
+(function(){
 /*логика ангулара*/
 function init_angular_cand_c ($scope, $http) {
 
@@ -19,25 +20,32 @@ function init_angular_cand_c ($scope, $http) {
   $scope.getMoreInfo = function() {
   /*сначала - данные с сервера*/
     var data =  {action: "all_candidats",};
-    $http.post('/handlers/user.php', data).success(function(response) {
-      _.each($scope.candidats, function(element, index, list) {
-        element.photo_100 = "http://vk.com/images/camera_b.gif";
-        _.extend(element, _.findWhere(response.users, {id: element.id+""}))
+    $scope.app2 = _.after(2, $scope.$apply);
+      $.ajax({
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data:  $.param(data)
+      }).done(function(response) {
+        _.each($scope.candidats, function(element, index, list) {
+          element.photo_100 = "http://vk.com/images/camera_b.gif";
+          _.extend(element, _.findWhere(response.users, {id: element.id+""}))
+        });
+        $scope.app2();
       });
       /*после - данные с ВК*/
       var all_vk_ids = [];
       _.each($scope.candidats, function(element, index, list) {
-        all_vk_ids.push(element.vk_id);
+        all_vk_ids.push(element.uid);
       });
       getVkData(all_vk_ids, ["photo_100", "photo_200", "domain"], 
         function(response) {
           _.each($scope.candidats, function(element, index, list) {
-            element.photo = response[element.vk_id].photo_100;
+            element.photo = response[element.uid].photo_100;
           });
-          $scope.$apply();
+          $scope.app2();
         }
       );
-    });
   }
 
   /*просто изменение формата вывода телефона*/
@@ -135,64 +143,9 @@ $('#page-container').on('click', ".pre-add-new-cand", function() {
     }
   }
 });
-
-
-
-'use strict';
-/*магия, чтобы ангулар нормально работал*/
-if (window.candidats == undefined) {
-  window.candidats = {}
-}
-if (window.candidats.angular_conroller == undefined) {
-  window.candidats.angular_conroller = null;
-}
-  var intID = setInterval(function(){
-  if (typeof(angular) !== "undefined") {
-    if ((window.location.pathname == "/about/candidats") && (window.candidats.angular_conroller == null)) {
-      if (window.candidats.angular_conroller == null) {      
-        window.candidats.angular_conroller = angular.module('common_candc_app', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
-          // Используем x-www-form-urlencoded Content-Type
-          $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-          // Переопределяем дефолтный transformRequest в $http-сервисе
-          $httpProvider.defaults.transformRequest = [function(data) {
-            var param = function(obj) {
-              var query = '';
-              var name, value, fullSubName, subValue, innerObj, i;
-              for(name in obj) {
-                value = obj[name];
-                if(value instanceof Array) {
-                  for(i=0; i<value.length; ++i) {
-                    subValue = value[i];
-                    fullSubName = name + '[' + i + ']';
-                    innerObj = {};
-                    innerObj[fullSubName] = subValue;
-                    query += param(innerObj) + '&';
-                  }
-                } else if(value instanceof Object) {
-                  for(subName in value) {
-                    subValue = value[subName];
-                    fullSubName = name + '[' + subName + ']';
-                    innerObj = {};
-                    innerObj[fullSubName] = subValue;
-                    query += param(innerObj) + '&';
-                  }
-                } else if(value !== undefined && value !== null) {
-                  query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-                }
-              }              
-              return query.length ? query.substr(0, query.length - 1) : query;
-            };
-            return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-          }];
-        });
-
-
-          //запускаем ангулар
-        window.candidats.angular_conroller.controller('candidatsApp', ['$scope', '$http', init_angular_cand_c]);
-        angular.bootstrap(document, ['common_candc_app']);
-        window.candidats.was_init = true;
-      }
-    }
-    clearInterval(intID);
-  }
-}, 50);
+var state = window.state.about.users.candidats.all;
+window.init_ang("candidatsApp", init_angular_cand_c, "all-cand");
+state.controller = "candidatsApp";
+state.init_f = init_angular_cand_c;
+state.element="all-cand"
+})();

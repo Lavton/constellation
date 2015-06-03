@@ -21,12 +21,17 @@ if (typeof String.prototype.startsWith != 'function') {
 	if_history==true, когда мы  вызываем функцию, двигаясь по истории браузера*/    
 	function setPage(page, if_history) {
 		if(typeof(if_history)==='undefined') if_history = false;
-	    $.post(page, { ajaxLoad: true }, function(data)
+     	if (!if_history) {
+     		// добавляем в историю
+ 	    	window.history.pushState({"page": page, "type": "page", "title": document.title}, document.title, page); 
+      }
+	    $.get(page, function(data)
         {
         	/*нужно загрузить и контекст, и js. Выполняем через одно место*/
         	var link = document.createElement('div');
         	$(link).html(data);
         	$("#page-container").html($(link).find("#page-container").html());
+
         	$("#after-js-container").html("");
         	/*последовательно добавляем все скрипты*/
         	_.each($(link).find("#after-js-container script"), function(element, index, list) {
@@ -40,14 +45,10 @@ if (typeof String.prototype.startsWith != 'function') {
 		        		document.getElementById("footer-js").appendChild(scrpt);  
 		        	}
         		} else {
-    	    		document.getElementById("after-js-container").appendChild(scrpt);  
+    	    		document.getElementById("after-js-container").appendChild(scrpt);
 	        	}
         	})
 
-        	if (!if_history) {
-        		// добавляем в историю
-    	    	window.history.pushState({"page": page, "type": "page", "title": document.title}, document.title, page); 
-	        }
 	        // меняем вид меню
 	        on_change();
         });
@@ -65,7 +66,20 @@ if (typeof String.prototype.startsWith != 'function') {
 	function on_change() {
 	    /*смотрим путь, на котором мы сейчас*/
 		var locat = window.location.pathname;
-		
+
+   	var script_date = _.find(window.locs, function(loc){return loc[0].test(locat);})
+   	if (script_date) {
+	   	document.title = script_date[1].title;
+	   	if (script_date[1].was_loaded==false) {
+	   		script_date[1].was_loaded = true;
+	   		_.reduce(script_date[1].js, function(memo, js) {
+	   			return memo.script(js).wait();
+	   		}, $LAB);
+	   	} else {
+		   	window.init_ang(script_date[1].controller, script_date[1].init_f, script_date[1].element);
+		  }
+		  window.last = script_date
+		}
 		if ((locat.startsWith("/about")) || (locat.startsWith("/events")) || (locat.startsWith("/method"))) {
 			/*показываем подменю*/
 			add_submenu(locat);
@@ -97,7 +111,7 @@ if (typeof String.prototype.startsWith != 'function') {
   			}, 50);
 		}
 
-		if (locat == "/about/users") {
+/*		if (locat == "/about/users") {
 			var usersID = setInterval(function(){
  				if (typeof(angular) !== "undefined") {
 					if ((window.fighters) && (window.fighters.was_init) && (! $(".table-container").is(":visible"))) {
@@ -118,7 +132,7 @@ if (typeof String.prototype.startsWith != 'function') {
   				}
   			}, 50);
 		}
-
+*/
 
 		if (locat == "/method/games") {
 			var gmID = setInterval(function(){
@@ -159,8 +173,8 @@ if (typeof String.prototype.startsWith != 'function') {
 				$("nav .header.lvl2.method").addClass("current");
 			}
 		}
+		
 	}
 
 	on_change(); // при загрузки скрипта так же приведём вид в нормальную форму.
-
 })();

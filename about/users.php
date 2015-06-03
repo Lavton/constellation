@@ -13,7 +13,7 @@
     include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/menu.php');
   ?>
       
-  <div id="page-container">
+  <div id="page-container" >
     <?php
       check_session();
       session_start();
@@ -61,7 +61,7 @@
   </script>
   <!-- скрипт для сохранения файла из js -->
   <script src="/standart/js/FileSaver.js"></script>
-  <script type="text/javascript" src="/own/js/users/all_fighters.js"></script>
+  <!-- // <script type="text/javascript" src="/own/js/users/all_fighters.js"></script> -->
   <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
   <script type="text/javascript" src="/own/js/users/one_fighter.js"></script>
   <?php

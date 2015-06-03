@@ -2,7 +2,7 @@
 if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
 ?>
 
-<div class="table-container" ng-cloak ng-controller="fightersApp">
+<div id="all-figh" class="table-container" ng-cloak ng-controller="fightersApp">
 <!-- поиск по бойцам -->  
   <div class="search_wrap"> Search: <input class="search" ng-model="query"></div>
 

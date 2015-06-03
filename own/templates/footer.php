@@ -24,9 +24,11 @@
   </script>
 
 	<script type="text/javascript" src="/standart/js/underscore.js"></script>
-	<script type="text/javascript" src="/own/js/menu.js"></script>
   <script type="text/javascript" src="/standart/markitup/jquery.markitup.js"></script>
   <script type="text/javascript" src="/standart/markitup/sets/bbcode/set.js"></script>
   <script type="text/javascript" src="/standart/js/sanitaze.js"></script>
+  <script type="text/javascript" src="/standart/js/LAB.js"></script>
   <script type="text/javascript" src="/own/js/helper.js"></script>
+  <script type="text/javascript" src="/own/js/init.js"></script>
+  <script type="text/javascript" src="/own/js/menu.js"></script>
 </div>
