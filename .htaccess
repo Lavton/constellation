@@ -9,8 +9,11 @@ RewriteEngine on
 
 #переделываем в человекочитаемый url
 RewriteRule ^(.*)users/([0-9]+)$ /about/users.php?id=$2 [QSA]
+RewriteRule ^(.*)candidats/([0-9]+)$ /about/candidats.php?id=$2 [QSA]
 RewriteRule ^(.*)shifts/([0-9]+)$ /events/shifts.php?id=$2 [QSA]
+RewriteRule ^(.*)shifts/([0-9]+)/edit$ /events/shifts.php?id=$2&edit=true [QSA]
 RewriteRule ^(.*)events/([0-9]+)$ /events/index.php?id=$2 [QSA]
+RewriteRule ^(.*).ics$ $1.php [QSA]
 
 
 #Hostinger don't understand DirectoryIndex((
@@ -18,3 +21,10 @@ RewriteRule ^(.*)/$ /$1/index.php [QSA]
 
 #Убираем расширение файла из URL
 RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php 
+
+#appCache
+AddType text/cache-manifest .manifest
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/cache-manifest "access plus 0 seconds"
+</IfModule>

@@ -1,68 +1,5 @@
 'use strict';
 function get_shift(shiftid) {
-  if (window.shifts == undefined) {
-    window.shifts = {}
-  }
-  window.shifts.one_angular_conroller = null;
-  var fid=window.location.href.split("/")
-  var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-
-  if (! window.shifts.one_script ) {
-    window.shifts.one_script = true;
-  var intID = setInterval(function(){
-      var fid=window.location.href.split("/")
-      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
-      if ((typeof(angular) !== "undefined") && (shiftid != "shifts")) {
-        if (window.shifts.one_angular_conroller == null) {
-          window.shifts.one_angular_conroller = angular.module('one_sc_app', ["ngSanitize"], function($httpProvider) { //магия, чтобы PHP понимал запрос
-            // Используем x-www-form-urlencoded Content-Type
-            $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-            // Переопределяем дефолтный transformRequest в $http-сервисе
-            $httpProvider.defaults.transformRequest = [function(data) {
-              var param = function(obj) {
-                var query = '';
-                var name, value, fullSubName, subValue, innerObj, i;
-                for(name in obj) {
-                  value = obj[name];
-                  if(value instanceof Array) {
-                    for(i=0; i<value.length; ++i) {
-                      subValue = value[i];
-                      fullSubName = name + '[' + i + ']';
-                      innerObj = {};
-                      innerObj[fullSubName] = subValue;
-                      query += param(innerObj) + '&';
-                    }
-                  } else if(value instanceof Object) {
-                    for(subName in value) {
-                      subValue = value[subName];
-                      fullSubName = name + '[' + subName + ']';
-                      innerObj = {};
-                      innerObj[fullSubName] = subValue;
-                      query += param(innerObj) + '&';
-                    }
-                  } else if(value !== undefined && value !== null) {
-                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-                  }
-                }              
-                return query.length ? query.substr(0, query.length - 1) : query;
-              };
-              return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-            }];
-          });
-          //запускаем ангулар
-          window.shifts.one_angular_conroller.controller('oneShiftApp', ['$scope', '$http', '$locale', init_angular_o_s_c]);
-          angular.bootstrap(document, ['one_sc_app']);
-          window.shifts.was_init_one = true;
-        
-        } else {
-          angular.bootstrap(document, ['one_sc_app']);
-        }
-        clearInterval(intID);
-    }
-  }, 50);
-  } else {
-     angular.bootstrap(document, ['one_sc_app']);
-  }
   /*логика ангулара*/
   function init_angular_o_s_c ($scope, $http, $locale) {
     $scope.id = shiftid;
@@ -139,12 +76,16 @@ function get_shift(shiftid) {
       $scope.show_add = !$scope.show_add;
       $scope.show_edit = false;
     }
+
+
       $(".shift-info").removeClass("hidden")
       var inthrefID = setInterval(function(){
       var fid=window.location.href.split("/")
       var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
       if (shiftid != "shifts") {
         clearInterval(inthrefID);
+
+        /*получаем информацию о смене*/
         var data = {action: "get_one_info", id: shiftid}
         $scope.shift.photo_200 = "http://vk.com/images/camera_b.gif"
         $.ajax({
@@ -166,7 +107,7 @@ function get_shift(shiftid) {
           var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'json',
             global: false,
             data: $.param(bbdata)
@@ -185,27 +126,42 @@ function get_shift(shiftid) {
           _.each(json.detachments, function(element, index, list) {
             comments.push({id: element.in_id, comment: element.comments});
           });
-          //формируем запрос сразу для всех нужных id
-          var vk_ids = []
           var bbdata =  {bbcode: comments, ownaction: "bbcodesToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'json',
             global: false,
             data: $.param(bbdata)
-          }).done(function(rdata) {
+          }).done(function(comment_data) {
+            //формируем запрос сразу для всех нужных id для ВКонтакте
+            var vk_idsD = []
             _.each($scope.detachments, function(element, index, list) {
-              element.bbcomments = _.findWhere(rdata, {id: element.in_id}).bbcomment;
+              element.bbcomments = _.findWhere(comment_data, {id: element.in_id}).bbcomment;
               element.people = element.people.split("$");
-              vk_ids.concat(element.people);
+              vk_idsD = vk_idsD.concat(element.people);
+            });
+            getVkData(vk_idsD, ["domain", "photo_50"], 
+            function(response) {
+              _.each($scope.detachments, function(detachment, index, list){
+                _.each(detachment.people, function(person, index_p, list){
+                  var vk_d = response[person];
+                  if (vk_d) {
+                    detachment.people[index_p] = vk_d;
+                  }
+                })
+              })
+              $scope.$apply();
             });
             $scope.$apply();
-          });
 
+          });
+            //формируем запрос сразу для всех нужных id для ВКонтакте
+            var vk_ids = []
           _.each(json.like_h, function(element, index, list) {
             vk_ids.push(element.vk_id);
           });
+          var vk_ids = []
           if ($scope.myself) {
             vk_ids.push($scope.myself.vk_id)
             vk_ids.push($scope.myself.like_one)
@@ -224,19 +180,13 @@ function get_shift(shiftid) {
             vk_ids.push(element.dislike_two)
             vk_ids.push(element.dislike_three)            
           })
-
-          var data_vk = {user_ids: _.unique(vk_ids), fields: ["domain", "photo_50"]}
-          $.ajax({
-            type: "GET",
-            url: "https://api.vk.com/method/users.get",
-            dataType: "jsonp",
-            data:  $.param(data_vk)
-          }).done(function(response) {
-            $scope.vk_info = response.response;
+          getVkData(vk_ids, ["domain", "photo_50"], 
+          function(response) {
+            $scope.vk_info = response;
             // ищем тех, кому нравится данный человек
             $scope.adding.vk_likes = [];
             _.each(json.like_h, function(element, index, list) {
-              var vk_d = _.findWhere($scope.vk_info, {uid: element.vk_id*1});
+              var vk_d = response[element.vk_id];
               _.each(vk_d, function(element2, index, list){
                 element[index] = vk_d[index];
               })
@@ -244,56 +194,43 @@ function get_shift(shiftid) {
             });
             $scope.adding.vk_likes = json.like_h;
 
-            _.each($scope.detachments, function(detachment, index, list){
-              _.each(detachment.people, function(person, index_p, list){
-                var vk_d = _.findWhere($scope.vk_info, {uid: person*1});
-                if (vk_d) {
-                  detachment.people[index_p] = vk_d;
-                }
-              })
 
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
-              _.each(vk_d, function(element2, index, list){
-                $scope.myself[index] = vk_d[index];
-              })
-              $scope.myself[index] = vk_d[index];
-            })
 
             if ($scope.myself) {
               // ищем инфу для данного человека
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.vk_id*1});
+              var vk_d = response[$scope.myself.vk_id];
               _.each(vk_d, function(element2, index, list){
                 $scope.myself[index] = vk_d[index];
               })
 
               $scope.myself.like_1 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_one*1});
+              var vk_d = response[$scope.myself.like_one]
               _.each(vk_d, function(element2, index, list){
                 $scope.myself.like_1[index] = vk_d[index];
               })
               $scope.myself.like_2 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_two*1});
+              var vk_d = response[$scope.myself.like_two];
               _.each(vk_d, function(element2, index, list){
                 $scope.myself.like_2[index] = vk_d[index];
               })
               $scope.myself.like_3 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.like_three*1});
+              var vk_d = response[$scope.myself.like_three];
               _.each(vk_d, function(element2, index, list){
                 $scope.myself.like_3[index] = vk_d[index];
               })
 
               $scope.myself.dislike_1 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_one*1});
+              var vk_d = response[$scope.myself.dislike_one];
               _.each(vk_d, function(element2, index, list){
                 $scope.myself.dislike_1[index] = vk_d[index];
               })
               $scope.myself.dislike_2 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_two*1});
+              var vk_d = response[$scope.myself.dislike_two];
               _.each(vk_d, function(element2, index, list){
                 $scope.myself.dislike_2[index] = vk_d[index];
               })
               $scope.myself.dislike_3 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: $scope.myself.dislike_three*1});
+              var vk_d = response[$scope.myself.dislike_three];
               _.each(vk_d, function(element2, index, list){
                 $scope.myself.dislike_3[index] = vk_d[index];
               })
@@ -301,39 +238,39 @@ function get_shift(shiftid) {
 
             //ищем инфу для всех записавшихся людей
             _.each($scope.all_apply, function(app_el, index, list){
-              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.vk_id*1});
+              var vk_d = response[app_el.vk_id];
               _.each(vk_d, function(element2, index, list){
                 app_el[index] = vk_d[index];
               })
 
               app_el.like_1 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.like_one*1});
+              var vk_d = response[app_el.like_one];
               _.each(vk_d, function(element2, index, list){
                 app_el.like_1[index] = vk_d[index];
               })
               app_el.like_2 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.like_two*1});
+              var vk_d = response[app_el.like_two];
               _.each(vk_d, function(element2, index, list){
                 app_el.like_2[index] = vk_d[index];
               })
               app_el.like_3 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.like_three*1});
+              var vk_d = response[app_el.like_three];
               _.each(vk_d, function(element2, index, list){
                 app_el.like_3[index] = vk_d[index];
               })
 
               app_el.dislike_1 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.dislike_one*1});
+              var vk_d = response[app_el.dislike_one];
               _.each(vk_d, function(element2, index, list){
                 app_el.dislike_1[index] = vk_d[index];
               })
               app_el.dislike_2 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.dislike_two*1});
+              var vk_d = response[app_el.dislike_two];
               _.each(vk_d, function(element2, index, list){
                 app_el.dislike_2[index] = vk_d[index];
               })
               app_el.dislike_3 = {}
-              var vk_d = _.findWhere($scope.vk_info, {uid: app_el.dislike_three*1});
+              var vk_d = response[app_el.dislike_three];
               _.each(vk_d, function(element2, index, list){
                 app_el.dislike_3[index] = vk_d[index];
               })
@@ -342,8 +279,11 @@ function get_shift(shiftid) {
 
             $scope.$apply();
           });
+          /*конец обращения к ВК*/
 
 
+
+          /*преобразование базовой инфы про смену*/
           $scope.shift = json.shift
           $scope.shift.visibility *= 1;
           $scope.shift.st_date = new Date($scope.shift.start_date);
@@ -397,7 +337,7 @@ function get_shift(shiftid) {
           var bbdata =  {bbcode: $scope.shift.comments, ownaction: "bbcodeToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'text',
             global: false,
             data: $.param(bbdata)
@@ -412,6 +352,8 @@ function get_shift(shiftid) {
     }, 100);
 
 
+  /*добавляем(ся) на смену. Или редактируем.
+  Что делает - зависит от is_edit*/
     $scope.guessAdd = function(is_edit) {
       var data = $scope.adding;
       var qw;
@@ -429,36 +371,33 @@ function get_shift(shiftid) {
           }
         })
         data.shift_id = $scope.shift.id;
+        /*преобразуем доп. поля*/
         data.social = data.soc*1+data.nonsoc*2;
         data.profile = data.prof*1+data.nonprof*2;
-        var data_vk = {user_ids: [data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], fields: ["domain"]}
-        $.ajax({
-          type: "GET",
-          url: "https://api.vk.com/method/users.get",
-          dataType: "jsonp",
-          data:  $.param(data_vk)
-        }).done(function(response) {
-          if(data.smbdy) {
-            data.vk_id = _.findWhere(response.response, {domain: data.smbdy}).uid
+        /*заменяем введённые домены на uid*/
+        getVkData([data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], ["domain"], 
+        function(response) {
+          if(data.smbdy) { // мы комсостав и хотим добавить другого человека
+            data.vk_id = response[data.smbdy].uid;
           }
           if(data.like1) {
-            data.like_one = _.findWhere(response.response, {domain: data.like1}).uid
+            data.like_one = response[data.like1].uid;
           }
           if(data.like2) {
-            data.like_two = _.findWhere(response.response, {domain: data.like2}).uid
+            data.like_two = response[data.like2].uid;
           }
           if(data.like3) {
-            data.like_three = _.findWhere(response.response, {domain: data.like3}).uid
+            data.like_three = response[data.like3].uid;
           }
 
           if(data.dislike1) {
-            data.dislike_one = _.findWhere(response.response, {domain: data.dislike1}).uid
+            data.dislike_one = response[data.dislike1].uid;
           }
           if(data.dislike2) {
-            data.dislike_two = _.findWhere(response.response, {domain: data.dislike2}).uid
+            data.dislike_two = response[data.dislike2].uid;
           }
           if(data.dislike3) {
-            data.dislike_three = _.findWhere(response.response, {domain: data.dislike3}).uid
+            data.dislike_three = response[data.dislike3].uid;
           }
           $.ajax({
             type: "POST",
@@ -569,7 +508,7 @@ function get_shift(shiftid) {
           var bbdata =  {bbcode: $scope.shift.comments, ownaction: "bbcodeToHtml"};
           $.ajax({
             type: "POST",
-            url: "/markitup/sets/bbcode/parser.php",
+            url: "/standart/markitup/sets/bbcode/parser.php",
             dataType: 'text',
             global: false,
             data: $.param(bbdata)
@@ -618,27 +557,23 @@ function get_shift(shiftid) {
       $scope.add_det = !$scope.add_det;      
     }
 
+    /*создаёт расстановку*/
     $scope.addDetachmentSubmit = function() {
-      var data_vk = {user_ids: $scope.newdetachment.people, fields: ["domain"]}
-          $.ajax({
-            type: "GET",
-            url: "https://api.vk.com/method/users.get",
-            dataType: "jsonp",
-            data:  $.param(data_vk)
-          }).done(function(response) {
-            _.each(response.response, function(element, index, list){
-              var idxxx = -1;
-              _.find($scope.newdetachment.people, function(p, pind){if (p==element.domain) {idxxx = pind}; return p==element.domain})
-              if (idxxx != -1) {
-               $scope.newdetachment.people[idxxx] = element.uid;
-              }
-            })
+      getVkData($scope.newdetachment.people, ["domain"], 
+        function(response) {
+          /*если передали имя ВК - заменяем на uid*/
+          for (var i = 0; i < $scope.newdetachment.people.length; i++) {
+            if (response[$scope.newdetachment.people[i]]) {
+              $scope.newdetachment.people[i] = response[$scope.newdetachment.people[i]].uid;
+            }
+          };
             var new_people = [];
             for (var i=0; i < $scope.newdetachment.people.length; i++) {
               if ($scope.newdetachment.people[i]) {
                 new_people.push($scope.newdetachment.people[i])
               }
             };
+            /*пушим в БД, конкатинируя имена*/
             var data = {
               comments: $scope.newdetachment.comments,
               people: new_people.join("$"),
@@ -728,6 +663,76 @@ function get_shift(shiftid) {
       }
     }
   }
+
+
+
+
+  /*магия, чтобы ангулар работал*/
+  if (window.shifts == undefined) {
+    window.shifts = {}
+  }
+  window.shifts.one_angular_conroller = null;
+  var fid=window.location.href.split("/")
+  var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+
+  if (! window.shifts.one_script ) {
+    window.shifts.one_script = true;
+  var intID = setInterval(function(){
+      var fid=window.location.href.split("/")
+      var shiftid=fid[fid.length-1] //TODO сделать тут нормально!
+      if ((typeof(angular) !== "undefined") && (shiftid != "shifts")) {
+        if (window.shifts.one_angular_conroller == null) {
+          window.shifts.one_angular_conroller = angular.module('one_sc_app', ["ngSanitize"], function($httpProvider) { //магия, чтобы PHP понимал запрос
+            // Используем x-www-form-urlencoded Content-Type
+            $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+            // Переопределяем дефолтный transformRequest в $http-сервисе
+            $httpProvider.defaults.transformRequest = [function(data) {
+              var param = function(obj) {
+                var query = '';
+                var name, value, fullSubName, subValue, innerObj, i;
+                for(name in obj) {
+                  value = obj[name];
+                  if(value instanceof Array) {
+                    for(i=0; i<value.length; ++i) {
+                      subValue = value[i];
+                      fullSubName = name + '[' + i + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  } else if(value instanceof Object) {
+                    for(subName in value) {
+                      subValue = value[subName];
+                      fullSubName = name + '[' + subName + ']';
+                      innerObj = {};
+                      innerObj[fullSubName] = subValue;
+                      query += param(innerObj) + '&';
+                    }
+                  } else if(value !== undefined && value !== null) {
+                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+                  }
+                }              
+                return query.length ? query.substr(0, query.length - 1) : query;
+              };
+              return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+            }];
+          });
+          //запускаем ангулар
+          window.shifts.one_angular_conroller.controller('oneShiftApp', ['$scope', '$http', '$locale', init_angular_o_s_c]);
+          angular.bootstrap(document, ['one_sc_app']);
+          window.shifts.was_init_one = true;
+        
+        } else {
+          angular.bootstrap(document, ['one_sc_app']);
+        }
+        clearInterval(intID);
+    }
+  }, 50);
+  } else {
+     angular.bootstrap(document, ['one_sc_app']);
+  }
+
+
 }
 
 //TODO phone input

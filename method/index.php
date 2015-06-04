@@ -26,6 +26,7 @@
       <li><a href="time" class="ajax-nav">распорядок, периоды и мероприятия</a></li>
       <li><a href="age" class="ajax-nav">возрастные особенности</a></li>
       <li><a href="conflicts" class="ajax-nav">конфликты</a></li>
+      <li><a href="partners" class="ajax-nav">напарники</a></li>
       <hr>
       <li><a href="knowledges" class="ajax-nav">источники знаний</a></li>
     </ul>

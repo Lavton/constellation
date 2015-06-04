@@ -5,10 +5,9 @@ html {
 
 body {
   /* Margin bottom by footer height */
+  
   margin-bottom: 60px;
 }
-
-
 /*Низ сайта*/
 
 footer {
@@ -24,20 +23,21 @@ footer {
   color: #9B9B9B;
   margin-top: 75px;
 }
-  footer .social i {
-    vertical-align: middle;
-  }
-  
-  footer .social a {
-    text-align: center;
-    color: #9B9B9B;
-  }
 
-  footer .social a:hover {
-    color: #777;
-  }
+footer .social i {
+  vertical-align: middle;
+}
 
+footer .social a {
+  text-align: center;
+  color: #9B9B9B;
+}
+
+footer .social a:hover {
+  color: #777;
+}
 /* Lastly, apply responsive CSS fixes as necessary */
+
 @media (max-width: 767px) {
   footer {
     margin-left: -20px;
@@ -46,11 +46,7 @@ footer {
     padding-right: 20px;
   }
 }
-
-
 /*конец низа сайта*/
-
-
 /*меню*/
 
 .header .container {
@@ -78,7 +74,6 @@ footer {
   z-index: 1000;
 }
 
-
 .header ul {
   padding-left: 0px;
 }
@@ -87,9 +82,9 @@ footer {
   color: white;
 }
 
-  .header a:hover {
-    text-decoration: none;
-  }
+.header a:hover {
+  text-decoration: none;
+}
 
 .header li {
   list-style: none;
@@ -101,12 +96,15 @@ footer {
   cursor: pointer;
 }
 
-  .header li:hover {
-    background-color: #437185; /*при наведении*/
-  }
-  .header li.current {
-    background-color: #24556A !important; /*выбранное*/
-  }
+.header li:hover {
+  background-color: #437185;
+  /*при наведении*/
+}
+
+.header li.current {
+  background-color: #24556A !important;
+  /*выбранное*/
+}
 
 .header .login .logout-url {
   font-weight: normal;
@@ -124,14 +122,14 @@ footer {
   color: white;
 }
 
-
 .header-lvl2-container {
   position: relative;
-  height: 50px; 
+  height: 50px;
   display: none;
 }
 
-.header.lvl2, .header.lvl2 .row {
+.header.lvl2,
+.header.lvl2 .row {
   background-color: #99B6C3;
 }
 
@@ -145,10 +143,10 @@ footer {
   z-index: -1;
 }
 
-  .header.lvl2.current {
-    display: block;
-    z-index: 100;
-  }
+.header.lvl2.current {
+  display: block;
+  z-index: 100;
+}
 
 .header.lvl2,
 .header.lvl2 .row {
@@ -159,28 +157,24 @@ footer {
   height: 100% !important;
 }
 /*конец меню*/
-
-
-
 /*авторизация*/
 
 #auth_wrapper {
   width: 300px;
   margin: 0 auto;
 }
-
 /*конец авторизации*/
-
 
 .starter-template {
   text-align: center;
 }
+
 .news {
   text-align: center;
 }
 
 .ctred {
-  text-align: center; 
+  text-align: center;
 }
 
 .saved {
@@ -198,12 +192,14 @@ footer {
 
 .own-row {
   margin-right: 0 !important;
-  margin-left: 0 !important;;
+  margin-left: 0 !important;
+  ;
 }
 
 .ng-dirty.ng-invalid {
   border-color: red;
 }
+
 .ng-dirty.ng-valid {
   border-color: green;
 }
@@ -211,6 +207,7 @@ footer {
 .own-invalid {
   border-color: red;
 }
+
 .own-valid {
   border-color: green;
 }
@@ -218,4 +215,14 @@ footer {
 .like_h {
   border: 2px outset green !important;
   /*color: green;*/
+}
+
+.show_div {
+  position: fixed;
+  background-color: white;
+  left: 150;
+  top: 100px;
+  z-index: 4;
+  display: none;
+  border: 4px outset green
 }
