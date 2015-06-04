@@ -1,0 +1,1 @@
+setClicking(".camod-clicked", "/handlers/methods.php", "get_camod")

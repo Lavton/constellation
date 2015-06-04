@@ -1,0 +1,1 @@
+setClicking(".stroevka-clicked", "/handlers/abouts.php", "get_stro")
