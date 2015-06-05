@@ -226,3 +226,8 @@ footer .social a:hover {
   display: none;
   border: 4px outset green
 }
+
+.selected {
+background: #ffffcc;
+padding: 2px 8px;
+}
