@@ -9,36 +9,18 @@
 <body>
   <?php include_once $_SERVER[ 'DOCUMENT_ROOT'] . '/own/templates/menu.php'; ?>
   <div id="page-container">
-    Вставка ВК:
-    <input class="vk_input"> <img src="" width="50px" height="50px">
-    <br>
-    <form id="search-highlight" method="post" action="#">
-      <input type="text" name="term" id="term" />
-      <input type="submit" name="submit" id="submit" value="Search" />
-    </form>
-    <p class="results"></p>
-    <div class="main">
-      Контент
-      <ul>
-        <li>Привет</li> Hello
-      </ul>
-    </div>
-    <article>
-      <label for="search">Top 10 Most Popular Frameworks</label>
-      <input id="search-navigation" name="search" placeholder="Start typing here" type="text" data-list=".navigation_list" data-nodata="No results found" autocomplete="off">
-      <ul class="vertical navigation_list hidden_mode_list">
-        <li><a href="http://www.asp.net/">ASP.NET</a></li>
-        <li><a href="http://flask.pocoo.org/">Flask</a></li>
-        <li><a href="http://codeigniter.com/">CodeIgniter</a></li>
-        <li><a href="http://framework.zend.com/">Zend</a></li>
-        <li><a href="http://rubyonrails.org/">Ruby on Rails</a></li>
-        <li><a href="http://angularjs.org/">AngularJS</a></li>
-        <li><a href="http://www.djangoproject.com/">Django</a></li>
-        <li><a href="http://www.yiiframework.com/">Yii</a></li>
-        <li><a href="http://symfony.com/">Symfony</a></li>
-        <li><a href="http://cakephp.org/">CakePHP</a></li>
-      </ul>
-    </article>
+    <table width="100%">
+      <tr>
+        <td>
+          Вставка ВК:
+          <input class="vk_input">
+        </td>
+        <td>
+          Вставка ВК:
+          <input class="vk_input">
+        </td>
+      </tr>
+    </table>
   </div>
   <!-- page-container -->
   <?php include_once $_SERVER[ 'DOCUMENT_ROOT'] . '/own/templates/footer.php'; ?>
@@ -48,49 +30,45 @@
     window.setPeople(init_vk_search);
 
     function init_vk_search() {
-      $("input.vk_input").wrap("<span class='vk_input'></span>");
-      $("input.vk_input").removeClass("vk_input")
-        .attr("name", "search")
-        .attr("placeholder", "введите имя")
-        .attr("type", "text")
-        .attr("data-list", ".my-nav")
-        .attr("autocomplete", "off")
-        .addClass("vk_now")
-
-      $("span.vk_input").append("<ul class='my-nav'></ul>")
-        //       $("span.vk_input > ul").append(_.template(
-        //         "<% _.each(people, function(person) {%>\
-        // <li><span class='name'><%= person.first_name %><br><%= person.last_name %></li></span>\
-        // <span class='hideThis'><%= person.IF %> <%= person.FI %> <%= person.domain %></span>\
-        // <% }); %>", {
-        //           "people": window.people
-        //         }))
-      _.each(window.people, function(element) {
-        $("span.vk_input > ul").append(
-          "<li><a href='/'>" +
-          "<span class='name'>" +
-          "<table><tr><td>" +
-          "<img src='" + element.photo + "' class='get-this " + element.uid + "'></img>" +
-          "</td><td>" +
-          element.first_name + "<br>" + element.last_name + " " +
-          "</td></tr></table>" +
-          "</span><span style='display:none;'>" +
-          element.IF + " " +
-          "https://vk.com/"+element.domain + " " +
-          element.FI +
-          "</span>" +
-          "</a></li>")
-      });
-      $(".hideThis").css('display', 'none')
-      $('input.vk_now').hideseek({
+      _.each($("input.vk_input"), function(vk_inpt) {
+        var uniq = _.uniqueId();
+        $(vk_inpt).wrap("<span class='vk_input '></span>");
+        $(vk_inpt).removeClass("vk_input")
+          .attr("name", "search")
+          .attr("placeholder", "введите имя")
+          .attr("type", "text")
+          .attr("data-list", ".my-nav[my-uniq="+uniq+"]")
+          .attr("autocomplete", "off")
+          .attr("my-uniq", uniq)
+          .addClass("vk_now")
+        $(vk_inpt).parent().attr("my-uniq", uniq)
+        $(vk_inpt).parent().append('<span class="selectPerson"><img src="" width="50px" height="50px"></span>')
+        $(vk_inpt).parent().append("<ul class='my-nav'></ul>")
+        $(vk_inpt).parent().children().attr("my-uniq", uniq)
+        _.each(window.people, function(element) {
+          $(vk_inpt).parent().children("ul").append(
+            "<li>" +
+            "<span class='name'>" +
+            "<table><tr><td>" +
+            "<span class='get-this'><img src='" + element.photo + "' class='" + element.uid + "'></img></span>" +
+            "</td><td>" +
+            element.first_name + "<br>" + element.last_name + " " +
+            "</td></tr></table>" +
+            "</span><span style='display:none;'>" +
+            element.IF + " " +
+            element.FI + " " +
+            "https://vk.com/" + element.domain +
+            "</span>" +
+            "</li>")
+        });
+      $(vk_inpt).hideseek({
         nodata: 'No results found<u>ddd</u>',
         navigation: true,
-        // hidden_mode: true
+        hidden_mode: true
       });
       var max_l = 3;
-      $('input.vk_now').on("_after", function(e) {
-        console.log(e)
-        var lis = $("span.vk_input > ul.my-nav > li").filter(function() {
+      $(vk_inpt).on("_after", function(e) {
+        var lis = $(vk_inpt).parent().children("ul.my-nav").children("li").filter(function() {
           return $(this).css('display') == 'list-item';
         })
         var curr_l = 0;
@@ -101,24 +79,20 @@
           }
         })
       });
+      })
       console.log("eee")
     }
 
     $("body").on('click', ".get-this", function(e) {
       console.log(e)
       console.log(this)
-    });
-    </script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-      $('#search-navigation').hideseek({
-        nodata: 'No results found',
-        navigation: true,
-        // hidden_mode: true
-      });
-      $('#search-navigation').on("_after", function(e) {
-        console.log(e)
-      });
+      $("span.selectPerson").html($(this).html())
+      var uid = $(this).children("img").attr("class") * 1;
+      var person = _.findWhere(window.people, {
+        "uid": uid
+      })
+      $("span.selectPerson > img").attr("title", person.IF)
+
     });
     </script>
   </div>
