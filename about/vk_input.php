@@ -37,7 +37,7 @@
           .attr("name", "search")
           .attr("placeholder", "введите имя")
           .attr("type", "text")
-          .attr("data-list", ".my-nav[my-uniq="+uniq+"]")
+          .attr("data-list", ".my-nav[my-uniq=" + uniq + "]")
           .attr("autocomplete", "off")
           .attr("my-uniq", uniq)
           .addClass("vk_now")
@@ -50,50 +50,67 @@
             "<li>" +
             "<span class='name'>" +
             "<table><tr><td>" +
-            "<span class='get-this'><img src='" + element.photo + "' class='" + element.uid + "'></img></span>" +
+            "<span class='get-this' my-uniq='" + uniq + "'><img src='" + element.photo + "' class='" + element.uid + "'></img></span>" +
             "</td><td>" +
             element.first_name + "<br>" + element.last_name + " " +
             "</td></tr></table>" +
-            "</span><span style='display:none;'>" +
+            "</span><span style='display:none;' class='" + element.domain + "'>" +
             element.IF + " " +
             element.FI + " " +
             "https://vk.com/" + element.domain +
             "</span>" +
             "</li>")
         });
-      $(vk_inpt).hideseek({
-        nodata: 'No results found<u>ddd</u>',
-        navigation: true,
-        hidden_mode: true
-      });
-      var max_l = 3;
-      $(vk_inpt).on("_after", function(e) {
-        var lis = $(vk_inpt).parent().children("ul.my-nav").children("li").filter(function() {
-          return $(this).css('display') == 'list-item';
-        })
-        var curr_l = 0;
-        _.each(lis, function(element) {
-          curr_l += 1
-          if (curr_l > max_l) {
-            $(element).css('display', 'none')
+        $(vk_inpt).hideseek({
+          nodata: 'Поиск не дал результатов. <br>Введите ссылку на человека ВКонтакте <br>и кликните по пустому квадрату справа',
+          navigation: true,
+          hidden_mode: true,
+          callback_nav: function(inpt, curr_l) {
+            inpt.val("https://vk.com/" + curr_l.children("span").last().attr("class"))
+            var lis = $(vk_inpt).parent().children("ul.my-nav").children("li").filter(function() {
+              return $(this).css('display') == 'list-item';
+            })
+            _.each(lis, function(element) {
+              $(element).css('display', 'none')
+            })
+            console.log(curr_l.find("img"))
+            $("span.selectPerson[my-uniq=" + uniq + "]").html(curr_l.find("img").parent().html())
+            var uid = curr_l.find("img").attr("class") * 1;
+            var person = _.findWhere(window.people, {
+              "uid": uid
+            })
+            $("span.selectPerson[my-uniq=" + uniq + "] > img").attr("title", person.IF)
+            $(vk_inpt).val("https://vk.com/" + person.domain)
           }
-        })
-      });
+        });
+        var max_l = 3;
+        $(vk_inpt).on("_after", function(e) {
+          var lis = $(vk_inpt).parent().children("ul.my-nav").children("li").filter(function() {
+            return $(this).css('display') == 'list-item';
+          })
+          var curr_l = 0;
+          _.each(lis, function(element) {
+            curr_l += 1
+            if (curr_l > max_l) {
+              $(element).css('display', 'none')
+            }
+          })
+        });
+
+        $("body").on('click', ".get-this[my-uniq=" + uniq + "]", function(e) {
+          console.log(e)
+          console.log(this)
+          $("span.selectPerson[my-uniq=" + uniq + "]").html($(this).html())
+          var uid = $(this).children("img").attr("class") * 1;
+          var person = _.findWhere(window.people, {
+            "uid": uid
+          })
+          $("span.selectPerson[my-uniq=" + uniq + "] > img").attr("title", person.IF)
+          $(vk_inpt).val("https://vk.com/" + person.domain)
+        });
       })
       console.log("eee")
     }
-
-    $("body").on('click', ".get-this", function(e) {
-      console.log(e)
-      console.log(this)
-      $("span.selectPerson").html($(this).html())
-      var uid = $(this).children("img").attr("class") * 1;
-      var person = _.findWhere(window.people, {
-        "uid": uid
-      })
-      $("span.selectPerson > img").attr("title", person.IF)
-
-    });
     </script>
   </div>
 </body>

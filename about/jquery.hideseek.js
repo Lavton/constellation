@@ -57,8 +57,8 @@ or any similar structure...
       var $this = $(this);
 
       $this.opts = [];
-
-      $.map(['list', 'nodata', 'attribute', 'highlight', 'ignore', 'navigation', 'ignore_accents', 'hidden_mode'], function(val, i) {
+      // ДОБАВЛЕН новый параметр callback_nav
+      $.map(['list', 'nodata', 'attribute', 'highlight', 'ignore', 'navigation', 'ignore_accents', 'hidden_mode', 'callback_nav'], function(val, i) {
         $this.opts[val] = $this.data(val) || options[val];
       });
 
@@ -111,7 +111,7 @@ or any similar structure...
                 .addClass('no-results')
                 .show()
                 .prependTo($this.opts.list)
-                .html($this.opts.nodata);
+                .html($this.opts.nodata); // ТУТ ИЗМЕНИЛ .text -> .html . Чтобы можно было вставлять логику взаимодействия при отсутствии элементов
 
             }
 
@@ -165,16 +165,18 @@ or any similar structure...
             };
 
           } else if (e.keyCode == 13) {
-            /*ЗДЕСЬ ИЗМЕНИНО (будет)*/
-            if (current($list).find('a').length) {
-
-              document.location = current($list).find('a').attr('href');
-
+            /*ЗДЕСЬ ИЗМЕНЕНО добавлено callback_nav*/
+            if (options.callback_nav) {
+              options.callback_nav($this, current($list))
             } else {
+              if (current($list).find('a').length) {
 
-              $this.val(current($list).text());
+                document.location = current($list).find('a').attr('href');
 
-            };
+              } else {
+                $this.val(current($list).text());
+              };
+            }
 
           };
 
