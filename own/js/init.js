@@ -46,6 +46,8 @@
         "fighters": {
           "all": {
             "js": [
+              "/standart/js/jquery.hideseek.js",
+              "/own/js/vk_input.js",
               "/own/js/users/all_in_common.js",
               "/own/js/users/all_fighters.js",
             ],

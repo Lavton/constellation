@@ -1,6 +1,6 @@
 /*зарегать нового человека*/
 var allPeople = {};
-allPeople.addNewPerson = function (actId, actPost, initSel, path) {
+allPeople.addNewPerson = function(actId, actPost, initSel, path) {
   var id_and_uid = null;
   $('#page-container').on('click', ".pre-add-new", function() {
     if (!$(initSel + " .pre-add-new").hasClass("clicked")) {
@@ -103,7 +103,7 @@ allPeople.addNewPerson = function (actId, actPost, initSel, path) {
 }
 
 /*получить больше информации с сервера*/
-allPeople.moreFromServer = function (action, $scope, people) {
+allPeople.moreFromServer = function(action, $scope, people) {
   var data = {
     "action": action,
   };
@@ -120,13 +120,23 @@ allPeople.moreFromServer = function (action, $scope, people) {
         id: element.id + ""
       }))
     });
-    $scope.app2();
+
+    /* Если мы нашли несоответствие между закешированной версией и той, которую получили*/
+    if (response.users.length != people.length) {
+      window.clearPeople()
+      window.setPeople(function() {
+        $scope.app2()
+      })
+    } else {
+      $scope.app2();
+    }
+
   });
 
 }
 
 /*получить больше информации с VK*/
-allPeople.moreFromVK = function (people, $scope) {
+allPeople.moreFromVK = function(people, $scope) {
   var all_vk_ids = [];
   _.each(people, function(element, index, list) {
     all_vk_ids.push(element.uid);
