@@ -96,7 +96,55 @@ function setPeople(callback) {
 }
 
 window.setPeople = setPeople;
-// setPeople(function() {console.log(_.now()-tl)});
+
+function addPeople(ids, callback) {
+
+  function supports_html5_storage() {
+    try {
+      return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+      return false;
+    }
+  }
+  var hasLocal = supports_html5_storage();
+  if (!Array.isArray(ids)) {
+    ids = [ids];
+  }
+  getVkData(ids, ["photo_50", "domain"],
+    function(response) {
+      var arr_resp = _.toArray(response)
+      window.setPeople(function() {
+        arr_resp = _.reject(arr_resp, function(person) {
+          if (person) {
+            var fnd = _.find(window.people, {
+              "domain": person.domain
+            })
+            return fnd;
+          } else {
+            return 1;
+          }
+        })
+        _.each(arr_resp, function(element) {
+          element = _.pick(element, 'uid', "domain", "first_name", "last_name", "photo_50");
+          element.photo = element.photo_50;
+          element.IF = element.first_name + " " + element.last_name;
+          element.FI = element.last_name + " " + element.first_name;
+          element.photo = element.photo_50;
+          window.people.push(element);
+          if (hasLocal) {
+            window.localStorage.setItem("people", JSON.stringify(window.people))
+          }
+
+        })
+        if (callback) {
+          callback(response);
+        }
+      })
+    }
+  );
+}
+window.addPeople = addPeople
+  // setPeople(function() {console.log(_.now()-tl)});
 function clearPeople() {
   delete window.people;
   window.localStorage.removeItem("people_ts");
@@ -154,6 +202,8 @@ function getVkData(ids, fields, callback) {
     "user_ids": _.unique(without_vk_com),
     "fields": fields
   }
+  console.log("dvk ")
+  console.log(data_vk)
   $.ajax({
     type: "GET",
     url: "https://api.vk.com/method/users.get",
@@ -163,7 +213,7 @@ function getVkData(ids, fields, callback) {
     console.log("go to VK.")
     if (json.error == undefined) {
       console.log("Get")
-        // console.log(json.response);
+      console.log(json.response);
       for (var i = 0; i < json.response.length; i++) {
         var vk_user = json.response[i];
         /* Если мы спросили фотку, но не получили - ставим заглушку*/
@@ -214,7 +264,7 @@ function getVkData(ids, fields, callback) {
           });
           /*если нет - наверно строку вида id1*/
           if (result[element] == undefined) {
-            if (element.search("id") == 0) {
+            if (clear_el.search("id") == 0) {
               result[element] = _.findWhere(json.response, {
                 "uid": clear_el.split("id")[1] * 1
               });
