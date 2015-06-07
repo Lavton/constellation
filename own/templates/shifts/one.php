@@ -196,7 +196,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_
   <div class="shift-edit hidden">
     <form ng-submit="submit()">
       <div class="col-xs-12">
-        <h2>{{shift.name}}
+        <h2><input type="text" ng-model="shift.time_name" size="{{(shift.time_name).length}}" /> {{shift.name}}
           <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
           <input type="submit" class="btn btn-primary text-right" ng-click="editShiftInfo()" value="Сохранить"></input>
             <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editShiftInfo()" >Отменить</input>

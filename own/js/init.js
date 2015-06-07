@@ -120,6 +120,8 @@
         "all": {
           "js": [
             "/own/js/shifts/all.js",
+            "/own/js/shifts/all_people.js",
+            "/own/js/shifts/all_archive_and_new.js"
           ],
           "title": "смены | СПО \"СОзвездие\"",
           "loc": /^\/events\/shifts$/

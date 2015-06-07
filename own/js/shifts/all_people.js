@@ -1,6 +1,7 @@
+// кусок кода про сводки про людей
 (function() {
   /*логика ангулара*/
-  function init_angular_s_c($scope, $http) {
+  function init_angular($scope, $http) {
     /*инициализация по умолочанию*/
     $scope.window = window;
     $scope.shifts = {}
@@ -8,16 +9,15 @@
 
     /*инициализация*/
     var data = {
-      action: "all_shifts",
+      action: "all_people",
     };
     $http.post('/handlers/shift.php', data).success(function(response) {
       $scope.shifts.all = response.shifts;
+      $scope.shifts.people = response.people;
 
       $scope.shifts.actual = [];
       $scope.shifts.future = [];
       $scope.Object = Object;
-      $scope.shifts.max_arhive = ((new Date()).getFullYear()) * 1;
-      $scope.shifts.arhive_year = $scope.shifts.max_arhive;
       _.each($scope.shifts.all, function(element, index, list) {
         element.st_date = new Date(element.start_date);
         element.fn_date = new Date(element.finish_date);
@@ -56,13 +56,40 @@
           $scope.shifts.actual.push(element);
         }
       }); // end _.each
+
+      window.setPeople(function(flag) {
+        $scope.fighters = {}
+        $scope.candidats = {}
+        _.each($scope.shifts.people, function(person, uid, list) {
+          _.each(person, function(sh_element, sh_index, list) {
+            sh_element["shift_name"] = _.findWhere($scope.shifts.all, {
+              id: sh_element.shift_id
+            }).name;
+          });
+
+          var cached_person = _.find(window.people, function(p) {
+            return p.uid * 1 == uid;
+          })
+          _.extend(person[0], cached_person)
+          if (cached_person.isFighter == true) {
+            $scope.fighters[uid] = person
+          } else {
+            $scope.candidats[uid] = person
+          }
+        });
+
+        if (flag) {
+          $scope.$apply();
+        }
+      })
+
     }); //end http
 
   }
 
 
   function init() {
-    window.init_ang("shiftsApp", init_angular_s_c, "all-shifts");
+    window.init_ang("shiftsAppPeople", init_angular, "all-shifts-people");
   }
   init();
   window.registerInit(init)

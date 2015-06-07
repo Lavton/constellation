@@ -90,9 +90,10 @@ if (typeof String.prototype.startsWith != 'function') {
           return memo;
         }
       }, lab);
-      if (script_date.length > 2) {
-        script_date[2]()
-      }
+      // все элементы 2+ - нужно запускать каждый раз
+      for (var i = 2; i < script_date.length; i++) {
+        script_date[i]()
+      };
       window.last = script_date
     }
     if ((locat.startsWith("/about")) || (locat.startsWith("/events")) || (locat.startsWith("/method"))) {

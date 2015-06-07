@@ -5,10 +5,13 @@ if (is_ajax()) {
 		//Checks if action value exists
 		$action = $_POST["action"];
 		switch ($action) {
-			case "all":get_all();
+			case "all_shifts":all_shifts();
+				break;
+			case "all_people":all_people();
 				break;
 			case "arhive":arhive();
 				break;
+
 			case "get_one_info":get_one_info();
 				break;
 			case 'set_new_data':set_new_data();
@@ -34,7 +37,7 @@ if (is_ajax()) {
 }
 
 //get all shifts base info
-function get_all() {
+function all_shifts() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
@@ -89,6 +92,65 @@ function get_all() {
 		echo json_encode($result);
 	}
 }
+
+/*все люди, которые поедут на предстоящие смены*/
+//TODO когда добавим name к смене, не будут забирать столько инфы!
+function all_people() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		// поиск смены
+		$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts WHERE (finish_date >= CURRENT_DATE) ORDER BY start_date;';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["shifts"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			/*сколько людей записалось*/
+			$queryt = 'SELECT SUM(1) as sm FROM guess_shift WHERE shift_id=' . $line["id"] . ';';
+			$rt_p = mysqli_query($link, $queryt) or die('Запрос не удался: ');
+			$line["common"] = mysqli_fetch_array($rt_p, MYSQL_ASSOC);
+			$line["common"] = $line["common"]["sm"];
+			/*cколько бойцов записалось*/
+			$queryt = 'SELECT SUM(1) as sm FROM guess_shift WHERE (shift_id=' . $line["id"] . ' AND fighter_id IS NOT NULL);';
+			$rt_p = mysqli_query($link, $queryt) or die('Запрос не удался: ');
+			$line["common_f"] = mysqli_fetch_array($rt_p, MYSQL_ASSOC);
+			$line["common_f"] = $line["common_f"]["sm"];
+
+			if (($line["visibility"] + 0) <= ($_SESSION["current_group"] + 0)) {
+				array_push($result["shifts"], $line);
+			}
+		}
+
+		/*выведем сводную таблицу по людям*/
+		$query = 'SELECT vk_id, shift_id, fighter_id, probability FROM `guess_shift` WHERE shift_id IN (SELECT id from shifts WHERE (start_date >= CURRENT_DATE AND visibility <= ' . $_SESSION["current_group"] . '));';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["people"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			/*группируем по людям сразу*/
+			if (!isset($result["people"][$line["vk_id"]])) {
+				$result["people"][$line["vk_id"]] = array();
+			}
+			array_push($result["people"][$line["vk_id"]], $line);
+		}
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
 
 function arhive() {
 	check_session();
@@ -225,6 +287,10 @@ function set_new_data() {
 		if (isset($_POST["finish_date"])) {
 			array_push($names, "finish_date");
 			array_push($values, "'" . $_POST["finish_date"] . "'");
+		}
+		if (isset($_POST["time_name"])) {
+			array_push($names, "time_name");
+			array_push($values, "'" . $_POST["time_name"] . "'");
 		}
 		if (isset($_POST["visibility"])) {
 			array_push($names, "visibility");
