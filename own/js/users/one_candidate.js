@@ -10,28 +10,19 @@
       $scope.candidate.domain = $(this).val()
       $scope.$apply()
     })
-    $("input.vk_input").on("_final_select", function() {
-      console.log("_final_select")
-    })
-    $("input.vk_input").on("_after", function() {
-      console.log("_after")
-    })
 
+    /*инициализация*/
+    $scope.candidate = {};
     $(".user-info").removeClass("hidden")
     window.setPeople(function(flag) {
-      console.log("setting")
-      console.log(window.people)
-      console.log(flag)
       $scope.candidate = _.clone(_.find(window.people, function(person) {
         return person.id == userid && person.isFighter == false;
       }))
-      $scope.candidate.domain = "https://vk.com/" + $scope.candidate.domain
       if (flag) {
         $scope.$apply();
       }
       initialize();
     });
-    $(".user-info").removeClass("hidden")
 
     function initialize() {
       $scope.app2 = _.after(2, $scope.$apply)
@@ -67,7 +58,6 @@
       getVkData($scope.candidate.domain, ["photo_200", "domain"],
         function(response) {
           _.extend($scope.candidate, response[$scope.candidate.domain]);
-          $scope.candidate.domain = "https://vk.com/" + $scope.candidate.domain
           $scope.candidate.photo = $scope.candidate.photo_200;
           $scope.app2();
         }
@@ -75,7 +65,6 @@
     }
 
     /*конец инициализации*/
-
 
     $scope.goodView = window.goodTelephoneView;
 
@@ -88,24 +77,32 @@
 
     /*отправляет на сервер изменения*/
     $scope.submit = function() {
-      get_vk(function() {
-        var data = angular.copy($scope.candidate);
-        data.vk_id = "" + data.uid;
-        data.action = "set_new_cand_data"
-        _.each(data, function(element, index, list) {
-          if (!element) {
-            data[index] = null;
-          }
-        })
-        $http.post('/handlers/user.php', data).success(function(response) {
-          window.clearPeople()
-          window.setPeople()
-          var saved = $(".saved");
-          $(saved).stop(true, true);
-          $(saved).fadeIn("slow");
-          $(saved).fadeOut("slow");
-        });
-      });
+      $scope.candidate.domain = $("input.vk_now").val()
+      getVkData($scope.candidate.domain, ["photo_200", "domain"],
+        function(response) {
+          var data = angular.copy($scope.candidate);
+          data.vk_id = "" + response[$scope.candidate.domain].uid;
+          data.uid = data.vk_id;
+          data.action = "set_new_cand_data"
+          _.each(data, function(element, index, list) {
+            if (!element) {
+              data[index] = null;
+            }
+          })
+          _.extend($scope.candidate, response[$scope.candidate.domain])
+          $scope.candidate.photo = $scope.candidate.photo_200;
+          console.log("data submite")
+          console.log(data);
+          $http.post('/handlers/user.php', data).success(function(response) {
+            window.clearPeople()
+            window.setPeople()
+            var saved = $(".saved");
+            $(saved).stop(true, true);
+            $(saved).fadeIn("slow");
+            $(saved).fadeOut("slow");
+          });
+        }
+      );
     }
 
     /*отменяет редактирование*/
@@ -132,35 +129,6 @@
           }
         });
       }
-    }
-
-    // $("#page-container").on("focusout", "input.vk-domain", function() {
-    //   get_vk()
-    // });
-
-
-
-    function get_vk(callback) {
-      var data_vk = {
-        user_ids: $scope.candidate.domain,
-        fields: ["photo_200", "domain"]
-      }
-      getVkData($scope.candidate.domain, ["photo_200", "domain"],
-        function(response) {
-          var user_vk = response[$scope.candidate.domain];
-          if (user_vk) {
-            $scope.candidate.domain = user_vk.domain
-            $scope.candidate.photo_200 = user_vk.photo_200;
-            $scope.candidate.vk_id = user_vk.uid;
-            $scope.candidate.first_name = user_vk.first_name;
-            $scope.candidate.last_name = user_vk.last_name;
-          }
-          $scope.$apply();
-          if (callback) {
-            callback();
-          }
-        }
-      );
     }
   }
 

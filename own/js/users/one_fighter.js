@@ -1,12 +1,18 @@
 (function() {
   /*логика ангулара*/
+
   function init_angular_o_f_c($scope, $http) {
-    // window.setPeople(window.init_vk_search.init());
     $scope.window = window;
+    var fid = window.location.href.split("/")
+    var userid = fid[fid.length - 1] * 1;
+
+    $("#page-container").on("_final_select", "input", function(e) {
+      $scope.fighter.domain = $(this).val()
+      $scope.$apply()
+    })
+
     /*инициализация*/
     $scope.fighter = {};
-    var fid = window.location.href.split("/")
-    var userid = fid[fid.length - 1] * 1
     $(".user-info").removeClass("hidden")
     window.setPeople(function(flag) {
       $scope.fighter = _.clone(_.find(window.people, function(person) {
@@ -72,25 +78,33 @@
 
     /*отправляет на сервер изменения*/
     $scope.submit = function() {
-      get_vk(function() {
-        var data = angular.copy($scope.fighter);
-        data.uid = "" + data.uid;
-        data.action = "fighter_modify"
-        _.each(data, function(element, index, list) {
-          if (!element) {
-            data[index] = null;
-          }
-        })
-        $http.post('/handlers/user.php', data).success(function(response) {
-          window.clearPeople()
-          window.setPeople()
-          var saved = $(".saved");
-          $(saved).stop(true, true);
-          $(saved).fadeIn("slow");
-          $(saved).fadeOut("slow");
-          window.clearPeople();
-        });
-      });
+      $scope.fighter.domain = $("input.vk_now").val()
+      getVkData($scope.fighter.domain, ["photo_200", "domain"],
+        function(response) {
+          var data = angular.copy($scope.fighter);
+          data.vk_id = "" + response[$scope.fighter.domain].uid;
+          data.uid = data.vk_id;
+          data.action = "fighter_modify"
+          _.each(data, function(element, index, list) {
+            if (!element) {
+              data[index] = null;
+            }
+          })
+          _.extend($scope.fighter, response[$scope.fighter.domain])
+          $scope.fighter.photo = $scope.fighter.photo_200;
+          console.log("data submite")
+          console.log(data);
+          $http.post('/handlers/user.php', data).success(function(response) {
+            window.clearPeople()
+            window.setPeople()
+            var saved = $(".saved");
+            $(saved).stop(true, true);
+            $(saved).fadeIn("slow");
+            $(saved).fadeOut("slow");
+          });
+
+        }
+      );
     }
 
     /*отменяет редактирование*/
@@ -118,38 +132,15 @@
         });
       }
     }
-
-    /*при падении фокуса с редактирования ВК обновляем данные*/
-    $("#page-container").on("focusout", "input.vk-domain", function() {
-      get_vk()
-    });
-
-    function get_vk(callback) {
-      var data_vk = {
-        user_ids: $scope.fighter.domain,
-        fields: ["photo_200", "domain"]
-      }
-      getVkData($scope.fighter.domain, ["photo_200", "domain"],
-        function(response) {
-          var user_vk = response[$scope.fighter.domain];
-          $scope.fighter.domain = user_vk.domain
-          $scope.fighter.photo = user_vk.photo;
-          $scope.fighter.uid = user_vk.uid;
-
-          $scope.$apply();
-          if (callback) {
-            callback();
-          }
-        }
-      );
-    }
   }
 
-
-  var state = window.state.about.users.fighters.one;
-  window.init_ang("oneFighterApp", init_angular_o_f_c, "one-fighter");
-  state.controller = "oneFighterApp";
-  state.init_f = init_angular_o_f_c;
-  state.element = "one-fighter";
+  function init() {
+    window.setPeople(function() {
+      $("input.vk_input").vkinput()
+    });
+    window.init_ang("oneFighterApp", init_angular_o_f_c, "one-fighter");
+  }
+  init();
+  window.registerInit(init)
 
 })();

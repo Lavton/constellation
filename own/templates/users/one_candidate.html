@@ -14,7 +14,7 @@
       </div>
       <div class="col-xs-9 info-str">
         <ul>
-          <li ng-show="candidate.domain"><strong>vk: </strong><a target='_blank' href='{{candidate.domain}}'>{{candidate.domain}}</a></li>
+          <li ng-show="candidate.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{candidate.domain}}'>vk.com/{{candidate.domain}}</a></li>
           <li ng-show="candidate.phone"><strong>Телефон:</strong><a href='tel:+7{{candidate.phone}}'> {{goodView(candidate.phone)}} </a></li>
           <li ng-show="candidate.birthdate"><strong>День рождения: </strong>{{candidate.birthdate | date: 'dd.MM.yyyy'}}</li>
         </ul>

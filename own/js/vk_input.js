@@ -17,7 +17,7 @@
       function paste_final(vk_inpt, person) {
         state_of_fin = true;
         console.log("FINAL")
-        vk_inpt.val("https://vk.com/" + person.domain)
+        vk_inpt.val(person.domain)
         console.log(person)
         console.log(vk_inpt.parent().children("span.selectPerson"))
         vk_inpt.parent().children("span.selectPerson").html(
@@ -29,6 +29,7 @@
         _.each(lis, function(element) {
           $(element).css('display', 'none')
         })
+
         // debugger
         vk_inpt.trigger('_final_select');
         vk_inpt.trigger('keyup')
@@ -99,15 +100,16 @@
           if (curr_l > max_l) {
             $(element).css('display', 'none')
           }
-          /*тут же - если мы всё ещё ищем человека -> никто не выбран -> уберём фото справа*/
-          if (state_of_fin == true) {
-            state_of_fin = false
-          } else {
-            if (curr_l > 1) {
-              $("span.selectPerson[my-uniq=" + uniq + "]").html("<img width='50px' height='50px'></img>")
-            }
-          }
         })
+        console.log("state_of_fin " + state_of_fin)
+          /*тут же - если мы всё ещё ищем человека -> никто не выбран -> уберём фото справа*/
+        if (state_of_fin == true) {
+          state_of_fin = false
+        } else {
+          if (curr_l > 1) {
+            $("span.selectPerson[my-uniq=" + uniq + "]").html("<img width='50px' height='50px'></img>")
+          }
+        }
       });
 
       /*при клике на картинку кого-либо мы его выбираем*/
