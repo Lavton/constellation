@@ -18,9 +18,7 @@ function getCookie(name) {
 
 /*закачивает базовую информацию о бойцах и кандидатах в localStorage и локальную переменную*/
 function setPeople(callback) {
-  // window.people = [];
   var people = [];
-  // console.log(window.people)
   function supports_html5_storage() {
     try {
       return 'localStorage' in window && window['localStorage'] !== null;
@@ -30,7 +28,7 @@ function setPeople(callback) {
   }
   var hasLocal = supports_html5_storage();
   var expire_time = 1000 * 60 * 60 * 24; // в мс
-  if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people_ts") || (parseInt(window.localStorage.getItem("people_ts")) < (_.now() - expire_time)))) {
+  if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people") || (parseInt(window.localStorage.getItem("people_ts")) < (_.now() - expire_time)))) {
     if (hasLocal) {
       window.localStorage.setItem("people_ts", _.now());
     }
@@ -43,7 +41,6 @@ function setPeople(callback) {
       dataType: "json",
       data: $.param(data)
     }).done(function(json) {
-      // console.log(window.people)
       vk_ids = [];
       _.each(json.candidats, function(element, index, list) {
         vk_ids.push(element.uid);
@@ -51,12 +48,8 @@ function setPeople(callback) {
       _.each(json.fighters, function(element, index, list) {
         vk_ids.push(element.uid);
       });
-      // console.log("pre_vk")
-      // console.log(window.people)
       getVkData(vk_ids, ["photo_50", "domain"],
         function(response) {
-          // console.log("VK")
-          // console.log(window.people)
           _.each(json.candidats, function(element, index, list) {
             var user = _.pick(response[element.uid], 'uid', "domain", "first_name", "last_name", "photo_50");
             user.isFighter = false;
@@ -65,7 +58,6 @@ function setPeople(callback) {
             user.IF = user.first_name + " " + user.last_name;
             user.FI = user.last_name + " " + user.first_name;
             user.photo = user.photo_50;
-            // console.log(window.people)
             people.push(user);
           });
           _.each(json.fighters, function(element, index, list) {
@@ -208,8 +200,6 @@ function getVkData(ids, fields, callback) {
     "user_ids": _.unique(without_vk_com),
     "fields": fields
   }
-  console.log("dvk ")
-  console.log(data_vk)
   $.ajax({
     type: "GET",
     url: "https://api.vk.com/method/users.get",

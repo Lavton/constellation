@@ -90,8 +90,8 @@ if (typeof String.prototype.startsWith != 'function') {
           return memo;
         }
       }, lab);
-      if (script_date[1].controller) { // если ангулар
-        window.init_ang(script_date[1].controller, script_date[1].init_f, script_date[1].element);
+      if (script_date.length > 2) {
+        script_date[2]()
       }
       window.last = script_date
     }

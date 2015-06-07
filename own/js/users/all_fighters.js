@@ -41,9 +41,12 @@
   /*добавить нового бойца*/
   allPeople.addNewPerson("get_all_ids", "add_new_fighter", ".add-new-fighter", "/about/users/")
 
-  var state = window.state.about.users.fighters.all;
-  window.init_ang("fightersApp", init_angular_f_c, "all-figh");
-  state.controller = "fightersApp";
-  state.init_f = init_angular_f_c;
-  state.element = "all-figh";
+  function init() {
+    window.setPeople(function() {
+      $("input.vk_input").vkinput()
+    });
+    window.init_ang("fightersApp", init_angular_f_c, "all-figh");
+  }
+  init();
+  window.registerInit(init)
 })();

@@ -1,16 +1,31 @@
 (function() {
   /*логика ангулара*/
-  window.setPeople(window.init_vk_search);
 
   function init_angular_o_cand_c($scope, $http) {
     $scope.window = window;
     var fid = window.location.href.split("/")
-    var userid = fid[fid.length - 1] * 1
+    var userid = fid[fid.length - 1] * 1;
+
+    $("#page-container").on("_final_select", "input", function(e) {
+      $scope.candidate.domain = $(this).val()
+      $scope.$apply()
+    })
+    $("input.vk_input").on("_final_select", function() {
+      console.log("_final_select")
+    })
+    $("input.vk_input").on("_after", function() {
+      console.log("_after")
+    })
+
     $(".user-info").removeClass("hidden")
     window.setPeople(function(flag) {
+      console.log("setting")
+      console.log(window.people)
+      console.log(flag)
       $scope.candidate = _.clone(_.find(window.people, function(person) {
         return person.id == userid && person.isFighter == false;
       }))
+      $scope.candidate.domain = "https://vk.com/" + $scope.candidate.domain
       if (flag) {
         $scope.$apply();
       }
@@ -52,6 +67,7 @@
       getVkData($scope.candidate.domain, ["photo_200", "domain"],
         function(response) {
           _.extend($scope.candidate, response[$scope.candidate.domain]);
+          $scope.candidate.domain = "https://vk.com/" + $scope.candidate.domain
           $scope.candidate.photo = $scope.candidate.photo_200;
           $scope.app2();
         }
@@ -118,9 +134,9 @@
       }
     }
 
-    $("#page-container").on("focusout", "input.vk-domain", function() {
-      get_vk()
-    });
+    // $("#page-container").on("focusout", "input.vk-domain", function() {
+    //   get_vk()
+    // });
 
 
 
@@ -147,10 +163,13 @@
       );
     }
   }
-  var state = window.state.about.users.candidats.one;
-  window.init_ang("oneCandidateApp", init_angular_o_cand_c, "one-candidate");
-  state.controller = "oneCandidateApp";
-  state.init_f = init_angular_o_cand_c;
-  state.element = "one-candidate";
 
+  function init() {
+    window.setPeople(function() {
+      $("input.vk_input").vkinput()
+    });
+    window.init_ang("oneCandidateApp", init_angular_o_cand_c, "one-candidate");
+  }
+  init();
+  window.registerInit(init)
 })();

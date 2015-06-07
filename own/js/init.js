@@ -188,5 +188,15 @@
     angular.bootstrap(document.getElementById(el), ['constellation']);
   }
 
+  window.registerInit = function(init_f) {
+    var locat = window.location.pathname;
+    var script_date = _.find(window.locs, function(loc) {
+      return loc[0].test(locat);
+    })
+    if (script_date) {
+      script_date.push(init_f);
+    }
+  }
+
   window.current_group = getCookie("current_group") * 1 || 1
 })();

@@ -1,9 +1,6 @@
 (function() {
   /*логика ангулара*/
   function init_angular_cand_c($scope, $http) {
-    window.setPeople(function() {
-      $("input.vk_input").vkinput()
-    });
     $scope.window = window;
     /*инициализация*/
     $scope.candidats = [];
@@ -41,9 +38,13 @@
   /*добавить нового кандидата*/
   allPeople.addNewPerson("get_all_candidats_ids", "add_new_candidate", ".add-new-candidate", "/about/candidats/")
 
-  var state = window.state.about.users.candidats.all;
-  window.init_ang("candidatsApp", init_angular_cand_c, "all-cand");
-  state.controller = "candidatsApp";
-  state.init_f = init_angular_cand_c;
-  state.element = "all-cand"
+  function init() {
+    window.setPeople(function() {
+      $("input.vk_input").vkinput()
+    });
+
+    window.init_ang("candidatsApp", init_angular_cand_c, "all-cand");
+  }
+  init();
+  window.registerInit(init)
 })();

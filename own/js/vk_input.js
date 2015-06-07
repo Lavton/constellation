@@ -12,12 +12,14 @@
     });
     return this.each(function() {
       var $this = $(this);
-      console.log($this)
-
+      var state_of_fin = false;
       /*окончательная подстановка. Вызываем соотв. событие*/
       function paste_final(vk_inpt, person) {
+        state_of_fin = true;
         console.log("FINAL")
         vk_inpt.val("https://vk.com/" + person.domain)
+        console.log(person)
+        console.log(vk_inpt.parent().children("span.selectPerson"))
         vk_inpt.parent().children("span.selectPerson").html(
           "<img src='" + person.photo + "' title='" + person.IF + "'></img>"
         );
@@ -27,7 +29,12 @@
         _.each(lis, function(element) {
           $(element).css('display', 'none')
         })
+        // debugger
         vk_inpt.trigger('_final_select');
+        vk_inpt.trigger('keyup')
+        vk_inpt.trigger('keydown')
+        vk_inpt.trigger('keypress')
+
       }
       var uniq = _.uniqueId();
       $this.wrap("<span class='vk_input'></span>");
@@ -70,15 +77,7 @@
         callback_nav: function(inpt, curr_l) {
           /*эта функция вызывается при клике на Enter в режиме навигации*/
           if (curr_l.length) { /*проверка, что именно в режиме навигации*/
-            inpt.val("https://vk.com/" + curr_l.children("span").last().attr("class"))
-              /*скрываем всё, раз выбрали*/
-            var lis = $parent.children("ul.my-nav").children("li").filter(function() {
-              return $(this).css('display') == 'list-item';
-            })
-            _.each(lis, function(element) {
-                $(element).css('display', 'none')
-              })
-              /*показываем найденное справа и вставляем строку*/
+            /*показываем найденное справа и вставляем строку*/
             var uid = curr_l.find("img").attr("class") * 1;
             var person = _.findWhere(window.people, {
               "uid": uid
@@ -101,15 +100,18 @@
             $(element).css('display', 'none')
           }
           /*тут же - если мы всё ещё ищем человека -> никто не выбран -> уберём фото справа*/
-          if (curr_l > 1) {
-            $("span.selectPerson[my-uniq=" + uniq + "]").html("<img width='50px' height='50px'></img>")
+          if (state_of_fin == true) {
+            state_of_fin = false
+          } else {
+            if (curr_l > 1) {
+              $("span.selectPerson[my-uniq=" + uniq + "]").html("<img width='50px' height='50px'></img>")
+            }
           }
         })
       });
 
       /*при клике на картинку кого-либо мы его выбираем*/
       $("body").on('click', ".get-this[my-uniq=" + uniq + "]", function(e) {
-        $("span.selectPerson[my-uniq=" + uniq + "]").html($(this).html())
         var uid = $(this).children("img").attr("class") * 1;
         var person = _.findWhere(window.people, {
           "uid": uid
@@ -119,7 +121,10 @@
 
       /*при клике на картинку справа мы ищем человека с input'a*/
       $("body").on('click', "span.selectPerson[my-uniq=" + uniq + "]", function(e) {
+        console.log("click")
         window.addPeople($this.val(), function(vk_resp) {
+          console.log($this.val())
+          console.log(vk_resp[$this.val()])
           if (vk_resp[$this.val()]) {
             var person = _.findWhere(window.people, {
               "uid": vk_resp[$this.val()].uid
