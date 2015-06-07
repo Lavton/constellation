@@ -48,8 +48,8 @@
             "js": [
               "/standart/js/jquery.hideseek.js",
               "/own/js/vk_input.js",
-              "/own/js/users/all_in_common.js",
-              "/own/js/users/all_fighters.js",
+              "/own/js/users/all/all_in_common.js",
+              "/own/js/users/all/all_fighters.js",
             ],
             "title": "бойцы | отряд в лицах | СПО \"СОзвездие\"",
             "loc": /^\/about\/users$/
@@ -58,7 +58,7 @@
             "js": [
               "/standart/js/jquery.hideseek.js",
               "/own/js/vk_input.js",
-              "/own/js/users/one_fighter.js",
+              "/own/js/users/one/one_fighter.js",
             ],
             "title": "бойцы | отряд в лицах | СПО \"СОзвездие\"",
             "loc": /^\/about\/users\/[1-9][0-9]*$/
@@ -69,8 +69,8 @@
             "js": [
               "/standart/js/jquery.hideseek.js",
               "/own/js/vk_input.js",
-              "/own/js/users/all_in_common.js",
-              "/own/js/users/all_candidats.js",
+              "/own/js/users/all/all_in_common.js",
+              "/own/js/users/all/all_candidats.js",
             ],
             "title": "кандидаты | отряд в лицах | СПО \"СОзвездие\"",
             "loc": /^\/about\/candidats$/
@@ -79,7 +79,7 @@
             "js": [
               "/standart/js/jquery.hideseek.js",
               "/own/js/vk_input.js",
-              "/own/js/users/one_candidate.js",
+              "/own/js/users/one/one_candidate.js",
             ],
             "title": "кандидаты | отряд в лицах | СПО \"СОзвездие\"",
             "loc": /^\/about\/candidats\/[1-9][0-9]*$/
@@ -119,9 +119,9 @@
       "shifts": {
         "all": {
           "js": [
-            "/own/js/shifts/all.js",
-            "/own/js/shifts/all_people.js",
-            "/own/js/shifts/all_archive_and_new.js"
+            "/own/js/shifts/all/all.js",
+            "/own/js/shifts/all/all_people.js",
+            "/own/js/shifts/all/all_archive_and_new.js"
           ],
           "title": "смены | СПО \"СОзвездие\"",
           "loc": /^\/events\/shifts$/
