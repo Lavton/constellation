@@ -4,14 +4,18 @@
     <h2 ng-show="shifts.actual">Текущие</h2>
     <ul>
       <li ng-repeat="shift in shifts.actual">
-        <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.name}}</a>
+        <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.time_name}}
+        <span ng-show="shift.place">({{shift.place}})</span>
+        </a>
       </li>
     </ul>
     <!-- предстоящие смены -->
     <h2 ng-show="shifts.future">Грядущие</h2>
     <ul>
       <li ng-repeat="shift in shifts.future">
-        <p><a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.name}}</a> (Всего: {{1*shift.common}}, бойцов: {{1*shift.common_f}} / кандидатов: {{1*shift.common - 1*shift.common_f}})
+        <p> <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.time_name}}
+        <span ng-show="shift.place">({{shift.place}})</span>
+        </a> (Всего: {{1*shift.common}}, бойцов: {{1*shift.common_f}} / кандидатов: {{1*shift.common - 1*shift.common_f}})
           <br>
         </p>
       </li>
@@ -25,7 +29,7 @@
       <!-- бойцы -->
       <div class="col-xs-6">
         Бойцов: {{Object.keys(fighters).length}}
-        <table class="table-bordered" width="100%" ng-show="(shifts.future).length > 1">
+        <table class="table-bordered" width="100%">
           <thead>
             <tr>
               <th></th>
@@ -55,7 +59,7 @@
                 <ol>
                   <li ng-repeat="shift in person">
                     <a href={{ "/events/shifts/"+shift.shift_id}} class="ajax-nav">
-                {{shift.shift_name}}
+                {{shift.time_name}} <span ng-show="shift.place">({{shift.place}})</span>
               </a> ({{shift.probability}}%)
                   </li>
                 </ol>
@@ -68,7 +72,7 @@
       <!-- таблица с записавшимися кандидатами -->
       <div class="col-xs-6">
         Кандидатов: {{Object.keys(candidats).length}}
-        <table class="table-bordered" width="100%" ng-show="(shifts.future).length > 1">
+        <table class="table-bordered" width="100%">
           <thead>
             <tr>
               <th></th>
@@ -98,7 +102,7 @@
                 <ol>
                   <li ng-repeat="shift in person">
                     <a href={{ "/events/shifts/"+shift.shift_id}} class="ajax-nav">
-                {{shift.shift_name}}
+                    {{shift.time_name}} <span ng-show="shift.place">({{shift.place}})</span>
               </a> ({{shift.probability}}%)
                   </li>
                 </ol>
@@ -119,15 +123,22 @@
     <h2 ng-show="shifts.prev">Прошедшие</h2>
     <ul>
       <li ng-repeat="shift in shifts.prev">
-        <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.name}}</a>
+        <a href="/events/shifts/{{shift.id}}" class="ajax-nav">{{shift.time_name}} {{shift.fn_date.getFullYear()}}
+        <span ng-show="shift.place">({{shift.place}})</span>
+        </a>
       </li>
     </ul>
     <!-- добавить новую смену -->
-    <div ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+    <div class="add-new-shift" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
       <br/>
       <br/>
-      <br/>
-      <button type="button" class="btn btn-warning pre-add-s-new">Добавить новую смену.</button>
+      <button type="button" class="btn btn-warning pre-add-new">Добавить новую смену?</button>
+      <div class="add-new hidden">
+        <br> Дата начала:
+        <input type="date" class="add-new-start-date" />
+        <br>Дата окончания:
+        <input type="date" class="add-new-end-date" />
+      </div>
     </div>
   </div>
 </div>

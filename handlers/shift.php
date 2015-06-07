@@ -54,7 +54,7 @@ function all_shifts() {
 		}
 		$link->set_charset("utf8");
 		// поиск смены
-		$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts WHERE (finish_date >= CURRENT_DATE) ORDER BY start_date;';
+		$query = 'SELECT id, place, start_date, finish_date, time_name, visibility FROM shifts WHERE (finish_date >= CURRENT_DATE) ORDER BY start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 
@@ -112,29 +112,7 @@ function all_people() {
 		}
 		$link->set_charset("utf8");
 		// поиск смены
-		$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts WHERE (finish_date >= CURRENT_DATE) ORDER BY start_date;';
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["shifts"] = array();
-
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			/*сколько людей записалось*/
-			$queryt = 'SELECT SUM(1) as sm FROM guess_shift WHERE shift_id=' . $line["id"] . ';';
-			$rt_p = mysqli_query($link, $queryt) or die('Запрос не удался: ');
-			$line["common"] = mysqli_fetch_array($rt_p, MYSQL_ASSOC);
-			$line["common"] = $line["common"]["sm"];
-			/*cколько бойцов записалось*/
-			$queryt = 'SELECT SUM(1) as sm FROM guess_shift WHERE (shift_id=' . $line["id"] . ' AND fighter_id IS NOT NULL);';
-			$rt_p = mysqli_query($link, $queryt) or die('Запрос не удался: ');
-			$line["common_f"] = mysqli_fetch_array($rt_p, MYSQL_ASSOC);
-			$line["common_f"] = $line["common_f"]["sm"];
-
-			if (($line["visibility"] + 0) <= ($_SESSION["current_group"] + 0)) {
-				array_push($result["shifts"], $line);
-			}
-		}
-
-		/*выведем сводную таблицу по людям*/
-		$query = 'SELECT vk_id, shift_id, fighter_id, probability FROM `guess_shift` WHERE shift_id IN (SELECT id from shifts WHERE (start_date >= CURRENT_DATE AND visibility <= ' . $_SESSION["current_group"] . '));';
+		$query = 'SELECT guess_shift.vk_id, guess_shift.shift_id, guess_shift.fighter_id, guess_shift.probability, shifts.time_name, shifts.place FROM guess_shift, shifts WHERE ((shifts.start_date >= CURRENT_DATE) AND (shifts.id=guess_shift.shift_id)  AND (shifts.visibility <= ' . $_SESSION["current_group"] . '));';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["people"] = array();
 
@@ -150,7 +128,6 @@ function all_people() {
 		echo json_encode($result);
 	}
 }
-
 
 function arhive() {
 	check_session();
@@ -169,7 +146,7 @@ function arhive() {
 		}
 		$link->set_charset("utf8");
 		// поиск смены
-		$query = 'SELECT id, place, start_date, finish_date, visibility FROM shifts WHERE (finish_date < CURRENT_DATE AND start_date>="' . $_POST["year"] . '-01-01") ORDER BY start_date;';
+		$query = 'SELECT id, time_name, place, start_date, finish_date, visibility FROM shifts WHERE (finish_date < CURRENT_DATE AND start_date>="' . $_POST["year"] . '-01-01") ORDER BY start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 
@@ -372,6 +349,10 @@ function add_new_shift() {
 		if (isset($_POST["finish_date"])) {
 			array_push($names, "finish_date");
 			array_push($values, "'" . $_POST["finish_date"] . "'");
+		}
+		if (isset($_POST["time_name"])) {
+			array_push($names, "time_name");
+			array_push($values, "'" . $_POST["time_name"] . "'");
 		}
 
 		$names = implode(", ", $names);
