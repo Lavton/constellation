@@ -101,7 +101,6 @@
             $(element).css('display', 'none')
           }
         })
-        console.log("state_of_fin " + state_of_fin)
           /*тут же - если мы всё ещё ищем человека -> никто не выбран -> уберём фото справа*/
         if (state_of_fin == true) {
           state_of_fin = false

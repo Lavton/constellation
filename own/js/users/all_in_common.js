@@ -3,7 +3,7 @@ var allPeople = {};
 allPeople.addNewPerson = function(actId, actPost, initSel, path) {
   var id_and_uid = null;
   $('#page-container').on('click', ".pre-add-new", function() {
-    if (!$(initSel + " .pre-add-new").hasClass("clicked")) {
+    if (!$(initSel + " .pre-add-new").hasClass("clicked") || (! $(initSel + " .add-new-d").val())) {
       $(".add-new-input-w").removeClass("hidden")
       $(".pre-add-new").addClass("clicked")
       $(".pre-add-new").text("Добавить")
@@ -43,6 +43,7 @@ allPeople.addNewPerson = function(actId, actPost, initSel, path) {
           function(response) {
             $(initSel + " .add-new-d").addClass("own-valid")
             $(initSel + " .add-new-d").removeClass("own-invalid")
+            console.log(response)
             if (_.findWhere(id_and_uid, {
                 vk_id: response[$(initSel + " .add-new-d").val()].uid + ""
               })) {
