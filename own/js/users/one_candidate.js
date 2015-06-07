@@ -1,8 +1,9 @@
 (function() {
   /*логика ангулара*/
+  window.setPeople(window.init_vk_search);
+
   function init_angular_o_cand_c($scope, $http) {
     $scope.window = window;
-
     var fid = window.location.href.split("/")
     var userid = fid[fid.length - 1] * 1
     $(".user-info").removeClass("hidden")
@@ -81,6 +82,8 @@
           }
         })
         $http.post('/handlers/user.php', data).success(function(response) {
+          window.clearPeople()
+          window.setPeople()
           var saved = $(".saved");
           $(saved).stop(true, true);
           $(saved).fadeIn("slow");
@@ -108,6 +111,7 @@
           data: $.param(data)
         }).done(function(response) {
           if (response.result == "Success") {
+            window.clearPeople()
             window.location = "/";
           }
         });
@@ -128,12 +132,13 @@
       getVkData($scope.candidate.domain, ["photo_200", "domain"],
         function(response) {
           var user_vk = response[$scope.candidate.domain];
-          $scope.candidate.domain = user_vk.domain
-          $scope.candidate.photo_200 = user_vk.photo_200;
-          $scope.candidate.vk_id = user_vk.uid;
-          $scope.candidate.first_name = user_vk.first_name;
-          $scope.candidate.last_name = user_vk.last_name;
-
+          if (user_vk) {
+            $scope.candidate.domain = user_vk.domain
+            $scope.candidate.photo_200 = user_vk.photo_200;
+            $scope.candidate.vk_id = user_vk.uid;
+            $scope.candidate.first_name = user_vk.first_name;
+            $scope.candidate.last_name = user_vk.last_name;
+          }
           $scope.$apply();
           if (callback) {
             callback();

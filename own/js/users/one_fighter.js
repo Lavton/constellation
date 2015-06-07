@@ -1,6 +1,7 @@
 (function() {
   /*логика ангулара*/
   function init_angular_o_f_c($scope, $http) {
+    // window.setPeople(window.init_vk_search.init());
     $scope.window = window;
     /*инициализация*/
     $scope.fighter = {};
@@ -81,6 +82,8 @@
           }
         })
         $http.post('/handlers/user.php', data).success(function(response) {
+          window.clearPeople()
+          window.setPeople()
           var saved = $(".saved");
           $(saved).stop(true, true);
           $(saved).fadeIn("slow");
@@ -109,6 +112,7 @@
           data: $.param(data)
         }).done(function(response) {
           if (response.result == "Success") {
+            window.clearPeople()
             window.location = "/about/users";
           }
         });

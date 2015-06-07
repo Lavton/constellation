@@ -39,8 +39,8 @@
           </div>
           <div class="col-xs-9 info-str">
             <ul>
-              <li><strong>vk: </strong>vk.com/
-                <input type="text" class="vk-domain" ng-model="candidate.domain" size="{{(candidate.domain).length}}" /> (uid: {{candidate.uid}})</li>
+              <li><strong>vk: </strong>
+                <input type="text" class="vk-domain vk_input" ng-model="candidate.domain" size="{{(candidate.domain).length}}" /> {{candidate.domain}} (uid: {{candidate.uid}})</li>
               <li><strong>Телефон:</strong> +7
                 <input type="text" ng-model="candidate.phone" size="{{(candidate.phone).length}}" /> <em>(цифрами)</em></li>
               <li><strong>День рождения: </strong>

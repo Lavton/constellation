@@ -1,6 +1,9 @@
 (function() {
   /*логика ангулара*/
   function init_angular_cand_c($scope, $http) {
+    window.setPeople(function() {
+      $("input.vk_input").vkinput()
+    });
     $scope.window = window;
     /*инициализация*/
     $scope.candidats = [];

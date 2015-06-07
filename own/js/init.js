@@ -56,6 +56,8 @@
           },
           "one": {
             "js": [
+              "/standart/js/jquery.hideseek.js",
+              "/own/js/vk_input.js",
               "/own/js/users/one_fighter.js",
             ],
             "title": "бойцы | отряд в лицах | СПО \"СОзвездие\"",
@@ -65,6 +67,8 @@
         "candidats": {
           "all": {
             "js": [
+              "/standart/js/jquery.hideseek.js",
+              "/own/js/vk_input.js",
               "/own/js/users/all_in_common.js",
               "/own/js/users/all_candidats.js",
             ],
@@ -73,6 +77,8 @@
           },
           "one": {
             "js": [
+              "/standart/js/jquery.hideseek.js",
+              "/own/js/vk_input.js",
               "/own/js/users/one_candidate.js",
             ],
             "title": "кандидаты | отряд в лицах | СПО \"СОзвездие\"",

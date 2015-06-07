@@ -1,7 +1,9 @@
 (function() {
   /*логика ангулара*/
   function init_angular_f_c($scope, $http) {
-    window.setPeople(window.init_vk_search);
+    window.setPeople(function() {
+      $("input.vk_input").vkinput()
+    });
     $scope.window = window;
     /*инициализация*/
     $scope.fighters = [];
