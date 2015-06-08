@@ -43,7 +43,6 @@
 ?>
 
 <div id="after-js-container">
-  <script type="text/javascript" src="/own/js/shifts/one.js"></script>
   <script type="text/javascript" src="/own/js/shifts/detach_edit.js"></script>
   <?php
   if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
@@ -52,12 +51,7 @@
   <script type="text/javascript">
     get_shift_edit(<?=$_GET["id"]?>);
   </script>
-  <?php } else { ?>
-  <script type="text/javascript">
-    get_shift(<?=$_GET["id"]?>);
-  </script>
-  <?php
-  }
+  <?php }
   }
   ?>
   <script type="text/javascript">

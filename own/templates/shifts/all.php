@@ -42,7 +42,7 @@
           <tbody>
             <tr ng-repeat="(uid, person) in fighters">
               <td>
-                <a href={{ "//vk.com/"+person[0].domain}} target="_blank"> <img ng-src="{{person[0].photo_50}}" /></a>
+                <img ng-src="{{person[0].photo_50}}" />
               </td>
               <td>{{person[0].last_name}} {{person[0].first_name}}</td>
               <td>
@@ -85,7 +85,7 @@
           <tbody>
             <tr ng-repeat="(uid, person) in candidats">
               <td>
-                <a href={{ "//vk.com/"+person[0].domain}} target="_blank"> <img ng-src="{{person[0].photo_50}}" /></a>
+                <img ng-src="{{person[0].photo_50}}" />
               </td>
               <td>{{person[0].last_name}} {{person[0].first_name}}</td>
               <td>

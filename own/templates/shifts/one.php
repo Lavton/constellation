@@ -2,7 +2,7 @@
 if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
   /*просмотр смены*/
 ?>
-<div ng-cloak ng-controller="oneShiftApp">
+<div ng-cloak ng-controller="oneShiftApp" id="shift-init">
   <div class="shift-info hidden">
     <div class="col-xs-12">
       <h2>{{shift.name}}
