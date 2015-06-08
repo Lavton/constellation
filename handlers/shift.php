@@ -14,6 +14,10 @@ if (is_ajax()) {
 
 			case "get_one_info":get_one_info();
 				break;
+			case "get_one_info_name":get_one_info_name();
+				break;
+			case "get_one_info_shift":get_one_info_shift();
+				break;
 			case 'set_new_data':set_new_data();
 				break;
 			case "kill_shift":kill_shift();
@@ -94,7 +98,6 @@ function all_shifts() {
 }
 
 /*все люди, которые поедут на предстоящие смены*/
-//TODO когда добавим name к смене, не будут забирать столько инфы!
 function all_people() {
 	check_session();
 	session_start();
@@ -129,6 +132,7 @@ function all_people() {
 	}
 }
 
+/*архивные смены*/
 function arhive() {
 	check_session();
 	session_start();
@@ -232,6 +236,69 @@ function get_one_info() {
 		mysqli_close($link);
 		echo json_encode($result);
 	}
+}
+
+/*возвращает нужные для имени смены вещи*/
+function get_one_info_name() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		// поиск смены
+		$query = "SELECT id, time_name, finish_date, place FROM shifts WHERE (id='" . $_POST['id'] . "' AND visibility <= " . $_SESSION["current_group"] . " );";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["shift_name"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+
+	}
+}
+
+function get_one_info_shift() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		// поиск смены
+		$query = "SELECT * FROM shifts WHERE (id='" . $_POST['id'] . "' AND visibility <= " . $_SESSION["current_group"] . " );";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["shift"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		$st = "'" . $result["shift"]["start_date"] . "'";
+		$query = "SELECT min(id) as mid FROM shifts where visibility <= " . $_SESSION["current_group"] . " AND (start_date > " . $st . " OR (start_date = " . $st . " AND id > " . $_POST['id'] . "));";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+		$query = "SELECT max(id) as mid FROM shifts where visibility <= " . $_SESSION["current_group"] . " AND (start_date < " . $st . " OR (start_date = " . $st . " AND id < " . $_POST['id'] . "));";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		mysqli_close($link);
+		echo json_encode($result);
+	}	
 }
 
 function set_new_data() {
