@@ -30,6 +30,9 @@
               include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one_shift_common.html');
               ?>
             </div>
+            <?php 
+            include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one_shift_people.html');
+            ?>
 
             <br/>
             <br/>
