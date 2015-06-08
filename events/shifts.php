@@ -23,8 +23,17 @@
         } else {
           if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
             // include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one.php');
-            include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one_shift_common.html');
-            ?> <br/><br/><a href="#" class="shift_priv" class="ajax-nav"><<предыдущая</a> &nbsp; &nbsp;
+            include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one_shift_name.html');
+            ?> 
+            <div class="row own-row">
+              <?php 
+              include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one_shift_common.html');
+              ?>
+            </div>
+
+            <br/>
+            <br/>
+            <a href="#" class="shift_priv" class="ajax-nav"><<предыдущая</a> &nbsp; &nbsp;
             <a href="#" class="shift_next pull-right" class="ajax-nav">следующая>></a>
             <?php
           } else {

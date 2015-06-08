@@ -1,0 +1,17 @@
+<!-- имя смены -->
+<div class="col-xs-12" ng-cloak ng-controller="oneShiftAppName" id="shift-name">
+  <h2><span class="shift-info hidden time-name">{{shift.time_name}}</span><span class="shift-edit hidden"><input ng-model="shift.time_name" size="{{(shift.time_name).length}}"></span>,
+       {{shift.fn_date.getFullYear()}} <span ng-show="shift.place">({{shift.place}})</span>
+        <span ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+          <span class="shift-info hidden">
+            <button type="button" class="btn btn-primary text-right edit-shift" ng-click="editShiftInfo()" >Редактировать описание смены</button>
+          </span>
+          <span class="shift-edit hidden">
+            <button class="btn btn-primary text-right edit-shift apply-shift" ng-click="editShiftInfo()" >Сохранить</button>
+            <button type="button" class="btn btn-primary text-right edit-shift cansel-shift" ng-click="resetInfo(); editShiftInfo()" >Отменить</input>
+          </span>
+        </span>
+      </h2>
+  <hr>
+  <span class="saved">  (Изменения сохранены)</span>
+</div>

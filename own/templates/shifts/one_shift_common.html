@@ -1,56 +1,33 @@
-<div>
-  <div>
-    <!-- имя смены -->
-    <div class="col-xs-12" ng-cloak ng-controller="oneShiftAppName" id="shift-name">
-      <h2><span class="shift-info hidden time-name">{{shift.time_name}}</span><span class="shift-edit hidden"><input ng-model="shift.time_name" size="{{(shift.time_name).length}}"></span>,
-       {{shift.fn_date.getFullYear()}} <span ng-show="shift.place">({{shift.place}})</span>
-        <span ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
-          <span class="shift-info hidden">
-            <button type="button" class="btn btn-primary text-right edit-shift" ng-click="editShiftInfo()" >Редактировать описание смены</button>
-          </span>
-          <span class="shift-edit hidden">
-            <button class="btn btn-primary text-right edit-shift apply-shift" ng-click="editShiftInfo()" >Сохранить</button>
-            <button type="button" class="btn btn-primary text-right edit-shift cansel-shift" ng-click="resetInfo(); editShiftInfo()" >Отменить</input>
-          </span>
-        </span>
-      </h2>
-      <hr>
-      <span class="saved">  (Изменения сохранены)</span>
-    </div>
-    <div class="row own-row">
-      <!-- базовая инфа по смене -->
-      <div class="col-xs-5 info-str common-info" ng-cloak ng-controller="oneShiftAppCommon" id="shift-common">
-        <div class="shift-info hidden">
-          <ul>
-            <!-- информация по смене -->
-            <li ng-show="shift.start_date"><strong>Дата начала:</strong> {{shift.start_date | date: 'dd.MM.yyyy'}} </li>
-            <li ng-show="shift.finish_date"><strong>Дата окончания:</strong> {{shift.finish_date | date: 'dd.MM.yyyy'}} </li>
-            <li ng-show="shift.place"><strong>Место:</strong> {{shift.place}} </li>
-            <li ng-show="shift.visibility && window.current_group>=window.groups.COMMAND_STAFF.num"><strong>Виден для: </strong>{{shift.visibility}} ({{window.groups[window.visibilities[shift.visibility]].rus}})</li>
-            <li ng-show="shift.bbcomments"><strong>Комментарии:</strong>
-              <br/>
-              <div class="table-bordered bbcomments-shift" ng-show="shift.bbcomments"></div>
-            </li>
-          </ul>
-          <button ng-show="window.current_group>=window.groups.COMMAND_STAFF.num" type="button" class="btn btn-danger kill-shift" ng-click="killShift()">Удалить смену</button>
-        </div>
-        <div class="shift-edit hidden">
-          <ul>
-            <li><strong>Дата начала:</strong>
-              <input type="date" ng-model="shift.start_date" size="{{(shift.start_date).length}}" /> </li>
-            <li><strong>Дата окончания:</strong>
-              <input type="date" ng-model="shift.finish_date" size="{{(shift.finish_date).length}}" /> </li>
-            <li><strong>Место:</strong>
-              <input type="text" ng-model="shift.place" size="{{(shift.place).length}}" /> </li>
-            <li><strong>Виден для: </strong>
-              <input type="number" min="1" max="7" ng-model="shift.visibility" size="{{(shift.visibility).length}}" /> ({{window.groups[window.visibilities[shift.visibility]].rus}})</li>
-            <li><strong>Комментарии:</strong>
-              <br/>
-              <textarea ng-model="shift.comments" class="bbcode" cols="20" rows="5"></textarea>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+<!-- базовая инфа по смене -->
+<div class="col-xs-5 info-str common-info" ng-cloak ng-controller="oneShiftAppCommon" id="shift-common">
+  <div class="shift-info hidden">
+    <ul>
+      <!-- информация по смене -->
+      <li ng-show="shift.start_date"><strong>Дата начала:</strong> {{shift.start_date | date: 'dd.MM.yyyy'}} </li>
+      <li ng-show="shift.finish_date"><strong>Дата окончания:</strong> {{shift.finish_date | date: 'dd.MM.yyyy'}} </li>
+      <li ng-show="shift.place"><strong>Место:</strong> {{shift.place}} </li>
+      <li ng-show="shift.visibility && window.current_group>=window.groups.COMMAND_STAFF.num"><strong>Виден для: </strong>{{shift.visibility}} ({{window.groups[window.visibilities[shift.visibility]].rus}})</li>
+      <li ng-show="shift.bbcomments"><strong>Комментарии:</strong>
+        <br/>
+        <div class="table-bordered bbcomments-shift" ng-show="shift.bbcomments"></div>
+      </li>
+    </ul>
+    <button ng-show="window.current_group>=window.groups.COMMAND_STAFF.num" type="button" class="btn btn-danger kill-shift" ng-click="killShift()">Удалить смену</button>
+  </div>
+  <div class="shift-edit hidden">
+    <ul>
+      <li><strong>Дата начала:</strong>
+        <input type="date" ng-model="shift.start_date" size="{{(shift.start_date).length}}" /> </li>
+      <li><strong>Дата окончания:</strong>
+        <input type="date" ng-model="shift.finish_date" size="{{(shift.finish_date).length}}" /> </li>
+      <li><strong>Место:</strong>
+        <input type="text" ng-model="shift.place" size="{{(shift.place).length}}" /> </li>
+      <li><strong>Виден для: </strong>
+        <input type="number" min="1" max="7" ng-model="shift.visibility" size="{{(shift.visibility).length}}" /> ({{window.groups[window.visibilities[shift.visibility]].rus}})</li>
+      <li><strong>Комментарии:</strong>
+        <br/>
+        <textarea ng-model="shift.comments" class="bbcode" cols="20" rows="5"></textarea>
+      </li>
+    </ul>
   </div>
 </div>
