@@ -42,10 +42,30 @@
           }
         });
 
-        console.log("what?")
-        console.log($scope.fighters)
-        $scope.$apply()
-        $scope.myself = json.myself;
+        /*отдельно обрабатываем запрос про себя. Ибо инфы в нём больше*/
+        $scope.me = json.myself;
+        if ($scope.me) {
+          _.extend($scope.me, _.find(window.people, function(p) {
+            return p.uid * 1 == $scope.me.vk_id * 1;
+          }))
+          _.each($scope.me.likes, function(person, ind, list) {
+            if (person) {
+              window.getPerson(person, function(pers) {
+                list[ind] = pers;
+                $scope.$apply();
+              })
+            }
+          })
+          _.each($scope.me.dislikes, function(person, ind, list) {
+            if (person) {
+              window.getPerson(person, function(pers) {
+                list[ind] = pers;
+                $scope.$apply();
+              })
+            }
+          })
+        }
+
         $scope.all_apply = json.all_apply;
         var comments = [];
         if (json.myself) {

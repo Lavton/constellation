@@ -18,78 +18,83 @@ function getCookie(name) {
 
 /*закачивает базовую информацию о бойцах и кандидатах в localStorage и локальную переменную*/
 function setPeople(callback) {
-  var people = [];
-  function supports_html5_storage() {
-    try {
-      return 'localStorage' in window && window['localStorage'] !== null;
-    } catch (e) {
-      return false;
-    }
-  }
-  var hasLocal = supports_html5_storage();
-  var expire_time = 1000 * 60 * 60 * 24; // в мс
-  if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people") || (parseInt(window.localStorage.getItem("people_ts")) < (_.now() - expire_time)))) {
-    if (hasLocal) {
-      window.localStorage.setItem("people_ts", _.now());
-    }
-    var data = {
-      "action": "get_common_inf"
-    }
-    $.ajax({
-      type: "POST",
-      url: "/handlers/user.php",
-      dataType: "json",
-      data: $.param(data)
-    }).done(function(json) {
-      vk_ids = [];
-      _.each(json.candidats, function(element, index, list) {
-        vk_ids.push(element.uid);
-      });
-      _.each(json.fighters, function(element, index, list) {
-        vk_ids.push(element.uid);
-      });
-      getVkData(vk_ids, ["photo_50", "domain"],
-        function(response) {
-          _.each(json.fighters, function(element, index, list) {
-            var user = _.pick(response[element.uid], 'uid', "domain", "first_name", "last_name", "photo_50");
-            user.isFighter = true;
-            user.id = element.id * 1
-            user.first_name = element.first_name;
-            user.last_name = element.last_name;
+  if ((!(_.isArray(window.people))) || (!window.people.length)) {
+    var people = [];
 
-            /*строковое представление понадобится для поиска*/
-            user.IF = user.first_name + " " + user.last_name;
-            user.FI = user.last_name + " " + user.first_name;
-            user.photo = user.photo_50;
-            people.push(user);
-          });
-          _.each(json.candidats, function(element, index, list) {
-            var user = _.pick(response[element.uid], 'uid', "domain", "first_name", "last_name", "photo_50");
-            user.isFighter = false;
-            user.id = element.id * 1
-              /*строковое представление понадобится для поиска*/
-            user.IF = user.first_name + " " + user.last_name;
-            user.FI = user.last_name + " " + user.first_name;
-            user.photo = user.photo_50;
-            people.push(user);
-          });
-          window.people = people;
-          if (hasLocal) {
-            window.localStorage.setItem("people", JSON.stringify(window.people))
-          }
-          if (callback) {
-            callback(true);
-          }
-        });
-    });
-  } else {
-    if (hasLocal) {
-      console.log("cached")
-      window.people = JSON.parse(window.localStorage.getItem("people"))
-      if (callback) {
-        callback(false);
+    function supports_html5_storage() {
+      try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+      } catch (e) {
+        return false;
       }
     }
+    var hasLocal = supports_html5_storage();
+    var expire_time = 1000 * 60 * 60 * 24; // в мс
+    if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people") || (parseInt(window.localStorage.getItem("people_ts")) < (_.now() - expire_time)))) {
+      if (hasLocal) {
+        window.localStorage.setItem("people_ts", _.now());
+      }
+      var data = {
+        "action": "get_common_inf"
+      }
+      $.ajax({
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        vk_ids = [];
+        _.each(json.candidats, function(element, index, list) {
+          vk_ids.push(element.uid);
+        });
+        _.each(json.fighters, function(element, index, list) {
+          vk_ids.push(element.uid);
+        });
+        getVkData(vk_ids, ["photo_50", "domain"],
+          function(response) {
+            _.each(json.fighters, function(element, index, list) {
+              var user = _.pick(response[element.uid], 'uid', "domain", "first_name", "last_name", "photo_50");
+              user.isFighter = true;
+              user.id = element.id * 1
+              user.first_name = element.first_name;
+              user.last_name = element.last_name;
+
+              /*строковое представление понадобится для поиска*/
+              user.IF = user.first_name + " " + user.last_name;
+              user.FI = user.last_name + " " + user.first_name;
+              user.photo = user.photo_50;
+              people.push(user);
+            });
+            _.each(json.candidats, function(element, index, list) {
+              var user = _.pick(response[element.uid], 'uid', "domain", "first_name", "last_name", "photo_50");
+              user.isFighter = false;
+              user.id = element.id * 1
+                /*строковое представление понадобится для поиска*/
+              user.IF = user.first_name + " " + user.last_name;
+              user.FI = user.last_name + " " + user.first_name;
+              user.photo = user.photo_50;
+              people.push(user);
+            });
+            window.people = people;
+            if (hasLocal) {
+              window.localStorage.setItem("people", JSON.stringify(window.people))
+            }
+            if (callback) {
+              callback(true);
+            }
+          });
+      });
+    } else {
+      if (hasLocal) {
+        console.log("cached")
+        window.people = JSON.parse(window.localStorage.getItem("people"))
+        if (callback) {
+          callback(false);
+        }
+      }
+    }
+  } else {
+    callback(false)
   }
 }
 
@@ -142,13 +147,39 @@ function addPeople(ids, callback) {
   );
 }
 window.addPeople = addPeople
-  // setPeople(function() {console.log(_.now()-tl)});
+
 function clearPeople() {
   delete window.people;
   window.localStorage.removeItem("people_ts");
   window.localStorage.removeItem("people");
 }
 window.clearPeople = clearPeople;
+
+/*возвращает или генерит и возвращает человека по uid */
+window.getPerson = function(uid, callback) {
+  window.setPeople(function(flag) {
+    var cached = _.find(window.people, function(p) {
+      return p.uid * 1 == uid * 1;
+    })
+    if (cached) {
+      if (callback) {
+        callback(cached);
+      }
+    } else {
+      window.addPeople([uid], function() {
+        var cached = _.find(window.people, function(p) {
+          return p.uid * 1 == uid * 1;
+        })
+        if (cached) {
+          if (callback) {
+            callback(cached);
+          }
+
+        }
+      })
+    }
+  })
+}
 
 /*блок взаимодействия с ВКонтакте*/
 
