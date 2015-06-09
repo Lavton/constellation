@@ -336,15 +336,19 @@ function get_one_info_people() {
 		$query = "SELECT * FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		$result["myself"]["likes"] = Array($result["myself"]["like_one"], $result["myself"]["like_two"], $result["myself"]["like_three"]);
+		$result["myself"]["dislikes"] = Array($result["myself"]["dislike_one"], $result["myself"]["dislike_two"], $result["myself"]["dislike_three"]);
 
 		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
 			$query = "SELECT * FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
 		} else {
-			$query = "SELECT vk_id, shift_id, fighter_id, probability, social, profile, min_age, max_age, comments, cr_time FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
+			$query = "SELECT vk_id, shift_id, fighter_id, probability, social, profile, min_age, max_age, cr_time FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
 		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["all_apply"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			$line["likes"] = Array($line["like_one"], $line["like_two"], $line["like_three"]);
+			$line["dislikes"] = Array($line["dislike_one"], $line["dislike_two"], $line["dislike_three"]);
 			array_push($result["all_apply"], $line);
 		}
 

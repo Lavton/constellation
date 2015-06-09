@@ -114,7 +114,6 @@
 <table class="table-bordered" ng-show="all_apply" width="100%">
   <thead>
   <tr>
-    <th>№</th>
     <th></th>
     <th>ФИО</th>
     <th>Статус</th>
@@ -129,8 +128,7 @@
   </tr>
   </thead>
 <tbody>
-  <tr ng-repeat="(ind, want) in all_apply">
-    <td>{{ind+1}}</td>
+  <tr ng-repeat="(ind, want) in fighters">
     <td><a href={{"//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}"/></a> <br/> 
       <span ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
       <a ng-click="editGuess(want, true)" href="">

@@ -13,203 +13,220 @@
     $scope.adding.vk_likes = {};
     $(".shift-info").removeClass("hidden")
       /*инициализация*/
+    window.setPeople(function() {
+      initialize();
+    })
 
-    var data = {
-      action: "get_one_info_people",
-      id: shiftid
-    }
-    console.log(data)
-    $.ajax({
-      type: "POST",
-      url: "/handlers/shift.php",
-      dataType: "json",
-      data: $.param(data)
-    }).done(function(json) {
-      console.log("what?")
-      console.log(json)
-      $scope.myself = json.myself;
-      $scope.all_apply = json.all_apply;
-      var comments = [];
-      if (json.myself) {
-        comments.push({
-          id: json.myself.vk_id,
-          comment: json.myself.comments
-        });
+    function initialize() {
+      var data = {
+        action: "get_one_info_people",
+        id: shiftid
       }
-      _.each(json.all_apply, function(element, index, list) {
-        comments.push({
-          id: element.vk_id,
-          comment: element.comments
-        });
-      });
-      var bbdata = {
-        bbcode: comments,
-        ownaction: "bbcodesToHtml"
-      };
       $.ajax({
         type: "POST",
-        url: "/standart/markitup/sets/bbcode/parser.php",
-        dataType: 'json',
-        global: false,
-        data: $.param(bbdata)
-      }).done(function(rdata) {
+        url: "/handlers/shift.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        $scope.fighters = {}
+        $scope.candidats = {}
+        _.each(json.all_apply, function(person, id, list) {
+          var cached_person = _.find(window.people, function(p) {
+            return p.uid * 1 == person.vk_id * 1;
+          })
+          _.extend(person, cached_person)
+          if (cached_person.isFighter == true) {
+            $scope.fighters[person.vk_id] = person
+          } else {
+            $scope.candidats[person.vk_id] = person
+          }
+        });
+
+        console.log("what?")
+        console.log($scope.fighters)
+        $scope.$apply()
+        $scope.myself = json.myself;
+        $scope.all_apply = json.all_apply;
+        var comments = [];
+        if (json.myself) {
+          comments.push({
+            id: json.myself.vk_id,
+            comment: json.myself.comments
+          });
+        }
+        _.each(json.all_apply, function(element, index, list) {
+          comments.push({
+            id: element.vk_id,
+            comment: element.comments
+          });
+        });
+        var bbdata = {
+          bbcode: comments,
+          ownaction: "bbcodesToHtml"
+        };
+        $.ajax({
+          type: "POST",
+          url: "/standart/markitup/sets/bbcode/parser.php",
+          dataType: 'json',
+          global: false,
+          data: $.param(bbdata)
+        }).done(function(rdata) {
+          if ($scope.myself) {
+            $scope.myself.bbcomments = _.findWhere(rdata, {
+              id: $scope.myself.vk_id
+            }).bbcomment;
+          }
+          _.each($scope.all_apply, function(element, index, list) {
+            element.bbcomments = _.findWhere(rdata, {
+              id: element.vk_id
+            }).bbcomment;
+          });
+          $scope.$apply();
+        });
+
+        //формируем запрос сразу для всех нужных id для ВКонтакте
+        var vk_ids = []
+        _.each(json.like_h, function(element, index, list) {
+          vk_ids.push(element.vk_id);
+        });
+        var vk_ids = []
         if ($scope.myself) {
-          $scope.myself.bbcomments = _.findWhere(rdata, {
-            id: $scope.myself.vk_id
-          }).bbcomment;
+          vk_ids.push($scope.myself.vk_id)
+          vk_ids.push($scope.myself.like_one)
+          vk_ids.push($scope.myself.like_two)
+          vk_ids.push($scope.myself.like_three)
+          vk_ids.push($scope.myself.dislike_one)
+          vk_ids.push($scope.myself.dislike_two)
+          vk_ids.push($scope.myself.dislike_three)
         }
         _.each($scope.all_apply, function(element, index, list) {
-          element.bbcomments = _.findWhere(rdata, {
-            id: element.vk_id
-          }).bbcomment;
-        });
-        $scope.$apply();
-      });
+          vk_ids.push(element.vk_id)
+          vk_ids.push(element.like_one)
+          vk_ids.push(element.like_two)
+          vk_ids.push(element.like_three)
+          vk_ids.push(element.dislike_one)
+          vk_ids.push(element.dislike_two)
+          vk_ids.push(element.dislike_three)
+        })
+        getVkData(vk_ids, ["domain", "photo_50"],
+          function(response) {
+            $scope.vk_info = response;
+            // ищем тех, кому нравится данный человек
+            $scope.adding.vk_likes = [];
+            _.each(json.like_h, function(element, index, list) {
+              var vk_d = response[element.vk_id];
+              _.each(vk_d, function(element2, index, list) {
+                element[index] = vk_d[index];
+              })
+              element.fighter = element.fighter_id;
+            });
+            $scope.adding.vk_likes = json.like_h;
 
-      //формируем запрос сразу для всех нужных id для ВКонтакте
-      var vk_ids = []
-      _.each(json.like_h, function(element, index, list) {
-        vk_ids.push(element.vk_id);
-      });
-      var vk_ids = []
-      if ($scope.myself) {
-        vk_ids.push($scope.myself.vk_id)
-        vk_ids.push($scope.myself.like_one)
-        vk_ids.push($scope.myself.like_two)
-        vk_ids.push($scope.myself.like_three)
-        vk_ids.push($scope.myself.dislike_one)
-        vk_ids.push($scope.myself.dislike_two)
-        vk_ids.push($scope.myself.dislike_three)
-      }
-      _.each($scope.all_apply, function(element, index, list) {
-        vk_ids.push(element.vk_id)
-        vk_ids.push(element.like_one)
-        vk_ids.push(element.like_two)
-        vk_ids.push(element.like_three)
-        vk_ids.push(element.dislike_one)
-        vk_ids.push(element.dislike_two)
-        vk_ids.push(element.dislike_three)
-      })
-      getVkData(vk_ids, ["domain", "photo_50"],
-        function(response) {
-          $scope.vk_info = response;
-          // ищем тех, кому нравится данный человек
-          $scope.adding.vk_likes = [];
-          _.each(json.like_h, function(element, index, list) {
-            var vk_d = response[element.vk_id];
-            _.each(vk_d, function(element2, index, list) {
-              element[index] = vk_d[index];
+
+            if ($scope.myself) {
+              // ищем инфу для данного человека
+              var vk_d = response[$scope.myself.vk_id];
+              _.each(vk_d, function(element2, index, list) {
+                $scope.myself[index] = vk_d[index];
+              })
+
+              $scope.myself.like_1 = {}
+              var vk_d = response[$scope.myself.like_one]
+              _.each(vk_d, function(element2, index, list) {
+                $scope.myself.like_1[index] = vk_d[index];
+              })
+              $scope.myself.like_2 = {}
+              var vk_d = response[$scope.myself.like_two];
+              _.each(vk_d, function(element2, index, list) {
+                $scope.myself.like_2[index] = vk_d[index];
+              })
+              $scope.myself.like_3 = {}
+              var vk_d = response[$scope.myself.like_three];
+              _.each(vk_d, function(element2, index, list) {
+                $scope.myself.like_3[index] = vk_d[index];
+              })
+
+              $scope.myself.dislike_1 = {}
+              var vk_d = response[$scope.myself.dislike_one];
+              _.each(vk_d, function(element2, index, list) {
+                $scope.myself.dislike_1[index] = vk_d[index];
+              })
+              $scope.myself.dislike_2 = {}
+              var vk_d = response[$scope.myself.dislike_two];
+              _.each(vk_d, function(element2, index, list) {
+                $scope.myself.dislike_2[index] = vk_d[index];
+              })
+              $scope.myself.dislike_3 = {}
+              var vk_d = response[$scope.myself.dislike_three];
+              _.each(vk_d, function(element2, index, list) {
+                $scope.myself.dislike_3[index] = vk_d[index];
+              })
+            }
+
+            //ищем инфу для всех записавшихся людей
+            _.each($scope.all_apply, function(app_el, index, list) {
+              var vk_d = response[app_el.vk_id];
+              _.each(vk_d, function(element2, index, list) {
+                app_el[index] = vk_d[index];
+              })
+
+              app_el.like_1 = {}
+              var vk_d = response[app_el.like_one];
+              _.each(vk_d, function(element2, index, list) {
+                app_el.like_1[index] = vk_d[index];
+              })
+              app_el.like_2 = {}
+              var vk_d = response[app_el.like_two];
+              _.each(vk_d, function(element2, index, list) {
+                app_el.like_2[index] = vk_d[index];
+              })
+              app_el.like_3 = {}
+              var vk_d = response[app_el.like_three];
+              _.each(vk_d, function(element2, index, list) {
+                app_el.like_3[index] = vk_d[index];
+              })
+
+              app_el.dislike_1 = {}
+              var vk_d = response[app_el.dislike_one];
+              _.each(vk_d, function(element2, index, list) {
+                app_el.dislike_1[index] = vk_d[index];
+              })
+              app_el.dislike_2 = {}
+              var vk_d = response[app_el.dislike_two];
+              _.each(vk_d, function(element2, index, list) {
+                app_el.dislike_2[index] = vk_d[index];
+              })
+              app_el.dislike_3 = {}
+              var vk_d = response[app_el.dislike_three];
+              _.each(vk_d, function(element2, index, list) {
+                app_el.dislike_3[index] = vk_d[index];
+              })
             })
-            element.fighter = element.fighter_id;
+
+
+            $scope.$apply();
           });
-          $scope.adding.vk_likes = json.like_h;
+        /*конец обращения к ВК*/
 
 
-
-          if ($scope.myself) {
-            // ищем инфу для данного человека
-            var vk_d = response[$scope.myself.vk_id];
-            _.each(vk_d, function(element2, index, list) {
-              $scope.myself[index] = vk_d[index];
-            })
-
-            $scope.myself.like_1 = {}
-            var vk_d = response[$scope.myself.like_one]
-            _.each(vk_d, function(element2, index, list) {
-              $scope.myself.like_1[index] = vk_d[index];
-            })
-            $scope.myself.like_2 = {}
-            var vk_d = response[$scope.myself.like_two];
-            _.each(vk_d, function(element2, index, list) {
-              $scope.myself.like_2[index] = vk_d[index];
-            })
-            $scope.myself.like_3 = {}
-            var vk_d = response[$scope.myself.like_three];
-            _.each(vk_d, function(element2, index, list) {
-              $scope.myself.like_3[index] = vk_d[index];
-            })
-
-            $scope.myself.dislike_1 = {}
-            var vk_d = response[$scope.myself.dislike_one];
-            _.each(vk_d, function(element2, index, list) {
-              $scope.myself.dislike_1[index] = vk_d[index];
-            })
-            $scope.myself.dislike_2 = {}
-            var vk_d = response[$scope.myself.dislike_two];
-            _.each(vk_d, function(element2, index, list) {
-              $scope.myself.dislike_2[index] = vk_d[index];
-            })
-            $scope.myself.dislike_3 = {}
-            var vk_d = response[$scope.myself.dislike_three];
-            _.each(vk_d, function(element2, index, list) {
-              $scope.myself.dislike_3[index] = vk_d[index];
-            })
-          }
-
-          //ищем инфу для всех записавшихся людей
-          _.each($scope.all_apply, function(app_el, index, list) {
-            var vk_d = response[app_el.vk_id];
-            _.each(vk_d, function(element2, index, list) {
-              app_el[index] = vk_d[index];
-            })
-
-            app_el.like_1 = {}
-            var vk_d = response[app_el.like_one];
-            _.each(vk_d, function(element2, index, list) {
-              app_el.like_1[index] = vk_d[index];
-            })
-            app_el.like_2 = {}
-            var vk_d = response[app_el.like_two];
-            _.each(vk_d, function(element2, index, list) {
-              app_el.like_2[index] = vk_d[index];
-            })
-            app_el.like_3 = {}
-            var vk_d = response[app_el.like_three];
-            _.each(vk_d, function(element2, index, list) {
-              app_el.like_3[index] = vk_d[index];
-            })
-
-            app_el.dislike_1 = {}
-            var vk_d = response[app_el.dislike_one];
-            _.each(vk_d, function(element2, index, list) {
-              app_el.dislike_1[index] = vk_d[index];
-            })
-            app_el.dislike_2 = {}
-            var vk_d = response[app_el.dislike_two];
-            _.each(vk_d, function(element2, index, list) {
-              app_el.dislike_2[index] = vk_d[index];
-            })
-            app_el.dislike_3 = {}
-            var vk_d = response[app_el.dislike_three];
-            _.each(vk_d, function(element2, index, list) {
-              app_el.dislike_3[index] = vk_d[index];
-            })
-          })
-
-
-          $scope.$apply();
+        var bbdata = {
+          bbcode: $scope.shift.comments,
+          ownaction: "bbcodeToHtml"
+        };
+        $.ajax({
+          type: "POST",
+          url: "/standart/markitup/sets/bbcode/parser.php",
+          dataType: 'text',
+          global: false,
+          data: $.param(bbdata)
+        }).done(function(rdata) {
+          $scope.shift.bbcomments = rdata,
+            $scope.$apply();
         });
-      /*конец обращения к ВК*/
-      
-
-      var bbdata = {
-        bbcode: $scope.shift.comments,
-        ownaction: "bbcodeToHtml"
-      };
-      $.ajax({
-        type: "POST",
-        url: "/standart/markitup/sets/bbcode/parser.php",
-        dataType: 'text',
-        global: false,
-        data: $.param(bbdata)
-      }).done(function(rdata) {
-        $scope.shift.bbcomments = rdata,
-          $scope.$apply();
-      });
-      //TODO make works all html. (jquery?)
-      $scope.$apply();
-      $scope.$apply();
-    })
+        //TODO make works all html. (jquery?)
+        $scope.$apply();
+      })
+    }
 
     var inthrefID = setInterval(function() {
       var fid = window.location.href.split("/")
