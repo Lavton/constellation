@@ -26,13 +26,10 @@
       dataType: "json",
       data: $.param(data)
     }).done(function(json) {
-      console.log(json);
+      $scope.myself = json.myself;
       if (json.like_h) {
         $scope.app2 = _.after(json.like_h.length, function() {
-
           $scope.like_h = json.like_h;
-          console.log("LIKE")
-          console.log($scope.like_h)
           $scope.$apply();
         })
         _.each(json.like_h, function(element, index, list) {
@@ -162,16 +159,15 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(json) {
-          // var saved = $(".saved");
-          // $(saved).stop(true, true);
-          // $(saved).fadeIn("slow");
-          // $(saved).fadeOut("slow");
-          // var lnk = document.createElement("a");
-          // lnk.setAttribute("class", "ajax-nav")
-          // $(lnk).attr("href", window.location.href);
-          // $("#page-container").append(lnk);
-          // $(lnk).trigger("click")
-          console.log(json)
+          var saved = $(".saved");
+          $(saved).stop(true, true);
+          $(saved).fadeIn("slow");
+          $(saved).fadeOut("slow");
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
         });
       }
     }
@@ -218,210 +214,6 @@
       $(lnk).trigger("click");
     }
 
-    $scope.submit = function() {
-      $scope.shift.st_date = new Date($scope.shift.start_date);
-      $scope.shift.fn_date = new Date($scope.shift.finish_date);
-      var name = "";
-      var st_month = $scope.shift.st_date.getMonth() * 1 + 1; //нумерация с нуля была
-      var fn_month = $scope.shift.fn_date.getMonth() * 1 + 1;
-      if ((st_month == 10) || (st_month == 11)) {
-        //октябрь или ноябрь -> осень
-        name = "Осень";
-      } else if ((st_month == 12) || (st_month == 1)) {
-        //декабрь или январь -> зима
-        name = "Зима";
-      } else if ((st_month == 3) || (st_month == 4)) {
-        //март или апрель -> весна
-        name = "Весна";
-      } else {
-        name = "Лето ";
-        if (fn_month == 6) { //в июне кончается первая смена
-          name += "1";
-        } else if (st_month == 6) { //в июне начинается вторая смена (или первая, но её уже обработали)
-          name += "2";
-        } else if (st_month == 7) { //в июле начинается третья смена
-          name += "3";
-        } else { //осталась четвёртая
-          name += "4";
-        }
-      }
-      name += ", " + $scope.shift.fn_date.getFullYear()
-      if ($scope.shift.place) {
-        name += " (" + $scope.shift.place + ")";
-      }
-      $scope.shift.name = name;
-
-      var data = angular.copy($scope.shift);
-      data.action = "set_new_data"
-      _.each(data, function(element, index, list) {
-        if (!element) {
-          data[index] = null;
-        }
-      })
-
-      var bbdata = {
-        bbcode: $scope.shift.comments,
-        ownaction: "bbcodeToHtml"
-      };
-      $.ajax({
-        type: "POST",
-        url: "/standart/markitup/sets/bbcode/parser.php",
-        dataType: 'text',
-        global: false,
-        data: $.param(bbdata)
-      }).done(function(rdata) {
-        $scope.shift.bbcomments = rdata,
-          $scope.$apply();
-      });
-
-
-      $http.post('/handlers/shift.php', data).success(function(response) {
-        var saved = $(".saved");
-        $(saved).stop(true, true);
-        $(saved).fadeIn("slow");
-        $(saved).fadeOut("slow");
-      });
-    }
-
-    $scope.detachment = [];
-    $scope.newdetachment = {
-      people: ["", ],
-      comments: ""
-
-    };
-    $scope.newdetachment.fieldKeys = [];
-
-    $scope.newdetachment.setFieldKeys = function() {
-      var keys = [];
-      for (var i = ($scope.newdetachment.people).length - 1; i >= 0; i--) {
-        keys.push(i);
-      };
-      $scope.newdetachment.fieldKeys = keys;
-    }
-    $scope.newdetachment.setFieldKeys();
-
-    $scope.addNewPersonDetach = function() {
-      $scope.newdetachment.people.push("");
-      $scope.newdetachment.setFieldKeys();
-    }
-
-    $scope.addDetachment = function() {
-      if ($scope.add_det) {
-        $(".addDetachment").text("добавить отряд в расстановку")
-      } else {
-        $(".addDetachment").text("Скрыть добавление")
-      }
-      $scope.add_det = !$scope.add_det;
-    }
-
-    /*создаёт расстановку*/
-    $scope.addDetachmentSubmit = function() {
-      getVkData($scope.newdetachment.people, ["domain"],
-        function(response) {
-          /*если передали имя ВК - заменяем на uid*/
-          for (var i = 0; i < $scope.newdetachment.people.length; i++) {
-            if (response[$scope.newdetachment.people[i]]) {
-              $scope.newdetachment.people[i] = response[$scope.newdetachment.people[i]].uid;
-            }
-          };
-          var new_people = [];
-          for (var i = 0; i < $scope.newdetachment.people.length; i++) {
-            if ($scope.newdetachment.people[i]) {
-              new_people.push($scope.newdetachment.people[i])
-            }
-          };
-          /*пушим в БД, конкатинируя имена*/
-          var data = {
-            comments: $scope.newdetachment.comments,
-            people: new_people.join("$"),
-            action: "add_detachment",
-            shift_id: $scope.shift.id
-          }
-          $.ajax({ //TODO: make with angular
-            type: "POST",
-            url: "/handlers/shift.php",
-            dataType: "json",
-            data: $.param(data)
-          }).done(function(json) {
-            var lnk = document.createElement("a");
-            lnk.setAttribute("class", "ajax-nav")
-            $(lnk).attr("href", window.location.href);
-            $("#page-container").append(lnk);
-            $(lnk).trigger("click")
-          });
-          $scope.$apply();
-        });
-    }
-
-    $scope.editDetachment = function(key) {
-      $scope.edit_detachment = $scope.detachments[key];
-    }
-
-    $scope.saveDetachComment = function() {
-      if (confirm("редактировать комментарий?")) {
-        var data = {};
-        data.action = "edit_detach_comment";
-        data.in_id = $scope.edit_detachment.in_id;
-        data.comments = $scope.edit_detachment.comments;
-        $.ajax({
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(json) {
-          var lnk = document.createElement("a");
-          lnk.setAttribute("class", "ajax-nav")
-          $(lnk).attr("href", window.location.href);
-          $("#page-container").append(lnk);
-          $(lnk).trigger("click")
-        });
-      }
-    }
-
-    $scope.deleteDetachment = function(key) {
-      if (confirm("удалить отряд?")) {
-        var data = {};
-        data.action = "del_detach_shift";
-        data.in_id = $scope.detachments[key].in_id;
-        $.ajax({
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(json) {
-          var lnk = document.createElement("a");
-          lnk.setAttribute("class", "ajax-nav")
-          $(lnk).attr("href", window.location.href);
-          $("#page-container").append(lnk);
-          $(lnk).trigger("click")
-        });
-      }
-    }
-
-    $scope.resetInfo = function() {
-      $scope.shift = angular.copy($scope.master);
-    }
-
-    $scope.killShift = function() {
-      var fid = window.location.href.split("/")
-      var shiftid = fid[fid.length - 1] //TODO сделать тут нормально!
-      if (confirm("Точно удалить смену со всей информацией?")) {
-        var data = {
-          action: "kill_shift",
-          id: shiftid
-        }
-        $.ajax({ //TODO: make with angular
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(response) {
-          if (response.result == "Success") {
-            window.location = "/";
-          }
-        });
-      }
-    }
   }
 
   function init() {

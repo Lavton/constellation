@@ -33,6 +33,12 @@
         $scope.fighters = []
         $scope.candidats = []
         $scope.all_apply = json.all_apply;
+        // автоматически не сбиндить. Делаем вручную после всех загрузок
+        var bind_comments = _.after(json.all_apply.length+1, function() {
+          _.each(json.all_apply, function(application) {
+            $("div."+application.vk_id+"-comments").html(application.bbcomments)
+          });
+        })
         _.each(json.all_apply, function(person, id, list) {
           window.getPerson(person.vk_id * 1, function(pers, flag) {
             var set_f = _.after(7, function() {
@@ -41,6 +47,7 @@
               } else {
                 $scope.candidats.push(person)
               }
+              bind_comments();
 
             })
             _.extend(person, pers)
@@ -100,30 +107,27 @@
               })
             }
           })
-          var bbdata = { // что-то не работает((
-            bbcode: [json.myself.comments],
-            ownaction: "bbcodesToHtml"
+          var bbdata = {
+            bbcode: json.myself.comments,
+            ownaction: "bbcodeToHtml"
           };
+          console.log("comments")
+          console.log(bbdata)
           $.ajax({
             type: "POST",
             url: "/standart/markitup/sets/bbcode/parser.php",
-            dataType: 'json',
+            dataType: 'text',
             global: false,
             data: $.param(bbdata)
           }).done(function(rdata) {
+            console.log(rdata)
             $scope.me.bbcomments = rdata;
+            $("div.me-comments").html(rdata); // почему-то бинд не работает(
             $scope.$apply();
           })
         }
 
-        $scope.all_apply = json.all_apply;
         var comments = [];
-        if (json.myself) {
-          comments.push({
-            id: json.myself.vk_id,
-            comment: json.myself.comments
-          });
-        }
         _.each(json.all_apply, function(element, index, list) {
           comments.push({
             id: element.vk_id,
@@ -141,16 +145,12 @@
           global: false,
           data: $.param(bbdata)
         }).done(function(rdata) {
-          if ($scope.myself) {
-            $scope.myself.bbcomments = _.findWhere(rdata, {
-              id: $scope.myself.vk_id
-            }).bbcomment;
-          }
           _.each($scope.all_apply, function(element, index, list) {
             element.bbcomments = _.findWhere(rdata, {
               id: element.vk_id
             }).bbcomment;
           });
+          bind_comments();
           $scope.$apply();
         });
 
@@ -697,10 +697,36 @@
           });
         })
       }
-
     }
 
-
+    /*удалить заявку на смену*/
+    $scope.deleteGuess = function(delid) {
+      if (confirm("удалить заявку?")) {
+        var data = {};
+        data.action = "del_from_shift";
+        data.shift_id = shiftid;
+        if (delid) {
+          data.vk_id = delid;
+        }
+        _.each(data, function(element, index, list) {
+          if (!element) {
+            data[index] = null;
+          }
+        })
+        $.ajax({
+          type: "POST",
+          url: "/handlers/shift.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(json) {
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
+        });
+      }
+    }
   }
 
   function init() {

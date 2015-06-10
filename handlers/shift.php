@@ -385,7 +385,7 @@ function get_one_info_adding() {
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["like_h"], $line);
 		}
-		$query = "SELECT 1 FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
+		$query = "SELECT vk_id FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
