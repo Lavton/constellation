@@ -32,6 +32,7 @@
       }).done(function(json) {
         $scope.fighters = []
         $scope.candidats = []
+        $scope.all_apply = json.all_apply;
         _.each(json.all_apply, function(person, id, list) {
           window.getPerson(person.vk_id * 1, function(pers, flag) {
             var set_f = _.after(7, function() {
@@ -667,26 +668,21 @@
       }
     }
 
+    /*удалить все заявки на смену*/
     $scope.killappsShift = function() {
       if (confirm("Точно удалить все заявки на поездку? (сама смена не удалиться)")) {
-        var data = {};
-        data.action = "del_from_shift";
-        data.shift_id = $scope.shift.id;
-        _.each(data, function(element, index, list) {
-          if (!element) {
-            data[index] = null;
-          }
+        var aft_click = _.after($scope.all_apply.length, function() {
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", window.location.href);
+
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click");
         })
-        $.ajax({
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(json) {});
         _.each($scope.all_apply, function(element, index, list) {
           var data = {};
           data.action = "del_from_shift";
-          data.shift_id = $scope.shift.id;
+          data.shift_id = shiftid;
           data.vk_id = element.vk_id;
           _.each(data, function(element, index, list) {
             if (!element) {
@@ -698,107 +694,15 @@
             url: "/handlers/shift.php",
             dataType: "json",
             data: $.param(data)
-          }).done(function(json) {});
+          }).done(function(json) {
+            aft_click()
+          });
         })
       }
-      var lnk = document.createElement("a");
-      lnk.setAttribute("class", "ajax-nav")
-      $(lnk).attr("href", window.location.href);
 
-      $("#page-container").append(lnk);
-      $(lnk).trigger("click");
-    }
-
-    $scope.submit = function() {
-      $scope.shift.st_date = new Date($scope.shift.start_date);
-      $scope.shift.fn_date = new Date($scope.shift.finish_date);
-      var name = "";
-      var st_month = $scope.shift.st_date.getMonth() * 1 + 1; //нумерация с нуля была
-      var fn_month = $scope.shift.fn_date.getMonth() * 1 + 1;
-      if ((st_month == 10) || (st_month == 11)) {
-        //октябрь или ноябрь -> осень
-        name = "Осень";
-      } else if ((st_month == 12) || (st_month == 1)) {
-        //декабрь или январь -> зима
-        name = "Зима";
-      } else if ((st_month == 3) || (st_month == 4)) {
-        //март или апрель -> весна
-        name = "Весна";
-      } else {
-        name = "Лето ";
-        if (fn_month == 6) { //в июне кончается первая смена
-          name += "1";
-        } else if (st_month == 6) { //в июне начинается вторая смена (или первая, но её уже обработали)
-          name += "2";
-        } else if (st_month == 7) { //в июле начинается третья смена
-          name += "3";
-        } else { //осталась четвёртая
-          name += "4";
-        }
-      }
-      name += ", " + $scope.shift.fn_date.getFullYear()
-      if ($scope.shift.place) {
-        name += " (" + $scope.shift.place + ")";
-      }
-      $scope.shift.name = name;
-
-      var data = angular.copy($scope.shift);
-      data.action = "set_new_data"
-      _.each(data, function(element, index, list) {
-        if (!element) {
-          data[index] = null;
-        }
-      })
-
-      var bbdata = {
-        bbcode: $scope.shift.comments,
-        ownaction: "bbcodeToHtml"
-      };
-      $.ajax({
-        type: "POST",
-        url: "/standart/markitup/sets/bbcode/parser.php",
-        dataType: 'text',
-        global: false,
-        data: $.param(bbdata)
-      }).done(function(rdata) {
-        $scope.shift.bbcomments = rdata,
-          $scope.$apply();
-      });
-
-
-      $http.post('/handlers/shift.php', data).success(function(response) {
-        var saved = $(".saved");
-        $(saved).stop(true, true);
-        $(saved).fadeIn("slow");
-        $(saved).fadeOut("slow");
-      });
     }
 
 
-    $scope.resetInfo = function() {
-      $scope.shift = angular.copy($scope.master);
-    }
-
-    $scope.killShift = function() {
-      var fid = window.location.href.split("/")
-      var shiftid = fid[fid.length - 1] //TODO сделать тут нормально!
-      if (confirm("Точно удалить смену со всей информацией?")) {
-        var data = {
-          action: "kill_shift",
-          id: shiftid
-        }
-        $.ajax({ //TODO: make with angular
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(response) {
-          if (response.result == "Success") {
-            window.location = "/";
-          }
-        });
-      }
-    }
   }
 
   function init() {

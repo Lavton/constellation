@@ -158,9 +158,13 @@
         $(".bbcomments-shift").html($scope.shift.bbcomments) // почему-то иначе не работает(
         $scope.$apply();
       });
-
-
-      $http.post('/handlers/shift.php', data).success(function(response) {
+      $.ajax({
+        type: "POST",
+        url: '/handlers/shift.php',
+        dataType: 'text',
+        global: false,
+        data: $.param(data)
+      }).done(function(response) {
         var saved = $(".saved");
         $(saved).stop(true, true);
         $(saved).fadeIn("slow");

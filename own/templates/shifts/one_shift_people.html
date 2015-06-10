@@ -98,7 +98,7 @@
             <td>
               <a href="//vk.com/{{fighter.domain}}" target="_blank"> <img ng-src="{{fighter.photo}}" /></a>
               <br/>
-              <a ng-click="editGuess(fighter, false)" href=""  ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <a ng-click="editGuess(fighter, false)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
         ред&nbsp;-&nbsp;вать
       </a>
               <br>
@@ -159,89 +159,91 @@
       </table>
     </div>
     <div class="col-lg-6">
-    <!-- информация про кандидатов -->
-    <div class="col-lg-6">
-      <span ng-show="candidats.length"> Кандидаты:</span>
-      <table class="table-bordered" ng-show="candidats.length" width="100%">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ФИО</th>
-            <th>Вер.
-              <br>поехать</th>
-            <!-- <th>Хочет <br> работать<br>на</th> -->
-            <th>Возраст</th>
-            <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Хочет работать с</th>
-            <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">не хочет работать с</th>
-            <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Комментарии</th>
-            <th>Последнее
-              <br> обновление</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="candidate in candidats">
-            <td>
-              <a href="//vk.com/{{candidate.domain}}" target="_blank"> <img ng-src="{{candidate.photo}}" /></a>
-              <br/>
-              <a ng-click="editGuess(candidate, false)" href=""  ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+      <!-- информация про кандидатов -->
+      <div class="col-lg-6">
+        <span ng-show="candidats.length"> Кандидаты:</span>
+        <table class="table-bordered" ng-show="candidats.length" width="100%">
+          <thead>
+            <tr>
+              <th></th>
+              <th>ФИО</th>
+              <th>Вер.
+                <br>поехать</th>
+              <!-- <th>Хочет <br> работать<br>на</th> -->
+              <th>Возраст</th>
+              <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Хочет работать с</th>
+              <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">не хочет работать с</th>
+              <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Комментарии</th>
+              <th>Последнее
+                <br> обновление</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="candidate in candidats">
+              <td>
+                <a href="//vk.com/{{candidate.domain}}" target="_blank"> <img ng-src="{{candidate.photo}}" /></a>
+                <br/>
+                <a ng-click="editGuess(candidate, false)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
         ред&nbsp;-&nbsp;вать
       </a>
-              <br>
-              <a ng-click="deleteGuess()" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+                <br>
+                <a ng-click="deleteGuess()" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
         удалить
       </a>
-            </td>
-            <td>
-              <span ng-show="window.current_group>=window.groups.FIGHTER.num">
+              </td>
+              <td>
+                <span ng-show="window.current_group>=window.groups.FIGHTER.num">
                 <a href={{"/about/candidats/"+person[0].id}} class="ajax-nav">
             {{candidate.first_name}}
               <br/> {{candidate.last_name}} &nbsp;
                 </a>
               </span>
-              <span ng-hide="window.current_group>=window.groups.FIGHTER.num">
+                <span ng-hide="window.current_group>=window.groups.FIGHTER.num">
             {{candidate.first_name}}
               <br/> {{candidate.last_name}} &nbsp;
               </span>
-            </td>
-            <td>{{candidate.probability}}%</td>
-            <!--     <td>
+              </td>
+              <td>{{candidate.probability}}%</td>
+              <!--     <td>
       <span ng-show="candidate.social > 1">социальные</span><br>
       <span ng-show="candidate.social%2">домашние</span><br>
       <span ng-show="candidate.profile > 1">профильные</span><br>
       <span ng-show="candidate.profile%2">непрофильные</span><br>
     </td> -->
-            <td>от {{candidate.min_age}} до {{candidate.max_age}}</td>
-            <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
-              <table>
-                <tr ng-repeat="ls in  candidate.likes" ng-show="ls">
-                  <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
-                  <td>
-                    <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
-                    <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
-                    <br> {{ls.first_name}} {{ls.last_name}}
-                  </td>
-                </tr>
-              </table>
-            </td>
-            <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
-              <table>
-                <tr ng-repeat="ls in  candidate.dislikes" ng-show="ls">
-                  <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
-                  <td>
-                    <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
-                    <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
-                    <br> {{ls.first_name}} {{ls.last_name}}
-                  </td>
-                </tr>
-              </table>
-            </td>
-            <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
-              <div class="table-bordered" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
-            </td>
-            <td>{{candidate.cr_time}} </td>
-          </tr>
-        </tbody>
-      </table>
+              <td>от {{candidate.min_age}} до {{candidate.max_age}}</td>
+              <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+                <table>
+                  <tr ng-repeat="ls in  candidate.likes" ng-show="ls">
+                    <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
+                    <td>
+                      <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
+                      <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
+                      <br> {{ls.first_name}} {{ls.last_name}}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+                <table>
+                  <tr ng-repeat="ls in  candidate.dislikes" ng-show="ls">
+                    <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
+                    <td>
+                      <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
+                      <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
+                      <br> {{ls.first_name}} {{ls.last_name}}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+                <div class="table-bordered" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
+              </td>
+              <td>{{candidate.cr_time}} </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
+  <button ng-show="window.current_group>=window.groups.COMMAND_STAFF.num" type="button" class="btn btn-danger kill-shift" ng-click="killappsShift()">Удалить все заявки на смену</button>
 </div>

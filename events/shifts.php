@@ -36,8 +36,7 @@
 
             <br/>
             <br/>
-            <a href="#" class="shift_priv" class="ajax-nav"><<предыдущая</a> &nbsp; &nbsp;
-            <a href="#" class="shift_next pull-right" class="ajax-nav">следующая>></a>
+            <a href="#" class="shift_priv ajax-nav"> &lt;&lt;предыдущая</a> &nbsp; &nbsp; <a href="#" class="shift_next pull-right ajax-nav">следующая &gt;&gt;</a>
             <?php
           } else {
             echo "Вы не авторизованы. <a href='/login'>Войдите</a>";
