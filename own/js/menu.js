@@ -74,7 +74,6 @@ if (typeof String.prototype.startsWith != 'function') {
     var script_date = _.find(window.locs, function(loc) {
       return loc[0].test(locat);
     })
-    console.log(script_date)
     if (script_date) {
       document.title = script_date[1].title;
       var lab = $LAB;
@@ -84,7 +83,6 @@ if (typeof String.prototype.startsWith != 'function') {
       _.reduce(script_date[1].js, function(memo, js) {
         if (window.jsFiles[js] == false) {
           window.jsFiles[js] = true;
-          console.log(js);
           return memo.script(js);
         } else {
           return memo;

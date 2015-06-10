@@ -16,10 +16,7 @@
       /*окончательная подстановка. Вызываем соотв. событие*/
       function paste_final(vk_inpt, person) {
         state_of_fin = true;
-        console.log("FINAL")
         vk_inpt.val(person.domain)
-        console.log(person)
-        console.log(vk_inpt.parent().children("span.selectPerson"))
         vk_inpt.parent().children("span.selectPerson").html(
           "<img src='" + person.photo + "' title='" + person.IF + "'></img>"
         );
@@ -122,10 +119,7 @@
 
       /*при клике на картинку справа мы ищем человека с input'a*/
       $("body").on('click', "span.selectPerson[my-uniq=" + uniq + "]", function(e) {
-        console.log("click")
         window.addPeople($this.val(), function(vk_resp) {
-          console.log($this.val())
-          console.log(vk_resp[$this.val()])
           if (vk_resp[$this.val()]) {
             var person = _.findWhere(window.people, {
               "uid": vk_resp[$this.val()].uid

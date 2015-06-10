@@ -112,8 +112,6 @@
             data: $.param(bbdata)
           }).done(function(rdata) {
             $scope.me.bbcomments = rdata;
-            console.log("catch")
-            console.log(rdata)
             $scope.$apply();
           })
         }

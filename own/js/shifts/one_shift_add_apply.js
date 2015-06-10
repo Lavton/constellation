@@ -11,6 +11,8 @@
     $scope.shift = {};
     $scope.adding = {};
     $scope.adding.vk_likes = {};
+    $scope.adding.profile = 3;
+    $scope.adding.social = 3;
 
     /*инициализация*/
     var data = {
@@ -79,6 +81,18 @@
       $scope.show_edit = false;
     }
 
+    /*синхронизируемся, где надо*/
+    $("#page-container").on("_final_select", "input", function(e) {
+      /*в ng-model лежит путь. Но не прямое значение(( Пройдём по нему до почти конца и впишем*/
+      var path = this.getAttribute("ng-model").split(".")
+      var self = $scope;
+      for (var i = 0; i < path.length - 1; i++) {
+        self = self[path[i]]
+      };
+      self[path[path.length - 1]] = this.value;
+      $scope.$apply();
+    })
+
 
     /*добавляем(ся) на смену. Или редактируем.
     Что делает - зависит от is_edit*/
@@ -98,53 +112,67 @@
             data[index] = null;
           }
         })
-        data.shift_id = $scope.shift.id;
+        data.shift_id = shiftid;
         /*преобразуем доп. поля*/
-        data.social = data.soc * 1 + data.nonsoc * 2;
-        data.profile = data.prof * 1 + data.nonprof * 2;
+        // data.social = data.soc * 1 + data.nonsoc * 2;
+        // data.profile = data.prof * 1 + data.nonprof * 2;
+        data.social = 3;
+        data.profile = 3;
+
         /*заменяем введённые домены на uid*/
-        getVkData([data.smbdy, data.like1, data.like2, data.like3, data.dislike1, data.dislike2, data.dislike3], ["domain"],
-          function(response) {
-            if (data.smbdy) { // мы комсостав и хотим добавить другого человека
-              data.vk_id = response[data.smbdy].uid;
-            }
-            if (data.like1) {
-              data.like_one = response[data.like1].uid;
-            }
-            if (data.like2) {
-              data.like_two = response[data.like2].uid;
-            }
-            if (data.like3) {
-              data.like_three = response[data.like3].uid;
-            }
+        if (data.smbdy) { // мы комсостав и хотим добавить другого человека
+          data.vk_id = _.find(window.people, function(p) {
+            return data.smbdy == p.domain;
+          }).uid
+        }
+        if (data.like1) {
+          data.like_one = _.find(window.people, function(p) {
+            return data.like1 == p.domain;
+          }).uid
+        }
+        if (data.like2) {
+          data.like_two = _.find(window.people, function(p) {
+            return data.like2 == p.domain;
+          }).uid
+        }
+        if (data.like3) {
+          data.like_three = _.find(window.people, function(p) {
+            return data.like3 == p.domain;
+          }).uid
+        }
 
-            if (data.dislike1) {
-              data.dislike_one = response[data.dislike1].uid;
-            }
-            if (data.dislike2) {
-              data.dislike_two = response[data.dislike2].uid;
-            }
-            if (data.dislike3) {
-              data.dislike_three = response[data.dislike3].uid;
-            }
-            $.ajax({
-              type: "POST",
-              url: "/handlers/shift.php",
-              dataType: "json",
-              data: $.param(data)
-            }).done(function(json) {
-              var saved = $(".saved");
-              $(saved).stop(true, true);
-              $(saved).fadeIn("slow");
-              $(saved).fadeOut("slow");
-              var lnk = document.createElement("a");
-              lnk.setAttribute("class", "ajax-nav")
-              $(lnk).attr("href", window.location.href);
-              $("#page-container").append(lnk);
-              $(lnk).trigger("click")
-            });
-
-          });
+        if (data.dislike1) {
+          data.dislike_one = _.find(window.people, function(p) {
+            return data.dislike1 == p.domain;
+          }).uid
+        }
+        if (data.dislike2) {
+          data.dislike_two = _.find(window.people, function(p) {
+            return data.dislike2 == p.domain;
+          }).uid
+        }
+        if (data.dislike3) {
+          data.dislike_three = _.find(window.people, function(p) {
+            return data.dislike3 == p.domain;
+          }).uid
+        }
+        $.ajax({
+          type: "POST",
+          url: "/handlers/shift.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(json) {
+          // var saved = $(".saved");
+          // $(saved).stop(true, true);
+          // $(saved).fadeIn("slow");
+          // $(saved).fadeOut("slow");
+          // var lnk = document.createElement("a");
+          // lnk.setAttribute("class", "ajax-nav")
+          // $(lnk).attr("href", window.location.href);
+          // $("#page-container").append(lnk);
+          // $(lnk).trigger("click")
+          console.log(json)
+        });
       }
     }
 

@@ -11,7 +11,7 @@
       <ul>
         <li ng-show="window.current_group>=window.groups.COMMAND_STAFF.num"><b>Кого добавить?</b> (как комсостав, можно добавить другого. Хотите добавиться сами - просто проигнорируйте поле)
           <br/> ссылка ВК:
-          <input type="text" ng-model="adding.smbdy" class="vk_input" placeholder="домен VK" />
+          <input type="text" ng-model="adding.smbdy" class="vk_input" placeholder="домен VK" /> {{adding.smbdy}}
         </li>
         <li> <i>С какой вероятностью вы поедете на смену?</i> (будет видно всем)
           <br/> {{adding.prob}}

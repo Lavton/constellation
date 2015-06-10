@@ -385,6 +385,9 @@ function get_one_info_adding() {
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["like_h"], $line);
 		}
+		$query = "SELECT 1 FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
 			$result = array();
 		}
@@ -530,6 +533,7 @@ function add_new_shift() {
 	}
 }
 
+/*запись на смену*/
 function apply_to_shift() {
 	check_session();
 	session_start();
@@ -587,34 +591,32 @@ function apply_to_shift() {
 			array_push($values, "'" . $_POST["max_age"] . "'");
 		}
 
-		if (isset($_POST["like_one"])) {
-			array_push($names, "like_one");
-			array_push($values, "'" . $_POST["like_one"] . "'");
+		array_push($names, "like_one");
+		array_push($values, "'" . $_POST["like_one"] . "'");
+
+		array_push($names, "like_two");
+		array_push($values, "'" . $_POST["like_two"] . "'");
+
+		array_push($names, "like_three");
+		array_push($values, "'" . $_POST["like_three"] . "'");
+
+		array_push($names, "dislike_one");
+		array_push($values, "'" . $_POST["dislike_one"] . "'");
+
+		array_push($names, "dislike_two");
+		array_push($values, "'" . $_POST["dislike_two"] . "'");
+
+		array_push($names, "dislike_three");
+		array_push($values, "'" . $_POST["dislike_three"] . "'");
+
+		array_push($names, "comments");
+		array_push($values, "'" . $_POST["comments"] . "'");
+		foreach ($values as $key => $value) {
+			if ($value == "''") {
+				$values[$key] = "NULL";
+			}
 		}
-		if (isset($_POST["like_two"])) {
-			array_push($names, "like_two");
-			array_push($values, "'" . $_POST["like_two"] . "'");
-		}
-		if (isset($_POST["like_three"])) {
-			array_push($names, "like_three");
-			array_push($values, "'" . $_POST["like_three"] . "'");
-		}
-		if (isset($_POST["dislike_one"])) {
-			array_push($names, "dislike_one");
-			array_push($values, "'" . $_POST["dislike_one"] . "'");
-		}
-		if (isset($_POST["dislike_two"])) {
-			array_push($names, "dislike_two");
-			array_push($values, "'" . $_POST["dislike_two"] . "'");
-		}
-		if (isset($_POST["dislike_three"])) {
-			array_push($names, "dislike_three");
-			array_push($values, "'" . $_POST["dislike_three"] . "'");
-		}
-		if (isset($_POST["comments"])) {
-			array_push($names, "comments");
-			array_push($values, "'" . $_POST["comments"] . "'");
-		}
+
 		// cначала проверим, боец ли этот человек
 		$query = "SELECT id FROM fighters where vk_id=" . $_POST["vk_id"] . ";";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
@@ -627,7 +629,7 @@ function apply_to_shift() {
 		$values = implode(", ", $values);
 		$query = "INSERT INTO guess_shift (" . $names . ") VALUES (" . $values . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-
+		// $result["qw"] = $query;
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
