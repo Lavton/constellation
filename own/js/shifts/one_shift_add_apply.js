@@ -41,6 +41,16 @@
       }
     })
 
+    /*появление редактирования. Перебрасываем событием из людей*/
+    $("#page-container").on("_edit_guess", function(e, json) {
+      if ($scope.show_add) {
+        $scope.tableToAdd();
+      }
+      $scope.show_edit = true;
+      $scope.adding = json;
+      $scope.$apply();
+    });
+
     /*пока не нужно, но потом для редактирования записи*/
     $scope.editGuess = function(who, is_smbdy) {
       if ($scope.show_add) {

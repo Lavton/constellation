@@ -173,6 +173,7 @@ function arhive() {
 
 }
 
+/*depricated*/
 function get_one_info() {
 	check_session();
 	session_start();

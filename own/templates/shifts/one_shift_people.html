@@ -98,7 +98,7 @@
             <td>
               <a href="//vk.com/{{fighter.domain}}" target="_blank"> <img ng-src="{{fighter.photo}}" /></a>
               <br/>
-              <a ng-click="editGuess(fighter, false)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <a ng-click="editGuess(fighter, true)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
         ред&nbsp;-&nbsp;вать
       </a>
               <br>
@@ -183,7 +183,7 @@
               <td>
                 <a href="//vk.com/{{candidate.domain}}" target="_blank"> <img ng-src="{{candidate.photo}}" /></a>
                 <br/>
-                <a ng-click="editGuess(candidate, false)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+                <a ng-click="editGuess(candidate, true)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
         ред&nbsp;-&nbsp;вать
       </a>
                 <br>
