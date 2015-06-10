@@ -1,5 +1,5 @@
 <br>
-<div class="events-container" ng-cloak ng-controller="eventsApp">
+<div class="events-container" ng-cloak ng-controller="eventsApp" id="events-all">
   <h2 ng-show="events.future">Грядущие</h2>
   <ul>
     <li ng-repeat="event in events.future">
@@ -41,7 +41,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
 </em>
 <br>
  название: <input type="text" class="add-new-event-name" placeholder="название мероприятия" size=50 /> <br>
- дата и время начала: <input type="date" class="add-new-event-start-date" /> <input type="time" class="add-new-event-start-time"/><br><br>
+ дата и время начала: <input type="date" class="add-new-event-start-date" /> <input type="time" class="add-new-event-start-time"/> <em>Пример: "2015-06-19" "20:40"</em><br><br>
  дата и время конца: <input type="date" class="add-new-event-end-date" /> <input type="time" class="add-new-event-end-time"/><br>
  </div>
 <?php } ?>  

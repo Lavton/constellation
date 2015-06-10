@@ -116,6 +116,22 @@
       }
     },
     "events": {
+      "events": {
+        "all": {
+          "js": [
+            "/own/js/events/all.js",
+          ],
+          "title": "мероприятия | СПО \"СОзвездие\"",
+          "loc": /^\/events\/$/
+        },
+        "one": {
+          "js": [
+            "/own/js/events/one.js",
+          ],
+          "title": "мероприятия | СПО \"СОзвездие\"",
+          "loc": /^\/events\/[1-9][0-9]*$/
+        }
+      },
       "shifts": {
         "all": {
           "js": [

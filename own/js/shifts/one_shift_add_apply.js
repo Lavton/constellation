@@ -51,32 +51,6 @@
       $scope.$apply();
     });
 
-    /*пока не нужно, но потом для редактирования записи*/
-    $scope.editGuess = function(who, is_smbdy) {
-      if ($scope.show_add) {
-        $scope.tableToAdd();
-      }
-      $scope.show_edit = true;
-      var paste_data = angular.copy(who);
-      if (is_smbdy) {
-        $scope.adding.smbdy = paste_data.domain;
-      }
-      $scope.adding.prob = paste_data.probability;
-      $scope.adding.soc = paste_data.social > 1;
-      $scope.adding.nonsoc = paste_data.social % 2 ? true : false;
-      $scope.adding.prof = paste_data.profile > 1;
-      $scope.adding.nonprof = paste_data.profile % 2 ? true : false;
-      $scope.adding.min_age = paste_data.min_age;
-      $scope.adding.max_age = paste_data.max_age;
-      $scope.adding.like1 = paste_data.like_1.domain;
-      $scope.adding.like2 = paste_data.like_2.domain;
-      $scope.adding.like3 = paste_data.like_3.domain;
-      $scope.adding.dislike1 = paste_data.dislike_1.domain;
-      $scope.adding.dislike2 = paste_data.dislike_2.domain;
-      $scope.adding.dislike3 = paste_data.dislike_3.domain;
-      $scope.adding.comments = paste_data.comments;
-    }
-
     /*инвертирует состояние записи*/
     $scope.tableToAdd = function() {
       if ($scope.show_add) {
@@ -181,49 +155,6 @@
         });
       }
     }
-
-    $scope.killappsShift = function() {
-      if (confirm("Точно удалить все заявки на поездку? (сама смена не удалиться)")) {
-        var data = {};
-        data.action = "del_from_shift";
-        data.shift_id = $scope.shift.id;
-        _.each(data, function(element, index, list) {
-          if (!element) {
-            data[index] = null;
-          }
-        })
-        $.ajax({
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(json) {});
-        _.each($scope.all_apply, function(element, index, list) {
-          var data = {};
-          data.action = "del_from_shift";
-          data.shift_id = $scope.shift.id;
-          data.vk_id = element.vk_id;
-          _.each(data, function(element, index, list) {
-            if (!element) {
-              data[index] = null;
-            }
-          })
-          $.ajax({
-            type: "POST",
-            url: "/handlers/shift.php",
-            dataType: "json",
-            data: $.param(data)
-          }).done(function(json) {});
-        })
-      }
-      var lnk = document.createElement("a");
-      lnk.setAttribute("class", "ajax-nav")
-      $(lnk).attr("href", window.location.href);
-
-      $("#page-container").append(lnk);
-      $(lnk).trigger("click");
-    }
-
   }
 
   function init() {

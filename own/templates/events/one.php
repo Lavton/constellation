@@ -2,7 +2,7 @@
 if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
   /*просмотр мероприятия*/
 ?>
-<div ng-cloak ng-controller="oneEventApp">
+<div ng-cloak ng-controller="oneEventApp" id="event-one">
   <br>
 
   <div class="event-info hidden">
@@ -20,12 +20,12 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <li ng-show="event.place"><strong>Место:</strong> {{event.place}}</li>
           <li ng-show="event.start_time"><strong>Начало:</strong> {{event.start_time}} </li>
           <li ng-show="event.end_time"><strong>Дата окончания:</strong> {{event.end_time}} </li>
-          <li ng-show="event.visibility"><strong>Виден для: </strong>{{event.visibility}} ({{groups[event.visibility]}})</li>
+          <li ng-show="event.visibility"><strong>Виден для: </strong>{{event.visibility}} ({{window.groups[window.visibilities[event.visibility]].rus}})</li>
           <li ng-show="event.contact"><strong>Контактное лицо:</strong> {{event.contact}} </li> 
           <li ng-show="event.lastUpdated"><strong>Последнее обновление</strong> {{event.lastUpdated}}</li>
           <li ng-show="event.editor"><strong>Создал </strong> {{event.editor_user.name}} {{event.editor_user.surname}}</li>
           <li ng-show="event.comments"><strong>Комментарии:</strong><br/> 
-            <div class="table-bordered" ng-bind-html="event.bbcomments" ng-show="event.bbcomments"></div>
+            <div class="table-bordered bb-codes" ng-bind-html="event.bbcomments" ng-show="event.bbcomments"></div>
         </ul>
       </div>
       <div class="col-xs-7 info-str">
