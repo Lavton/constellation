@@ -20,6 +20,8 @@ if (is_ajax()) {
 				break;
 			case "get_one_info_people":get_one_info_people();
 				break;
+			case 'get_one_info_adding':get_one_info_adding();
+				break;
 
 			case 'set_new_data':set_new_data();
 				break;
@@ -302,6 +304,10 @@ function get_one_info_shift() {
 		$query = "SELECT max(id) as mid FROM shifts where visibility <= " . $_SESSION["current_group"] . " AND (start_date < " . $st . " OR (start_date = " . $st . " AND id < " . $_POST['id'] . "));";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
+			$result = array();
+		}
+
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -326,12 +332,6 @@ function get_one_info_people() {
 		$link->set_charset("utf8");
 
 		$_POST["vk_id"] = $_SESSION["vk_id"];
-		// $query = "SELECT vk_id, fighter_id FROM guess_shift where (shift_id=" . $_POST["id"] . " AND (like_one=" . $_POST["vk_id"] . " OR like_two=" . $_POST["vk_id"] . " OR like_three=" . $_POST["vk_id"] . "));";
-		// $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		// $result["like_h"] = array();
-		// while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-		// 	array_push($result["like_h"], $line);
-		// }
 
 		$query = "SELECT * FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
@@ -352,6 +352,42 @@ function get_one_info_people() {
 			array_push($result["all_apply"], $line);
 		}
 
+		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
+			$result = array();
+		}
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+/*получает нужную инфу для добавления. А именно, кому нравится человек*/
+function get_one_info_adding() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$_POST["vk_id"] = $_SESSION["vk_id"];
+		$query = "SELECT vk_id, fighter_id FROM guess_shift where (shift_id=" . $_POST["id"] . " AND (like_one=" . $_POST["vk_id"] . " OR like_two=" . $_POST["vk_id"] . " OR like_three=" . $_POST["vk_id"] . "));";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["like_h"] = array();
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["like_h"], $line);
+		}
+		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
+			$result = array();
+		}
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
