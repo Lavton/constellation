@@ -28,6 +28,7 @@
             <div class="row own-row">
               <?php 
               include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one_shift_common.html');
+              include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/shifts/one_shift_add_apply.html');
               ?>
             </div>
             <?php 

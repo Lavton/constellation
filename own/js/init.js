@@ -131,7 +131,8 @@
             "/standart/js/jquery.hideseek.js",
             "/own/js/vk_input.js",
             "/own/js/shifts/one_shift_common.js",
-            "/own/js/shifts/one_shift_people.js"
+            "/own/js/shifts/one_shift_people.js",
+            "/own/js/shifts/one_shift_add_apply.js"
             // "/own/js/shifts/one.js",
           ],
           "title": "смены | СПО \"СОзвездие\"",
