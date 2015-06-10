@@ -163,7 +163,7 @@ window.getPerson = function(uid, callback) {
     })
     if (cached) {
       if (callback) {
-        callback(cached);
+        callback(cached, flag);
       }
     } else {
       window.addPeople([uid], function() {
@@ -172,7 +172,7 @@ window.getPerson = function(uid, callback) {
         })
         if (cached) {
           if (callback) {
-            callback(cached);
+            callback(cached, true);
           }
 
         }

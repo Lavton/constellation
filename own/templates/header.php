@@ -1,13 +1,11 @@
-<?php
-/*общие стили и прочее*/
-?>
-    <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache">
-    <link rel="shortcut icon" href="/own/images/icon.ico">
-    <link rel="stylesheet" href="/standart/css/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="/standart/markitup/skins/markitup/style.css" />
-  	<link rel="stylesheet" type="text/css" href="/standart/markitup/sets/bbcode/style.css" />
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<?php /*общие стили и прочее*/ ?>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache">
+<link rel="shortcut icon" href="/own/images/icon.ico">
+<link rel="stylesheet" href="/standart/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="/standart/markitup/skins/markitup/style.css" />
+<link rel="stylesheet" type="text/css" href="/standart/markitup/sets/bbcode/style.css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <!-- <script type="text/javascript" src="/standart/js/angular.js"></script> -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/own/css/common_style.css">
+<link rel="stylesheet" type="text/css" href="/own/css/common_style.css">

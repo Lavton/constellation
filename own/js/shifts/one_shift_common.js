@@ -102,8 +102,8 @@
         data: $.param(bbdata)
       }).done(function(rdata) {
         $scope.shift.bbcomments = rdata;
-        $(".bbcomments-shift").html($scope.shift.bbcomments) // почему-то иначе не работает()
         $scope.$apply();
+        $(".bbcomments-shift").html($scope.shift.bbcomments) // почему-то иначе не работает()
       });
     });
 
