@@ -111,8 +111,6 @@
             bbcode: json.myself.comments,
             ownaction: "bbcodeToHtml"
           };
-          console.log("comments")
-          console.log(bbdata)
           $.ajax({
             type: "POST",
             url: "/standart/markitup/sets/bbcode/parser.php",
@@ -120,7 +118,6 @@
             global: false,
             data: $.param(bbdata)
           }).done(function(rdata) {
-            console.log(rdata)
             $scope.me.bbcomments = rdata;
             $("div.me-comments").html(rdata); // почему-то бинд не работает(
             $scope.$apply();
