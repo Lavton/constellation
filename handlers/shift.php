@@ -22,6 +22,8 @@ if (is_ajax()) {
 				break;
 			case 'get_one_info_adding':get_one_info_adding();
 				break;
+			case 'get_one_detach_info':get_one_detach_info();
+				break;
 
 			case 'set_new_data':set_new_data();
 				break;
@@ -389,6 +391,53 @@ function get_one_info_adding() {
 		$query = "SELECT vk_id FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
+			$result = array();
+		}
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+/*получаем расстановку(и)*/
+function get_one_detach_info() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		// поиск смены
+		$query = "SELECT time_name, place, finish_date, visibility FROM shifts WHERE id='" . $_POST['id'] . "' ORDER BY id;";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["shift"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+		$query = "SELECT vk_id, shift_id  FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["all_apply"] = array();
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["all_apply"], $line);
+		}
+		$query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NULL) ORDER BY in_id;";
+		if (isset($_POST["edit"])) {
+			$query = "SELECT in_id, people, comments, ranking FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NOT NULL) ORDER BY in_id;";
+		}
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["detachments"] = array();
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["detachments"], $line);
+		}
 		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
 			$result = array();
 		}
