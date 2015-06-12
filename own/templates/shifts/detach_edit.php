@@ -2,7 +2,7 @@
 if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
   /*просмотр смены*/
 ?>
-<div ng-cloak ng-controller="oneShiftApp">
+<div ng-cloak ng-controller="oneShiftAppEditDetach" id="shift-edit-detach">
       <h2>{{shift.name}}</h2>
       <div  ng-show="edit_detachment.in_id">
             <textarea class="bbcode" ng-model="edit_detachment.comments"></textarea>

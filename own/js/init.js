@@ -142,6 +142,15 @@
           "title": "смены | СПО \"СОзвездие\"",
           "loc": /^\/events\/shifts$/
         },
+        "all_edit": {
+          "js": [
+            "/standart/js/jquery.hideseek.js",
+            "/own/js/vk_input.js",
+            "/own/js/shifts/detach_edit.js",
+          ],
+          "title": "работа с расстановками | смены | СПО \"СОзвездие\"",
+          "loc": /^\/events\/shifts\/[1-9][0-9]*\/edit$/
+        },
         "one": {
           "js": [
             "/standart/js/jquery.hideseek.js",

@@ -59,17 +59,6 @@
 ?>
 
 <div id="after-js-container">
-  <script type="text/javascript" src="/own/js/shifts/detach_edit.js"></script>
-  <?php
-  if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
-    if (isset($_GET["edit"])) {
-  ?>
-  <script type="text/javascript">
-    get_shift_edit(<?=$_GET["id"]?>);
-  </script>
-  <?php }
-  }
-  ?>
   <script type="text/javascript">
   $('.bbcode').markItUp(mySettings);
   </script>
