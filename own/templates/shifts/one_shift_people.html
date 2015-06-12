@@ -86,9 +86,9 @@
               <br>поехать</th>
             <!-- <th>Хочет <br> работать<br>на</th> -->
             <th>Возраст</th>
-            <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Хочет работать с</th>
-            <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">не хочет работать с</th>
-            <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Комментарии</th>
+            <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Хочет работать с</th>
+            <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">не хочет работать с</th>
+            <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Комментарии</th>
             <th>Последнее
               <br> обновление</th>
           </tr>
@@ -126,7 +126,7 @@
       <span ng-show="fighter.profile%2">непрофильные</span><br>
     </td> -->
             <td>от {{fighter.min_age}} до {{fighter.max_age}}</td>
-            <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+            <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <table>
                 <tr ng-repeat="ls in  fighter.likes" ng-show="ls">
                   <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
@@ -138,7 +138,7 @@
                 </tr>
               </table>
             </td>
-            <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+            <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <table>
                 <tr ng-repeat="ls in  fighter.dislikes" ng-show="ls">
                   <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
@@ -150,7 +150,7 @@
                 </tr>
               </table>
             </td>
-            <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+            <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <div class="table-bordered {{fighter.uid}}-comments" ng-bind-html="fighter.bbcomments" ng-show="fighter.comments"></div>
             </td>
             <td>{{fighter.cr_time}} </td>
@@ -171,9 +171,9 @@
                 <br>поехать</th>
               <!-- <th>Хочет <br> работать<br>на</th> -->
               <th>Возраст</th>
-              <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Хочет работать с</th>
-              <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">не хочет работать с</th>
-              <th ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Комментарии</th>
+              <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Хочет работать с</th>
+              <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">не хочет работать с</th>
+              <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Комментарии</th>
               <th>Последнее
                 <br> обновление</th>
             </tr>
@@ -223,7 +223,7 @@
                   </tr>
                 </table>
               </td>
-              <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
                 <table>
                   <tr ng-repeat="ls in  candidate.dislikes" ng-show="ls">
                     <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
@@ -235,7 +235,7 @@
                   </tr>
                 </table>
               </td>
-              <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
                 <div class="table-bordered {{candidate.uid}}-comments" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
               </td>
               <td>{{candidate.cr_time}} </td>
@@ -245,5 +245,5 @@
       </div>
     </div>
   </div>
-  <button ng-show="window.current_group>=window.groups.COMMAND_STAFF.num" type="button" class="btn btn-danger kill-shift" ng-click="killappsShift()">Удалить все заявки на смену</button>
+  <button ng-show="window.current_group==window.groups.COMMAND_STAFF.num" type="button" class="btn btn-danger kill-shift" ng-click="killappsShift()">Удалить все заявки на смену</button>
 </div>

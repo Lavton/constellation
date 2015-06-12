@@ -14,11 +14,11 @@
     $scope.new_rank = {}
     $scope.detachment = [];
     $scope.newdetachment = {
-      people: ["", ],
-      comments: ""
+      people: [],
+      comments: "",
+      fieldKeys: []
 
     };
-    $scope.newdetachment.fieldKeys = [];
 
     var data = {
       action: "get_one_detach_info",
@@ -35,9 +35,59 @@
       console.log(json)
       $scope.shift = json.shift;
       $scope.shift.fn_date = new Date($scope.shift.finish_date);
+      $scope.all_apply = json.all_apply;
+      $scope.detachments = json.detachments;
+      _.each(json.all_apply, function(person, id, list) {
+        window.getPerson(person.vk_id * 1, function(pers, flag) {
+          _.extend(person, pers)
+          if (flag) {
+            $scope.$apply();
+          }
+
+        })
+      });
 
       $scope.$apply();
     });
+
+    /*конец инициализации*/
+
+    /*подтверждение, что человек найден*/
+    $scope.okAddPerson = function() {
+      $scope.newdetachment.people.push($scope.newdetachment.newPerson)
+      $scope.newdetachment.newPerson = "";
+      $scope.newdetachment.setFieldKeys();
+    }
+
+
+    /*синхронизируемся, где надо*/
+    $("#page-container").on("_final_select", "input", function(e) {
+      /*в ng-model лежит путь. Но не прямое значение(( Пройдём по нему до почти конца и впишем*/
+      var path = this.getAttribute("ng-model").split(".")
+      var self = $scope;
+      for (var i = 0; i < path.length - 1; i++) {
+        self = self[path[i]]
+      };
+      self[path[path.length - 1]] = this.value;
+      $scope.$apply();
+    })
+
+    /*удаляет человека из рассмотрения для создания отряда*/
+    $scope.deletePersonEdit = function(key) {
+      console.log(key)
+      var people = []
+      for (var i = 0; i < $scope.newdetachment.people.length; i++) {
+        if (i != key) {
+          people.push($scope.newdetachment.people[i])
+          console.log(i)
+          console.log($scope.newdetachment.people[i])
+        }
+      };
+      $scope.newdetachment.people = people;
+      $scope.newdetachment.setFieldKeys();
+      console.log($scope.newdetachment)
+
+    }
 
     // var inthrefID = setInterval(function() {
     //   var fid = window.location.href.split("/")
@@ -362,6 +412,7 @@
     }
 
 
+    /*обновляет значение ключей*/
     $scope.newdetachment.setFieldKeys = function() {
       var keys = [];
       for (var i = ($scope.newdetachment.people).length - 1; i >= 0; i--) {
@@ -370,11 +421,6 @@
       $scope.newdetachment.fieldKeys = keys;
     }
     $scope.newdetachment.setFieldKeys();
-
-    $scope.addNewPersonDetach = function() {
-      $scope.newdetachment.people.push("");
-      $scope.newdetachment.setFieldKeys();
-    }
 
     $scope.editRanking = function(index) {
       $scope.new_rank = {}

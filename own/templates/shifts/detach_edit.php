@@ -39,13 +39,8 @@
     <div class="row own-row">
       <div class="col-xs-5 info-str">
         <ul ng-show="add_det">
-          <li ng-show="myself.vk_id">
-            <a href={{ "//vk.com/"+myself.domain}} target="_blank"> <img ng-src="{{myself.photo_50}}" /></a>
-            {{myself.first_name}} {{myself.last_name}}; vk.com/
-            <input type="text" placeholder="домен VK" ng-model="myself.domain" readonly size="{{(myself.domain).length}}" />
-          </li>
           <li ng-repeat="want in all_apply">
-            <a href={{ "//vk.com/"+want.domain}} target="_blank"> <img ng-src="{{want.photo_50}}" /></a>
+            <a href="//vk.com/{{want.domain}}" target="_blank"> <img ng-src="{{want.photo}}" /></a>
             {{want.first_name}} {{want.last_name}}; vk.com/
             <input type="text" placeholder="домен VK" ng-model="want.domain" readonly size="{{(want.domain).length}}" />
           </li>
@@ -54,13 +49,11 @@
       <div class="col-xs-7 info-str">
         <button ng-click="newRanking(false)">Создать новую расстановку</button>
         <div class="table-bordered" ng-show="new_rank.ranking">
-          <div class="table-bordered" ng-show="detachments.length">
             <h2>Расстановка № {{new_rank.ranking}}
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
-          </h2>
+            </h2>
             <form ng-show="add_det">
               <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()">Создать отряд</button>
-              <button ng-click="addNewPersonDetach()">добавить человека</button>
               <br>
               <i>Вставьте домен ВК или имя человека, если он не из со*</i>
               <br>
@@ -69,12 +62,12 @@
                   <td>
                     <input class="vk_input" ng-model="newdetachment.newPerson">
                   </td>
-                  <td> <img src="/own/images/check.png" width="40px">
+                  <td> <img src="/own/images/check.png" width="40px" ng-click="okAddPerson()">
                   </td>
                 </tr>
               </table>
               <span ng-repeat="key in newdetachment.fieldKeys">
-              ссылка ВК: <input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <br>
+              ссылка ВК: <input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <img src="/own/images/close.png" width="20px" ng-click="deletePersonEdit(key)"> <br>
             </span> какие дети, комментарии, дополнения и т.п.
               <br>
               <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
@@ -104,7 +97,6 @@
                 <div class="table-bordered" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
               </li>
             </ul>
-          </div>
           <!-- расстановка -->
         </div>
       </div>

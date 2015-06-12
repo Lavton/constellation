@@ -342,7 +342,7 @@ function get_one_info_people() {
 		$result["myself"]["likes"] = Array($result["myself"]["like_one"], $result["myself"]["like_two"], $result["myself"]["like_three"]);
 		$result["myself"]["dislikes"] = Array($result["myself"]["dislike_one"], $result["myself"]["dislike_two"], $result["myself"]["dislike_three"]);
 
-		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == COMMAND_STAFF))) {
 			$query = "SELECT * FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
 		} else {
 			$query = "SELECT vk_id, shift_id, fighter_id, probability, social, profile, min_age, max_age, cr_time FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
