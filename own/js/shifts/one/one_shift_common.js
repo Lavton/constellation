@@ -55,6 +55,13 @@
     $scope.resetInfo = function() {
       $scope.shift = angular.copy($scope.master);
     }
+
+    $scope.applyShift = function() {
+      $("#page-container").trigger("_apply_shift", [{
+        "time_name": $scope.shift.time_name,
+        "shiftid": shiftid
+      }]);
+    }
   }
 
 
@@ -125,16 +132,18 @@
     })
 
     /*сохранить редактирование: кнопка*/
-    $("body").on("click", "button.apply-shift", function() {
-      $scope.submit();
-      $scope.$apply();
-    })
+    $("#page-container").on("_apply_shift", function(e, json) {
+      if (shiftid * 1 == json.shiftid) {
+        $scope.shift.time_name = json.time_name;
+        $scope.$apply();
+        $scope.submit();
+      }
+    });
 
-    /*сохранить редактирование: кнопка*/
+    /*сохранить редактирование*/
     $scope.submit = function() {
       $scope.shift.st_date = new Date($scope.shift.start_date);
       $scope.shift.fn_date = new Date($scope.shift.finish_date);
-      $scope.shift.time_name = $("span.time-name").text();
       var data = angular.copy($scope.shift);
       data.action = "set_new_data"
       _.each(data, function(element, index, list) {

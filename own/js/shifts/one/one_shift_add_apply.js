@@ -98,13 +98,15 @@
 
 
     /*появление редактирования. Перебрасываем событием из людей*/
-    $("#page-container").on("_edit_guess", function(e, json) {
-      if ($scope.show_add) {
-        $scope.tableToAdd();
+    $("#page-container").on("_edit_guess", function(e, json, sid) {
+      if (shiftid * 1 == sid * 1) {
+        if ($scope.show_add) {
+          $scope.tableToAdd();
+        }
+        $scope.show_edit = true;
+        $scope.adding = json;
+        $scope.$apply();
       }
-      $scope.show_edit = true;
-      $scope.adding = json;
-      $scope.$apply();
     });
 
     /*инвертирует состояние записи*/
@@ -227,7 +229,7 @@
         console.log(json)
         var lnk = document.createElement("a");
         lnk.setAttribute("class", "ajax-nav")
-        $(lnk).attr("href", window.location.href+"/edit");
+        $(lnk).attr("href", window.location.href + "/edit");
         $("#page-container").append(lnk);
         $(lnk).trigger("click")
       });

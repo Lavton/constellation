@@ -187,7 +187,7 @@
         $scope.adding.dislike3 = paste_data.dislikes[2].domain;
       }
       $scope.adding.comments = paste_data.comments;
-      $("#page-container").trigger("_edit_guess", [$scope.adding]);
+      $("#page-container").trigger("_edit_guess", [$scope.adding, shiftid]);
     }
 
     /*удалить все заявки на смену*/
