@@ -13,12 +13,13 @@
       <ul>
         <li ng-repeat="(key, detachment) in value">
           {{key+1}}
-<!-- <a ng-click="deleteDetachment(index,key)" href="">
+          <!-- <a ng-click="deleteDetachment(index,key)" href="">
                   удалить отряд
                 </a> / <a ng-click="editDetachment(index,key)" href="">
                   ред-ть ком-рий
                 </a>
- -->          <ul>
+ -->
+          <ul>
             <li ng-repeat="person in detachment.people">
               <span ng-show="person.uid">
                     <!-- <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a> -->
@@ -48,6 +49,7 @@
       </div>
       <div class="col-xs-7 info-str">
         <button ng-click="newRanking(false)">Создать новую расстановку</button>
+        <button  ng-show="new_rank.ranking" ng-click="hideRanking()">Скрыть</button>
         <div class="table-bordered" ng-show="new_rank.ranking">
           <h2>Расстановка № {{new_rank.ranking}}
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
@@ -80,12 +82,15 @@
           <ul>
             <li ng-repeat="(key, detachment) in detachments" ng-show="detachment.ranking*1==new_rank.ranking*1">
               {{key+1}}
-              <a ng-click="editDetachment(key)" href="">
+              <a href="" ng-click="editDetachment(key)"><img src="/own/images/edit.png" width="10px"></a>&nbsp;&nbsp;&nbsp;
+              <a href="" ng-click="deleteDetachment(key)"><img src="/own/images/close.png" width="10px"></a>
+              <!--               <a ng-click="editDetachment(key)" href="">
                   редактировать комментарий
                 </a> |
               <a ng-click="deleteDetachment(key)" href="">
                   удалить отряд
                 </a>
+ -->
               <ul>
                 <li ng-repeat="person in detachment.people">
                   <span ng-show="person.uid">
@@ -94,7 +99,7 @@
                   </span> <span ng-hide="person.uid">{{person}}</span>
                 </li>
               </ul>
-              <div class="table-bordered {{detachment.unid}}-bbcomments" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
+              <div class="table-bordered {{detachment.in_id}}-bbcomments" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
             </li>
           </ul>
           <!-- расстановка -->

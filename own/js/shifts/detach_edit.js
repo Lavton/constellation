@@ -463,6 +463,10 @@
       $scope.new_rank.edit = false;
     }
 
+    /*скрывает растановку*/
+    $scope.hideRanking = function() {
+      $scope.new_rank = {}
+    }
 
     /*обновляет значение ключей*/
     $scope.newdetachment.setFieldKeys = function() {
@@ -474,16 +478,24 @@
     }
     $scope.newdetachment.setFieldKeys();
 
+    /*редактировать расстановку*/
     $scope.editRanking = function(index) {
-      $scope.new_rank = {}
+      console.log($scope.rankings[index])
+      $scope.new_rank = angular.copy($scope.rankings[index])
       $scope.new_rank.ranking = index
       $scope.new_rank.edit = true;
+      _.each($scope.detachments, function(detachment) {
+        if (detachment.ranking * 1 == $scope.new_rank.ranking * 1) {
+          $("div." + detachment.in_id + "-bbcomments").html(detachment.bbcomments)
+        }
+      })
     }
 
     $scope.addDetachment = function() {
       if ($scope.add_det) {
         $(".addDetachment").text("добавить отряд в расстановку")
-        window.location.href = window.location.href;
+          // window.location.href = window.location.href;
+        $scope.newdetachment = {}
       } else {
         $(".addDetachment").text("Скрыть добавление")
       }
@@ -527,7 +539,7 @@
                 var detachment = {
                   people: new_people,
                   "ranking": $scope.new_rank.ranking,
-                  "comments" : $scope.newdetachment.comments
+                  "comments": $scope.newdetachment.comments
                 }
                 _.each(detachment.people, function(person, index_p, list) {
                   var vk_d = response[person];
@@ -537,7 +549,7 @@
                 })
 
                 // чтобы показать и комментарии
-                detachment.unid = _.uniqueId();
+                detachment.in_id = _.uniqueId();
                 var bbdata = {
                   bbcode: detachment.comments,
                   ownaction: "bbcodeToHtml"
@@ -550,7 +562,7 @@
                   data: $.param(bbdata)
                 }).done(function(comment_data) {
                   detachment.bbcomments = comment_data;
-                  $("div." + detachment.unid + "-bbcomments").html(detachment.bbcomments)
+                  $("div." + detachment.in_id + "-bbcomments").html(detachment.bbcomments)
                   $scope.$apply();
                 });
 
@@ -572,26 +584,26 @@
       $scope.edit_detachment = $scope.rankings[index][key];
     }
 
-    $scope.saveDetachComment = function() {
-      if (confirm("редактировать комментарий?")) {
-        var data = {};
-        data.action = "edit_detach_comment";
-        data.in_id = $scope.edit_detachment.in_id;
-        data.comments = $scope.edit_detachment.comments;
-        $.ajax({
-          type: "POST",
-          url: "/handlers/shift.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(json) {
-          var lnk = document.createElement("a");
-          lnk.setAttribute("class", "ajax-nav")
-          $(lnk).attr("href", window.location.href);
-          $("#page-container").append(lnk);
-          $(lnk).trigger("click")
-        });
-      }
-    }
+    // $scope.saveDetachComment = function() {
+    //   if (confirm("редактировать комментарий?")) {
+    //     var data = {};
+    //     data.action = "edit_detach_comment";
+    //     data.in_id = $scope.edit_detachment.in_id;
+    //     data.comments = $scope.edit_detachment.comments;
+    //     $.ajax({
+    //       type: "POST",
+    //       url: "/handlers/shift.php",
+    //       dataType: "json",
+    //       data: $.param(data)
+    //     }).done(function(json) {
+    //       var lnk = document.createElement("a");
+    //       lnk.setAttribute("class", "ajax-nav")
+    //       $(lnk).attr("href", window.location.href);
+    //       $("#page-container").append(lnk);
+    //       $(lnk).trigger("click")
+    //     });
+    //   }
+    // }
 
     $scope.deleteRanking = function(index) {
       if (confirm("удалить расстановку №" + index + "?")) {
@@ -618,22 +630,30 @@
       }
 
     }
-    $scope.deleteDetachment = function(index, key) {
+    $scope.deleteDetachment = function(key) {
       if (confirm("удалить отряд?")) {
         var data = {};
         data.action = "del_detach_shift";
-        data.in_id = $scope.rankings[index][key].in_id;
+        data.in_id = $scope.detachments[key].in_id;
         $.ajax({
           type: "POST",
           url: "/handlers/shift.php",
           dataType: "json",
           data: $.param(data)
         }).done(function(json) {
-          var lnk = document.createElement("a");
-          lnk.setAttribute("class", "ajax-nav")
-          $(lnk).attr("href", window.location.href);
-          $("#page-container").append(lnk);
-          $(lnk).trigger("click")
+          var detachments = []
+          for (var i = 0; i < $scope.detachments.length; i++) {
+            if (i != key) {
+              detachments.push($scope.detachments[i])
+            }
+          };
+          $scope.detachments = detachments;
+          $scope.$apply();
+          // var lnk = document.createElement("a");
+          // lnk.setAttribute("class", "ajax-nav")
+          // $(lnk).attr("href", window.location.href);
+          // $("#page-container").append(lnk);
+          // $(lnk).trigger("click")
         });
       }
     }
