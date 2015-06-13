@@ -18,7 +18,6 @@
       data: $.param(data)
     }).done(function(json) {
       $scope.event = json.event;
-      console.log(json.event);
       $scope.event.visibility = $scope.event.visibility * 1;
       $scope.parent_event = json.parent_event;
       var bbdata = {

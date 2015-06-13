@@ -78,7 +78,7 @@ function BBCode2Html($text) {
 					 '<u>\1</u>',
 					 '<img src="\1" alt="\1" />',
 					 '<a href="mailto:\1">\1</a>',
-					 '<a href="\1">\2</a>',
+					 '<a href="\1" target="_blank">\2</a>',
 					 '<span style="font-size:\1%">\2</span>',
 					 '<span style="color:\1">\2</span>',
 					 '<blockquote>\1</blockquote>',

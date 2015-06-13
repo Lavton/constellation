@@ -6,8 +6,8 @@
         {{key+1}}
         <table class="table-bordered">
           <tr>
-            <td ng-repeat="person in detachment.people">
-              <span ng-show="person.uid">
+            <td ng-repeat="(ind, person) in detachment.people">
+              {{ind+1}})<span ng-show="person.uid">
                     <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
                   {{person.first_name}} {{person.last_name}}
                   </span> <span ng-hide="person.uid">{{person}}</span>

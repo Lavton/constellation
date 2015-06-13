@@ -32,8 +32,6 @@
       dataType: "json",
       data: $.param(data)
     }).done(function(json) {
-      console.log("new way")
-      console.log(json)
       $scope.shift = json.shift;
       $scope.shift.fn_date = new Date($scope.shift.finish_date);
       $scope.all_apply = json.all_apply;
@@ -127,18 +125,14 @@
 
     /*удаляет человека из рассмотрения для создания отряда*/
     $scope.deletePersonEdit = function(key) {
-      console.log(key)
       var people = []
       for (var i = 0; i < $scope.newdetachment.people.length; i++) {
         if (i != key) {
           people.push($scope.newdetachment.people[i])
-          console.log(i)
-          console.log($scope.newdetachment.people[i])
         }
       };
       $scope.newdetachment.people = people;
       $scope.setFieldKeys();
-      console.log($scope.newdetachment)
 
     }
 
@@ -167,7 +161,6 @@
 
     /*редактировать расстановку*/
     $scope.editRanking = function(index) {
-      console.log($scope.rankings[index])
       $scope.new_rank = angular.copy($scope.rankings[index])
       $scope.new_rank.ranking = index
       $scope.new_rank.edit = true;
@@ -279,11 +272,14 @@
                   $("div." + detachment.in_id + "-bbcomments").html(detachment.bbcomments)
                   $scope.$apply();
                 });
-
+                if (_.isNumber(key)) {
+                  $scope.add_det = false;
+                  $(".addDetachment").text("добавить отряд в расстановку")
+                }
                 $scope.detachments.push(detachment)
-                $scope.newdetachment.people = [];
-                $scope.newdetachment.comments = "";
-                $scope.newdetachment.fieldKeys = [];
+                $scope.newdetachment = {
+                  people: []
+                };
                 $scope.setFieldKeys();
                 $scope.$apply();
               });
