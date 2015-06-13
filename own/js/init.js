@@ -155,10 +155,9 @@
           "js": [
             "/standart/js/jquery.hideseek.js",
             "/own/js/vk_input.js",
-            "/own/js/shifts/one_shift_common.js",
-            "/own/js/shifts/one_shift_people.js",
-            "/own/js/shifts/one_shift_add_apply.js"
-            // "/own/js/shifts/one.js",
+            "/own/js/shifts/one/one_shift_common.js",
+            "/own/js/shifts/one/one_shift_people.js",
+            "/own/js/shifts/one/one_shift_add_apply.js"
           ],
           "title": "смены | СПО \"СОзвездие\"",
           "loc": /^\/events\/shifts\/[1-9][0-9]*$/
