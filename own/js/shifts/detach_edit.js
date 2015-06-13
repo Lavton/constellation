@@ -142,6 +142,9 @@
       $scope.new_rank.ranking = $scope.max_rank + 1
       $scope.max_rank += 1;
       $scope.new_rank.edit = false;
+      _.each($scope.all_apply, function(el) {
+        el.have_in_det = false;
+      })
     }
 
     /*скрывает растановку*/
@@ -167,8 +170,17 @@
       _.each($scope.detachments, function(detachment) {
         if (detachment.ranking * 1 == $scope.new_rank.ranking * 1) {
           $("div." + detachment.in_id + "-bbcomments").html(detachment.bbcomments)
+          _.each(detachment.people, function(person) {
+            var per = _.find($scope.all_apply, function(pers) {
+              return pers.uid * 1 == person.uid * 1;
+            })
+            if (per) {
+              per.have_in_det = true;
+            }
+          })
         }
       })
+
     }
 
     /*инвертирует видимость ддля создания / редактирования отряда*/
@@ -234,8 +246,15 @@
             url: "/handlers/shift.php",
             dataType: "json",
             data: $.param(data)
-          }).done(function(json) {
-            console.log(json)
+          }).done(function(json_detach) {
+            _.each(new_people, function(person) {
+              var per = _.find($scope.all_apply, function(pers) {
+                return pers.uid * 1 == person * 1;
+              })
+              if (per) {
+                per.have_in_det = true;
+              }
+            })
             var vk_idsD = new_people
             getVkData(vk_idsD, ["domain", "photo_50"],
               function(response) {
@@ -255,7 +274,7 @@
                 if (_.isNumber(key)) {
                   detachment.in_id = $scope.cached_detach.in_id;
                 } else {
-                  detachment.in_id = _.uniqueId();
+                  detachment.in_id = json_detach.in_id;
                 }
                 var bbdata = {
                   bbcode: detachment.comments,
@@ -355,6 +374,14 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(json) {
+          _.each($scope.detachments[key].people, function(person) {
+            var per = _.find($scope.all_apply, function(pers) {
+              return pers.uid * 1 == person.uid * 1;
+            })
+            if (per) {
+              per.have_in_det = false;
+            }
+          })
           var detachments = []
           for (var i = 0; i < $scope.detachments.length; i++) {
             if (i != key) {

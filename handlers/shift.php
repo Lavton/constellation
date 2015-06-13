@@ -867,6 +867,10 @@ function add_detachment() {
 		$query = "INSERT INTO detachments (" . $names . ") VALUES (" . $values . ");";
 		// $result["qw"] = $query;
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$query = "SELECT MAX(in_id) AS in_id FROM detachments";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		$result["in_id"] = $line["in_id"];
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);

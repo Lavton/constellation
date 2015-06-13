@@ -31,7 +31,7 @@
     <div class="row own-row">
       <div class="col-xs-5 info-str">
         <ul ng-show="add_det">
-          <li ng-repeat="want in all_apply">
+          <li ng-repeat="want in all_apply" ng-hide="want.have_in_det == true">
             <a href="//vk.com/{{want.domain}}" target="_blank"> <img ng-src="{{want.photo}}" /></a>
             {{want.first_name}} {{want.last_name}}; vk.com/
             <input type="text" placeholder="домен VK" ng-model="want.domain" readonly size="{{(want.domain).length}}" />
