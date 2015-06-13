@@ -108,7 +108,7 @@
     $scope.okAddPerson = function() {
       $scope.newdetachment.people.push($scope.newdetachment.newPerson)
       $scope.newdetachment.newPerson = "";
-      $scope.newdetachment.setFieldKeys();
+      $scope.setFieldKeys();
     }
 
 
@@ -136,7 +136,7 @@
         }
       };
       $scope.newdetachment.people = people;
-      $scope.newdetachment.setFieldKeys();
+      $scope.setFieldKeys();
       console.log($scope.newdetachment)
 
     }
@@ -469,14 +469,14 @@
     }
 
     /*обновляет значение ключей*/
-    $scope.newdetachment.setFieldKeys = function() {
+    $scope.setFieldKeys = function() {
       var keys = [];
       for (var i = ($scope.newdetachment.people).length - 1; i >= 0; i--) {
         keys.push(i);
       };
       $scope.newdetachment.fieldKeys = keys;
     }
-    $scope.newdetachment.setFieldKeys();
+    $scope.setFieldKeys();
 
     /*редактировать расстановку*/
     $scope.editRanking = function(index) {
@@ -491,10 +491,28 @@
       })
     }
 
+    /*инвертирует видимость ддля создания / редактирования отряда*/
     $scope.addDetachment = function() {
       if ($scope.add_det) {
         $(".addDetachment").text("добавить отряд в расстановку")
-          // window.location.href = window.location.href;
+        if ($scope.newdetachment.editKey) { // если редактирование
+          var detachments = []
+          for (var i = 0; i < $scope.detachments.length; i++) {
+            detachments.push($scope.detachments[i])
+            if (i == $scope.newdetachment.editKey) {
+              detachments.push(angular.copy($scope.cached_detach));
+            }
+          };
+          $scope.detachments = detachments;
+          _.delay(function() {
+            _.each($scope.detachments, function(detachment) {
+              if (detachment.ranking * 1 == $scope.new_rank.ranking * 1) {
+                $("div." + detachment.in_id + "-bbcomments").html(detachment.bbcomments)
+              }
+            })
+          }, 20);
+
+        }
         $scope.newdetachment = {}
       } else {
         $(".addDetachment").text("Скрыть добавление")
@@ -502,8 +520,8 @@
       $scope.add_det = !$scope.add_det;
     }
 
-    /*создаёт отряд*/
-    $scope.addDetachmentSubmit = function() {
+    /*создаёт отряд или редактирует его (key отвечает)*/
+    $scope.addDetachmentSubmit = function(key) {
       getVkData($scope.newdetachment.people, ["domain"],
         function(response) {
           /*если передали имя ВК - заменяем на uid*/
@@ -526,6 +544,10 @@
             shift_id: shiftid,
             ranking: $scope.new_rank.ranking
           }
+          if (key) { // если редактируем
+            data.action = "edit_detachment";
+            data.in_id = $scope.cached_detach.in_id;
+          }
           console.log(data)
           $.ajax({ //TODO: make with angular
             type: "POST",
@@ -533,6 +555,7 @@
             dataType: "json",
             data: $.param(data)
           }).done(function(json) {
+            console.log(json)
             var vk_idsD = new_people
             getVkData(vk_idsD, ["domain", "photo_50"],
               function(response) {
@@ -549,7 +572,11 @@
                 })
 
                 // чтобы показать и комментарии
-                detachment.in_id = _.uniqueId();
+                if (key) {
+                  detachment.in_id = $scope.cached_detach.in_id;
+                } else {
+                  detachment.in_id = _.uniqueId();
+                }
                 var bbdata = {
                   bbcode: detachment.comments,
                   ownaction: "bbcodeToHtml"
@@ -570,7 +597,7 @@
                 $scope.newdetachment.people = [];
                 $scope.newdetachment.comments = "";
                 $scope.newdetachment.fieldKeys = [];
-                $scope.newdetachment.setFieldKeys();
+                $scope.setFieldKeys();
                 $scope.$apply();
               });
 
@@ -580,8 +607,32 @@
         });
     }
 
-    $scope.editDetachment = function(index, key) {
-      $scope.edit_detachment = $scope.rankings[index][key];
+    /*редактировать отряд*/
+    $scope.editDetachment = function(key) {
+      // $scope.edit_detachment = $scope.rankings[index][key];
+      $scope.newdetachment = angular.copy($scope.detachments[key])
+      $scope.cached_detach = angular.copy($scope.newdetachment)
+      for (var i = 0; i < $scope.newdetachment.people.length; i++) {
+        if ($scope.newdetachment.people[i].domain) {
+          $scope.newdetachment.people[i] = $scope.newdetachment.people[i].domain;
+        }
+      };
+      $scope.newdetachment.editKey = key;
+      var detachments = [];
+      for (var i = 0; i < $scope.detachments.length; i++) {
+        if (i != key) {
+          detachments.push($scope.detachments[i])
+        }
+      };
+      $scope.detachments = detachments;
+      if ($scope.add_det) {
+        $(".addDetachment").text("добавить отряд в расстановку")
+      } else {
+        $(".addDetachment").text("Скрыть добавление")
+      }
+      $scope.add_det = !$scope.add_det;
+
+      $scope.setFieldKeys();
     }
 
     // $scope.saveDetachComment = function() {

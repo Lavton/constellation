@@ -43,7 +43,7 @@ if (is_ajax()) {
 				break;
 			case "del_detach_shift":del_detach_shift();
 				break;
-			case "edit_detach_comment":edit_detach_comment();
+			case "edit_detachment":edit_detachment();
 				break;
 		}
 	}
@@ -892,7 +892,7 @@ function del_detach_shift() {
 	}
 }
 
-function edit_detach_comment() {
+function edit_detachment() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
@@ -910,6 +910,10 @@ function edit_detach_comment() {
 		$link->set_charset("utf8");
 		$names = array();
 		$values = array();
+		if (isset($_POST["people"])) {
+			array_push($names, "people");
+			array_push($values, "'" . $_POST["people"] . "'");
+		}
 		array_push($names, "comments");
 		array_push($values, "'" . $_POST["comments"] . "'");
 		$conc = array();
@@ -920,6 +924,7 @@ function edit_detach_comment() {
 		$query = "UPDATE detachments SET " . $conc . " WHERE (in_id='" . $_POST['in_id'] . "');";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
+		$result["qw"] = $query;
 		mysqli_close($link);
 		echo json_encode($result);
 	}

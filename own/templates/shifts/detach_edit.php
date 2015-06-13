@@ -55,7 +55,8 @@
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
             </h2>
           <form ng-show="add_det">
-            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()">Создать отряд</button>
+            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()" ng-hide="newdetachment.editKey">Создать отряд</button>
+            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit(newdetachment.editKey)" ng-show="newdetachment.editKey">Редактировать отряд</button>
             <br>
             <i>Вставьте домен ВК или имя человека, если он не из со*</i>
             <br>
