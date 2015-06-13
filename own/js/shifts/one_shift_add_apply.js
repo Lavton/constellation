@@ -19,7 +19,6 @@
       action: "get_one_info_adding",
       id: shiftid
     }
-    $scope.shift.photo_200 = "http://vk.com/images/camera_b.gif"
     $.ajax({
       type: "POST",
       url: "/handlers/shift.php",
@@ -40,6 +39,63 @@
         });
       }
     })
+
+    /*ещё забираем инфу про расстановку*/
+    var data = {
+      action: "get_one_detach_info",
+      id: shiftid,
+    }
+    $.ajax({
+      type: "POST",
+      url: "/handlers/shift.php",
+      dataType: "json",
+      data: $.param(data)
+    }).done(function(json) {
+      $scope.detachments = json.detachments;
+
+      /*запись комментариев*/
+      var comments = []
+      _.each(json.detachments, function(element, index, list) {
+        comments.push({
+          id: element.in_id,
+          comment: element.comments
+        });
+      });
+      var bbdata = {
+        bbcode: comments,
+        ownaction: "bbcodesToHtml"
+      };
+      $.ajax({
+        type: "POST",
+        url: "/standart/markitup/sets/bbcode/parser.php",
+        dataType: 'json',
+        global: false,
+        data: $.param(bbdata)
+      }).done(function(comment_data) {
+        _.each($scope.detachments, function(detachment, index, list) {
+          detachment.bbcomments = _.findWhere(comment_data, {
+            id: detachment.in_id
+          }).bbcomment;
+          $("div." + detachment.in_id + "-bbcomment-detach").html(detachment.bbcomments)
+        });
+      });
+
+      /*люди*/
+      _.each($scope.detachments, function(detachment, index, list) {
+        detachment.people = detachment.people.split("$");
+        _.each(detachment.people, function(person, index, list) {
+          window.getPerson(person, function(pers, flag) {
+            list[index] = pers;
+            if (flag) {
+              $scope.$apply();
+            }
+          })
+        })
+      });
+
+      $scope.$apply();
+    });
+
 
     /*появление редактирования. Перебрасываем событием из людей*/
     $("#page-container").on("_edit_guess", function(e, json) {
@@ -154,6 +210,28 @@
           $(lnk).trigger("click")
         });
       }
+    }
+
+    /*убрать расстановку для редактирования*/
+    $scope.removeRank = function() {
+      var data = {
+        "action": "remove_rank",
+        "shift_id": shiftid
+      }
+      $.ajax({
+        type: "POST",
+        url: "/handlers/shift.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        console.log(json)
+        var lnk = document.createElement("a");
+        lnk.setAttribute("class", "ajax-nav")
+        $(lnk).attr("href", window.location.href+"/edit");
+        $("#page-container").append(lnk);
+        $(lnk).trigger("click")
+      });
+
     }
   }
 

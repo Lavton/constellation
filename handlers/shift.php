@@ -45,6 +45,11 @@ if (is_ajax()) {
 				break;
 			case "edit_detachment":edit_detachment();
 				break;
+
+			case "publish_rank":publish_rank();
+				break;
+			case "remove_rank":remove_rank();
+				break;
 		}
 	}
 }
@@ -430,7 +435,7 @@ function get_one_detach_info() {
 			array_push($result["all_apply"], $line);
 		}
 		$query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NULL) ORDER BY in_id;";
-		if (isset($_POST["edit"])) {
+		if (isset($_POST["edit"]) && ($_POST["edit"] == true)) {
 			$query = "SELECT in_id, people, comments, ranking FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NOT NULL) ORDER BY in_id;";
 		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
@@ -925,6 +930,70 @@ function edit_detachment() {
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
 		$result["qw"] = $query;
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+/*публикует расстановку*/
+function publish_rank() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$query = "SELECT 1 FROM detachments WHERE (ranking IS NULL AND shift_id=" . $_POST["shift_id"] . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		if (is_null($line)) {
+			$query = "UPDATE detachments SET ranking=NULL WHERE (ranking=" . $_POST["rank_id"] . " AND shift_id=" . $_POST["shift_id"] . ");";
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			$result["result"] = "Success";
+		} else {
+			$result["result"] = "Fail";
+		}
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+/*убирает расстановку для редактирования*/
+function remove_rank() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$query = "SELECT (MAX(ranking)+1) AS MR FROM detachments WHERE shift_id=" . $_POST["shift_id"] . ";";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		if (is_null($line["MR"])) {
+			$line["MR"] = 1;
+		}
+		$query = "UPDATE detachments SET ranking=" . $line["MR"] . " WHERE (ranking IS NULL AND shift_id=" . $_POST["shift_id"] . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		// $result["qw"] = $query;
 		mysqli_close($link);
 		echo json_encode($result);
 	}

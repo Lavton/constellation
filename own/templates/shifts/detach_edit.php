@@ -1,10 +1,6 @@
 <?php if (isset($_GET[ "id"]) && (isset($_SESSION[ "current_group"]) && ($_SESSION[ "current_group"]>= COMMAND_STAFF))) { ?>
 <div ng-cloak ng-controller="oneShiftAppEditDetach" id="shift-edit-detach">
   <h2>{{shift.time_name}}, {{shift.fn_date.getFullYear()}} <span ng-show="shift.place">({{shift.place}})</span></h2>
-  <div ng-show="edit_detachment.in_id">
-    <textarea class="bbcode" ng-model="edit_detachment.comments"></textarea>
-    <button ng-click="saveDetachComment()">сохранить комментарий</button>
-  </div>
   <div class="row" ng-hide="new_rank.ranking">
     <div class="col-md-3" ng-repeat="(index, value) in rankings" style="border: 4px outset green">
       <h2>Расстановка  № {{index}} 
@@ -13,12 +9,6 @@
       <ul>
         <li ng-repeat="(key, detachment) in value">
           {{key+1}}
-          <!-- <a ng-click="deleteDetachment(index,key)" href="">
-                  удалить отряд
-                </a> / <a ng-click="editDetachment(index,key)" href="">
-                  ред-ть ком-рий
-                </a>
- -->
           <ul>
             <li ng-repeat="person in detachment.people">
               <span ng-show="person.uid">
@@ -30,6 +20,7 @@
           <div class="table-bordered {{detachment.in_id}}-bbcomment" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
         </li>
       </ul>
+      <a href="" ng-click="publish(index)">Опубликовать эту расстановку</a>
     </div>
   </div>
   <div class="shift-info">
@@ -49,14 +40,14 @@
       </div>
       <div class="col-xs-7 info-str">
         <button ng-click="newRanking(false)">Создать новую расстановку</button>
-        <button  ng-show="new_rank.ranking" ng-click="hideRanking()">Скрыть</button>
+        <button ng-show="new_rank.ranking" ng-click="hideRanking()">Скрыть</button>
         <div class="table-bordered" ng-show="new_rank.ranking">
           <h2>Расстановка № {{new_rank.ranking}}
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
             </h2>
           <form ng-show="add_det">
-            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()" ng-hide="newdetachment.editKey">Создать отряд</button>
-            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit(newdetachment.editKey)" ng-show="newdetachment.editKey">Редактировать отряд</button>
+            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()" ng-hide="isNumber(newdetachment.editKey)">Создать отряд</button>
+            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit(newdetachment.editKey)" ng-show="isNumber(newdetachment.editKey)">Редактировать отряд</button>
             <br>
             <i>Вставьте домен ВК или имя человека, если он не из со*</i>
             <br>
@@ -85,13 +76,6 @@
               {{key+1}}
               <a href="" ng-click="editDetachment(key)"><img src="/own/images/edit.png" width="10px"></a>&nbsp;&nbsp;&nbsp;
               <a href="" ng-click="deleteDetachment(key)"><img src="/own/images/close.png" width="10px"></a>
-              <!--               <a ng-click="editDetachment(key)" href="">
-                  редактировать комментарий
-                </a> |
-              <a ng-click="deleteDetachment(key)" href="">
-                  удалить отряд
-                </a>
- -->
               <ul>
                 <li ng-repeat="person in detachment.people">
                   <span ng-show="person.uid">
@@ -109,5 +93,5 @@
     </div>
     <hr>
   </div>
-  <?php } ?>
 </div>
+<?php } ?>
