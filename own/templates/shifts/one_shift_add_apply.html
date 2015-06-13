@@ -3,22 +3,17 @@
   <div ng-show="detachments.length">
     <ul>
       <li ng-repeat="(key, detachment) in detachments">
-        {{key+1}}
-        <table class="table-bordered">
-          <tr>
-            <td ng-repeat="(ind, person) in detachment.people">
-              {{ind+1}})<span ng-show="person.uid">
-                    <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
-                  {{person.first_name}} {{person.last_name}}
-                  </span> <span ng-hide="person.uid">{{person}}</span>
-            </td>
-          </tr>
-        </table>
-        <div class="table-bordered {{detachment.in_id}}-bbcomment-detach" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
+        <span ng-repeat="(ind, person) in detachment.people">
+          <span ng-show="person.uid">
+          <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}" width="20px" /></a>
+          {{person.first_name}} {{person.last_name}}
+          </span> <span ng-hide="person.uid">{{person}}</span>
+        <br>
+        </span>
+        <div class="table-bordered {{detachment.in_id}}-bbcomment-detach" ng-bind-html="detachment.bbcomments"></div>
       </li>
     </ul>
-      <a href="" ng-click="removeRank()" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">убрать расстановку для редактирования</a>
-
+    <a href="" ng-click="removeRank()" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">убрать расстановку для редактирования</a>
   </div>
   <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id || (shift.today > shift.st_date)">Записаться на смену</button>
   <span class="text-right" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num"><a href="{{window.location.pathname}}/edit" class="ajax-nav">расстановка</a></span>

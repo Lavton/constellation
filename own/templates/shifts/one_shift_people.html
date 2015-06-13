@@ -75,7 +75,7 @@
   <hr>
   <div class="row">
     <!-- информация про бойцов -->
-    <div class="col-lg-6">
+    <div class="col-lg-6 table-all-sh">
       <span ng-show="fighters.length"> Бойцы:</span>
       <table class="table-bordered" ng-show="fighters.length" width="100%">
         <thead>
@@ -89,8 +89,6 @@
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Хочет работать с</th>
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">не хочет работать с</th>
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Комментарии</th>
-            <th>Последнее
-              <br> обновление</th>
           </tr>
         </thead>
         <tbody>
@@ -153,13 +151,12 @@
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <div class="table-bordered {{fighter.uid}}-comments" ng-bind-html="fighter.bbcomments" ng-show="fighter.comments"></div>
             </td>
-            <td>{{fighter.cr_time}} </td>
           </tr>
         </tbody>
       </table>
     </div>
     <!-- информация про кандидатов -->
-    <div class="col-lg-6">
+    <div class="col-lg-6 table-all-sh">
       <span ng-show="candidats.length"> Кандидаты:</span>
       <table class="table-bordered" ng-show="candidats.length" width="100%">
         <thead>
@@ -173,8 +170,6 @@
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Хочет работать с</th>
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">не хочет работать с</th>
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Комментарии</th>
-            <th>Последнее
-              <br> обновление</th>
           </tr>
         </thead>
         <tbody>
@@ -237,7 +232,6 @@
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <div class="table-bordered {{candidate.uid}}-comments" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
             </td>
-            <td>{{candidate.cr_time}} </td>
           </tr>
         </tbody>
       </table>

@@ -6,7 +6,10 @@
     $scope.window = window;
     var fid = window.location.href.split("/")
     var shiftid = fid[fid.length - 1] * 1;
-
+    // кс доступно больше инфы. Поэтому и лучше расположить друг под другом
+    if (window.current_group==window.groups.COMMAND_STAFF.num) {
+      $(".table-all-sh").attr("style", "width:100% !important;");
+    }
     $scope.id = shiftid;
     $scope.shift = {};
     $scope.fighters = [];
