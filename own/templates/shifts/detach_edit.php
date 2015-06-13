@@ -7,18 +7,18 @@
   </div>
   <div class="row" ng-hide="new_rank.ranking">
     <div class="col-md-3" ng-repeat="(index, value) in rankings" style="border: 4px outset green">
-      <h2>Расстановка  № {{index}} </h2>
-      <a href="" ng-click="editRanking(index)">(редактировать)</a>
-      <a href="" ng-click="deleteRanking(index)">(удалить)</a>
+      <h2>Расстановка  № {{index}} 
+        <a href="" ng-click="editRanking(index)"><img src="/own/images/edit.png" width="20px"></a><a href="" ng-click="deleteRanking(index)"><img src="/own/images/close.png" width="20px"></a>
+        </h2>
       <ul>
         <li ng-repeat="(key, detachment) in value">
           {{key+1}}
-          <a ng-click="deleteDetachment(index,key)" href="">
+<!-- <a ng-click="deleteDetachment(index,key)" href="">
                   удалить отряд
                 </a> / <a ng-click="editDetachment(index,key)" href="">
                   ред-ть ком-рий
                 </a>
-          <ul>
+ -->          <ul>
             <li ng-repeat="person in detachment.people">
               <span ng-show="person.uid">
                     <!-- <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a> -->
@@ -26,7 +26,7 @@
                   </span> <span ng-hide="person.uid">{{person}}</span>
             </li>
           </ul>
-          <div class="table-bordered" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
+          <div class="table-bordered {{detachment.in_id}}-bbcomment" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
         </li>
       </ul>
     </div>
@@ -49,54 +49,54 @@
       <div class="col-xs-7 info-str">
         <button ng-click="newRanking(false)">Создать новую расстановку</button>
         <div class="table-bordered" ng-show="new_rank.ranking">
-            <h2>Расстановка № {{new_rank.ranking}}
+          <h2>Расстановка № {{new_rank.ranking}}
               <button class="btn btn-primary text-right addDetachment" ng-click="addDetachment()" ng-init="add_det=false">добавить отряд в расстановку</button>
             </h2>
-            <form ng-show="add_det">
-              <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()">Создать отряд</button>
-              <br>
-              <i>Вставьте домен ВК или имя человека, если он не из со*</i>
-              <br>
-              <table>
-                <tr>
-                  <td>
-                    <input class="vk_input" ng-model="newdetachment.newPerson">
-                  </td>
-                  <td> <img src="/own/images/check.png" width="40px" ng-click="okAddPerson()">
-                  </td>
-                </tr>
-              </table>
-              <span ng-repeat="key in newdetachment.fieldKeys">
-              ссылка ВК: <input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <img src="/own/images/close.png" width="20px" ng-click="deletePersonEdit(key)"> <br>
+          <form ng-show="add_det">
+            <button class="btn btn-primary text-right" ng-click="addDetachmentSubmit()">Создать отряд</button>
+            <br>
+            <i>Вставьте домен ВК или имя человека, если он не из со*</i>
+            <br>
+            <table>
+              <tr>
+                <td>
+                  <input class="vk_input" ng-model="newdetachment.newPerson">
+                </td>
+                <td> <img src="/own/images/check.png" width="40px" ng-click="okAddPerson()">
+                </td>
+              </tr>
+            </table>
+            <span ng-repeat="key in newdetachment.fieldKeys">
+              ссылка ВК: <input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <img src="/own/images/close.png" width="15px" ng-click="deletePersonEdit(key)"> <br>
             </span> какие дети, комментарии, дополнения и т.п.
-              <br>
-              <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
-            </form>
-            <!-- создание расстановки по отрядам -->
-            <div ng-show="edit_detachment.in_id">
-              <textarea class="bbcode" ng-model="edit_detachment.comments"></textarea>
-              <button ng-click="saveDetachComment()">сохранить комментарий</button>
-            </div>
-            <ul>
-              <li ng-repeat="(key, detachment) in detachments" ng-show="detachment.ranking*1==new_rank.ranking*1">
-                {{key+1}}
-                <a ng-click="editDetachment(key)" href="">
+            <br>
+            <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
+          </form>
+          <!-- создание расстановки по отрядам -->
+          <div ng-show="edit_detachment.in_id">
+            <textarea class="bbcode" ng-model="edit_detachment.comments"></textarea>
+            <button ng-click="saveDetachComment()">сохранить комментарий</button>
+          </div>
+          <ul>
+            <li ng-repeat="(key, detachment) in detachments" ng-show="detachment.ranking*1==new_rank.ranking*1">
+              {{key+1}}
+              <a ng-click="editDetachment(key)" href="">
                   редактировать комментарий
                 </a> |
-                <a ng-click="deleteDetachment(key)" href="">
+              <a ng-click="deleteDetachment(key)" href="">
                   удалить отряд
                 </a>
-                <ul>
-                  <li ng-repeat="person in detachment.people">
-                    <span ng-show="person.uid">
-                    <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
+              <ul>
+                <li ng-repeat="person in detachment.people">
+                  <span ng-show="person.uid">
+                    <a href="//vk.com/{{person.domain}}" target="_blank"> <img ng-src="{{person.photo}}"/></a>
                   {{person.first_name}} {{person.last_name}}
                   </span> <span ng-hide="person.uid">{{person}}</span>
-                  </li>
-                </ul>
-                <div class="table-bordered" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
-              </li>
-            </ul>
+                </li>
+              </ul>
+              <div class="table-bordered {{detachment.unid}}-bbcomments" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
+            </li>
+          </ul>
           <!-- расстановка -->
         </div>
       </div>

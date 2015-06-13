@@ -46,6 +46,58 @@
 
         })
       });
+      _.each($scope.detachments, function(element, index, list) {
+        element.ranking *= 1
+      });
+      $scope.rankings = _.groupBy($scope.detachments, function(detach) {
+        return detach.ranking;
+      })
+      $scope.max_rank = _.chain($scope.rankings).keys().map(function(key) {
+        return key * 1
+      }).max().value()
+      if (!_.isFinite($scope.max_rank)) {
+        $scope.max_rank = 0
+      }
+
+      /*запись комментариев*/
+      var comments = []
+      _.each(json.detachments, function(element, index, list) {
+        comments.push({
+          id: element.in_id,
+          comment: element.comments
+        });
+      });
+      var bbdata = {
+        bbcode: comments,
+        ownaction: "bbcodesToHtml"
+      };
+      $.ajax({
+        type: "POST",
+        url: "/standart/markitup/sets/bbcode/parser.php",
+        dataType: 'json',
+        global: false,
+        data: $.param(bbdata)
+      }).done(function(comment_data) {
+        _.each($scope.detachments, function(detachment, index, list) {
+          detachment.bbcomments = _.findWhere(comment_data, {
+            id: detachment.in_id
+          }).bbcomment;
+          $("div." + detachment.in_id + "-bbcomment").html(detachment.bbcomments)
+        });
+      });
+
+      /*люди*/
+      _.each($scope.detachments, function(detachment, index, list) {
+        detachment.people = detachment.people.split("$");
+        _.each(detachment.people, function(person, index, list) {
+          window.getPerson(person, function(pers, flag) {
+            list[index] = pers;
+            if (flag) {
+              $scope.$apply();
+            }
+          })
+        })
+      });
 
       $scope.$apply();
     });
@@ -438,7 +490,7 @@
       $scope.add_det = !$scope.add_det;
     }
 
-    /*создаёт расстановку*/
+    /*создаёт отряд*/
     $scope.addDetachmentSubmit = function() {
       getVkData($scope.newdetachment.people, ["domain"],
         function(response) {
@@ -459,9 +511,10 @@
             comments: $scope.newdetachment.comments,
             people: new_people.join("$"),
             action: "add_detachment",
-            shift_id: $scope.shift.id,
+            shift_id: shiftid,
             ranking: $scope.new_rank.ranking
           }
+          console.log(data)
           $.ajax({ //TODO: make with angular
             type: "POST",
             url: "/handlers/shift.php",
@@ -473,7 +526,8 @@
               function(response) {
                 var detachment = {
                   people: new_people,
-                  "ranking": $scope.new_rank.ranking
+                  "ranking": $scope.new_rank.ranking,
+                  "comments" : $scope.newdetachment.comments
                 }
                 _.each(detachment.people, function(person, index_p, list) {
                   var vk_d = response[person];
@@ -481,8 +535,27 @@
                     detachment.people[index_p] = vk_d;
                   }
                 })
+
+                // чтобы показать и комментарии
+                detachment.unid = _.uniqueId();
+                var bbdata = {
+                  bbcode: detachment.comments,
+                  ownaction: "bbcodeToHtml"
+                };
+                $.ajax({
+                  type: "POST",
+                  url: "/standart/markitup/sets/bbcode/parser.php",
+                  dataType: 'text',
+                  global: false,
+                  data: $.param(bbdata)
+                }).done(function(comment_data) {
+                  detachment.bbcomments = comment_data;
+                  $("div." + detachment.unid + "-bbcomments").html(detachment.bbcomments)
+                  $scope.$apply();
+                });
+
                 $scope.detachments.push(detachment)
-                $scope.newdetachment.people = ["", ];
+                $scope.newdetachment.people = [];
                 $scope.newdetachment.comments = "";
                 $scope.newdetachment.fieldKeys = [];
                 $scope.newdetachment.setFieldKeys();

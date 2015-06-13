@@ -211,7 +211,7 @@
       <span ng-show="candidate.profile%2">непрофильные</span><br>
     </td> -->
               <td>от {{candidate.min_age}} до {{candidate.max_age}}</td>
-              <td ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
                 <table>
                   <tr ng-repeat="ls in  candidate.likes" ng-show="ls">
                     <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
