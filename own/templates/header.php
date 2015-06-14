@@ -1,5 +1,7 @@
 <?php /*общие стили и прочее*/ ?>
 <meta charset="UTF-8">
+<meta name='yandex-verification' content='45094f1f56749ee6' />
+<meta name="google-site-verification" content="rNqmJlY_Fh0A8aj0d1k4JFal0zfKmbRQ_IFmT67skug" />
 <meta http-equiv="Cache-Control" content="no-cache">
 <link rel="shortcut icon" href="/own/images/icon.ico">
 <link rel="stylesheet" href="/standart/css/bootstrap.css" />

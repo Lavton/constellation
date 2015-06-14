@@ -47,7 +47,7 @@
               <td>{{person[0].last_name}} {{person[0].first_name}}</td>
               <td>
                 <span ng-show="window.current_group>=window.groups.FIGHTER.num">
-            <a href={{"/about/users/"+person[0].id}} class="ajax-nav">
+            <a href="/about/users/{{person[0].id}}" class="ajax-nav">
               боец
             </a>
               </span>
@@ -58,7 +58,7 @@
               <td>
                 <ol>
                   <li ng-repeat="shift in person">
-                    <a href={{ "/events/shifts/"+shift.shift_id}} class="ajax-nav">
+                    <a href="/events/shifts/{{shift.shift_id}}" class="ajax-nav">
                 {{shift.time_name}} <span ng-show="shift.place">({{shift.place}})</span>
               </a> ({{shift.probability}}%)
                   </li>
@@ -90,7 +90,7 @@
               <td>{{person[0].last_name}} {{person[0].first_name}}</td>
               <td>
                 <span ng-show="window.current_group>=window.groups.FIGHTER.num">
-                <a href={{"/about/candidats/"+person[0].id}} class="ajax-nav">
+                <a href="/about/candidats/{{person[0].id}}" class="ajax-nav">
                   кандидат
                 </a>
               </span>
@@ -101,7 +101,7 @@
               <td>
                 <ol>
                   <li ng-repeat="shift in person">
-                    <a href={{ "/events/shifts/"+shift.shift_id}} class="ajax-nav">
+                    <a href="/events/shifts/{{shift.shift_id}}" class="ajax-nav">
                     {{shift.time_name}} <span ng-show="shift.place">({{shift.place}})</span>
               </a> ({{shift.probability}}%)
                   </li>
