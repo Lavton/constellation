@@ -11,13 +11,13 @@
         <br>
         </span>
         <span ng-show="detachment.children_num || canEditDet(key)"><strong>количество детей:</strong> <input type="number" ng-model="detachment.children_num" ng-show="detachment.childrenEdit"> {{detachment.children_num}}  </span>
-        <span>
+        <span ng-show="canEditDet(key)">
           <img src="/own/images/edit.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&& !detachment.childrenEdit" ng-click="editChildren(key)"> <img src="/own/images/white.jpg" width="15px"  style="display: block;" align="right"><img src="/own/images/white.jpg" width="15px"  style="display: block;" align="right">
           <img src="/own/images/close.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&&detachment.childrenEdit" ng-click="editChildrenDel(key)"><img src="/own/images/white.jpg" width="15px"  style="display: block;" align="right">
           <img src="/own/images/check.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&&detachment.childrenEdit" ng-click="editChildrenOK(key)">
-          
+        <br>  
         </span>
-        <br><span ng-show="detachment.children_dis || canEditDet(key)"><strong>описание отряда:</strong> <input type="text" ng-show="detachment.childrenEdit" ng-model="detachment.children_dis"> {{detachment.children_dis}}</span>
+        <span ng-show="detachment.children_dis || canEditDet(key)"><strong>описание отряда:</strong> <input type="text" ng-show="detachment.childrenEdit" ng-model="detachment.children_dis"> {{detachment.children_dis}}</span>
         <div class="table-bordered {{detachment.in_id}}-bbcomment-detach" ng-bind-html="detachment.bbcomments"></div>
       </li>
     </ul>
