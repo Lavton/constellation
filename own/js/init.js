@@ -237,5 +237,5 @@
     }
   }
 
-  window.current_group = getCookie("current_group") * 1 || 1
+  window.current_group = window.getCookie("current_group") * 1 || 1
 })();

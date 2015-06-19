@@ -233,7 +233,22 @@
         $("#page-container").append(lnk);
         $(lnk).trigger("click")
       });
+    }
 
+    /*добавлять доп инфу про отряд (количество детей и описание) может КС и вожатые этого отряда*/
+    $scope.canEditDet = function(key) {
+      if (window.current_group >= window.groups.COMMAND_STAFF.num) {
+        return true;
+      }
+      var ouid = window.getCookie("vk_id") * 1;
+      return _.find($scope.detachments[key].people, function(element) {
+        return element.uid * 1 == ouid;
+      })
+    }
+
+    /*редактируем про детей для тех, кто может*/
+    $scope.editChildren = function(key) {
+      $scope.detachments[key].childrenEdit = true;
     }
   }
 

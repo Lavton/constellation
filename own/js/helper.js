@@ -14,7 +14,7 @@ function getCookie(name) {
   ))
   return matches ? decodeURIComponent(matches[1]) : undefined
 }
-
+window.getCookie = getCookie;
 
 /*закачивает базовую информацию о бойцах и кандидатах в localStorage и локальную переменную*/
 function setPeople(callback) {
