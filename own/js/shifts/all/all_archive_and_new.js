@@ -17,9 +17,8 @@
       };
       $http.post('/handlers/shift.php', data).success(function(response) {
         var today = new Date();
-        $scope.shifts.all = response.shifts;
-        $scope.shifts.prev = [];
-        _.each($scope.shifts.all, function(element, index, list) {
+        $scope.shifts.prev = response.shifts;
+        _.each($scope.shifts.prev, function(element, index, list) {
           element.st_date = new Date(element.start_date);
           element.fn_date = new Date(element.finish_date);
         });
