@@ -1010,7 +1010,7 @@ function remove_rank() {
 function set_children() {
 	check_session();
 	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
