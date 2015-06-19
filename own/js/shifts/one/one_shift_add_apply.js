@@ -82,6 +82,7 @@
 
       /*люди*/
       _.each($scope.detachments, function(detachment, index, list) {
+        detachment.children_num *= 1;
         detachment.people = detachment.people.split("$");
         _.each(detachment.people, function(person, index, list) {
           window.getPerson(person, function(pers, flag) {
@@ -249,6 +250,32 @@
     /*редактируем про детей для тех, кто может*/
     $scope.editChildren = function(key) {
       $scope.detachments[key].childrenEdit = true;
+      $scope.master_child_num = $scope.detachments[key].children_num;
+      $scope.master_child_dis = $scope.detachments[key].children_dis;
+    }
+
+    /*отменяет редактирование про детей*/
+    $scope.editChildrenDel = function(key) {
+      $scope.detachments[key].childrenEdit = false;
+      $scope.detachments[key].children_num = $scope.master_child_num;
+      $scope.detachments[key].children_dis = $scope.master_child_dis;
+    }
+
+    /*сохраняет редактирование про детей*/
+    $scope.editChildrenOK = function(key) {
+      $scope.detachments[key].childrenEdit = false;
+      var data = {
+        action: "set_children",
+        in_id: $scope.detachments[key].in_id,
+        "children_num": $scope.detachments[key].children_num,
+        "children_dis": $scope.detachments[key].children_dis
+      }
+      $.ajax({
+        type: "POST",
+        url: "/handlers/shift.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {});
     }
   }
 

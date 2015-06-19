@@ -50,6 +50,9 @@ if (is_ajax()) {
 				break;
 			case "remove_rank":remove_rank();
 				break;
+
+			case "set_children":set_children();
+				break;
 		}
 	}
 }
@@ -434,9 +437,9 @@ function get_one_detach_info() {
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["all_apply"], $line);
 		}
-		$query = "SELECT in_id, people, comments FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NULL) ORDER BY in_id;";
+		$query = "SELECT in_id, people, children_num, children_dis, comments FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NULL) ORDER BY in_id;";
 		if (isset($_POST["edit"]) && ($_POST["edit"] == true)) {
-			$query = "SELECT in_id, people, comments, ranking FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NOT NULL) ORDER BY in_id;";
+			$query = "SELECT in_id, people, children_num, children_dis, comments, ranking FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NOT NULL) ORDER BY in_id;";
 		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["detachments"] = array();
@@ -998,6 +1001,48 @@ function remove_rank() {
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
 		// $result["qw"] = $query;
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+/*вставляет информацию про детей в отряде*/
+function set_children() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$names = array();
+		$values = array();
+		array_push($names, "children_num");
+		array_push($values, "'" . $_POST["children_num"] . "'");
+
+		array_push($names, "children_dis");
+		array_push($values, "'" . $_POST["children_dis"] . "'");
+		foreach ($values as $key => $value) {
+			if ($value == "''") {
+				$values[$key] = "NULL";
+			}
+		}
+		$conc = array();
+		foreach ($names as $key => $value) {
+			array_push($conc, "" . $value . "=" . $values[$key]);
+		}
+		$conc = implode(", ", $conc);
+		$query = "UPDATE detachments SET " . $conc . " WHERE (in_id='" . $_POST['in_id'] . "');";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
 	}
