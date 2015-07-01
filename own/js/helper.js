@@ -29,7 +29,7 @@ function setPeople(callback) {
       }
     }
     var hasLocal = supports_html5_storage();
-    var expire_time = 1000 * 60 * 60 * 24; // в мс
+    var expire_time = 1000 * 60 * 60 * 24 * 30; // в мс
     if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("people") || (parseInt(window.localStorage.getItem("people_ts")) < (_.now() - expire_time)))) {
       if (hasLocal) {
         window.localStorage.setItem("people_ts", _.now());

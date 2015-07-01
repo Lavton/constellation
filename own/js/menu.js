@@ -94,7 +94,7 @@ if (typeof String.prototype.startsWith != 'function') {
       };
       window.last = script_date
     }
-    if ((locat.startsWith("/about")) || (locat.startsWith("/events")) || (locat.startsWith("/method"))) {
+    if ((locat.startsWith("/about")) || (locat.startsWith("/events")) || (locat.startsWith("/method")) || (locat.startsWith("/cs"))) {
       /*показываем подменю*/
       add_submenu(locat);
       $(".header-lvl2-container").show('slow');
@@ -130,6 +130,9 @@ if (typeof String.prototype.startsWith != 'function') {
       } else if (locat.startsWith("/method")) {
         $("nav a.method.index li").addClass("current");
         $("nav .header.lvl2.method").addClass("current");
+      } else if (locat.startsWith("/cs")) {
+        $("nav a.cs.index li").addClass("current");
+        $("nav .header.lvl2.cs").addClass("current");
       }
     }
 

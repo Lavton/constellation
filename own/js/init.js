@@ -164,6 +164,16 @@
         }
 
       }
+    },
+    "command_staff": {
+      "shifts": {
+        "js": [
+          "/standart/js/checklist-model.js",
+          "/own/js/cs/shifts.js",
+        ],
+        "title": "смены | комсостав | СПО \"СОзвездие\"",
+        "loc": /^\/cs\/shifts$/
+      }
     }
   }
 
@@ -185,7 +195,6 @@
     }
     fin_state_ind += 1
   }
-
 
   var angular_conroller = angular.module('constellation', [], function($httpProvider) { //магия, чтобы PHP понимал запрос
     // Используем x-www-form-urlencoded Content-Type
