@@ -42,7 +42,6 @@
           if (flag) {
             $scope.$apply();
           }
-
         })
       });
       _.each($scope.detachments, function(element, index, list) {
