@@ -59,6 +59,7 @@
               "/standart/js/jquery.hideseek.js",
               "/own/js/vk_input.js",
               "/own/js/users/one/one_fighter.js",
+              "/own/js/users/own_profile.js"
             ],
             "title": "бойцы | отряд в лицах | СПО \"СОзвездие\"",
             "loc": /^\/about\/users\/[1-9][0-9]*$/

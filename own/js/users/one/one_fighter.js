@@ -13,6 +13,7 @@
 
     /*инициализация*/
     $scope.fighter = {};
+    $scope.f_groups = _.toArray(window.groups)
     $(".user-info").removeClass("hidden")
     window.setPeople(function(flag) {
       $scope.fighter = _.clone(_.find(window.people, function(person) {
@@ -77,7 +78,7 @@
     };
 
     /*отправляет на сервер изменения*/
-    $scope.submit = function() {
+    $scope.submit = function(is_me) {
       $scope.fighter.domain = $("input.vk_now").val()
       getVkData($scope.fighter.domain, ["photo_200", "domain"],
         function(response) {
@@ -85,6 +86,9 @@
           data.vk_id = "" + response[$scope.fighter.domain].uid;
           data.uid = data.vk_id;
           data.action = "fighter_modify"
+          if (is_me) {
+            data.id = 0;
+          }
           _.each(data, function(element, index, list) {
             if (!element) {
               data[index] = null;

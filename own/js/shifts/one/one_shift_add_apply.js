@@ -13,6 +13,7 @@
     $scope.adding.vk_likes = {};
     $scope.adding.profile = 3;
     $scope.adding.social = 3;
+    $scope.newdetachment = {}
 
     /*инициализация*/
     var data = {
@@ -129,7 +130,10 @@
       for (var i = 0; i < path.length - 1; i++) {
         self = self[path[i]]
       };
-      self[path[path.length - 1]] = this.value;
+      console.log($(this).val())
+      console.log(path)
+      console.log(self[path[path.length - 1]])
+      self[path[path.length - 1]] = $(this).val();
       $scope.$apply();
     })
 

@@ -4,7 +4,7 @@
     <input class="search" ng-model="query">
   </div>
   <!-- табличка, в которой будут все контакты кандидатов -->
-  <button ng-click="getMoreInfo()">Получить подробную информацию</button>
+  <button ng-click="getMoreInfo()" ng-show="window.current_group>=window.groups.FIGHTER.num">Получить подробную информацию</button>
   <table class="table common-contacts">
     <thead>
       <tr>

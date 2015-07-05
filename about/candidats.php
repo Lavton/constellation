@@ -22,7 +22,7 @@ if (isset($_GET["id"]) && $_GET["id"] == 0) {
 	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/own.php';
 
 	/*смотрим на чужой профиль (доступно >=бойцам)*/
-} elseif (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+} elseif (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
 	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_candidate.html';
 	/*не боец попытался посмотреть профиль*/
 } elseif (isset($_GET["id"])) {
@@ -35,7 +35,7 @@ if (isset($_GET["id"]) && $_GET["id"] == 0) {
 /*не смотрим конкретный профиль*/
 if (!isset($_GET["id"])) {
 	/*если не боец, то нельзя посмотреть людей в отряде*/
-	if (!(isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+	if (!(isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
 		?>
           Наш чудесный комсостав - это бойцы, которые управляют жизнью отряда:
           <ul>

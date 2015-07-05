@@ -165,10 +165,6 @@ function fighter_modify() {
 				array_push($values, "'" . $_POST["first_name"] . "'");
 				array_push($names, "name");
 			}
-			if (isset($_POST["second_name"])) {
-				array_push($values, "'" . $_POST["second_name"] . "'");
-				array_push($names, "second_name");
-			}
 			if (isset($_POST["last_name"])) {
 				array_push($values, "'" . $_POST["last_name"] . "'");
 				array_push($names, "surname");
@@ -182,6 +178,11 @@ function fighter_modify() {
 				array_push($names, "year_of_entrance");
 			}
 		}
+		if (isset($_POST["second_name"])) {
+			array_push($values, "'" . $_POST["second_name"] . "'");
+			array_push($names, "second_name");
+		}
+
 		if (isset($_POST["phone"])) {
 			array_push($values, "'" . $_POST["phone"] . "'");
 			array_push($names, "phone");

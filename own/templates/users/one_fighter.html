@@ -3,7 +3,7 @@
   <div class="user-info hidden">
     <div class="col-xs-12">
       <h2>{{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}} {{fighter.second_name}}
-        <button type="button" class="btn btn-primary text-right" ng-click="editPerson()" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">Редактировать</button>
+        <button type="button" class="btn btn-primary text-right" ng-click="editPerson()" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')">Редактировать</button>
       </h2>
       <hr>
       <span class="saved">  (Изменения сохранены)</span>
@@ -26,15 +26,21 @@
       </div>
     </div>
   </div>
-  <div ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+  <div ng-show="window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')">
     <div class="user-edit hidden">
-      <form ng-submit="submit()">
+      <form ng-submit="submit({{fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num}})">
         <div class="col-xs-12">
           <h2>
-          <input type="text" ng-model="fighter.first_name" size="{{(fighter.first_name).length}}+1" />
-          <input type="text" ng-model="fighter.second_name"  size="{{(fighter.second_name).length}}+1" />
-          <input type="text" ng-model="fighter.last_name"  size="{{(fighter.last_name).length}}+1" />
-          (<input type="text" ng-model="fighter.maiden_name"  size="{{(fighter.maiden_name).length}}+1" />)
+          <span ng-show="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num">
+        {{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}}
+          </span>
+          <span ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num">  
+          <input type="text" ng-model="fighter.last_name"  size="{{(fighter.last_name).length}}+1" placeholder="Фамилия" />
+          (<input type="text" ng-model="fighter.maiden_name"  size="{{(fighter.maiden_name).length}}+1" placeholder="Девичья фамилия (при наличии)"/>)
+
+          <input type="text" ng-model="fighter.first_name" size="{{(fighter.first_name).length}}+1" placeholder="Имя" />
+          </span>
+          <input type="text" ng-model="fighter.second_name"  size="{{(fighter.second_name).length}}+1" placeholder="Отчество"/>
           <input type="submit" class="btn btn-primary text-right" ng-click="editPerson()" value="Сохранить"></input>
           <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editPerson()" >Отменить</input>
         </h2>
@@ -46,8 +52,9 @@
           </div>
           <div class="col-xs-9 info-str">
             <ul>
-              <li><strong>vk: </strong>
+              <li ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num"><strong>vk: </strong>
                 <input type="text" class="vk-domain vk_input" ng-model="fighter.domain" size="{{(fighter.domain).length}}" /> {{fighter.domain}} (uid: {{fighter.uid}})</li>
+              <li ng-show="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num"><strong>vk: </strong><a target='_blank' href='//vk.com/{{fighter.domain}}'>vk.com/{{fighter.domain}}</a></li>
               <li><strong>Телефон:</strong> +7
                 <input type="text" ng-model="fighter.phone" size="{{(fighter.phone).length}}" /> <em>(цифрами)</em></li>
               <li><strong>Второй телефон:</strong> +7
@@ -61,19 +68,28 @@
               <li><strong>День рождения: </strong>
                 <input type="date" ng-model="fighter.birthdate" size="{{(fighter.birthdate).length}}" />
               </li>
-              <li><strong>Год вступления в отряд: </strong>
+              <li ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num"><strong>Год вступления в отряд: </strong>
                 <input type="number" min="2000" max="3000" ng-model="fighter.year_of_entrance" size="{{(fighter.year_of_entrance).length}}" />
               </li>
-              <li><strong>Права доступа: </strong>
+              <li ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num"><strong>Права доступа: </strong>
                 <input type="number" min="1" max="7" ng-model="fighter.group_of_rights" /> ({{window.groups[window.visibilities[fighter.group_of_rights]].rus}})</li>
+              <li ng-show="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
+              <li ng-show="fighter.group_of_rights && window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')"><strong>Права доступа: </strong>{{fighter.group_of_rights}} ({{window.groups[window.visibilities[fighter.group_of_rights]].rus}})</li>
             </ul>
           </div>
         </div>
       </form>
+      <h2>Выбрать категорию доступа</h2>
+      <i>данное поле влияет на то, как вы видите страницы.</i>
+      <span class="saved">  (Изменения сохранены)</span><br/>
+      <span ng-repeat="group in f_groups">
+      <input type="radio" value="{{group.num}}" name="group_r" ng-checked="window.getCookie('current_group')*1 == group.num*1" >{{group.rus}}<br></span>
+
     </div>
-    <button type="button" class="btn btn-danger kill-fighter" ng-click="killFighter()">Удалить профиль</button>
+    <button type="button" class="btn btn-danger kill-fighter" ng-click="killFighter()" ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num">Удалить профиль</button>
   </div>
 </div>
+
 <br/>
 <br/>
 <a href="#" class="profile_priv ajax-nav"> &lt;&lt;предыдщий</a> &nbsp; &nbsp; <a href="#" class="profile_next pull-right ajax-nav">следующий &gt;&gt;</a>

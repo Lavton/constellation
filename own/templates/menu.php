@@ -43,7 +43,7 @@
             require_once $_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php';
 
             if (isset($_SESSION["fighter_id"])) {
-              echo '<a href="/about/users/0" class="ajax-nav"><img class="user_ava" src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
+              echo '<a href="/about/users/'.$_SESSION["fighter_id"].'" class="ajax-nav"><img class="user_ava" src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } elseif (isset($_SESSION["vk_id"])) {
               echo '<img class="user_ava" src="'.$_SESSION["photo"].'"/>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } else {
@@ -79,13 +79,11 @@
                   Отряд в лицах
                 </li>
               </a>
-              <?php if ((isset($_SESSION[ "current_group"]) && ($_SESSION[ "current_group"]>= FIGHTER))) { ?>
               <a href="/about/candidats" class="about cand-faces ajax-nav">
                 <li class="">
                   Наши кандидаты
                 </li>
               </a>
-              <?php } ?>
             </ul>
           </div>
         </div>
