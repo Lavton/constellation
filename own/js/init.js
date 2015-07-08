@@ -114,6 +114,11 @@
         ],
         "title": "чемодан вожатого | методическая база | СПО \"СОзвездие\"",
         "loc": /^\/method\/musthave$/
+      },
+      "danet": {
+        "js": ["/own/js/method/danet.js"],
+        "title": "ситуации | методическая база | СПО \"СОзвездие\"",
+        "loc": /^\/method\/danetki_parser$/
       }
     },
     "events": {

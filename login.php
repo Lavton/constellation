@@ -27,7 +27,7 @@
       <input type="number" size="10" class="tel_num"> <em>(Цифрами)</em>
       <br>
       <strong>Дата рождения:</strong>
-      <input type="date" class="brday">
+      <input type="date" class="brday"> <i> В формате 'гггг-мм-дд'</i>
       <br>
     </div>
   </div>
@@ -71,17 +71,20 @@
                     dataType: "json",
                     data: $.param(odata)
                   }).done(function(json) {
+                    console.log(json)
                     window.location = "/";
                   });
                 });
               }
             } else {
+              console.log("NOOOOOOOO", odata)
               $.ajax({
                 type: "POST",
                 url: "/handlers/login.php",
                 dataType: "json",
                 data: $.param(odata)
               }).done(function(json) {
+                console.log(json)
                 window.location = "/";
               });
             }

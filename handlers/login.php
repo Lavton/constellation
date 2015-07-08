@@ -15,6 +15,7 @@ if (is_ajax()) {
 function vk_auth() {
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 	$ownMd5 = md5((Passwords::$vk_app_id) . ((string) $_POST["uid"]) . (Passwords::$vk_secret_key));
+	
 	$result = array();
 	if ($ownMd5 == $_POST["hash"]) {
 		$result["result"] = "Success";

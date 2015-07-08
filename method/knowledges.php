@@ -19,6 +19,14 @@
       <li><a href="http://summercamp.ru/" target="_blank">Summercamp</a> - википедия для вожатых.</li>
       <li><a href="https://play.google.com/store/apps/details?id=com.kuz.vojatienew" target="_blank">Методичка от СПО Драйв под Android.</a></li>
     </ul>
+    <hr>
+    Интеллектуалки:
+    <ul>
+      <li><a target="_blank" href="http://db.chgk.info/">ЧГК</a></li>
+      <li><a href="http://www.danetka.ru/cgi-bin/resolved.pl" target="_blank">Ситуации (да-нетки)</a> |
+      <a href="danetki_parser">парсер</a>
+      </li>
+    </ul>
   </div>
   <!-- /container -->
   <?php include_once($_SERVER[ 'DOCUMENT_ROOT']. '/own/templates/footer.php'); ?>
