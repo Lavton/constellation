@@ -119,7 +119,7 @@ function get_birthdays() {
 		}
 
 		// предстоящие смены. Если ДР выходит на них - отображаем это
-		$query = "SELECT id, place, start_date, finish_date, time_name FROM shifts WHERE (finish_date >= CURRENT_DATE) ORDER BY start_date;";
+		$query = "SELECT shifts.id, shifts.place, shifts.start_date, shifts.finish_date, shifts.time_name, guess_shift.vk_id FROM shifts, guess_shift WHERE (shifts.finish_date >= CURRENT_DATE AND guess_shift.shift_id=shifts.id) ORDER BY start_date;";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {

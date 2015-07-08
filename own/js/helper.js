@@ -94,7 +94,9 @@ function setPeople(callback) {
       }
     }
   } else {
-    callback(false)
+    if (callback) {
+      callback(false)
+    }
   }
 }
 
