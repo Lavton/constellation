@@ -19,8 +19,8 @@
         <li ng-repeat="person in people">
           <img ng-src="{{person.photo}}" width="30px">
           <a href="/about/{{person.url_s}}/{{person.id}}"> {{person.first_name}} {{person.last_name}}</a> 
-          ДР: {{person.birthdate | date: 'dd.MM.yyyy'}}  Осталось дней: {{(person.dayFromYear - today + 365 - 1) % 365}} 
-          <span ng-show="person.shift">
+          ДР: {{person.birthdate | date: 'dd.MM.yyyy'}}  Осталось дней: {{(person.dayFromYear - today + 365 - 1) % 365}} <img src="/own/images/warning.png" width="40px" ng-show="((person.dayFromYear - today + 365 - 1) % 365) < 7">
+          <span ng-show="person.shift"> <img src="/own/images/warning.png" width="40px">
             <a href="/events/shifts/{{person.shift.id}}" class="ajax-nav">
               {{person.shift.time_name}} <span ng-show="person.shift.place">({{person.shift.place}})</span>, {{person.shift.fn_date.getFullYear()}} г.
             </a>

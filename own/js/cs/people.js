@@ -28,7 +28,6 @@
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-        console.log(json)
 
         // получаем норм отображение.
         $scope.people = [];
@@ -74,7 +73,6 @@
             happyPeople.push(person)
           })
         })
-        console.log(happyPeople)
         $scope.$apply();
       })
 
