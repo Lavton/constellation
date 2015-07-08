@@ -81,15 +81,31 @@
       </form>
       <h2>Выбрать категорию доступа</h2>
       <i>данное поле влияет на то, как вы видите страницы.</i>
-      <span class="saved">  (Изменения сохранены)</span><br/>
+      <span class="saved">  (Изменения сохранены)</span>
+      <br/>
       <span ng-repeat="group in f_groups">
       <input type="radio" value="{{group.num}}" name="group_r" ng-checked="window.getCookie('current_group')*1 == group.num*1" >{{group.rus}}<br></span>
-
     </div>
     <button type="button" class="btn btn-danger kill-fighter" ng-click="killFighter()" ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num">Удалить профиль</button>
   </div>
+  <!--  -->
+  <!-- доп. информация -->
+  <div class="row own-row">
+    <div class="col-xs-6">
+      <h3>Смены</h3>
+      <ul>
+        <li ng-repeat="shift in shifts">
+          <a href="/events/shifts/{{shift.id}}" class="ajax-nav">
+                      {{shift.time_name}} <span ng-show="shift.place">({{shift.place}})</span>, {{shift.fn_date.getFullYear()}} г.
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-xs-6">
+      <h3>Достижения</h3>
+    </div>
+  </div>
 </div>
-
 <br/>
 <br/>
 <a href="#" class="profile_priv ajax-nav"> &lt;&lt;предыдщий</a> &nbsp; &nbsp; <a href="#" class="profile_next pull-right ajax-nav">следующий &gt;&gt;</a>

@@ -51,6 +51,24 @@
         if (!json.next.mid) {
           $("a.profile_next").hide();
         }
+
+        // отображение смен
+        var data = {
+          action: "get_shifts_nd_ach",
+          uid: $scope.fighter.uid
+        }
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/user.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(response) {
+          if (response.result == "Success") {
+            showShifts(response);
+            $scope.$apply();
+          }
+        });
+
         $scope.app2();
       });
       /*с ВК*/
@@ -135,6 +153,15 @@
           }
         });
       }
+    }
+
+    // готовит данные для отображения прошедших смен
+    function showShifts(json) {
+      console.log(json);
+      $scope.shifts = json.shifts;
+      _.each($scope.shifts, function(detachment, index, list) {
+        detachment.fn_date = new Date(detachment.finish_date);
+      });
     }
   }
 

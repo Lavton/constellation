@@ -21,8 +21,9 @@ if (is_ajax()) {
 
 			case "kill_fighter":kill_fighter();
 				break;
-
 			case "get_own_info":get_own_info();
+				break;
+			case 'get_shifts_nd_ach':get_shifts_nd_ach();
 				break;
 
 			/*то, что относится ко всем кандидатам*/
@@ -713,6 +714,38 @@ function get_common_inf() {
 
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["candidats"], $line);
+		}
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+// выдаёт прошедшие смены и достижения бойца
+function get_shifts_nd_ach() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		// смены, на которых был боец
+		$query = 'SELECT detachments.shift_id as id, shifts.place, shifts.finish_date, shifts.time_name FROM detachments, shifts WHERE (ranking IS NULL AND people LIKE \'%'.$_POST["uid"].'%\' AND shifts.id=detachments.shift_id) ORDER BY shifts.finish_date DESC';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["shifts"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["shifts"], $line);
 		}
 		$result["result"] = "Success";
 		mysqli_close($link);
