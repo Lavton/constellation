@@ -55,7 +55,8 @@
         // отображение смен
         var data = {
           action: "get_shifts_nd_ach",
-          uid: $scope.fighter.uid
+          uid: $scope.fighter.uid,
+          fighter_id: userid
         }
         $.ajax({ //TODO: make with angular
           type: "POST",
@@ -157,10 +158,106 @@
 
     // готовит данные для отображения прошедших смен
     function showShifts(json) {
-      console.log(json);
       $scope.shifts = json.shifts;
+      $scope.achievements = json.achievements;
       _.each($scope.shifts, function(detachment, index, list) {
         detachment.fn_date = new Date(detachment.finish_date);
+      });
+      _.each($scope.achievements, function(element) {
+        element.start_year *= 1;
+        element.finish_year *= 1;
+      })
+    }
+
+    // отображает панель для редактирования
+    $scope.editAchvs = function() {
+      $scope.edit_achiv = true;
+    }
+
+    $scope.master_achv = {}
+      // редактирование достижения
+    $scope.editAchv = function(achv) {
+      $scope.master_achv[achv.id] = angular.copy(achv);
+      achv.edit_flag = true;
+    }
+
+    // отменяем редактирование
+    $scope.notOkEditAchv = function(achv) {
+      for (var i = 0; i < $scope.achievements.length; i++) {
+        if ($scope.achievements[i].id == achv.id) {
+          $scope.achievements[i] = angular.copy($scope.master_achv[achv.id]);
+          break;
+        }
+      };
+    }
+
+    // сохраняем редактирование, отправляем на сервер.
+    $scope.okEditAchv = function(achv) {
+      var data = angular.copy(achv);
+      data.action = "ok_edit_achv"
+      $.ajax({ //TODO: make with angular
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(response) {
+        if (response.result == "Success") {
+          achv.edit_flag = false;
+        }
+      });
+    }
+
+    // удаляет достижение
+    $scope.deleteAchv = function(achv) {
+      if (confirm("точно удалить достижение?")) {
+        var data = angular.copy(achv);
+        data.action = "delete_achv"
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/user.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(response) {
+          if (response.result == "Success") {
+            var achievements = []
+            for (var i = 0; i < $scope.achievements.length; i++) {
+              if ($scope.achievements[i].id != achv.id) {
+                achievements.push($scope.achievements[i])
+              }
+            };
+            $scope.achievements = achievements;
+            $scope.$apply();
+          }
+        });
+      }
+    }
+
+    // форма для добавления достижения
+    $scope.addAch = function() {
+      $scope.add_achiv = true;
+      $scope.new_achv = {}
+      $scope.new_achv.start_year = (new Date()).getFullYear();
+      $scope.new_achv.finish_year = (new Date()).getFullYear();
+    }
+
+    // добавляет достижение на сервер
+    $scope.okAddAchv = function() {
+      var data = angular.copy($scope.new_achv);
+      data.action = "add_achv";
+      data.fighter_id = userid;
+      $.ajax({ //TODO: make with angular
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(response) {
+        if (response.result == "Success") {
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", window.location.href);
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
+        }
       });
     }
   }

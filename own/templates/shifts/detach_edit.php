@@ -4,7 +4,7 @@
   <div class="row" ng-hide="new_rank.ranking">
     <div class="col-md-3" ng-repeat="(index, value) in rankings" style="border: 4px outset green">
       <h2>Расстановка  № {{index}} 
-        <a href="" ng-click="editRanking(index)"><img src="/own/images/edit.png" width="20px"></a><a href="" ng-click="deleteRanking(index)"><img src="/own/images/close.png" width="20px"></a>
+        <a href="" ng-click="editRanking(index)"><img src="/own/images/edit.png" width="20px"></a><a href="" ng-click="deleteRanking(index)"><img src="/own/images/delete.png" width="20px"></a>
         </h2>
       <ul>
         <li ng-repeat="(key, detachment) in value">
@@ -61,7 +61,7 @@
               </tr>
             </table>
             <span ng-repeat="key in newdetachment.fieldKeys">
-              ссылка ВК: <input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <img src="/own/images/close.png" width="15px" ng-click="deletePersonEdit(key)"> <br>
+              ссылка ВК: <input type="text" ng-model="newdetachment.people[key]" placeholder="домен VK"/> <img src="/own/images/delete.png" width="15px" ng-click="deletePersonEdit(key)"> <br>
             </span> какие дети, комментарии, дополнения и т.п.
             <br>
             <textarea class="bbcode" ng-model="newdetachment.comments"></textarea>
@@ -75,7 +75,7 @@
             <li ng-repeat="(key, detachment) in detachments" ng-show="detachment.ranking*1==new_rank.ranking*1">
               {{key+1}}
               <a href="" ng-click="editDetachment(key)"><img src="/own/images/edit.png" width="10px"></a>&nbsp;&nbsp;&nbsp;
-              <a href="" ng-click="deleteDetachment(key)"><img src="/own/images/close.png" width="10px"></a>
+              <a href="" ng-click="deleteDetachment(key)"><img src="/own/images/delete.png" width="10px"></a>
               <ul>
                 <li ng-repeat="person in detachment.people">
                   <span ng-show="person.uid">

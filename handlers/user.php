@@ -10,20 +10,27 @@ if (is_ajax()) {
 				break;
 			case "all":get_all_fighters();
 				break;
-			case "get_one_info":get_one_info();
-				break;
-			case 'fighter_modify':fighter_modify();
-				break;
 			case "get_all_ids":get_all_ids();
 				break;
 			case "add_new_fighter":add_new_fighter();
 				break;
 
+			case "get_one_info":get_one_info();
+				break;
+			case 'fighter_modify':fighter_modify();
+				break;
 			case "kill_fighter":kill_fighter();
 				break;
 			case "get_own_info":get_own_info();
 				break;
+				// смены и достижения
 			case 'get_shifts_nd_ach':get_shifts_nd_ach();
+				break;
+			case "ok_edit_achv": ok_edit_achv();
+				break;
+			case "delete_achv": delete_achv();
+				break;
+			case "add_achv": add_achv();
 				break;
 
 			/*то, что относится ко всем кандидатам*/
@@ -747,9 +754,151 @@ function get_shifts_nd_ach() {
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["shifts"], $line);
 		}
+
+		// достижения
+		$query = 'SELECT * FROM achievements WHERE (fighter_id='.$_POST["fighter_id"].') ORDER BY start_year DESC';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["achievements"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["achievements"], $line);
+		}
+
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
+	}
+}
+
+// редактирование достижения
+function ok_edit_achv() {
+	check_session();
+	session_start();
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["fighter_id"]*1 == $_POST["fighter_id"]*1)) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$names = array();
+		$values = array();
+
+		if (isset($_POST["start_year"])) {
+			array_push($values, "'" . $_POST["start_year"] . "'");
+			array_push($names, "start_year");
+		}
+
+		if (isset($_POST["finish_year"])) {
+			array_push($values, "'" . $_POST["finish_year"] . "'");
+			array_push($names, "finish_year");
+		}
+		if (isset($_POST["achiev"])) {
+			array_push($values, "'" . $_POST["achiev"] . "'");
+			array_push($names, "achiev");
+		}
+		$conc = array();
+		foreach ($names as $key => $value) {
+			array_push($conc, "" . $value . "=" . $values[$key]);
+		}
+		$conc = implode(", ", $conc);
+		$query = "UPDATE achievements SET " . $conc . " WHERE id='" . $_POST["id"] . "';";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	} else {
+		mysqli_close($link);
+		echo json_encode(Array('result' => 'Fail'));
+	}
+}
+
+// удалить достижение
+function delete_achv() {
+	check_session();
+	session_start();
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["fighter_id"]*1 == $_POST["fighter_id"]*1)) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		$query = "DELETE FROM achievements WHERE id=" . $_POST["id"] . ";";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	} else {
+		mysqli_close($link);
+		echo json_encode(Array('result' => 'Fail'));
+	}
+}
+
+
+// добавляет достижение
+function add_achv() {
+	check_session();
+	session_start();
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["fighter_id"]*1 == $_POST["fighter_id"]*1)) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$names = array();
+		$values = array();
+		
+		if (isset($_POST["fighter_id"])) {
+			array_push($values, "'" . $_POST["fighter_id"] . "'");
+			array_push($names, "fighter_id");
+		}
+
+		if (isset($_POST["start_year"])) {
+			array_push($values, "'" . $_POST["start_year"] . "'");
+			array_push($names, "start_year");
+		}
+
+		if (isset($_POST["finish_year"])) {
+			array_push($values, "'" . $_POST["finish_year"] . "'");
+			array_push($names, "finish_year");
+		}
+		if (isset($_POST["achiev"])) {
+			array_push($values, "'" . $_POST["achiev"] . "'");
+			array_push($names, "achiev");
+		}
+
+		$names = implode(", ", $names);
+		$values = implode(", ", $values);
+
+		$query = "INSERT INTO achievements (" . $names . ") VALUES (" . $values . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	} else {
+		mysqli_close($link);
+		echo json_encode(Array('result' => 'Fail'));
 	}
 }
 ?>
