@@ -169,12 +169,19 @@
     "command_staff": {
       "shifts": {
         "js": [
-          "/standart/js/checklist-model.js",
           "/own/js/cs/shifts.js",
         ],
         "title": "смены | комсостав | СПО \"СОзвездие\"",
         "loc": /^\/cs\/shifts$/
+      },
+      "people": {
+        "js": [
+          "/own/js/cs/people.js",
+        ],
+        "title": "люди | комсостав | СПО \"СОзвездие\"",
+        "loc": /^\/cs\/people$/
       }
+
     }
   }
 

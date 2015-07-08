@@ -144,6 +144,11 @@
                   Смены
                 </li>
               </a>
+              <a href="/cs/people" class="cs people ajax-nav">
+                <li class="cs people">
+                  Люди
+                </li>
+              </a>
             </ul>
           </div>
         </div>
