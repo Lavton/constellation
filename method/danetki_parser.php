@@ -19,7 +19,7 @@
       <div class="row">
         <div class="col-xs-5">
           <ul ng-show="listPages && !selectPages">
-            Выбрано: {{num_of_select}}, займёт примерно {{num_of_select * 5}} мин.
+            Выбрано: {{num_of_select}}, займёт примерно {{num_of_select * 3}} мин.
             <li ng-repeat="pages in listPages">
               <input type="checkbox" ng-click="swithCheck(pages)"> {{pages.name}} <a href="{{pages.url}}" target="_blank">{{pages.url}}</a>
             </li>

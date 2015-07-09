@@ -72,7 +72,7 @@
             action: "situation",
             url: $scope.sitPages.shift()
           };
-          var rand_time = 7 * 1000 + getRandomInt(-4 * 1000, 4 * 1000);
+          var rand_time = 3 * 1000 + getRandomInt(-2 * 1000, 2 * 1000);
           setTimeout(function() {
             $.ajax({
               type: "POST",
@@ -90,7 +90,7 @@
             });
           }, rand_time);
         }
-      }, 10 * 1000);
+      }, 5 * 1000);
 
       getPagesLogic();
 
