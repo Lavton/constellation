@@ -32,8 +32,8 @@
         data: $.param(bbdata)
       }).done(function(rdata) {
         $scope.event.bbcomments = rdata,
-        $("div.bb-codes").html(rdata)
-          $scope.$apply();
+          $("div.bb-codes").html(rdata)
+        $scope.$apply();
       });
       // debugger;
       //TODO make works all html. (jquery?)
@@ -138,9 +138,9 @@
       var shiftid = fid[fid.length - 1] //TODO сделать тут нормально!
       if (confirm("Точно удалить мероприятие со всей информацией?")) {
         var data = {
-            action: "kill_event",
-            id: eventid
-          }
+          action: "kill_event",
+          id: eventid
+        }
         $.ajax({ //TODO: make with angular
           type: "POST",
           url: "/handlers/event.php",
@@ -188,13 +188,49 @@
 
     }
 
+    // создаём текст поста для ВК. Пока заглушка
     $scope.exportToVK = function() {
       $scope.vk_export = "sadsad";
     }
 
+    // добавляем себя на мероприятие
+    $scope.applyToEvent = function(person) {
+      console.log("apply", person)
+      var data = {
+        "action": "apply_to_event",
+        "event_id": $scope.event.id,
+      }
+      if (person) {
+        data.vk_id = person;
+      }
+      
+      $.ajax({ //TODO: make with angular
+        type: "POST",
+        url: "/handlers/event.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(response) {});
+    }
+
+    /*синхронизируемся, где надо*/
+    $("#page-container").on("_final_select", "input", function(e) {
+      /*в ng-model лежит путь. Но не прямое значение(( Пройдём по нему до почти конца и впишем*/
+      var path = this.getAttribute("ng-model").split(".")
+      var self = $scope;
+      for (var i = 0; i < path.length - 1; i++) {
+        self = self[path[i]]
+      };
+      self[path[path.length - 1]] = this.value;
+      $scope.$apply();
+    })
+
+
   }
 
   function init() {
+    window.setPeople(function() {
+      $("input.vk_input").vkinput()
+    });
     window.init_ang("oneEventApp", init_angular_o_e_c, "event-one");
   }
   init();

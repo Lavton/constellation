@@ -21,6 +21,9 @@ if (is_ajax()) {
 				break;
 			case "getMe":getMe();
 				break;
+
+			case "apply_to_event":apply_to_event();
+				break;
 		}
 	}
 }
@@ -335,6 +338,7 @@ function get_reproduct() {
 
 }
 
+// контакты себя любимого
 function getMe() {
 	check_session();
 	session_start();
@@ -362,6 +366,7 @@ function getMe() {
 
 }
 
+// проверяет, может ли человек редактировать мероприятие
 function canEditEvent($link, $userId, $eventId) {
 	if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
 		return true;
@@ -387,5 +392,58 @@ function canEditEvent($link, $userId, $eventId) {
 	} else {
 		return false;
 	}
+}
+
+// записывает человека на мероприятие
+function apply_to_event() {
+	check_session();
+	session_start();
+	if (isset($_SESSION["current_group"])) {
+		if (isset($_POST["vk_id"])) {
+			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+				echo json_encode(array('result' => "Fail"));
+				return;
+			}
+		} else {
+			$_POST["vk_id"] = $_SESSION["vk_id"];
+		}
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		$names = array();
+		$values = array();
+		if (isset($_POST["vk_id"])) {
+			array_push($names, "vk_id");
+			array_push($values, "'" . $_POST["vk_id"] . "'");
+		}
+		if (isset($_POST["event_id"])) {
+			array_push($names, "event_id");
+			array_push($values, "'" . $_POST["event_id"] . "'");
+		}
+		foreach ($values as $key => $value) {
+			if ($value == "''") {
+				$values[$key] = "NULL";
+			}
+		}
+
+		$names = implode(", ", $names);
+		$values = implode(", ", $values);
+		$query = "INSERT INTO guess_event (" . $names . ") VALUES (" . $values . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+
 }
 ?>

@@ -132,6 +132,8 @@
         },
         "one": {
           "js": [
+            "/standart/js/jquery.hideseek.js",
+            "/own/js/vk_input.js",
             "/own/js/events/one.js",
           ],
           "title": "мероприятия | СПО \"СОзвездие\"",
