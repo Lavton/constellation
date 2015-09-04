@@ -67,6 +67,7 @@
     <p>Что касательно книг и подобного, то самые основы я восстанавливал в памяти по <a href="//site-do.ru" target="_blank">site-do</a>,
       <br/> А уж дальше пользовался <i>PHP 5 (Котеров, Костарев)</i>, <i>Ajax в действии (Крейн)</i>, <a href="http://habrahabr.ru/post/155107/" target="_blank">jQuery для начинающих</a>
     </p>
+    <p>Для данного сайта используется бесплатный хостинг <a href="http://www.hostinger.ru/" target="_blank">Hostinger</a>. Пока ни одного пререкания к нему нет.</p>
   </div>
   <?php include_once($_SERVER[ 'DOCUMENT_ROOT']. '/own/templates/footer.php'); ?>
   <div id="after-js-container">

@@ -29,7 +29,14 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           </ul>
         </div>
         <div class="col-xs-7 info-str">
-          <button ng-click="applyToEvent()">Записаться на мероприятие</button>
+          <button ng-click="applyToEvent()" ng-hide="IAmIn">Записаться на мероприятие</button>
+          <br>
+          <h4>Записавшиеся люди:</h4>
+          <ul>
+            <li ng-repeat="person in event.users"> <img ng-src="{{person.photo}}" width="20"> {{person.IF}}
+              <span ng-show="person.uid==window.getCookie('vk_id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
+            </li>
+          </ul>
           <!-- <a href="" ng-click="exportToVK()">текст для ВК</a><br>
         <div ng-show="vk_export">
           <textarea ng-model="vk_export" rows="10" cols="80"></textarea>
@@ -65,7 +72,14 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
         </div>
         <div class="col-xs-7 info-str">
          <button ng-click="applyToEvent(personToApply)">Записать на мероприятие</button>
-         <input class="vk_input" ng-model="personToApply">
+         <input class="vk_input" ng-model="personToApply"> <br>
+
+          <ul>
+            <li ng-repeat="person in event.users"> <img ng-src="{{person.photo}}" width="20"> {{person.IF}}
+              <img src="/own/images/delete.png" width="20" ng-click="deleteApply(person)">
+            </li>
+          </ul>
+
         </div>
       </div>
     </form>

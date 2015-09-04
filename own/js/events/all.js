@@ -59,7 +59,7 @@
 
   }
 
-
+  // работа с новым событием
   $('#page-container').on('click', ".pre-add-new-event", function() {
     var auto_date = null;
     if (!$(".pre-add-new-event").hasClass("clicked")) {

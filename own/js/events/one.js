@@ -17,6 +17,10 @@
       dataType: "json",
       data: $.param(data)
     }).done(function(json) {
+      $scope.app2 = _.after(3, function() {
+        $scope.$apply();
+      })
+
       $scope.event = json.event;
       $scope.event.visibility = $scope.event.visibility * 1;
       $scope.parent_event = json.parent_event;
@@ -33,9 +37,8 @@
       }).done(function(rdata) {
         $scope.event.bbcomments = rdata,
           $("div.bb-codes").html(rdata)
-        $scope.$apply();
+        $scope.app2();
       });
-      // debugger;
       //TODO make works all html. (jquery?)
 
       $("a.event_priv").attr("href", json.prev.mid)
@@ -47,7 +50,23 @@
         $("a.event_next").hide();
       }
 
-      $scope.$apply();
+
+      window.setPeople(function() {
+        _.each($scope.event.users, function(person) {
+          _.extend(person, _.findWhere(window.people, {
+            "uid": person.vk_id * 1
+          }));
+          // если мы уже записаны на мероприятие - кнопку убираем
+          if (person.uid == window.getCookie("vk_id") * 1) {
+            $scope.IAmIn = true;
+          }
+        })
+
+        $scope.app2();
+      });
+
+
+      $scope.app2();
     });
     $scope.editEventInfo = function(flag) {
       $(".event-info").toggleClass("hidden");
@@ -203,6 +222,11 @@
         data.vk_id = _.find(window.people, function(p) {
           return person == p.domain;
         }).uid
+      } else {
+        $scope.IAmIn = true;
+        $scope.event.users.push(_.findWhere(window.people, {
+          "uid": window.getCookie("vk_id") * 1
+        }))
       }
       console.log("apply", data.vk_id)
 
@@ -212,7 +236,14 @@
         dataType: "json",
         data: $.param(data)
       }).done(function(response) {
-        console.log(response)
+        $scope.personToApply = "";
+        if (data.vk_id) {
+          $scope.event.users.push(_.findWhere(window.people, {
+            "uid": data.vk_id * 1
+          }))
+        }
+
+        $scope.$apply();
       });
     }
 
@@ -228,6 +259,34 @@
       $scope.$apply();
     })
 
+    // удаляем участие в мероприятии человека
+    $scope.deleteApply = function(person) {
+      if (confirm("Удалить? ")) {
+        var data = {
+          "action": "delete_apply_from_event",
+          "event_id": $scope.event.id,
+        }
+        var uid = null;
+        if (person) {
+          data.vk_id = person.uid
+          uid = person.uid * 1;
+        } else {
+          uid = window.getCookie("vk_id") * 1;
+          $scope.IAmIn = false;
+        }
+        $scope.event.users = _.reject($scope.event.users, function(user) {
+          return user.uid * 1 == uid;
+        })
+
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/event.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(response) {});
+
+      }
+    }
 
   }
 

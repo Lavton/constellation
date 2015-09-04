@@ -24,6 +24,8 @@ if (is_ajax()) {
 
 			case "apply_to_event":apply_to_event();
 				break;
+			case "delete_apply_from_event": delete_apply_from_event();
+				break;
 		}
 	}
 }
@@ -77,7 +79,26 @@ function add_new_event() {
 		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		$result["id"] = $line["id"];
 
+
+		// человек, создавший мероприятие всегда считается записавшимся на него
+		$names = array();
+		$values = array();
+		array_push($names, "vk_id");
+		array_push($values, "'" . $_SESSION["vk_id"] . "'");
+		array_push($names, "event_id");
+		array_push($values, "'" . $result["id"] . "'");
+		foreach ($values as $key => $value) {
+			if ($value == "''") {
+				$values[$key] = "NULL";
+			}
+		}
+		$names = implode(", ", $names);
+		$values = implode(", ", $values);
+		$query = "INSERT INTO guess_event (" . $names . ") VALUES (" . $values . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
 		mysqli_close($link);
+
 		echo json_encode($result);
 	}
 }
@@ -148,6 +169,7 @@ function arhive() {
 	}
 }
 
+// инфа об одном мероприятии
 function get_one_info() {
 	check_session();
 	session_start();
@@ -193,6 +215,17 @@ function get_one_info() {
 		$userId = $userId["id"];
 
 		$result["event"]["editable"] = canEditEvent($link, $userId, $_POST["id"]);
+
+		// список записавшихся людей
+		$query = 'SELECT * FROM guess_event WHERE (event_id='.$result["event"]["id"].');';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["event"]["users"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["event"]["users"], $line);
+		}
+
+
 		if (!isset($result["event"]["id"])) {
 			$result = Array();
 		}
@@ -450,5 +483,65 @@ function apply_to_event() {
 		mysqli_close($link);
 		echo json_encode($result);
 	}
+}
+
+
+// удаляет участие
+function delete_apply_from_event() {
+	check_session();
+	session_start();
+	if (isset($_SESSION["current_group"])) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		if (isset($_POST["vk_id"])) {
+			$query = "SELECT id FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			$userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
+			$userId = $userId["id"];
+
+			if (!(canEditEvent($link, $userId, $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+				echo json_encode(array(
+					'result' => canEditEvent($link, $_SESSION["vk_id"], $_POST["event_id"]))
+				);
+				return;
+			}
+		} else {
+			$_POST["vk_id"] = $_SESSION["vk_id"];
+		}
+
+		$names = array();
+		$values = array();
+		array_push($names, "vk_id");
+		array_push($values, "'" . $_POST["vk_id"] . "'");
+		if (isset($_POST["event_id"])) {
+			array_push($names, "event_id");
+			array_push($values, "'" . $_POST["event_id"] . "'");
+		}
+		foreach ($values as $key => $value) {
+			if ($value == "''") {
+				$values[$key] = "NULL";
+			}
+		}
+
+		$names = implode(", ", $names);
+		$values = implode(", ", $values);
+		$query = "DELETE FROM guess_event WHERE (event_id=" . $_POST["event_id"] . " && vk_id=" . $_POST["vk_id"] . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+
 }
 ?>
