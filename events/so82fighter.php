@@ -94,6 +94,14 @@ if ($line["visibility"] <= 2) {
   echo " (совместно с кандидатами)\\n\n";
 }
 ?>
+ на мероприятие записались: \n
+ <?php
+    $query2 = 'SELECT guess_event.vk_id, fighters.name as name, fighters.surname as surname, fighters.phone as phone FROM guess_event LEFT OUTER JOIN fighters ON guess_event.vk_id=fighters.vk_id WHERE guess_event.event_id='.$line["id"].';';
+    $rt2 = mysqli_query($link, $query2) or die('Запрос не удался: ');
+    while ($person = mysqli_fetch_array($rt2, MYSQL_ASSOC)) {
+ ?>
+ * <?=$person["name"]?> <?=$person["surname"]?> +7<?=$person["phone"]?> \n
+<?php } ?>
 LOCATION: <?=$line["place"]?> 
 URL:spo-sozvezdie.hol.es/events/<?=$line[id]?>/
 END:VEVENT
