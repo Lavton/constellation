@@ -399,14 +399,6 @@ function apply_to_event() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"])) {
-		if (isset($_POST["vk_id"])) {
-			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
-				echo json_encode(array('result' => "Fail"));
-				return;
-			}
-		} else {
-			$_POST["vk_id"] = $_SESSION["vk_id"];
-		}
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -420,12 +412,26 @@ function apply_to_event() {
 		}
 		$link->set_charset("utf8");
 
+		if (isset($_POST["vk_id"])) {
+			$query = "SELECT id FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			$userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
+			$userId = $userId["id"];
+
+			if (!(canEditEvent($link, $userId, $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+				echo json_encode(array(
+					'result' => canEditEvent($link, $_SESSION["vk_id"], $_POST["event_id"]))
+				);
+				return;
+			}
+		} else {
+			$_POST["vk_id"] = $_SESSION["vk_id"];
+		}
+
 		$names = array();
 		$values = array();
-		if (isset($_POST["vk_id"])) {
-			array_push($names, "vk_id");
-			array_push($values, "'" . $_POST["vk_id"] . "'");
-		}
+		array_push($names, "vk_id");
+		array_push($values, "'" . $_POST["vk_id"] . "'");
 		if (isset($_POST["event_id"])) {
 			array_push($names, "event_id");
 			array_push($values, "'" . $_POST["event_id"] . "'");
@@ -444,6 +450,5 @@ function apply_to_event() {
 		mysqli_close($link);
 		echo json_encode($result);
 	}
-
 }
 ?>

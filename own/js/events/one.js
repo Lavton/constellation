@@ -195,21 +195,25 @@
 
     // добавляем себя на мероприятие
     $scope.applyToEvent = function(person) {
-      console.log("apply", person)
       var data = {
         "action": "apply_to_event",
         "event_id": $scope.event.id,
       }
       if (person) {
-        data.vk_id = person;
+        data.vk_id = _.find(window.people, function(p) {
+          return person == p.domain;
+        }).uid
       }
-      
+      console.log("apply", data.vk_id)
+
       $.ajax({ //TODO: make with angular
         type: "POST",
         url: "/handlers/event.php",
         dataType: "json",
         data: $.param(data)
-      }).done(function(response) {});
+      }).done(function(response) {
+        console.log(response)
+      });
     }
 
     /*синхронизируемся, где надо*/
