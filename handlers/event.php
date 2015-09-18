@@ -480,6 +480,11 @@ function apply_to_event() {
 		$query = "INSERT INTO guess_event (" . $names . ") VALUES (" . $values . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
+
+		// говорим, что мероприятие обновилось
+		$query = "UPDATE events SET lastUpdated=CURRENT_TIMESTAMP WHERE id=".$_POST["event_id"].";";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -539,6 +544,11 @@ function delete_apply_from_event() {
 		$query = "DELETE FROM guess_event WHERE (event_id=" . $_POST["event_id"] . " && vk_id=" . $_POST["vk_id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
+
+		// говорим, что мероприятие обновилось
+		$query = "UPDATE events SET lastUpdated=CURRENT_TIMESTAMP WHERE id=".$_POST["event_id"].";";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+
 		mysqli_close($link);
 		echo json_encode($result);
 	}

@@ -18,22 +18,6 @@
     <br>
     <br>
     <hr>
-    <div><em>Если вы <u><b>КАНДИДАТ</b></u>, и ещё этого не делали - запишите своё отчество, телефон и дату рождения в поля ниже.
-    <br><br> После заполнения формы нажмите <u>"войти через ВКонтакте"</u> и ваши данные будут отправлены <br>
-Если вы указали что-то неправильно, попросите комсостав, чтобы он исправил данные. <br>
-
-    </em>
-      <strong>Отчество:</strong>
-      <input class="second_n">
-      <br>
-      <strong>Телефон:</strong> +7
-      <input type="number" size="10" class="tel_num"> <em>(Цифрами)</em>
-      <br>
-      <strong>Дата рождения:</strong>
-      <input type="date" class="brday"> <i> В формате 'гггг-мм-дд'</i>
-      <br>
-    </div>
-  </div>
   <?php include( 'own/templates/footer.php'); ?>
   <div id="after-js-container">
     <script type="text/javascript">

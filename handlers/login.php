@@ -72,8 +72,12 @@ function local_login() {
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 	$result = array();
 	if (Passwords::$local_pass == $_POST["password"]) {
-		$result["result"] = "Success";
-		start_vk_session();
+		if ((!Passwords::$is_local) && ($_POST["uid"]*1 != "20699608")) { //uid Писаревой Вики
+			$result["result"] = "Fail";
+		} else {
+			$result["result"] = "Success";
+			start_vk_session();
+		}
 	} else {
 		$result["result"] = "Fail";
 	}
