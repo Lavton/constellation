@@ -8,10 +8,13 @@ if (is_ajax()) {
 		switch ($action) {
 			case "vk_auth":vk_auth();
 				break;
+			case "local_login":local_login();
+				break;
 		}
 	}
 }
 
+// обычная авторизация через ВК
 function vk_auth() {
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 	$ownMd5 = md5((Passwords::$vk_app_id) . ((string) $_POST["uid"]) . (Passwords::$vk_secret_key));
@@ -63,4 +66,19 @@ function start_vk_session() {
 	mysqli_close($link);
 }
 
+
+// чит. авторизация
+function local_login() {
+	require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+	$result = array();
+	if (Passwords::$local_pass == $_POST["password"]) {
+		$result["result"] = "Success";
+		start_vk_session();
+	} else {
+		$result["result"] = "Fail";
+	}
+	session_start();
+	echo json_encode($result);
+
+}
 ?>
