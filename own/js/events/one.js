@@ -209,7 +209,16 @@
 
     // создаём текст поста для ВК. Пока заглушка
     $scope.exportToVK = function() {
-      $scope.vk_export = "sadsad";
+      $scope.vk_export = "\n__________\n";
+      $scope.vk_export += $scope.event.name + ($scope.parent_event.name ? (" (" + $scope.parent_event.name+ ")\n") : "\n");
+      $scope.vk_export += "Начало: " + $scope.event.start_time + "\n"; 
+      $scope.vk_export += "Место: " + $scope.event.place + "\n";
+      $scope.vk_export += "Контактное лицо: " + $scope.event.contact + "\n";
+      $scope.vk_export += "\n__________\n";
+      _.each($scope.event.users, function(person) {
+        var pers_string = "*"+person.domain + " (" + person.first_name + "), ";
+        $scope.vk_export += pers_string
+      })
     }
 
     // добавляем себя на мероприятие

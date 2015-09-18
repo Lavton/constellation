@@ -37,10 +37,12 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
               <span ng-show="person.uid==window.getCookie('vk_id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
             </li>
           </ul>
-          <!-- <a href="" ng-click="exportToVK()">текст для ВК</a><br>
+          <button ng-click="exportToVK()" ng-show="event.editable">Сгенерировать запись для ВКонтакте</button>
         <div ng-show="vk_export">
-          <textarea ng-model="vk_export" rows="10" cols="80"></textarea>
-        </div> -->
+          <textarea ng-model="vk_export" rows="10" cols="80"></textarea> <br>
+          Это шаблонная концовка новости про мероприятие. Добавьте, что хотите, 
+          Скопируйте текст в буффер обмена и вставьте в нужные группы: <a href="https://vk.com/spo_sozvezdie" target="_blank">бойцов</a> или|и <a href="https://vk.com/sozvezdie_school" target="_blank">кандидатов</a>
+        </div>
         </div>
       </div>
     </div>
