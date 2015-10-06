@@ -24,6 +24,7 @@
     // показывает форму создания нового базового мероприятия
     $scope.addNewEvent = function() {
       $scope.adding_new = !$scope.adding_new;
+      $('html, body').animate({ scrollTop: $("footer").offset().top }, 500); // анимируем скроолинг к элементу
     }
 
     // создаёт новое базовое мероприятие
