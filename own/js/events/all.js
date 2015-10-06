@@ -2,16 +2,47 @@
 (function() {
   /*логика ангулара*/
   function init_angular_e_c($scope, $http) {
-    
+    $scope.window = window;
+    $scope.newevent = {}
+
+    // инициируем для выбора даты
+    $('.date').pickmeup({
+      format  : 'Y-m-d',
+      hide_on_select  : true,
+      change: function() {
+        var path = this.getAttribute("ng-model").split(".")
+        var self = $scope;
+        for (var i = 0; i < path.length - 1; i++) {
+          self = self[path[i]]
+        };
+        console.log($(this).val())
+        console.log(path)
+        console.log(self[path[path.length - 1]])
+        self[path[path.length - 1]] = $(this).val();
+        if (!$scope.newevent.finish_date) {
+          $scope.newevent.finish_date = $scope.newevent.start_date;
+        }
+        $scope.$apply();
+        return true;
+      }
+    });
+    $(document).keyup(function(e) {
+      if (e.keyCode == 27) {
+        $('.date').pickmeup('hide');
+      }
+    });
+    $scope.newevent.start_time="00:00"
+
     // возращает дату в формате "6 мая 2015"
     $scope.formatDate = function(date) {
       date = new Date(date);
       Number.prototype.toMonthName = function() {
-        var month = ['января','февраля','марта','апреля','мая','июня',
-        'июля','августа','сентября','октября','ноября','декабря'];
+        var month = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+          'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+        ];
         return month[this];
       };
-      return date.getDate()+" "+date.getMonth().toMonthName()+" "+date.getFullYear();
+      return date.getDate() + " " + date.getMonth().toMonthName() + " " + date.getFullYear();
     }
 
     var data = {
@@ -51,6 +82,50 @@
       });
     }
 
+    // показывает форму создания нового мероприятия
+    $scope.addNewEvent = function() {
+      $scope.adding_new = true;
+      $scope.edit_ev = false;
+      $scope.newevent = {
+        "visibility": 3
+      }
+      if (!$scope.eventsBase) {
+        var data = {
+          "action": "get_base_and_par"
+        }
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/event.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(response) {
+          console.log(response);
+          $scope.pos_parents = response.pos_parents;
+          $scope.newevent.contact = response.me;
+          $scope.pos_parents.push({
+            id: null,
+            name: "--нет--"
+          })
+          $scope.eventsBase = response.eventsBase;
+          $scope.eventsBase.push({
+            id: null,
+            name: "--нет--"
+          })
+          $scope.$apply();
+        });
+
+      }
+      $('html, body').animate({
+        scrollTop: $("footer").offset().top
+      }, 500); // анимируем скроолинг к элементу
+    }
+
+    $scope.changeBase = function(base_id) {
+      if (!$scope.newevent.name) {
+        $scope.newevent.name = _.findWhere($scope.eventsBase, {id: base_id}).name;
+        $scope.newevent.visibility = _.findWhere($scope.eventsBase, {id: base_id}).visibility*1;
+      }
+    }
   }
 
   // работа с новым событием

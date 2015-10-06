@@ -26,15 +26,15 @@
   <div ng-show="adding_new || edit_ev" ng-init="adding_new=false; edit_ev=false"> 
   <em>Поля, отмеченные * обязательны для заполнения<br></em>
 <br>
-<button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
-<button type="button" ng-click="editEventSubmit()" ng-show="edit_ev" class="btn btn-success">Редактировать</button>
+<button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new && newevent.name" class="btn btn-success">Создать</button>
+<button type="button" ng-click="editEventSubmit()" ng-show="edit_ev && newevent.name" class="btn btn-success">Редактировать</button>
 <br>
  название*: <input ng-model="newevent.name" placeholder="название мероприятия" size=50 /> <br>
  Виден для*: <input type="number" min="1" max="7" ng-model="newevent.visibility" size="{{(newevent.visibility).length}}" ng-init="newevent.visibility=3"/> ({{groups[window.visibilities[newevent.visibility]].rus}}) <br>
  Описание: <input type="text" ng-model="newevent.comments" size="50">
  <br>
- <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
- <button type="button" ng-click="editEventSubmit()" ng-show="edit_ev" class="btn btn-success">Редактировать</button>
+ <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new && newevent.name" class="btn btn-success">Создать</button>
+ <button type="button" ng-click="editEventSubmit()" ng-show="edit_ev && newevent.name" class="btn btn-success">Редактировать</button>
  </div>
 
     </div>

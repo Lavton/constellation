@@ -125,6 +125,8 @@
       "events": {
         "all": {
           "js": [
+            "/standart/js/jquery.hideseek.js",
+            "/standart/js/jquery.pickmeup.min.js",
             "/own/js/events/all.js",
           ],
           "title": "мероприятия | СПО \"СОзвездие\"",

@@ -181,6 +181,10 @@ $link = mysqli_connect(
 			array_push($names, "finish_time	");
 		}
 
+		if (isset($line["parent_id"])) {
+			array_push($values, "'" . $line["parent_id"] . "'");
+			array_push($names, "parent_id");
+		}
 		$names = implode(", ", $names);
 		$values = implode(", ", $values);
 
@@ -192,10 +196,6 @@ $link = mysqli_connect(
 		if (isset($line["id"])) {
 			array_push($values, "'" . $line["id"] . "'");
 			array_push($names, "id");
-		}
-		if (isset($line["parent_id"])) {
-			array_push($values, "'" . $line["parent_id"] . "'");
-			array_push($names, "parent_id");
 		}
 		if (isset($line["contact"])) {
 			array_push($values, "'" . $line["contact"] . "'");

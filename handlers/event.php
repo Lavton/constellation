@@ -17,7 +17,7 @@ if (is_ajax()) {
 				break;
 			case "kill_event":kill_event();
 				break;
-			case "get_reproduct":get_reproduct();
+			case "get_base_and_par":get_base_and_par();
 				break;
 			case "getMe":getMe();
 				break;
@@ -349,8 +349,8 @@ function kill_event() {
 	}
 }
 
-/* выдаёт всех возможных родителей - события, которые сами не дети*/
-function get_reproduct() {
+/* выдаёт всех базовых мероприятий и возможных родителей (событий, которые сами не дети)*/
+function get_base_and_par() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
@@ -367,8 +367,7 @@ function get_reproduct() {
 		}
 		$link->set_charset("utf8");
 		// поиск мероприятий
-		$query = 'SELECT id, name, start_time, end_time FROM events WHERE (visibility <= ' . $_POST["visibility"] . ' AND parent_id IS NULL AND end_time >= CURRENT_TIMESTAMP AND start_time >= \'' . $_POST["end_time"] . '\') ORDER BY start_time;';
-
+		$query = 'SELECT id, name FROM `EventsMain` WHERE parent_id IS NULL AND start_date>=CURRENT_DATE;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["pos_parents"] = array();
 
@@ -377,6 +376,20 @@ function get_reproduct() {
 				array_push($result["pos_parents"], $line);
 			}
 		}
+
+		$query = 'SELECT id, name, visibility FROM EventsBase WHERE (visibility <= ' . $_SESSION["current_group"] . ');';
+
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["eventsBase"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["eventsBase"], $line);
+		}
+
+		$query = "SELECT name, surname, vk_id, phone, second_phone FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["me"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		$result["me"] = $result["me"]["name"]." ".$result["me"]["surname"]." +7".$result["me"]["phone"];
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
