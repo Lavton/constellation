@@ -11,8 +11,35 @@ if (is_ajax()) {
 				break;
 			case "get_birthdays": get_birthdays();
 				break;
+			case "get_base_events": get_base_events();
+				break;
+			case "add_base_event": add_base_event();
+				break;
 		}
 	}
+}
+
+// упрощает вставку
+function inserter($link, $table, $data) {
+	$names = array();
+	$values = array();
+
+	foreach ($data as $key => $value) {
+		array_push($names, $key);
+		array_push($values, "'" . $value . "'");
+	}
+	foreach ($values as $key => $value) {
+		if ($value == "''") {
+			$values[$key] = "NULL";
+		}
+	}
+	$names = implode(", ", $names);
+	$values = implode(", ", $values);
+	$query = "INSERT INTO ".$table." (" . $names . ") VALUES (" . $values . ");";
+	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+	$result = array();
+	$result["result"] = "Success";
+	return $result;
 }
 
 //отображает список смен для дальнейшего выбора действий
@@ -128,4 +155,55 @@ function get_birthdays() {
 		echo json_encode($result);
 	}
 }
+
+
+// получаем список базовых мероприятий
+function get_base_events() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$query = "SELECT * FROM EventsBase;";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["events"] = array();
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["events"], $line);
+		}
+		echo json_encode($result);
+	}
+}
+
+// добавляет новое базовое мероприятие
+function add_base_event() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$result = inserter($link, "EventsBase", array("name" => $_POST["name"], "visibility" => $_POST["visibility"], "comments" => $_POST["comments"]));
+	}
+	echo json_encode($result);
+}
+
 ?>

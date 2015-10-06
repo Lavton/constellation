@@ -149,6 +149,11 @@
                   Люди
                 </li>
               </a>
+              <a href="/cs/events" class="cs events ajax-nav">
+                <li class="cs events">
+                  Мероприятия
+                </li>
+              </a>
             </ul>
           </div>
         </div>
