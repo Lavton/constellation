@@ -15,7 +15,7 @@
       <div ng-show="events">
       <ul>
         <li ng-repeat="event in events">
-        <em>{{event.id}}</em> <strong>{{event.name}}:</strong> {{event.comments}}
+        <strong>{{event.name}}:</strong> {{event.comments}}
         </li>
        </ul>
       </div>

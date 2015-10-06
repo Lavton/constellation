@@ -20,7 +20,7 @@ if (is_ajax()) {
 }
 
 // упрощает вставку
-function inserter($link, $table, $data) {
+function inserter($link, $table, $data, $needId=False) {
 	$names = array();
 	$values = array();
 
@@ -36,9 +36,12 @@ function inserter($link, $table, $data) {
 	$names = implode(", ", $names);
 	$values = implode(", ", $values);
 	$query = "INSERT INTO ".$table." (" . $names . ") VALUES (" . $values . ");";
-	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+	$link->query($query);
 	$result = array();
 	$result["result"] = "Success";
+	if ($needId) {
+		$result["id"] = $link->insert_id;
+	}
 	return $result;
 }
 
@@ -201,7 +204,7 @@ function add_base_event() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$result = inserter($link, "EventsBase", array("name" => $_POST["name"], "visibility" => $_POST["visibility"], "comments" => $_POST["comments"]));
+		$result = inserter($link, "EventsBase", array("name" => $_POST["name"], "visibility" => $_POST["visibility"], "comments" => $_POST["comments"]), True);
 	}
 	echo json_encode($result);
 }

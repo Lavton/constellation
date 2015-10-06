@@ -38,16 +38,15 @@
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-          var lnk = document.createElement("a");
-          lnk.setAttribute("class", "ajax-nav")
-          $(lnk).attr("href", window.location.href);
-          $("#page-container").append(lnk);
-          $(lnk).trigger("click")
-
+        console.log(json)
+        $scope.newevent.id = json.id
+        $scope.events.push($scope.newevent)
+        $scope.newevent = {}
+        $scope.adding_new = false;
+        $scope.$apply();
+        $('html, body').animate({ scrollTop: $("#page-container").offset().top }, 500); // анимируем скроолинг к элементу
       })
-
     }
-
   }
 
 
