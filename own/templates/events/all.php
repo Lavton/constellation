@@ -3,17 +3,18 @@
   <h2 ng-show="events.future">Грядущие</h2>
   <ul>
     <li ng-repeat="event in events.future">
-       <p>{{event.start_date}} {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
+       <p>{{formatDate(event.start_date)}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
               {{event.base}}
        <br></p>
-       {{event | json}}
     </li>
   </ul>
 
   <h2 ng-show="events.actual">Текущие</h2>
   <ul>
     <li ng-repeat="event in events.actual">
-      {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
+      <p>{{formatDate(event.start_date)}}, в {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
+              {{event.base}}
+       <br></p>
     </li>
   </ul>
 
@@ -23,7 +24,9 @@
   <h2 ng-show="events.prev">Прошедшие</h2>
   <ul>
     <li ng-repeat="event in events.prev">
-      {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.name}}</a> <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
+      <p>{{formatDate(event.start_date)}}, в {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
+              {{event.base}}
+       <br></p>
     </li>
   </ul>
 

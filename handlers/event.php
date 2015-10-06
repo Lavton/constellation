@@ -121,7 +121,13 @@ function get_all() {
 		}
 		$link->set_charset("utf8");
 		// поиск мероприятий
-		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EE.parent_id AS parent_id, EvB.name AS parent_name FROM EventsMain AS EM LEFT JOIN EventsBase AS EB ON EB.id=base_id LEFT JOIN EventsEvents AS EE ON EE.id=EM.id LEFT JOIN EventsBase AS EvB ON parent_id=EvB.id WHERE (EM.finish_date >= CURRENT_DATE) ORDER BY EM.start_date;';
+		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EE.parent_id AS parent_id, EvB.name AS parent_name 
+		FROM EventsMain AS EM 
+		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
+		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id 
+		LEFT JOIN EventsMain AS EvB ON parent_id=EvB.id 
+		WHERE (EM.finish_date >= CURRENT_DATE) 
+		ORDER BY EM.start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["events"] = array();
 
@@ -154,8 +160,14 @@ function arhive() {
 		}
 		$link->set_charset("utf8");
 		// поиск мероприятий
-		$query = 'SELECT * FROM events WHERE (end_time < CURRENT_TIMESTAMP AND start_time >= "' . $_POST["month"] . '-01 00:00:00") ORDER BY start_time;';
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EE.parent_id AS parent_id, EvB.name AS parent_name 
+		FROM EventsMain AS EM 
+		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
+		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id 
+		LEFT JOIN EventsMain AS EvB ON parent_id=EvB.id  
+		WHERE (EM.finish_date < CURRENT_DATE AND EM.start_date >= "' . $_POST["month"] . '-01") 
+		ORDER BY EM.start_date DESC;';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: '.$query);
 		$result["events"] = array();
 
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
@@ -164,6 +176,7 @@ function arhive() {
 			}
 		}
 		$result["result"] = "Success";
+		$result["qw"] = $query;
 		mysqli_close($link);
 		echo json_encode($result);
 	}

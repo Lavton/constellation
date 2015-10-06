@@ -2,6 +2,18 @@
 (function() {
   /*логика ангулара*/
   function init_angular_e_c($scope, $http) {
+    
+    // возращает дату в формате "6 мая 2015"
+    $scope.formatDate = function(date) {
+      date = new Date(date);
+      Number.prototype.toMonthName = function() {
+        var month = ['января','февраля','марта','апреля','мая','июня',
+        'июля','августа','сентября','октября','ноября','декабря'];
+        return month[this];
+      };
+      return date.getDate()+" "+date.getMonth().toMonthName()+" "+date.getFullYear();
+    }
+
     var data = {
       action: "all",
     };
