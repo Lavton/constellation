@@ -15,6 +15,10 @@ if (is_ajax()) {
 				break;
 			case "add_base_event": add_base_event();
 				break;
+			case "edit_base_event": edit_base_event();
+				break;
+			case "delete_base_event": delete_base_event();
+				break;
 		}
 	}
 }
@@ -42,6 +46,36 @@ function inserter($link, $table, $data, $needId=False) {
 	if ($needId) {
 		$result["id"] = $link->insert_id;
 	}
+	return $result;
+}
+
+// упрощает редактирование
+function updater($link, $table, $data, $is_by_id=True, $condition="") {
+	$names = array();
+	$values = array();
+
+	foreach ($data as $key => $value) {
+		array_push($names, $key);
+		array_push($values, "'" . $value . "'");
+	}
+	foreach ($values as $key => $value) {
+		if ($value == "''") {
+			$values[$key] = "NULL";
+		}
+	}
+	$conc = array();
+	foreach ($names as $key => $value) {
+		array_push($conc, "" . $value . "=" . $values[$key]);
+	}
+	$conc = implode(", ", $conc);
+	$query = "";
+	if ($is_by_id) {
+		$query = "UPDATE ".$table." SET " . $conc . " WHERE id='" . $data['id'] . "';";
+	} else {
+		$query = "UPDATE ".$table." SET " . $conc . " WHERE (" . $condition . ");";
+	}
+	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+	$result["result"] = "Success";
 	return $result;
 }
 
@@ -209,4 +243,50 @@ function add_base_event() {
 	echo json_encode($result);
 }
 
+// редактирует существующее базовое мероприятие
+function edit_base_event() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$result = updater($link, "EventsBase", array("id" => $_POST["id"], "name" => $_POST["name"], "visibility" => $_POST["visibility"], "comments" => $_POST["comments"]));
+	}
+	echo json_encode($result);
+}
+
+// удаляет базовое мероприятие
+function delete_base_event() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$query = "DELETE FROM EventsBase WHERE (id=" . $_POST["id"] . ");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);	
+	}
+}
 ?>

@@ -15,22 +15,26 @@
       <div ng-show="events">
       <ul>
         <li ng-repeat="event in events">
-        <strong>{{event.name}}:</strong> {{event.comments}}
+        <strong>{{event.name}}:</strong> {{event.comments}} 
+        <a href="" ng-click="editEvent(event)"><img src="/own/images/edit.png" width="10px"></a>
+        <a href="" ng-click="deleteEvent(event)"><img src="/own/images/delete.png" width="10px"></a>
         </li>
        </ul>
       </div>
       Добавить базовое мероприятие:
       <button type="button" ng-click="addNewEvent()" class="btn btn-warning" >Создать мероприятие?</button> 
-  <div ng-show="adding_new" ng-init="adding_new=false"> 
+  <div ng-show="adding_new || edit_ev" ng-init="adding_new=false; edit_ev=false"> 
   <em>Поля, отмеченные * обязательны для заполнения<br></em>
 <br>
-<button type="button" ng-click="addNewEventSubmit()" class="btn btn-success">Создать</button>
+<button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
+<button type="button" ng-click="editEventSubmit()" ng-show="edit_ev" class="btn btn-success">Редактировать</button>
 <br>
  название*: <input ng-model="newevent.name" placeholder="название мероприятия" size=50 /> <br>
  Виден для*: <input type="number" min="1" max="7" ng-model="newevent.visibility" size="{{(newevent.visibility).length}}" ng-init="newevent.visibility=3"/> ({{groups[window.visibilities[newevent.visibility]].rus}}) <br>
  Описание: <input type="text" ng-model="newevent.comments" size="50">
  <br>
- <button type="button" ng-click="addNewEventSubmit()" class="btn btn-success">Создать</button>
+ <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
+ <button type="button" ng-click="editEventSubmit()" ng-show="edit_ev" class="btn btn-success">Редактировать</button>
  </div>
 
     </div>
