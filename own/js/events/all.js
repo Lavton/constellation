@@ -12,13 +12,8 @@
       $scope.events.actual = [];
       $scope.events.future = [];
       _.each($scope.events.all, function(element, index, list) {
-        if (element.parent_id) {
-          element.parent_name = _.findWhere($scope.events.all, {
-            id: element.parent_id
-          }).name;
-        }
-        element.st_date = new Date(element.start_time);
-        element.fn_date = new Date(element.end_time);
+        element.st_date = new Date(element.start_date);
+        element.fn_date = new Date(element.finish_date);
         if (element.st_date > today) {
           $scope.events.future.push(element);
         } else {
@@ -37,21 +32,8 @@
         $scope.events.oall = response.events;
         $scope.events.prev = [];
         _.each($scope.events.oall, function(element, index, list) {
-          if (element.parent_id) {
-            element.parent_name = _.findWhere($scope.events.oall, {
-              id: element.parent_id
-            });
-            if (element.parent_name) {
-              element.parent_name = element.parent_name.name;
-            } else {
-              element.parent_name = _.findWhere($scope.events.all, {
-                id: element.parent_id
-              }).name;
-            }
-          }
-
-          element.st_date = new Date(element.start_time);
-          element.fn_date = new Date(element.end_time);
+          element.st_date = new Date(element.start_date);
+          element.fn_date = new Date(element.finish_date);
           $scope.events.prev.push(element);
         });
       });
