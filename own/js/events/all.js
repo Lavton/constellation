@@ -6,9 +6,9 @@
     $scope.newevent = {}
 
     // инициируем для выбора даты
-    $('.date').pickmeup({
-      format  : 'Y-m-d',
-      hide_on_select  : true,
+    $('input.date').pickmeup({
+      format: 'Y-m-d',
+      hide_on_select: true,
       change: function() {
         var path = this.getAttribute("ng-model").split(".")
         var self = $scope;
@@ -33,16 +33,7 @@
     });
 
     // возращает дату в формате "6 мая 2015"
-    $scope.formatDate = function(date) {
-      date = new Date(date);
-      Number.prototype.toMonthName = function() {
-        var month = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-          'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
-        ];
-        return month[this];
-      };
-      return date.getDate() + " " + date.getMonth().toMonthName() + " " + date.getFullYear();
-    }
+    $scope.formatDate = window.formatDate;
 
     var data = {
       action: "all",
@@ -62,8 +53,20 @@
           $scope.events.actual.push(element);
         }
       });
+
+      // хотим привязку, но в этот момент элементы ещё не созданы
+      setTimeout(function() {
+        _.each($("span.date"), function(self) {
+          $(self).pickmeup({
+            format: 'Y-m-d',
+            hide_on_select: true,
+            date: new Date($(self).attr("class").split(" ")[1])
+          });
+        })
+      }, 500);
     });
 
+    // получить список архивных мероприятий
     $scope.get_arhive = function(month) {
       var data = {
         action: "arhive",
@@ -102,7 +105,7 @@
         }).done(function(response) {
           console.log(response);
           $scope.pos_parents = response.pos_parents;
-          $scope.newevent.contact = response.me.first_name+" "+response.me.last_name+" +7"+response.me.phone;
+          $scope.newevent.contact = response.me.first_name + " " + response.me.last_name + " +7" + response.me.phone;
           $scope.newevent.editor = response.me.id;
           $scope.pos_parents.push({
             id: null,
@@ -125,8 +128,12 @@
     // выполняется при выборе базового мероприятия. Меняет имя и видимость
     $scope.changeBase = function(base_id) {
       if (!$scope.newevent.name) {
-        $scope.newevent.name = _.findWhere($scope.eventsBase, {id: base_id}).name;
-        $scope.newevent.visibility = _.findWhere($scope.eventsBase, {id: base_id}).visibility*1;
+        $scope.newevent.name = _.findWhere($scope.eventsBase, {
+          id: base_id
+        }).name;
+        $scope.newevent.visibility = _.findWhere($scope.eventsBase, {
+          id: base_id
+        }).visibility * 1;
       }
     }
 
@@ -143,60 +150,13 @@
         data: $.param(data)
       }).done(function(json) {
         console.log(json)
-        // $scope.newevent.id = json.id
-        // $scope.events.push($scope.newevent)
-        // $scope.newevent = {"visibility":3}
-        // $scope.adding_new = false;
-        // $scope.$apply();
-        $('html, body').animate({ scrollTop: $("nav").offset().top }, 500); // анимируем скроолинг к элементу
+        $('html, body').animate({
+          scrollTop: $("nav").offset().top
+        }, 500); // анимируем скроолинг к элементу
+        window.location = "/events/" + json.id;
       })
     }
-
   }
-
-  // работа с новым событием
-  $('#page-container').on('click', ".pre-add-new-event", function() {
-    var auto_date = null;
-    if (!$(".pre-add-new-event").hasClass("clicked")) {
-      $(".add-new-input-w").removeClass("hidden")
-      $(".pre-add-new-event").addClass("clicked")
-      $(".pre-add-new-event").text("Добавить")
-      auto_date = setInterval(function() {
-        var start_date = $(".add-new-event-start-date").val();
-        var end_date = $(".add-new-event-end-date").val();
-        if (end_date == "") {
-          if (start_date != "") {
-            $(".add-new-event-end-date").val(start_date);
-          }
-        } else {
-          clearInterval(auto_date);
-        }
-      }, 750);
-
-    } else {
-      var name = $(".add-new-event-name").val();
-      var start_date = $(".add-new-event-start-date").val();
-      var start_time = $(".add-new-event-start-time").val();
-      var end_date = $(".add-new-event-end-date").val();
-      var end_time = $(".add-new-event-end-time").val();
-      var send_data = {
-        action: "add_new_event",
-        name: name,
-        start_time: start_date + " " + start_time + ":00",
-        end_time: end_date + " " + end_time + ":00"
-      }
-      $.ajax({ //TODO: make with angular
-        type: "POST",
-        url: "/handlers/event.php",
-        dataType: "json",
-        data: $.param(send_data)
-      }).done(function(response) {
-        if (response.result == "Success") {
-          window.location = "/events/" + response.id;
-        }
-      });
-    }
-  });
 
   function init() {
     window.init_ang("eventsApp", init_angular_e_c, "events-all");

@@ -3,7 +3,7 @@
   <h2 ng-show="events.future">Грядущие</h2>
   <ul>
     <li ng-repeat="event in events.future">
-       <p>{{formatDate(event.start_date)}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
+       <p><span class="date {{event.start_date}}">{{formatDate(event.start_date)}}</span> <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
      <!--          {{event.base}} -->
        <br></p>
     </li>
@@ -40,10 +40,9 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
   <em>Поля, отмеченные * обязательны для заполнения<br></em>
 <br>
 <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
-<button type="button" ng-click="editEventSubmit()" ng-show="edit_ev" class="btn btn-success">Редактировать</button>
 <br> 
- Базовое мероприятие:  <select ng-change="changeBase(newevent.base_id)" ng-model="newevent.base_id" ng-options="value.id as value.name for (key , value) in eventsBase"></select> <br>
- Головное мероприятие: <select ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select> <br><br>
+ <span ng-hide="newevent.parent_id"> Базовое мероприятие:  <select ng-change="changeBase(newevent.base_id)" ng-model="newevent.base_id" ng-options="value.id as value.name for (key , value) in eventsBase"></select> </span><br>
+ <span ng-hide="newevent.base_id"> Головное мероприятие: <select ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select></span> <br><br>
  название*: <input ng-model="newevent.name" placeholder="название мероприятия" size=50 /> <br>
  место: <input ng-model="newevent.place" placeholder="место мероприятия" size=50 /> <br><br>
  Дата начала*: <input type="text" class="date" ng-model="newevent.start_date">  {{newevent.start_date}}<br>
@@ -55,7 +54,6 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
  Описание: <br> <textarea ng-model="newevent.comments" class="bbcode" cols="20" rows="5"></textarea>
  <br>
  <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
- <button type="button" ng-click="editEventSubmit()" ng-show="edit_ev" class="btn btn-success">Редактировать</button>
  </div>
 
 

@@ -6,7 +6,8 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
     <br>
     <div class="event-info hidden">
       <div class="col-xs-12">
-        <h2>{{event.name}}
+        <h2><span ng-hide="event.base_id">{{event.name}}</span>
+        <span ng-show="event.base_id"><abbr title="{{event.base_dis}}">{{event.name}}</abbr></span>
         <button type="button" ng-show="event.editable" class="btn btn-primary text-right" ng-click="editEventInfo(true)">Редактировать описание мероприятия</button>
       </h2>
         <hr>
@@ -15,14 +16,15 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <div class="row own-row">
         <div class="col-xs-5 info-str">
           <ul>
-            <li ng-show="parent_event.name"><strong>Головное мероприятие:</strong> <a target="_blank" href="{{'/events/'+parent_event.id}}">{{parent_event.name}}</a> </li>
+            <li ng-show="event.parent_name"><strong>Головное мероприятие:</strong> <a target="_blank" href="{{'/events/'+event.parent_id}}">{{event.parent_name}}</a> </li>
             <li ng-show="event.place || event.editable"><strong>Место:</strong> {{event.place}}</li>
-            <li ng-show="event.start_time"><strong>Начало:</strong> {{event.start_time}} </li>
-            <li ng-show="event.end_time"><strong>Дата окончания:</strong> {{event.end_time}} </li>
+            <li ng-show="event.start_time"><strong>Начало:</strong> <span class="date {{event.start_date}}">{{formatDate(event.start_date)}}</span> в {{event.start_time}} </li>
+            <li ng-show="event.finish_time"><strong>Окончание:</strong> <span class="date {{event.finish_date}}">{{formatDate(event.finish_date)}}</span> в {{event.finish_time}} </li>
             <li ng-show="event.visibility"><strong>Виден для: </strong>{{event.visibility}} ({{window.groups[window.visibilities[event.visibility]].rus}})</li>
             <li ng-show="event.contact || event.editable"><strong>Контактное лицо:</strong> {{event.contact}} </li>
-            <li ng-show="event.lastUpdated"><strong>Последнее обновление</strong> {{event.lastUpdated}}</li>
-            <li ng-show="event.editor"><strong>Создал </strong> {{event.editor_user.name}} {{event.editor_user.surname}}</li>
+            <li ng-show="event.last_updated"><strong>Последнее обновление</strong> {{formatTimestamp(event.last_updated)}}</li>
+            <li ng-show="editors"><strong>Редактирует(ют): </strong> 
+            <a href="/about/users/{{editor.editor}}" ng-repeat="editor in editors">{{editor.first_name}} {{editor.last_name}} </a></li>
             <li ng-show="event.comments"><strong>Комментарии:</strong>
               <br/>
               <div class="table-bordered bb-codes" ng-bind-html="event.bbcomments" ng-show="event.bbcomments"></div>
@@ -33,8 +35,9 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <br>
           <h4>Записавшиеся люди:</h4>
           <ul>
-            <li ng-repeat="person in event.users"> <img ng-src="{{person.photo}}" width="20"> {{person.IF}}
-              <span ng-show="person.uid==window.getCookie('vk_id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
+            <li ng-repeat="person in appliers"> <img ng-src="{{person.photo}}" width="20"> 
+             <a href="/about/users/{{person.user}}">{{person.IF}}</a> 
+              <span ng-show="person.user==window.getCookie('fighter_id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
             </li>
           </ul>
           <button ng-click="exportToVK()" ng-show="event.editable">Сгенерировать запись для ВКонтакте</button>

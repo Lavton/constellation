@@ -7,6 +7,32 @@ window.goodTelephoneView = function(tel) {
   return tel ? "+7 (" + tel[0] + tel[1] + tel[2] + ") " + tel[3] + tel[4] + tel[5] + "-" + tel[6] + tel[7] + "-" + tel[8] + tel[9] : ""
 }
 
+// форматирует строку вида '2015-10-20' в '20 ноября 2015'
+window.formatDate = function(date) {
+  date = new Date(date);
+  Number.prototype.toMonthName = function() {
+    var month = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+      'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    ];
+    return month[this];
+  };
+  return date.getDate() + " " + date.getMonth().toMonthName() + " " + date.getFullYear();
+}
+
+// форматирует timestamp в удобный вид
+window.formatTimestamp = function(date) {
+  date = new Date(date);
+  Number.prototype.toMonthName = function() {
+    var month = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+      'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    ];
+    return month[this];
+  };
+  return date.getDate() + " " + date.getMonth().toMonthName() + " " + date.getFullYear() + " " +
+  date.getHours() + ":" + date.getMinutes(); 
+}
+
+
 /*вернуть куки по имени*/
 function getCookie(name) {
   var matches = document.cookie.match(new RegExp(

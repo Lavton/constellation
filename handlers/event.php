@@ -164,47 +164,56 @@ function get_one_info() {
 		$link->set_charset("utf8");
 
 		// поиск мероприятия
-		$query = "SELECT * FROM events WHERE id='" . $_POST['id'] . "';";
+		$query = "SELECT EM.id, EM.base_id, EM.parent_id, EM.name, EM.place, EM.start_date,
+		EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EM.comments, EM.last_updated, 
+		EvM.name AS parent_name, EE.contact, EB.comments AS base_dis FROM EventsMain AS EM 
+		LEFT JOIN EventsMain AS EvM ON EM.parent_id=EvM.id
+		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
+		LEFT JOIN EventsBase AS EB ON EB.id=EM.base_id
+		 WHERE EM.id='" . $_POST['id'] . "';";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["event"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$st = "'" . $result["event"]["start_time"] . "'";
-		$query = "SELECT min(id) as mid FROM events where visibility <= " . $_SESSION["current_group"] . " AND start_time > " . $st . ";";
+
+		// смотрим, кто может редактировать
+		$query = "SELECT EEE.editor, UM.first_name, UM.last_name FROM EventsEventsEditors AS EEE
+		LEFT JOIN UsersMain AS UM ON EEE.editor=UM.id
+		 WHERE event=".$result["event"]["id"].";";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["editors"]=array();
+		$canEdit = false;
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["editors"], $line);
+		}
+
+		$userId = $_SESSION["fighter_id"]; //TODO: модифицировать потом
+		$result["event"]["editable"] = canEditEvent($link, $userId, $_POST["id"]);;
+
+		// смотрим предыдущее и следующее
+		$st = "'" . $result["event"]["start_date"] . "'";
+		$condition = "visibility <= " . $_SESSION["current_group"] . " 
+		AND start_date > '" . $result["event"]["start_date"] . "' OR 
+		(start_date='". $result["event"]["start_date"] ."' AND 
+		start_time>'". $result["event"]["start_time"] ."')";
+		$query = "SELECT min(id) as mid FROM EventsMain WHERE (".$condition.");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$query = "SELECT max(id) as mid FROM events where visibility <= " . $_SESSION["current_group"] . " AND start_time < " . $st . ";";
+		$query = "SELECT max(id) as mid FROM EventsMain WHERE (".$condition.");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		/*поиск родительского мероприятия*/
-		if (isset($result["event"]["parent_id"])) {
-			$query = "SELECT id, name FROM events where visibility <= " . $_SESSION["current_group"] . " AND id=" . $result["event"]["parent_id"] . ";";
-		}
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["parent_event"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-
-		$query = "SELECT id, name, surname FROM fighters WHERE id='" . $result["event"]["editor"] . "' ORDER BY id;";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["event"]["editor_user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-
-		$query = "SELECT id FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$userId = $userId["id"];
-
-		$result["event"]["editable"] = canEditEvent($link, $userId, $_POST["id"]);
 
 		// список записавшихся людей
-		$query = 'SELECT * FROM guess_event WHERE (event_id='.$result["event"]["id"].');';
+		$query = 'SELECT user FROM EventsSupply WHERE (event='.$result["event"]["id"].');';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["event"]["users"] = array();
+		$result["appliers"] = array();
 
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["event"]["users"], $line);
+			array_push($result["appliers"], $line);
 		}
 
 
-		if (!isset($result["event"]["id"])) {
-			$result = Array();
-		}
+		// if (!isset($result["event"]["id"])) {
+		// 	$result = Array();
+		// }
 
 		mysqli_close($link);
 		echo json_encode($result);
@@ -393,24 +402,12 @@ function canEditEvent($link, $userId, $eventId) {
 	if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
 		return true;
 	} elseif (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) {
-		$query = 'SELECT id, parent_id, editor FROM events WHERE (id=' . $eventId . ');';
+		$query = 'SELECT * FROM (SELECT EEE.editor FROM EventsEventsEditors AS EEE
+		LEFT JOIN EventsMain AS EM ON (EEE.event=EM.id OR EEE.event=EM.parent_id)
+		WHERE (EM.id=' . $eventId . ') GROUP BY EEE.editor) AS Etors WHERE Etors.editor='.$userId.';';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$event = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		/*Если создал мероприятие*/
-		if ($event["editor"] * 1 == $userId * 1) {
-			return true;
-		}
-
-		if (isset($event["parent_id"])) {
-			$query = 'SELECT id, editor FROM events WHERE (id=' . $event["parent_id"] . ');';
-			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-			$event = mysqli_fetch_array($rt, MYSQL_ASSOC);
-			/*Если создал родительское мероприятие*/
-			if ($event["editor"] * 1 == $userId * 1) {
-				return true;
-			}
-		}
-		return false;
+		$user = mysqli_fetch_array($rt, MYSQL_ASSOC);
+		return isset($user);
 	} else {
 		return false;
 	}

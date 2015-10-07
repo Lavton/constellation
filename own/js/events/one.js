@@ -6,6 +6,16 @@
     var eventid = fid[fid.length - 1] //TODO сделать тут нормально!
     $scope.window = window;
     $scope.event = {};
+    $scope.formatDate = window.formatDate;
+    $scope.formatTimestamp = window.formatTimestamp;
+
+    $(document).keyup(function(e) {
+      if (e.keyCode == 27) {
+        $('.date').pickmeup('hide');
+      }
+    });
+
+
     $(".event-info").removeClass("hidden")
     var data = {
       action: "get_one_info",
@@ -23,7 +33,19 @@
 
       $scope.event = json.event;
       $scope.event.visibility = $scope.event.visibility * 1;
-      $scope.parent_event = json.parent_event;
+      $scope.editors = json.editors;
+      $scope.appliers = json.appliers;
+      $scope.$apply();
+
+      // показываем календарь при клике на дату
+      _.each($(".date"), function(self) {
+        $(self).pickmeup({
+          format: 'Y-m-d',
+          hide_on_select: true,
+          date: new Date($(self).attr("class").split(" ")[1])
+        });
+      })
+
       var bbdata = {
         bbcode: $scope.event.comments,
         ownaction: "bbcodeToHtml"
@@ -38,6 +60,7 @@
         $scope.event.bbcomments = rdata,
           $("div.bb-codes").html(rdata)
         $scope.app2();
+        $scope.$apply();
       });
       //TODO make works all html. (jquery?)
 
@@ -51,10 +74,12 @@
       }
 
 
+
       window.setPeople(function() {
-        _.each($scope.event.users, function(person) {
+        _.each($scope.appliers, function(person) {
+          console.log(person)
           _.extend(person, _.findWhere(window.people, {
-            "uid": person.vk_id * 1
+            "id": person.user*1
           }));
           // если мы уже записаны на мероприятие - кнопку убираем
           if (person.uid == window.getCookie("vk_id") * 1) {
@@ -210,13 +235,13 @@
     // создаём текст поста для ВК. Пока заглушка
     $scope.exportToVK = function() {
       $scope.vk_export = "\n__________\n";
-      $scope.vk_export += $scope.event.name + ($scope.parent_event.name ? (" (" + $scope.parent_event.name+ ")\n") : "\n");
-      $scope.vk_export += "Начало: " + $scope.event.start_time + "\n"; 
+      $scope.vk_export += $scope.event.name + ($scope.parent_event.name ? (" (" + $scope.parent_event.name + ")\n") : "\n");
+      $scope.vk_export += "Начало: " + $scope.event.start_time + "\n";
       $scope.vk_export += "Место: " + $scope.event.place + "\n";
       $scope.vk_export += "Контактное лицо: " + $scope.event.contact + "\n";
       $scope.vk_export += "\n__________\n";
       _.each($scope.event.users, function(person) {
-        var pers_string = "*"+person.domain + " (" + person.first_name + "), ";
+        var pers_string = "*" + person.domain + " (" + person.first_name + "), ";
         $scope.vk_export += pers_string
       })
     }
