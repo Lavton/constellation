@@ -31,7 +31,6 @@
         $('.date').pickmeup('hide');
       }
     });
-    $scope.newevent.start_time="00:00"
 
     // возращает дату в формате "6 мая 2015"
     $scope.formatDate = function(date) {
@@ -87,7 +86,9 @@
       $scope.adding_new = true;
       $scope.edit_ev = false;
       $scope.newevent = {
-        "visibility": 3
+        "visibility": 3,
+        "start_time": "00:00",
+        "finish_time": "23:59"
       }
       if (!$scope.eventsBase) {
         var data = {
@@ -101,7 +102,8 @@
         }).done(function(response) {
           console.log(response);
           $scope.pos_parents = response.pos_parents;
-          $scope.newevent.contact = response.me;
+          $scope.newevent.contact = response.me.first_name+" "+response.me.last_name+" +7"+response.me.phone;
+          $scope.newevent.editor = response.me.id;
           $scope.pos_parents.push({
             id: null,
             name: "--нет--"
@@ -120,12 +122,36 @@
       }, 500); // анимируем скроолинг к элементу
     }
 
+    // выполняется при выборе базового мероприятия. Меняет имя и видимость
     $scope.changeBase = function(base_id) {
       if (!$scope.newevent.name) {
         $scope.newevent.name = _.findWhere($scope.eventsBase, {id: base_id}).name;
         $scope.newevent.visibility = _.findWhere($scope.eventsBase, {id: base_id}).visibility*1;
       }
     }
+
+
+    // создаёт новое базовое мероприятие
+    $scope.addNewEventSubmit = function() {
+      var data = angular.copy($scope.newevent);
+      data.action = "add_new_event";
+
+      $.ajax({
+        type: "POST",
+        url: "/handlers/event.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        console.log(json)
+        // $scope.newevent.id = json.id
+        // $scope.events.push($scope.newevent)
+        // $scope.newevent = {"visibility":3}
+        // $scope.adding_new = false;
+        // $scope.$apply();
+        $('html, body').animate({ scrollTop: $("nav").offset().top }, 500); // анимируем скроолинг к элементу
+      })
+    }
+
   }
 
   // работа с новым событием

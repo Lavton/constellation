@@ -1,5 +1,7 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/php_globals.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/handlers/helper.php';
+
 if (is_ajax()) {
 	if (isset($_POST["action"]) && !empty($_POST["action"])) {
 		//Checks if action value exists
@@ -30,6 +32,7 @@ if (is_ajax()) {
 	}
 }
 
+// Создаёт новое мероприятие
 function add_new_event() {
 	check_session();
 	session_start();
@@ -47,56 +50,18 @@ function add_new_event() {
 		}
 		$link->set_charset("utf8");
 
-		$names = array();
-		$values = array();
+		// записываем в головное
+		$result = inserter($link, "EventsMain", array("base_id" => $_POST["base_id"], "parent_id" => $_POST["parent_id"], 
+			"name" => $_POST["name"], "place" => $_POST["place"], "start_date" => $_POST["start_date"],
+			"start_time" => $_POST["start_time"], "finish_date" => $_POST["finish_date"], "finish_time" => $_POST["finish_time"],
+			"visibility" => $_POST["visibility"], "comments" => $_POST["comments"]), True);
 
-		//find editor
-		$query = 'SELECT id FROM fighters where vk_id=\'' . $_SESSION["vk_id"] . '\';';
-		$result = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result = mysqli_fetch_array($result, MYSQL_ASSOC);
-		array_push($names, "editor");
-		array_push($values, $result["id"]);
-
-		array_push($names, "name");
-		array_push($values, "'" . $_POST["name"] . "'");
-
-		array_push($names, "start_time");
-		array_push($values, "'" . $_POST["start_time"] . "'");
-
-		array_push($names, "end_time");
-		array_push($values, "'" . $_POST["end_time"] . "'");
-
-		array_push($names, "visibility");
-		array_push($values, "'3'");
-
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO events (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
-		$query = "select max(id) as id FROM events;";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["id"] = $line["id"];
-
-
-		// человек, создавший мероприятие всегда считается записавшимся на него
-		$names = array();
-		$values = array();
-		array_push($names, "vk_id");
-		array_push($values, "'" . $_SESSION["vk_id"] . "'");
-		array_push($names, "event_id");
-		array_push($values, "'" . $result["id"] . "'");
-		foreach ($values as $key => $value) {
-			if ($value == "''") {
-				$values[$key] = "NULL";
-			}
-		}
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO guess_event (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		// записываем в мероприятия
+		$res2 = inserter($link, "EventsEvents", array("id" => $result["id"], "contact" => $_POST["contact"]));
+		// записываем редактирующего
+		$res3 = inserter($link, "EventsEventsEditors", array("editor" => $_POST["editor"], "event" => $result["id"]));
+		// автоматическая запись на мероприятие для человека, создавшего его.
+		$res4 = inserter($link, "EventsSupply", array("user" => $_POST["editor"], "event" => $result["id"]));
 		mysqli_close($link);
 
 		echo json_encode($result);
@@ -121,11 +86,10 @@ function get_all() {
 		}
 		$link->set_charset("utf8");
 		// поиск мероприятий
-		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EE.parent_id AS parent_id, EvB.name AS parent_name 
+		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EM.parent_id AS parent_id, EvB.name AS parent_name 
 		FROM EventsMain AS EM 
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
-		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id 
-		LEFT JOIN EventsMain AS EvB ON parent_id=EvB.id 
+		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
 		WHERE (EM.finish_date >= CURRENT_DATE) 
 		ORDER BY EM.start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
@@ -160,11 +124,10 @@ function arhive() {
 		}
 		$link->set_charset("utf8");
 		// поиск мероприятий
-		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EE.parent_id AS parent_id, EvB.name AS parent_name 
+		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EM.parent_id AS parent_id, EvB.name AS parent_name 
 		FROM EventsMain AS EM 
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
-		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id 
-		LEFT JOIN EventsMain AS EvB ON parent_id=EvB.id  
+		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
 		WHERE (EM.finish_date < CURRENT_DATE AND EM.start_date >= "' . $_POST["month"] . '-01") 
 		ORDER BY EM.start_date DESC;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: '.$query);
@@ -386,10 +349,10 @@ function get_base_and_par() {
 			array_push($result["eventsBase"], $line);
 		}
 
-		$query = "SELECT name, surname, vk_id, phone, second_phone FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
+		$query = "SELECT id, first_name, last_name, phone FROM UsersMain WHERE uid='" . $_SESSION["vk_id"] . "';";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["me"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["me"] = $result["me"]["name"]." ".$result["me"]["surname"]." +7".$result["me"]["phone"];
+		// $result["me"] = $result["me"]["first_name"]." ".$result["me"]["last_name"]." +7".$result["me"]["phone"];
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);

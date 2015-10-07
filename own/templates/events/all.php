@@ -4,7 +4,7 @@
   <ul>
     <li ng-repeat="event in events.future">
        <p>{{formatDate(event.start_date)}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
-              {{event.base}}
+     <!--          {{event.base}} -->
        <br></p>
     </li>
   </ul>
@@ -13,7 +13,7 @@
   <ul>
     <li ng-repeat="event in events.actual">
       <p>{{formatDate(event.start_date)}}, в {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
-              {{event.base}}
+             <!--  {{event.base}} -->
        <br></p>
     </li>
   </ul>
@@ -41,7 +41,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
 <br>
 <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
 <button type="button" ng-click="editEventSubmit()" ng-show="edit_ev" class="btn btn-success">Редактировать</button>
-<br> {{newevent | json}} <br>
+<br> 
  Базовое мероприятие:  <select ng-change="changeBase(newevent.base_id)" ng-model="newevent.base_id" ng-options="value.id as value.name for (key , value) in eventsBase"></select> <br>
  Головное мероприятие: <select ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select> <br><br>
  название*: <input ng-model="newevent.name" placeholder="название мероприятия" size=50 /> <br>
@@ -49,7 +49,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
  Дата начала*: <input type="text" class="date" ng-model="newevent.start_date">  {{newevent.start_date}}<br>
  Время начала*: <input type="text" ng-model="newevent.start_time"> {{newevent.start_time}} <br>
  Дата окончания*: <input type="text" class="date" ng-model="newevent.finish_date">  {{newevent.finish_date}}<br>
- Время окончания*: <input type="text" ng-model="newevent.start_time"> {{newevent.start_time}} <br><br>
+ Время окончания*: <input type="text" ng-model="newevent.finish_time"> {{newevent.finish_time}} <br><br>
  Контактое лицо: <input type="text" ng-model="newevent.contact"><br>
  Виден для*: <input type="number" min="1" max="7" ng-model="newevent.visibility" size="{{(newevent.visibility).length}}" ng-init="newevent.visibility=3"/> ({{window.groups[window.visibilities[newevent.visibility]].rus}}) <br>
  Описание: <br> <textarea ng-model="newevent.comments" class="bbcode" cols="20" rows="5"></textarea>
