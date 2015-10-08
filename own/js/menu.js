@@ -11,8 +11,11 @@ if (typeof String.prototype.startsWith != 'function') {
       {
         if ($(this).attr('target') != "_blank") {
           var url = $(this).attr('href');
-          setPage(url);
-          $('html, body').animate({ scrollTop: $("nav").offset().top }, 500); // анимируем скроолинг к элементу
+          $("#page-container").fadeOut("fast", function() {
+            setPage(url);
+            $('html, body').animate({ scrollTop: $("nav").offset().top }, 500); // анимируем скроолинг к элементу
+            $("#page-container").fadeIn("fast");            
+          })
           return false;
         }
       });

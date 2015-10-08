@@ -93,6 +93,8 @@
         "start_time": "00:00",
         "finish_time": "23:59"
       }
+
+      // если ещё не получали список
       if (!$scope.eventsBase) {
         var data = {
           "action": "get_base_and_par"
@@ -118,7 +120,6 @@
           })
           $scope.$apply();
         });
-
       }
       $('html, body').animate({
         scrollTop: $("footer").offset().top

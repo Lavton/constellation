@@ -9,6 +9,9 @@ window.goodTelephoneView = function(tel) {
 
 // форматирует строку вида '2015-10-20' в '20 ноября 2015'
 window.formatDate = function(date) {
+  if (!date) {
+    return "";
+  }
   date = new Date(date);
   Number.prototype.toMonthName = function() {
     var month = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',

@@ -9,6 +9,27 @@
     $scope.formatDate = window.formatDate;
     $scope.formatTimestamp = window.formatTimestamp;
 
+    // инициируем для выбора даты
+    $('input.date').pickmeup({
+      format: 'Y-m-d',
+      hide_on_select: true,
+      change: function() {
+        var path = this.getAttribute("ng-model").split(".")
+        var self = $scope;
+        for (var i = 0; i < path.length - 1; i++) {
+          self = self[path[i]]
+        };
+        console.log($(this).val())
+        console.log(path)
+        console.log(self[path[path.length - 1]])
+        self[path[path.length - 1]] = $(this).val();
+        if (!$scope.newevent.finish_date) {
+          $scope.newevent.finish_date = $scope.newevent.start_date;
+        }
+        $scope.$apply();
+        return true;
+      }
+    });
     $(document).keyup(function(e) {
       if (e.keyCode == 27) {
         $('.date').pickmeup('hide');
@@ -40,7 +61,7 @@
       $scope.$apply();
 
       // показываем календарь при клике на дату
-      _.each($(".date"), function(self) {
+      _.each($("span.date"), function(self) {
         $(self).pickmeup({
           format: 'Y-m-d',
           hide_on_select: true,
@@ -81,7 +102,7 @@
         _.each($scope.appliers, function(person) {
           console.log(person)
           _.extend(person, _.findWhere(window.people, {
-            "id": person.user*1
+            "id": person.user * 1
           }));
           // если мы уже записаны на мероприятие - кнопку убираем
           if (person.user == window.getCookie("fighter_id") * 1) {
@@ -96,68 +117,57 @@
 
     // показывает реактирование
     $scope.editEventInfo = function(flag) {
-      $(".event-info").toggleClass("hidden");
-      $(".event-edit").toggleClass("hidden");
-      $scope.master = angular.copy($scope.event);
 
-      if (flag) { // начинаем редактировать
-        var spl = $scope.event.start_time.split(" ");
-        $scope.event.start_date = spl[0];
-        var time = spl[1].split(":");
-        $scope.event.start_ttime = time[0] + ":" + time[1];
+      $(".event-edit").removeClass("hidden");
+      $(".event-edit").hide();
+      $(".event-info").hide("slow");
+      $(".event-edit").show("slow");
 
-        spl = $scope.event.end_time.split(" ");
-        $scope.event.end_date = spl[0];
-        $scope.event.end_ttime = spl[1];
-        var time = spl[1].split(":");
-        $scope.event.end_ttime = time[0] + ":" + time[1];
+      $scope.newevent = angular.copy($scope.event);
 
-        //Если ещё не редактировали до этого, найдём все мероприятия в кандидаты в родители
-        if (!$scope.pos_parents) {
-          var data = {
-            action: "get_reproduct",
-            visibility: $scope.event.visibility,
-            end_time: $scope.event.end_time
-          }
-          $http.post('/handlers/event.php', data).success(function(response) {
-            $scope.pos_parents = [];
-            if (response.pos_parents) {
-              $scope.pos_parents = response.pos_parents;
-            }
-            $scope.pos_parents.push({
-              id: null,
-              name: "--нет--"
-            })
-          });
-
+      // если ещё не получали список
+      if (!$scope.eventsBase) {
+        var data = {
+          "action": "get_base_and_par"
         }
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/event.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(response) {
+          console.log(response);
+          $scope.pos_parents = response.pos_parents;
+          $scope.pos_parents.push({
+            id: null,
+            name: "--нет--"
+          })
+          $scope.eventsBase = response.eventsBase;
+          $scope.eventsBase.push({
+            id: null,
+            name: "--нет--"
+          })
+          $scope.$apply();
+        });
       }
     }
-    $scope.resetInfo = function() {
-      $scope.shift = angular.copy($scope.master);
+
+    // убирает форму редактирования
+    $scope.hideEdit = function() {
+      $(".event-edit").hide("slow");
+      $(".event-info").show("slow");
     }
 
-    $scope.submit = function() {
-      $scope.event.start_time = $scope.event.start_date + " " + $scope.event.start_ttime + ":00";
-      $scope.event.end_time = $scope.event.end_date + " " + $scope.event.end_ttime + ":00";
-      var data = angular.copy($scope.event);
-      data.editor_user = null;
-      data.action = "set_new_data"
-      _.each(data, function(element, index, list) {
-        if (!element) {
-          data[index] = null;
-        }
-      })
-      if (!$scope.parent_event) {
-        $scope.parent_event = {}
-      }
-      $scope.parent_event.id = $scope.event.parent_id;
-      $scope.parent_event.name = _.findWhere($scope.pos_parents, {
-        id: $scope.event.parent_id
-      }).name;
+    // отсылает изменения на сервер и изменяет мероприятие видимое
+    $scope.editEventSubmit = function() {
+      var data = angular.copy($scope.newevent);
+      data.action = "edit_event";
+      $scope.event = angular.copy($scope.newevent);
+      console.log(data);
 
+      // чтобы показывать изменённые данные
       var bbdata = {
-        bbcode: $scope.event.comments,
+        bbcode: $scope.newevent.comments,
         ownaction: "bbcodeToHtml"
       };
       $.ajax({
@@ -168,20 +178,50 @@
         data: $.param(bbdata)
       }).done(function(rdata) {
         $scope.event.bbcomments = rdata,
-          $scope.$apply();
+          $("div.bb-codes").html(rdata)
+        $scope.$apply();
       });
+      if ($scope.event.parent_id) {
+        $scope.event.parent_name = _.findWhere($scope.pos_parents, {
+          id: $scope.event.parent_id
+        }).name;
+      } else {
+        $scope.event.parent_name = null;
+      }
+      $scope.event.parent_date = "";
 
-      $http.post('/handlers/event.php', data).success(function(response) {
-        var saved = $(".saved");
-        $(saved).stop(true, true);
-        $(saved).fadeIn("slow");
-        $(saved).fadeOut("slow");
-      });
+      if ($scope.event.base_id) {
+        $scope.event.base_dis = _.findWhere($scope.eventsBase, {
+          id: $scope.event.base_id
+        }).name;
+      } else {
+        $scope.event.base_dis = null;
+      }
+
+      // сам запрос на сервер для изменения
+      $.ajax({
+        type: "POST",
+        url: "/handlers/event.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        // анимация на выходе
+        $(".event-edit").hide("slow");
+        $(".event-info").show("slow", function() {
+          setTimeout(function() {
+            var saved = $(".saved");
+            $(saved).stop(true, true);
+            $(saved).fadeIn("slow");
+            $(saved).fadeOut("slow");
+          }, 1000);
+        });
+        $('html, body').animate({
+          scrollTop: $("nav").offset().top
+        }, 500); // анимируем скроолинг к элементу
+      })
     }
 
     $scope.killEvent = function() {
-      var fid = window.location.href.split("/")
-      var shiftid = fid[fid.length - 1] //TODO сделать тут нормально!
       if (confirm("Точно удалить мероприятие со всей информацией?")) {
         var data = {
           action: "kill_event",
@@ -193,45 +233,17 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(response) {
-          window.location = "/events/";
+          $('html, body').animate({
+            scrollTop: $("nav").offset().top
+          }, 500, function() {
+            var lnk = document.createElement("a");
+            lnk.setAttribute("class", "ajax-nav")
+            $(lnk).attr("href", "/events/");
+            $("#page-container").append(lnk);
+            $(lnk).trigger("click")
+          }); // анимируем скроолинг к элементу
         });
       }
-    }
-
-    $scope.setContactMe = function() {
-      var data = {
-        action: "getMe"
-      }
-      $.ajax({ //TODO: make with angular
-        type: "POST",
-        url: "/handlers/event.php",
-        dataType: "json",
-        data: $.param(data)
-      }).done(function(response) {
-        $scope.event.contact = response.me.name + " " + response.me.surname;
-        if (response.me.phone) {
-          $scope.event.contact += ", +7" + response.me.phone;
-        }
-        if (response.me.second_phone) {
-          $scope.event.contact += ", +7" + response.me.second_phone;
-        }
-
-        $scope.$apply();
-        getVkData(response.me.vk_id, ["domain"],
-          function(vk_response) {
-            $scope.event.contact = response.me.name + " " + response.me.surname + " ( https://vk.com/" + vk_response[response.me.vk_id].domain + " )";
-            if (response.me.phone) {
-              $scope.event.contact += ", +7" + response.me.phone;
-            }
-            if (response.me.second_phone) {
-              $scope.event.contact += ", +7" + response.me.second_phone;
-            }
-
-            $scope.$apply();
-          }
-        );
-      });
-
     }
 
     // создаём текст поста для ВК. Пока заглушка
@@ -248,23 +260,23 @@
       })
     }
 
-    // добавляем себя на мероприятие
+    // добавляем на мероприятие. По умолчанию - себя
     $scope.applyToEvent = function(person) {
       var data = {
         "action": "apply_to_event",
         "event_id": $scope.event.id,
       }
       if (person) {
-        data.vk_id = _.find(window.people, function(p) {
+        data.id = _.find(window.people, function(p) {
           return person == p.domain;
-        }).uid
+        }).id
       } else {
         $scope.IAmIn = true;
-        $scope.event.users.push(_.findWhere(window.people, {
-          "uid": window.getCookie("vk_id") * 1
+        $scope.appliers.push(_.findWhere(window.people, {
+          "id": window.getCookie("fighter_id") * 1
         }))
       }
-      console.log("apply", data.vk_id)
+      console.log("apply", data.id)
 
       $.ajax({ //TODO: make with angular
         type: "POST",
@@ -273,12 +285,11 @@
         data: $.param(data)
       }).done(function(response) {
         $scope.personToApply = "";
-        if (data.vk_id) {
-          $scope.event.users.push(_.findWhere(window.people, {
-            "uid": data.vk_id * 1
+        if (data.id) {
+          $scope.appliers.push(_.findWhere(window.people, {
+            "id": data.id * 1
           }))
         }
-
         $scope.$apply();
       });
     }
@@ -302,26 +313,72 @@
           "action": "delete_apply_from_event",
           "event_id": $scope.event.id,
         }
-        var uid = null;
+        var id = null;
         if (person) {
-          data.vk_id = person.uid
-          uid = person.uid * 1;
+          data.id = person.id
+          id = person.id * 1;
         } else {
-          uid = window.getCookie("vk_id") * 1;
+          id = window.getCookie("fighter_id") * 1;
           $scope.IAmIn = false;
         }
-        $scope.event.users = _.reject($scope.event.users, function(user) {
-          return user.uid * 1 == uid;
+        $scope.appliers = _.reject($scope.appliers, function(user) {
+          return user.id * 1 == id * 1;
         })
-
         $.ajax({ //TODO: make with angular
           type: "POST",
           url: "/handlers/event.php",
           dataType: "json",
           data: $.param(data)
         }).done(function(response) {});
-
       }
+    }
+
+    // добавить к редакторам мероприятия
+    $scope.addToEventEditors = function(person) {
+      var data = {
+        "action": "add_to_event_editors",
+        "event_id": $scope.event.id,
+      }
+      data.id = _.find(window.people, function(p) {
+        return person == p.domain;
+      }).id
+
+      $.ajax({ //TODO: make with angular
+        type: "POST",
+        url: "/handlers/event.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(response) {
+        $scope.personToAdd = "";
+        if (data.id) {
+          $scope.editors.push(_.findWhere(window.people, {
+            "id": data.id * 1
+          }))
+        }
+        $scope.$apply();
+      });
+    }
+
+    // удалить из редакторов
+    $scope.deleteFromEditors = function(person) {
+      console.log(person)
+      if (confirm("Удалить? ")) {
+        var data = {
+          "action": "delete_editor_from_event",
+          "event_id": $scope.event.id,
+          "id": person.id ? person.id*1 : person.editor*1
+        }
+        $scope.editors = _.reject($scope.appliers, function(user) {
+          return user.id * 1 == data.id * 1;
+        })
+        $.ajax({ //TODO: make with angular
+          type: "POST",
+          url: "/handlers/event.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(response) {console.log(response)});
+      }
+
     }
 
   }

@@ -15,18 +15,21 @@ if (is_ajax()) {
 				break;
 			case "get_one_info":get_one_info();
 				break;
-			case "set_new_data":set_new_data();
+			case "edit_event":edit_event();
 				break;
 			case "kill_event":kill_event();
 				break;
 			case "get_base_and_par":get_base_and_par();
 				break;
-			case "getMe":getMe();
-				break;
 
 			case "apply_to_event":apply_to_event();
 				break;
 			case "delete_apply_from_event": delete_apply_from_event();
+				break;
+
+			case "add_to_event_editors": add_to_event_editors();
+				break;
+			case "delete_editor_from_event": delete_editor_from_event();
 				break;
 		}
 	}
@@ -166,7 +169,8 @@ function get_one_info() {
 		// поиск мероприятия
 		$query = "SELECT EM.id, EM.base_id, EM.parent_id, EM.name, EM.place, EM.start_date,
 		EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EM.comments, EM.last_updated, 
-		EvM.name AS parent_name, EvM.start_date AS parent_date, EE.contact, EB.comments AS base_dis FROM EventsMain AS EM 
+		EvM.name AS parent_name, EvM.start_date AS parent_date, EE.contact, 
+		EB.comments AS base_dis, EB.name AS base_name FROM EventsMain AS EM 
 		LEFT JOIN EventsMain AS EvM ON EM.parent_id=EvM.id
 		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
 		LEFT JOIN EventsBase AS EB ON EB.id=EM.base_id
@@ -219,17 +223,13 @@ function get_one_info() {
 			array_push($result["appliers"], $line);
 		}
 
-
-		// if (!isset($result["event"]["id"])) {
-		// 	$result = Array();
-		// }
-
 		mysqli_close($link);
 		echo json_encode($result);
 	}
 }
 
-function set_new_data() {
+// сохраняет изменения мероприятия
+function edit_event() {
 	check_session();
 	session_start();
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
@@ -244,54 +244,17 @@ function set_new_data() {
 		exit;
 	}
 	$link->set_charset("utf8");
-
-	$query = "SELECT id FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
-	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-	$userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
-	$userId = $userId["id"];
-
+	$userId = $_SESSION["fighter_id"]; //TODO: модифицировать потом
+	
 	if (canEditEvent($link, $userId, $_POST["id"])) {
-		$names = array();
-		$values = array();
+		// запись в главную БД мероприятий
+		$result = updater($link, "EventsMain", array("id" => $_POST["id"], "base_id" => $_POST["base_id"], 
+			"parent_id" => $_POST["parent_id"], "name" => $_POST["name"], "place" => $_POST["place"], 
+			"start_date" => $_POST["start_date"], "start_time" => $_POST["start_time"], "finish_date" => $_POST["finish_date"], "finish_time" => $_POST["finish_time"],
+			"visibility" => $_POST["visibility"], "comments" => $_POST["comments"]));
 
-		array_push($names, "contact");
-		array_push($values, "'" . $_POST["contact"] . "'");
-
-		array_push($names, "parent_id");
-		if ($_POST["parent_id"] == 0) {
-			array_push($values, "NULL");
-		} else {
-			array_push($values, "'" . $_POST["parent_id"] . "'");
-		}
-
-		if (isset($_POST["name"])) {
-			array_push($names, "name");
-			array_push($values, "'" . $_POST["name"] . "'");
-		}
-		array_push($names, "place");
-		array_push($values, "'" . $_POST["place"] . "'");
-		if (isset($_POST["start_time"])) {
-			array_push($names, "start_time");
-			array_push($values, "'" . $_POST["start_time"] . "'");
-		}
-		if (isset($_POST["end_time"])) {
-			array_push($names, "end_time");
-			array_push($values, "'" . $_POST["end_time"] . "'");
-		}
-		if (isset($_POST["visibility"])) {
-			array_push($names, "visibility");
-			array_push($values, "'" . $_POST["visibility"] . "'");
-		}
-		array_push($names, "comments");
-		array_push($values, "'" . $_POST["comments"] . "'");
-		$conc = array();
-		foreach ($names as $key => $value) {
-			array_push($conc, "" . $value . "=" . $values[$key]);
-		}
-		$conc = implode(", ", $conc);
-		$query = "UPDATE events SET " . $conc . " WHERE id='" . $_POST['id'] . "';";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		// записываем в мероприятия
+		$res2 = updater($link, "EventsEvents", array("id" => $_POST["id"], "contact" => $_POST["contact"]));
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {
@@ -314,17 +277,13 @@ function kill_event() {
 		exit;
 	}
 	$link->set_charset("utf8");
-	$query = "SELECT id FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
-	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-	$userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
-	$userId = $userId["id"];
-
-	if (canEditEvent($link, $userId, $_POST["id"])) {
-
+	
+	if (canEditEvent($link, $_SESSION["fighter_id"], $_POST["id"])) {
 		//удаляем мероприятие по id и всех потомков
-		$query = "DELETE FROM events WHERE (id=" . $_POST["id"] . " OR parent_id=" . $_POST["id"] . ");";
+		$query = "DELETE FROM EventsMain WHERE (id=" . $_POST["id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
+		$result["qw"] = $query;
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -375,36 +334,8 @@ function get_base_and_par() {
 		mysqli_close($link);
 		echo json_encode($result);
 	}
-
 }
 
-// контакты себя любимого
-function getMe() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-		// поиск мероприятий
-		$query = "SELECT name, surname, vk_id, phone, second_phone FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["me"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["result"] = "Success";
-		mysqli_close($link);
-		echo json_encode($result);
-	}
-
-}
 
 // проверяет, может ли человек редактировать мероприятие
 function canEditEvent($link, $userId, $eventId) {
@@ -440,46 +371,18 @@ function apply_to_event() {
 		}
 		$link->set_charset("utf8");
 
-		if (isset($_POST["vk_id"])) {
-			$query = "SELECT id FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
-			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-			$userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
-			$userId = $userId["id"];
-
-			if (!(canEditEvent($link, $userId, $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+		if (isset($_POST["id"])) {
+			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array(
-					'result' => canEditEvent($link, $_SESSION["vk_id"], $_POST["event_id"]))
+					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
 				);
 				return;
 			}
 		} else {
-			$_POST["vk_id"] = $_SESSION["vk_id"];
+			$_POST["id"] = $_SESSION["fighter_id"];
 		}
 
-		$names = array();
-		$values = array();
-		array_push($names, "vk_id");
-		array_push($values, "'" . $_POST["vk_id"] . "'");
-		if (isset($_POST["event_id"])) {
-			array_push($names, "event_id");
-			array_push($values, "'" . $_POST["event_id"] . "'");
-		}
-		foreach ($values as $key => $value) {
-			if ($value == "''") {
-				$values[$key] = "NULL";
-			}
-		}
-
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO guess_event (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
-
-		// говорим, что мероприятие обновилось
-		$query = "UPDATE events SET lastUpdated=CURRENT_TIMESTAMP WHERE id=".$_POST["event_id"].";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-
+		$result = inserter($link, "EventsSupply", array("user" => $_POST["id"], "event" => $_POST["event_id"]));
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -504,49 +407,89 @@ function delete_apply_from_event() {
 		}
 		$link->set_charset("utf8");
 
-		if (isset($_POST["vk_id"])) {
-			$query = "SELECT id FROM fighters WHERE vk_id='" . $_SESSION["vk_id"] . "';";
-			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-			$userId = mysqli_fetch_array($rt, MYSQL_ASSOC);
-			$userId = $userId["id"];
-
-			if (!(canEditEvent($link, $userId, $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+		if (isset($_POST["id"])) {
+			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array(
-					'result' => canEditEvent($link, $_SESSION["vk_id"], $_POST["event_id"]))
+					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
 				);
 				return;
 			}
 		} else {
-			$_POST["vk_id"] = $_SESSION["vk_id"];
+			$_POST["id"] = $_SESSION["fighter_id"];
 		}
-
-		$names = array();
-		$values = array();
-		array_push($names, "vk_id");
-		array_push($values, "'" . $_POST["vk_id"] . "'");
-		if (isset($_POST["event_id"])) {
-			array_push($names, "event_id");
-			array_push($values, "'" . $_POST["event_id"] . "'");
-		}
-		foreach ($values as $key => $value) {
-			if ($value == "''") {
-				$values[$key] = "NULL";
-			}
-		}
-
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "DELETE FROM guess_event WHERE (event_id=" . $_POST["event_id"] . " && vk_id=" . $_POST["vk_id"] . ");";
+		$query = "DELETE FROM EventsSupply WHERE (user=".$_POST["id"]." AND event=".$_POST["event_id"].");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
-
-		// говорим, что мероприятие обновилось
-		$query = "UPDATE events SET lastUpdated=CURRENT_TIMESTAMP WHERE id=".$_POST["event_id"].";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 
 		mysqli_close($link);
 		echo json_encode($result);
 	}
+}
 
+// добавляет человека к редакторам
+function add_to_event_editors() {
+	check_session();
+	session_start();
+	if (isset($_SESSION["current_group"])) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		if (isset($_POST["id"])) {
+			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+				echo json_encode(array(
+					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
+				);
+				return;
+			}
+		}
+
+		$result = inserter($link, "EventsEventsEditors", array("editor" => $_POST["id"], "event" => $_POST["event_id"]));
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+// удаляем возможность редактирования для человека
+function delete_editor_from_event() {
+	check_session();
+	session_start();
+	if (isset($_SESSION["current_group"])) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+
+		if (isset($_POST["id"])) {
+			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+				echo json_encode(array(
+					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
+				);
+				return;
+			}
+		}
+		$query = "DELETE FROM EventsEventsEditors WHERE (editor=".$_POST["id"]." AND event=".$_POST["event_id"].");";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
 }
 ?>

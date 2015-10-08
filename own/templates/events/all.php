@@ -4,7 +4,6 @@
   <ul>
     <li ng-repeat="event in events.future">
        <p><span class="date {{event.start_date}}">{{formatDate(event.start_date)}}</span> <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
-     <!--          {{event.base}} -->
        <br></p>
     </li>
   </ul>
@@ -13,7 +12,6 @@
   <ul>
     <li ng-repeat="event in events.actual">
       <p>{{formatDate(event.start_date)}}, в {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
-             <!--  {{event.base}} -->
        <br></p>
     </li>
   </ul>
@@ -33,7 +31,7 @@
 <?php /*Все бойцы могут добавлять мероприятия (согласовав с комсоставом)*/
 if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
 ?>
-
+<!-- создание мероприятия -->
 <br/><br/>
       <button type="button" ng-click="addNewEvent()" class="btn btn-warning" >Создать мероприятие?</button> 
   <div ng-show="adding_new || edit_ev" ng-init="adding_new=false; edit_ev=false"> 
