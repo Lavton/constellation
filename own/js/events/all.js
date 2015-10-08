@@ -153,7 +153,11 @@
         $('html, body').animate({
           scrollTop: $("nav").offset().top
         }, 500); // анимируем скроолинг к элементу
-        window.location = "/events/" + json.id;
+        var lnk = document.createElement("a");
+        lnk.setAttribute("class", "ajax-nav")
+        $(lnk).attr("href", "/events/" + json.id);
+        $("#page-container").append(lnk);
+        $(lnk).trigger("click")
       })
     }
   }

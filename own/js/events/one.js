@@ -35,6 +35,8 @@
       $scope.event.visibility = $scope.event.visibility * 1;
       $scope.editors = json.editors;
       $scope.appliers = json.appliers;
+      $scope.children = json.children;
+      console.log(json)
       $scope.$apply();
 
       // показываем календарь при клике на дату
@@ -82,17 +84,17 @@
             "id": person.user*1
           }));
           // если мы уже записаны на мероприятие - кнопку убираем
-          if (person.uid == window.getCookie("vk_id") * 1) {
+          if (person.user == window.getCookie("fighter_id") * 1) {
             $scope.IAmIn = true;
           }
         })
 
         $scope.app2();
       });
-
-
       $scope.app2();
     });
+
+    // показывает реактирование
     $scope.editEventInfo = function(flag) {
       $(".event-info").toggleClass("hidden");
       $(".event-edit").toggleClass("hidden");

@@ -16,7 +16,8 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <div class="row own-row">
         <div class="col-xs-5 info-str">
           <ul>
-            <li ng-show="event.parent_name"><strong>Головное мероприятие:</strong> <a target="_blank" href="{{'/events/'+event.parent_id}}">{{event.parent_name}}</a> </li>
+            <li ng-show="event.parent_name"><strong>Головное мероприятие:</strong> <a target="_blank" href="{{'/events/'+event.parent_id}}">{{event.parent_name}}</a> 
+            <span class="date {{event.parent_date}}">{{formatDate(event.parent_date)}}</span></li>
             <li ng-show="event.place || event.editable"><strong>Место:</strong> {{event.place}}</li>
             <li ng-show="event.start_time"><strong>Начало:</strong> <span class="date {{event.start_date}}">{{formatDate(event.start_date)}}</span> в {{event.start_time}} </li>
             <li ng-show="event.finish_time"><strong>Окончание:</strong> <span class="date {{event.finish_date}}">{{formatDate(event.finish_date)}}</span> в {{event.finish_time}} </li>
@@ -24,10 +25,18 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
             <li ng-show="event.contact || event.editable"><strong>Контактное лицо:</strong> {{event.contact}} </li>
             <li ng-show="event.last_updated"><strong>Последнее обновление</strong> {{formatTimestamp(event.last_updated)}}</li>
             <li ng-show="editors"><strong>Редактирует(ют): </strong> 
-            <a href="/about/users/{{editor.editor}}" ng-repeat="editor in editors">{{editor.first_name}} {{editor.last_name}} </a></li>
+            <a href="/about/users/{{editor.editor}}" ng-repeat="editor in editors">{{editor.first_name}} {{editor.last_name}}, </a></li>
             <li ng-show="event.comments"><strong>Комментарии:</strong>
               <br/>
               <div class="table-bordered bb-codes" ng-bind-html="event.bbcomments" ng-show="event.bbcomments"></div>
+            <li ng-show="children"><strong>Дочерние мероприятия: </strong> 
+              <ul>
+                <li ng-repeat="child in children">
+                  <a href="/events/{{child.id}}">{{child.name}}</a> 
+                  <span class="date {{child.start_date}}">{{formatDate(child.start_date)}}</span>
+                </li>
+              </ul>
+            </li>
           </ul>
         </div>
         <div class="col-xs-7 info-str">
@@ -35,7 +44,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <br>
           <h4>Записавшиеся люди:</h4>
           <ul>
-            <li ng-repeat="person in appliers"> <img ng-src="{{person.photo}}" width="20"> 
+            <li ng-repeat="person in appliers"> <a href="//vk.com/{{person.domain}}" target="_blank"><img ng-src="{{person.photo}}" width="20"></a> 
              <a href="/about/users/{{person.user}}">{{person.IF}}</a> 
               <span ng-show="person.user==window.getCookie('fighter_id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
             </li>
@@ -55,6 +64,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <div class="col-xs-12">
         <h2><input type="text" ng-model="event.name"/> 
           <input type="submit" class="btn btn-primary text-right" ng-click="editEventInfo()" value="Сохранить"></input>
+          <button type="button" ng-click="editEventSubmit()" class="btn btn-success text-right">Редактировать</button>
             <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editEventInfo()" >Отменить</input>
         </h2>        
         <hr>

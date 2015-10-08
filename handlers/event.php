@@ -166,7 +166,7 @@ function get_one_info() {
 		// поиск мероприятия
 		$query = "SELECT EM.id, EM.base_id, EM.parent_id, EM.name, EM.place, EM.start_date,
 		EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EM.comments, EM.last_updated, 
-		EvM.name AS parent_name, EE.contact, EB.comments AS base_dis FROM EventsMain AS EM 
+		EvM.name AS parent_name, EvM.start_date AS parent_date, EE.contact, EB.comments AS base_dis FROM EventsMain AS EM 
 		LEFT JOIN EventsMain AS EvM ON EM.parent_id=EvM.id
 		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
 		LEFT JOIN EventsBase AS EB ON EB.id=EM.base_id
@@ -200,6 +200,15 @@ function get_one_info() {
 		$query = "SELECT max(id) as mid FROM EventsMain WHERE (".$condition.");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
+
+		// список дочерних мероприятий
+		$query = "SELECT EvM.id, EvM.name, EvM.start_date FROM EventsMain AS EvM WHERE EvM.parent_id='" . $_POST['id'] . "' ORDER BY EvM.start_date;";
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["children"] = array();
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["children"], $line);
+		}
+
 
 		// список записавшихся людей
 		$query = 'SELECT user FROM EventsSupply WHERE (event='.$result["event"]["id"].');';
