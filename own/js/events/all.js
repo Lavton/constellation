@@ -121,9 +121,11 @@
           $scope.$apply();
         });
       }
-      $('html, body').animate({
-        scrollTop: $("footer").offset().top
-      }, 500); // анимируем скроолинг к элементу
+      setTimeout(function() {
+        $('html, body').animate({
+          scrollTop: $(".scrl").offset().top
+        }, 500); // анимируем скроолинг к элементу
+      }, 100);
     }
 
     // выполняется при выборе базового мероприятия. Меняет имя и видимость

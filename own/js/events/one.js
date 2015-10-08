@@ -121,7 +121,12 @@
       $(".event-edit").removeClass("hidden");
       $(".event-edit").hide();
       $(".event-info").hide("slow");
-      $(".event-edit").show("slow");
+      $(".event-edit").show("slow", function() {
+        $('html, body').animate({
+          scrollTop: $(".scrl").offset().top
+        }, 500); // анимируем скроолинг к элементу
+
+      });
 
       $scope.newevent = angular.copy($scope.event);
 
@@ -366,7 +371,7 @@
         var data = {
           "action": "delete_editor_from_event",
           "event_id": $scope.event.id,
-          "id": person.id ? person.id*1 : person.editor*1
+          "id": person.id ? person.id * 1 : person.editor * 1
         }
         $scope.editors = _.reject($scope.appliers, function(user) {
           return user.id * 1 == data.id * 1;
@@ -376,7 +381,9 @@
           url: "/handlers/event.php",
           dataType: "json",
           data: $.param(data)
-        }).done(function(response) {console.log(response)});
+        }).done(function(response) {
+          console.log(response)
+        });
       }
 
     }

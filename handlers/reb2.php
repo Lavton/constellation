@@ -11,9 +11,6 @@ $link = mysqli_connect(
 		exit;
 	}
 	$link->set_charset("utf8");
-/*	$query = 'DELETE FROM UsersMain WHERE 1;';
-	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-
 	$query = 'SELECT * FROM fighters;';
 	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 
@@ -181,6 +178,10 @@ $link = mysqli_connect(
 			array_push($names, "finish_time	");
 		}
 
+		if (isset($line["parent_id"])) {
+			array_push($values, "'" . $line["parent_id"] . "'");
+			array_push($names, "parent_id");
+		}
 		$names = implode(", ", $names);
 		$values = implode(", ", $values);
 
@@ -192,10 +193,6 @@ $link = mysqli_connect(
 		if (isset($line["id"])) {
 			array_push($values, "'" . $line["id"] . "'");
 			array_push($names, "id");
-		}
-		if (isset($line["parent_id"])) {
-			array_push($values, "'" . $line["parent_id"] . "'");
-			array_push($names, "parent_id");
 		}
 		if (isset($line["contact"])) {
 			array_push($values, "'" . $line["contact"] . "'");
@@ -229,50 +226,4 @@ $link = mysqli_connect(
 			$rt2 = mysqli_query($link, $query2) or die('Запрос не удался: '. $query2);
 		}
 	}
-
-
-	$query = 'SELECT * FROM shifts;';
-	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-
-	while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-		$names = array();
-		$values = array();
-		if (isset($line["time_name"])) {
-			array_push($values, "'" . $line["time_name"] . "'");
-			array_push($names, "name");
-		}
-		if (isset($line["place"])) {
-			array_push($values, "'" . $line["place"] . "'");
-			array_push($names, "place");
-		}
-		if (isset($line["visibility"])) {
-			array_push($values, "'" . $line["visibility"] . "'");
-			array_push($names, "visibility");
-		}
-		if (isset($line["comments"])) {
-			array_push($values, "'" . $line["comments"] . "'");
-			array_push($names, "comments");
-		}
-		if (isset($line["last_updated"])) {
-			array_push($values, "'" . $line["last_updated"] . "'");
-			array_push($names, "last_updated");
-		}
-		if (isset($line["start_date"])) {
-			array_push($values, "'" . $line["start_date"] . "'");
-			array_push($names, "start_date");
-		}
-
-		if (isset($line["finish_date"])) {
-			array_push($values, "'" . $line["finish_date"] . "'");
-			array_push($names, "finish_date");
-		}
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-
-		$query2 = "INSERT INTO EventsMain (" . $names . ") VALUES (" . $values . ");";
-		$rt2 = mysqli_query($link, $query2) or die('Запрос не удался: ');
-
-
-	}
-*/
 ?>

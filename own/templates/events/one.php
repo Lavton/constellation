@@ -5,6 +5,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
   <div ng-cloak ng-controller="oneEventApp" id="event-one">
     <br>
     <!-- просмотр мероприятия -->
+    <span class="scrl"></span>
     <div class="event-info hidden">
       <div class="col-xs-12">
         <h2><span ng-hide="event.base_id">{{event.name}}</span>
