@@ -30,16 +30,14 @@ if (!$link) {
 }    
 $link->set_charset("utf8");
     // поиск мероприятий
-    $query = 'SELECT id, parent_id, name, place, start_time, end_time, contact, comments, lastUpdated FROM events WHERE (end_time >= CURRENT_TIMESTAMP AND visibility <= 2) ORDER BY start_time;';
+    $query = 'SELECT EM.id, EM.parent_id, EvM.name AS parent_name, EM.name, EM.place, EM.start_date, EM.start_time, 
+    EM.finish_date, EM.finish_time, EE.contact, EM.comments, EM.last_updated 
+    FROM EventsMain AS EM 
+    LEFT JOIN EventsMain AS EvM ON EvM.id=EM.parent_id
+    LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
+    WHERE (EM.finish_date >= CURRENT_DATE AND EM.visibility <= 2) ORDER BY EM.start_date;';
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-      if (isset($line["parent_id"])) {
-        $quer = "SELECT name FROM events where visibility <= 2 AND id=".$line["parent_id"].";";
-        $ret = mysqli_query($link, $quer) or die('Запрос не удался: ');
-        $res = mysqli_fetch_array($ret, MYSQL_ASSOC);
-      } else {
-        $res = array();
-      }
       $in = array(   '/\[b\](.*?)\[\/b\]/ms', 
                '/\[i\](.*?)\[\/i\]/ms',
                '/\[u\](.*?)\[\/u\]/ms',
@@ -77,14 +75,14 @@ $link->set_charset("utf8");
 
 BEGIN:VEVENT
 SUMMARY:<?=$line["name"]?> <?php 
-if (isset($res["name"])) {
-    echo '('.$res["name"].')';
+if (isset($line["parent_name"])) {
+    echo '('.$line["parent_name"].')';
 }
 ?> 
-DTSTART;TZID=Europe/Moscow;VALUE=DATE-TIME:<?=date(DATE_ICAL, strtotime($line["start_time"]))?> 
-DTEND;TZID=Europe/Moscow;VALUE=DATE-TIME:<?=date(DATE_ICAL, strtotime($line["end_time"]))?> 
+DTSTART;TZID=Europe/Moscow;VALUE=DATE-TIME:<?=date(DATE_ICAL, strtotime($line["start_date"]." ".$line["start_time"]))?> 
+DTEND;TZID=Europe/Moscow;VALUE=DATE-TIME:<?=date(DATE_ICAL, strtotime($line["finish_date"]." ".$line["finish_time"]))?> 
 UID:event-<?=$line[id]?>@spo-sozvezdie.hol.es
-LAST-MODIFIED;VALUE=DATE-TIME:<?=date(DATE_ICAL, strtotime($line["lastUpdated"]))?> 
+LAST-MODIFIED;VALUE=DATE-TIME:<?=date(DATE_ICAL, strtotime($line["last_updated"]))?> 
 DESCRIPTION: <?=$line["comments"]?>
  ( http://spo-sozvezdie.hol.es/events/<?=$line["id"]?> ) \n 
 <?php 
