@@ -228,9 +228,7 @@ function delete_base_event() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$query = "DELETE FROM EventsBase WHERE (id=" . $_POST["id"] . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result["result"] = deleter($link, "EventsBase", "id=" . $_POST["id"]);
 		mysqli_close($link);
 		echo json_encode($result);	
 	}

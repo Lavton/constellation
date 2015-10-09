@@ -280,10 +280,7 @@ function kill_event() {
 	
 	if (canEditEvent($link, $_SESSION["fighter_id"], $_POST["id"])) {
 		//удаляем мероприятие по id и всех потомков
-		$query = "DELETE FROM EventsMain WHERE (id=" . $_POST["id"] . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
-		$result["qw"] = $query;
+		$result["result"] = deleter($link, "EventsMain", "id=" . $_POST["id"]);;
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -417,9 +414,7 @@ function delete_apply_from_event() {
 		} else {
 			$_POST["id"] = $_SESSION["fighter_id"];
 		}
-		$query = "DELETE FROM EventsSupply WHERE (user=".$_POST["id"]." AND event=".$_POST["event_id"].");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result["result"] = deleter($link, "EventsSupply", "user=".$_POST["id"]." AND event=".$_POST["event_id"]);
 
 		mysqli_close($link);
 		echo json_encode($result);
@@ -485,9 +480,7 @@ function delete_editor_from_event() {
 				return;
 			}
 		}
-		$query = "DELETE FROM EventsEventsEditors WHERE (editor=".$_POST["id"]." AND event=".$_POST["event_id"].");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result["result"] = deleter($link, "EventsEventsEditors", "editor=".$_POST["id"]." AND event=".$_POST["event_id"]);
 		mysqli_close($link);
 		echo json_encode($result);
 	}

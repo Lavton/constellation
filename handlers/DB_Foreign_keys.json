@@ -1,0 +1,171 @@
+{
+  "UsersMain": [{
+    "name": "UsersCandidats",
+    "fk": "id",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "UsersFighters",
+    "fk": "id",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "EventsSupply",
+    "fk": "user",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "EventsSupplyShiftsLikes",
+    "fk": "other",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "EventsShiftsDetachmentsPeople",
+    "fk": "user",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "NewsBody",
+    "fk": "creator",
+    "ref": "id",
+    "del": "null"
+  }, {
+    "name": "NewsAddressee",
+    "fk": "person",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "EventsBaseSupply",
+    "fk": "user",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "UsersCandidats": [
+
+  ],
+  "UsersFighters": [{
+    "name": "EventsEventsEditors",
+    "fk": "id",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "UsersFightersOptions",
+    "fk": "editor",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "UsersFightersAchievements",
+    "fk": "fighter",
+    "ref": "id",
+    "del": "cascade"
+  }],
+
+  "UsersFightersOptions": [
+
+  ],
+  "UsersFightersAchievements": [
+
+  ],
+
+
+  "EventsBase": [{
+    "name": "EventsMain",
+    "fk": "base_id",
+    "ref": "id",
+    "del": "null"
+  }, {
+    "name": "EventsBaseSupply",
+    "fk": "base_event",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "EventsMain": [{
+    "name": "EventsMain",
+    "fk": "parent_id",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "EventsShifts",
+    "fk": "id",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "EventsEvents",
+    "fk": "id",
+    "ref": "id",
+    "del": "cascade"
+  }, {
+    "name": "EventsSupply",
+    "fk": "event",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "EventsShifts": [{
+    "name": "EventsShiftsRanking",
+    "fk": "shift",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "EventsEvents": [{
+    "name": "EventsEventsEditors",
+    "fk": "event",
+    "ref": "id",
+    "del": "cascade"
+  }],
+
+  "EventsEventsEditors": [
+
+  ],
+
+  "EventsBaseSupply": [
+
+  ],
+  "EventsSupply": [{
+    "name": "EventsSupplyShifts",
+    "fk": "supply_id",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "EventsSupplyShifts": [{
+    "name": "EventsSupplyShiftsLikes",
+    "fk": "supply_id",
+    "ref": "supply_id",
+    "del": "cascade"
+  }],
+  "EventsSupplyShiftsLikes": [
+
+  ],
+
+  "EventsShiftsRanking": [{
+    "name": "EventsShiftsDetachments",
+    "fk": "ranking",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "EventsShiftsDetachments": [{
+    "name": "EventsShiftsDetachmentsPeople",
+    "fk": "detachment",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "EventsShiftsDetachmentsPeople": [
+
+  ],
+
+
+  "NewsRubrics": [{
+    "name": "NewsBody",
+    "fk": "rubric",
+    "ref": "id",
+    "del": "null"
+  }],
+  "NewsBody": [{
+    "name": "NewsAddressee",
+    "fk": "news",
+    "ref": "id",
+    "del": "cascade"
+  }],
+  "NewsAddressee": [
+
+  ]
+}
