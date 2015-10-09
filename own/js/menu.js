@@ -9,13 +9,20 @@ if (typeof String.prototype.startsWith != 'function') {
   if (history.pushState) { // если поддерживает HTML5 History API
     $('body').on('click', 'a.ajax-nav', function(event) // вешаем обработчик на все ссылки, даже созданные после загрузки страницы
       {
+        var self = this;
         if ($(this).attr('target') != "_blank") {
-          var url = $(this).attr('href');
-          $("#page-container").fadeOut("fast", function() {
-            setPage(url);
-            $('html, body').animate({ scrollTop: $("nav").offset().top }, 500); // анимируем скроолинг к элементу
-            $("#page-container").fadeIn("fast");            
-          })
+          $("#page-container").fadeOut(10, function() {
+
+            var url = $(self).attr('href');
+            setPage(url, false, function() {
+              $('html, body').animate({
+                scrollTop: $("nav").offset().top
+              }, 500, function() {
+                $("#page-container").fadeIn("fast");
+              }); // анимируем скроолинг к элементу
+            });
+
+          });
           return false;
         }
       });
@@ -23,7 +30,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
   /*Берём не всю страницу, а часть
   if_history==true, когда мы  вызываем функцию, двигаясь по истории браузера*/
-  function setPage(page, if_history) {
+  function setPage(page, if_history, callback) {
     if (typeof(if_history) === 'undefined') if_history = false;
     if (!if_history) {
       // добавляем в историю
@@ -58,6 +65,9 @@ if (typeof String.prototype.startsWith != 'function') {
 
       // меняем вид меню
       on_change();
+      if (callback) {
+        callback();
+      }
     });
   }
 
