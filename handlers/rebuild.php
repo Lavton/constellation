@@ -1,5 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/handlers/helper.php';
+
 $link = mysqli_connect(
 	Passwords::$db_host, /* Хост, к которому мы подключаемся */
 	Passwords::$db_user, /* Имя пользователя */
@@ -185,11 +187,6 @@ $link = mysqli_connect(
 			array_push($values, "'" . $line["parent_id"] . "'");
 			array_push($names, "parent_id");
 		}
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-
-		$query2 = "INSERT INTO EventsMain (" . $names . ") VALUES (" . $values . ");";
-		$rt2 = mysqli_query($link, $query2) or die('Запрос не удался: ');
 
 		$names = array();
 		$values = array();

@@ -53,7 +53,7 @@ function updater($link, $table, $data, $is_by_id=True, $condition="") {
 	} else {
 		$query = "UPDATE ".$table." SET " . $conc . " WHERE (" . $condition . ");";
 	}
-	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+	$rt = mysqli_query($link, $query) or die('Запрос не удался1: '.$query);
 	$result["result"] = "Success";
 	return $result;
 }
@@ -66,24 +66,23 @@ function deleter($link, $table, $condition="") {
 		// для всех зависимостей
 		foreach ($DB_Fk[$table] as $key => $value) {
 			// ищем строки, которые подвергнуться редактированию
-			$query = "SELECT FK.".$value["fk"]. "AS getting_for_key FROM ".$value["name"]." AS FK 
-			JOIN ".$table." AS TB ON TB.".$value["ref"].";";
-			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			$query = "SELECT ".$value['ref']." AS ref_value FROM ".$table." WHERE ".$condition;
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: '. $query);
 			while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 				// если каскадно - удаляем
 				if ($value["del"] == "cascade") {
-					deleter($link, $value["name"], "".$value["fk"]."=".$line["getting_for_key"]);
+					deleter($link, $value["name"], "".$value["fk"]."='".$line["ref_value"]."'");
 
 				// иначе - выставляем на ноль.
 				} else {
-					updater($link, $value["name"], array($value["fk"] => "NULL"), False, "".$value["fk"]."=".$line["getting_for_key"]);
+					updater($link, $value["name"], array($value["fk"] => "NULL"), False, "".$value["fk"]."='".$line["ref_value"]."'");
 				}
 			}
 		}
 	}
 
 	$query = "DELETE FROM ".$table." WHERE (" . $condition . ");";
-	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+	$rt = mysqli_query($link, $query) or die('Запрос не удался3: '.$query);
 	$result["result"] = "Success";
 	return $result;
 }

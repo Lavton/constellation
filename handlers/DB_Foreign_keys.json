@@ -45,12 +45,12 @@
   ],
   "UsersFighters": [{
     "name": "EventsEventsEditors",
-    "fk": "id",
+    "fk": "editor",
     "ref": "id",
     "del": "cascade"
   }, {
     "name": "UsersFightersOptions",
-    "fk": "editor",
+    "fk": "id",
     "ref": "id",
     "del": "cascade"
   }, {
