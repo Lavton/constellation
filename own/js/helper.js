@@ -32,7 +32,7 @@ window.formatTimestamp = function(date) {
     return month[this];
   };
   return date.getDate() + " " + date.getMonth().toMonthName() + " " + date.getFullYear() + " " +
-  date.getHours() + ":" + date.getMinutes(); 
+    date.getHours() + ":" + date.getMinutes();
 }
 
 
@@ -73,32 +73,20 @@ function setPeople(callback) {
         data: $.param(data)
       }).done(function(json) {
         vk_ids = [];
-        _.each(json.candidats, function(element, index, list) {
-          vk_ids.push(element.uid);
-        });
-        _.each(json.fighters, function(element, index, list) {
+        _.each(json.users, function(element, index, list) {
           vk_ids.push(element.uid);
         });
         getVkData(vk_ids, ["photo_50", "domain"],
           function(response) {
-            _.each(json.fighters, function(element, index, list) {
-              var user = _.pick(response[element.uid], 'uid', "domain", "first_name", "last_name", "photo_50");
+            _.each(json.users, function(element, index, list) {
+              var user = _.pick(response[element.uid], 'uid', "domain", "photo_50");
+              _.extend(user, element);
               user.isFighter = true;
-              user.id = element.id * 1
-              user.first_name = element.first_name;
-              user.last_name = element.last_name;
+              user.id = user.id * 1;
+              user.isCandidate = Boolean(user.isCandidate * 1);
+              user.isFighter = Boolean(user.isFighter * 1);
 
-              /*строковое представление понадобится для поиска*/
-              user.IF = user.first_name + " " + user.last_name;
-              user.FI = user.last_name + " " + user.first_name;
-              user.photo = user.photo_50;
-              people.push(user);
-            });
-            _.each(json.candidats, function(element, index, list) {
-              var user = _.pick(response[element.uid], 'uid', "domain", "first_name", "last_name", "photo_50");
-              user.isFighter = false;
-              user.id = element.id * 1
-                /*строковое представление понадобится для поиска*/
+              // строковое представление понадобится для поиска
               user.IF = user.first_name + " " + user.last_name;
               user.FI = user.last_name + " " + user.first_name;
               user.photo = user.photo_50;

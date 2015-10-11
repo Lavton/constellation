@@ -1,5 +1,7 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/php_globals.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/handlers/helper.php';
+
 if (is_ajax()) {
 	if (isset($_POST["action"]) && !empty($_POST["action"])) {
 		//Checks if action value exists
@@ -687,7 +689,7 @@ function own_add_candidate() {
 	echo json_encode($result);
 }
 
-/*базовая информация о пользователях. Будем её кэшировать.*/
+// базовая информация о пользователях. Будем её кэшировать.
 function get_common_inf() {
 	check_session();
 	session_start();
@@ -705,22 +707,17 @@ function get_common_inf() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		// берём всех бойцов
-		$query = 'SELECT id, vk_id as uid, name as first_name, surname as last_name FROM fighters ORDER BY id;';
+		// берём всех
+		$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, IFNULL(UF.id, 0) AS isFighter, 
+		UF.nickname, UF.maiden_name, IFNULL(UC.id, 0) AS isCandidate FROM UsersMain AS UM 
+		LEFT JOIN UsersFighters AS UF ON UF.id=UM.id
+		LEFT JOIN UsersCandidats AS UC  ON UC.id=UM.id
+		ORDER BY UM.id;";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["fighters"] = array();
+		$result["users"] = array();
 
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["fighters"], $line);
-		}
-
-		// все кандидаты
-		$query = 'SELECT id, vk_id as uid FROM candidats ORDER BY id;';
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["candidats"] = array();
-
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["candidats"], $line);
+			array_push($result["users"], $line);
 		}
 		$result["result"] = "Success";
 		mysqli_close($link);

@@ -26,6 +26,7 @@ function check_session() {
 	session_start();
 	if (!isset($_SESSION["vk_id"])) {
 		if (isset($_COOKIE['vk_id'])) {
+			
 			session_start();
 			require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 			$ownMd5 = md5((Passwords::$vk_app_id) . ((string) $_COOKIE["vk_id"]) . (Passwords::$vk_secret_key));

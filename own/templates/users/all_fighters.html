@@ -1,4 +1,7 @@
 <div id="all-figh" class="table-container" ng-cloak ng-controller="fightersApp">
+<a href="">все</a> | <a href="">бойцы</a> | <a href="">кандидаты</a> 
+| <a href="">бойцы и кандидаты</a> | <a href="">комсостав</a> | <a href="">остальные</a>
+
   <!-- поиск по бойцам -->
   <div class="search_wrap"> Search:
     <input class="search" ng-model="query">
@@ -19,7 +22,7 @@
         <td><img ng-src="{{fighter.photo}}" /></td>
         <td>
           <ul>
-            <li><strong>ФИО:</strong> {{fighter.last_name}} <span ng-show="fighter.maiden_name">({{fighter.maiden_name}}) </span>{{fighter.first_name}} {{fighter.second_name}} </li>
+            <li><strong>ФИ:</strong> {{fighter.FI}}</li>
             <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
             <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
             <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
