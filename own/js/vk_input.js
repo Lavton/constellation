@@ -16,7 +16,7 @@
       /*окончательная подстановка. Вызываем соотв. событие*/
       function paste_final(vk_inpt, person) {
         state_of_fin = true;
-        vk_inpt.val(person.domain)
+        vk_inpt.val(person.uid)
         vk_inpt.parent().children("span.selectPerson").html(
           "<img src='" + person.photo + "' title='" + person.IF + "'></img>"
         );
@@ -27,7 +27,6 @@
           $(element).css('display', 'none')
         })
 
-        // debugger
         vk_inpt.trigger('_final_select');
         vk_inpt.trigger('keyup')
         vk_inpt.trigger('keydown')
@@ -63,7 +62,10 @@
           "</span><span style='display:none;' class='" + element.domain + "'>" +
           element.IF + " " +
           element.FI + " " +
-          "https://vk.com/" + element.domain +
+          element.maiden_name + " " +
+          element.nickname + " " +
+          "https://vk.com/" + element.domain + " " +
+          "https://vk.com/id" + element.uid + " " +
           "</span>" +
           "</li>")
       });
@@ -86,18 +88,18 @@
       });
 
       /*hideseek отображает все элементы. Скроем лишние в ручную*/
-      var max_l = 3;
+      var max_l = 4;
       $this.on("_after", function(e) {
         var lis = $parent.children("ul.my-nav").children("li").filter(function() {
           return $(this).css('display') == 'list-item';
         })
         var curr_l = 0;
         _.each(lis, function(element) {
-          curr_l += 1
-          if (curr_l > max_l) {
-            $(element).css('display', 'none')
-          }
-        })
+            curr_l += 1
+            if (curr_l > max_l) {
+              $(element).css('display', 'none')
+            }
+          })
           /*тут же - если мы всё ещё ищем человека -> никто не выбран -> уберём фото справа*/
         if (state_of_fin == true) {
           state_of_fin = false
@@ -122,7 +124,7 @@
         window.addPeople($this.val(), function(vk_resp) {
           if (vk_resp[$this.val()]) {
             var person = _.findWhere(window.people, {
-              "uid": vk_resp[$this.val()].uid
+              "uid": vk_resp[$this.val()].uid * 1
             })
             paste_final($this, person)
           }

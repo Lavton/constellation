@@ -48,6 +48,7 @@
             "js": [
               "/standart/js/jquery.hideseek.js",
               "/own/js/vk_input.js",
+              "/standart/js/jquery.pickmeup.min.js",
               "/own/js/users/all/all_in_common.js",
               "/own/js/users/all/all_fighters.js",
             ],

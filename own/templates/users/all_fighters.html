@@ -1,7 +1,5 @@
 <div id="all-figh" class="table-container" ng-cloak ng-controller="fightersApp">
-<a href="">все</a> | <a href="">бойцы</a> | <a href="">кандидаты</a> 
-| <a href="">бойцы и кандидаты</a> | <a href="">комсостав</a> | <a href="">остальные</a>
-
+  <a href="">все</a> | <a href="">бойцы</a> | <a href="">кандидаты</a> | <a href="">бойцы и кандидаты</a> | <a href="">комсостав</a> | <a href="">остальные</a>
   <!-- поиск по бойцам -->
   <div class="search_wrap"> Search:
     <input class="search" ng-model="query">
@@ -33,16 +31,37 @@
       </tr>
     </tbody>
   </table>
-  <!-- комсостав+ может добавлять новых бойцов -->
-  <div class="add-new-fighter" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
-  <br/>
-  <br/>
-  <br/>
-    <button type="button" class="btn btn-warning pre-add-new">Добавить нового бойца?</button>
-    <span class="add-new-input-w hidden">  <input type="text" class="add-new-d vk_input" placeholder="введите домен вконтакте" size=30 />
-    id: <input type="number" class="add-new-id" />
-
-  </span>
+  <!-- комсостав+ может добавлять новых людей -->
+  <div ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+    <br/>
+    <br/>
+    <br/>
+    <button type="button" class="btn btn-warning scrl" ng-click="addNewPerson()">Добавить нового человека?</button>
+    <div ng-show="adding_new" ng-init="adding_new=false">
+      <em>Поля, отмеченные * обязательны для заполнения. Остальные можно будет заполнить на странице человека.<br></em>
+      <br>
+      <button type="button" ng-click="addNewPersonSubmit()" ng-show="adding_new" class="btn btn-success">Добавить</button>
+      <br>
+      <br> Ссылка ВК*:
+      <input ng-model="newperson.uid" class="vk_input" placeholder="ссылка на страницу ВК"/>
+      <br> имя*:
+      <input ng-model="newperson.first_name" placeholder="имя человека" size=30 />
+      <br>
+      фамилия*: <input ng-model="newperson.last_name" placeholder="фамилия человека" size=30 />
+      <br>
+      отчество: <input ng-model="newperson.middle_name" placeholder="отчество человека" size=30 />
+      <br>
+      телефон: <input ng-model="newperson.phone" placeholder="телефон человека" size=30 /> 
+      <br>
+      дата рождения: <input ng-model="newperson.birthdate" class="date" placeholder="дата рождения человека"/> {{newperson.birthdate}}
+      <br>
+      статус: <select ng-model="newperson.status" ng-options="value.id as value.title for (key , value) in newperson.pos_status"></select> {{newperson.status}}
+      <br>
+      <button type="button" ng-click="addNewPersonSubmit()" ng-show="adding_new" class="btn btn-success">Добавить</button>
+    </div>
+    <!-- <span class="add-new-input-w hidden">  <input type="text" class="add-new-d vk_input" placeholder="введите домен вконтакте" size=30 /> -->
+    <!-- id: <input type="number" class="add-new-id" /> -->
+    </span>
   </div>
 </div>
 <!-- table-container -->

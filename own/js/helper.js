@@ -35,8 +35,35 @@ window.formatTimestamp = function(date) {
     date.getHours() + ":" + date.getMinutes();
 }
 
+// говорит, число ли строка)
+function isNumeric(input) {
+    return (input - 0) == input && (''+input).trim().length > 0;
+}
 
-/*вернуть куки по имени*/
+// из разных вариантов ввода телефона делает его цифрами
+function getPhone(input) {
+  var out = "";
+  _.each(input, function(ch) {
+    if (isNumeric(ch)) {
+      out += ch;
+    }
+  })
+  if (out.length == 11) {
+    var temp = ""
+    for (var i = 1; i < out.length; i++) {
+      temp += out[i];
+    };
+    out = temp;
+  }
+  if (out.length != 10) {
+    out = null;
+  }
+  return out;
+}
+
+window.getPhone = getPhone;
+
+// вернуть куки по имени
 function getCookie(name) {
   var matches = document.cookie.match(new RegExp(
     "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -83,6 +110,7 @@ function setPeople(callback) {
               _.extend(user, element);
               user.isFighter = true;
               user.id = user.id * 1;
+              user.uid = user.uid * 1;
               user.isCandidate = Boolean(user.isCandidate * 1);
               user.isFighter = Boolean(user.isFighter * 1);
 

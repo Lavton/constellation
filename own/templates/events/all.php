@@ -34,7 +34,7 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
 <!-- создание мероприятия -->
 <br/><br/>
       <button type="button" ng-click="addNewEvent()" class="btn btn-warning" >Создать мероприятие?</button> 
-  <div ng-show="adding_new || edit_ev" ng-init="adding_new=false; edit_ev=false"> 
+  <div ng-show="adding_new" ng-init="adding_new=false"> 
   <em>Поля, отмеченные * обязательны для заполнения<br></em>
       <span class="scrl"></span>
 <br>

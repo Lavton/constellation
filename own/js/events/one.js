@@ -19,9 +19,6 @@
         for (var i = 0; i < path.length - 1; i++) {
           self = self[path[i]]
         };
-        console.log($(this).val())
-        console.log(path)
-        console.log(self[path[path.length - 1]])
         self[path[path.length - 1]] = $(this).val();
         if (!$scope.newevent.finish_date) {
           $scope.newevent.finish_date = $scope.newevent.start_date;
