@@ -125,8 +125,8 @@ if (typeof String.prototype.startsWith != 'function') {
       if (locat.startsWith("/about/users")) {
         locat = "/about/users";
       }
-      if (locat.startsWith("/about/candidats")) {
-        locat = "/about/candidats";
+      if (locat.startsWith("/about/command_staff")) {
+        locat = "/about/command_staff";
       }
       if (locat.startsWith("/events/shifts")) {
         locat = "/events/shifts";

@@ -47,7 +47,7 @@ if (!isset($_GET["id"])) {
           <?php
 } else {
 		/*иначе - смотри людей)*/
-		include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/all_fighters.html';
+		include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/all_users.html';
 	}
 }
 ?>

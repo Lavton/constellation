@@ -79,9 +79,9 @@
                   Отряд в лицах
                 </li>
               </a>
-              <a href="/about/candidats" class="about cand-faces ajax-nav">
+              <a href="/about/command_staff" class="about cand-faces ajax-nav">
                 <li class="">
-                  Наши кандидаты
+                  КомСостав
                 </li>
               </a>
             </ul>

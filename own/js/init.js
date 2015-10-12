@@ -43,16 +43,15 @@
   window.state = {
     "about": {
       "users": {
-        "fighters": {
+        "users": {
           "all": {
             "js": [
               "/standart/js/jquery.hideseek.js",
               "/own/js/vk_input.js",
               "/standart/js/jquery.pickmeup.min.js",
-              "/own/js/users/all/all_in_common.js",
-              "/own/js/users/all/all_fighters.js",
+              "/own/js/users/all/all_users.js",
             ],
-            "title": "бойцы | отряд в лицах | СПО \"СОзвездие\"",
+            "title": "отряд в лицах | СПО \"СОзвездие\"",
             "loc": /^\/about\/users$/
           },
           "one": {
