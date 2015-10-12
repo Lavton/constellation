@@ -10,11 +10,11 @@ if (is_ajax()) {
 			/*если просят менять группу доступа - сделаем это!*/
 			case "change_group":change_group();
 				break;
-			case "all":get_all_fighters();
+			case "get_all_more_info":get_all_more_info();
 				break;
 			case "get_all_ids":get_all_ids();
 				break;
-			case "add_new_fighter":add_new_fighter();
+			case "add_new_person":add_new_person();
 				break;
 
 			case "get_one_info":get_one_info();
@@ -75,8 +75,8 @@ function change_group() {
 	}
 }
 
-//get all users base info
-function get_all_fighters() {
+//get all users more info
+function get_all_more_info() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
@@ -94,7 +94,9 @@ function get_all_fighters() {
 		}
 		$link->set_charset("utf8");
 		// поиск юзера
-		$query = 'SELECT  id, vk_id, name, second_name, surname, maiden_name, birthdate, phone, second_phone, email, Instagram_id FROM fighters ORDER BY id;';
+		$query = 'SELECT  UM.id, UM.birthdate, UM.phone, UF.second_phone, UF.email, UF.instagram_id 
+		FROM UsersMain AS UM 
+		LEFT JOIN UsersFighters AS UF ON UM.id = UF.id;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["users"] = array();
 
@@ -274,8 +276,8 @@ function get_all_ids() {
 	}
 }
 
-//добавляет бойца
-function add_new_fighter() {
+//добавляет человека
+function add_new_person() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
@@ -292,46 +294,20 @@ function add_new_fighter() {
 		}
 		$link->set_charset("utf8");
 
-		//добавляем id и vk_id
-		// $query = "INSERT INTO fighters (id, vk_id) VALUES (".$_POST["id"].", '".$_POST["vk_id"]."');";
+		// записываем в головное
+		$result = inserter($link, "UsersMain", array("uid" => $_POST["uid"], "first_name" => $_POST["first_name"],
+			"last_name" => $_POST["last_name"], "middle_name" => $_POST["middle_name"],
+			"phone" => $_POST["phone"], "birthdate" => $_POST["birthdate"], "group_of_rights" => $_POST["status"]), True);
 
-		$names = array();
-		$values = array();
-		if (isset($_POST["id"])) {
-			array_push($names, "id");
-			array_push($values, "'" . $_POST["id"] . "'");
-		}
-		if (isset($_POST["vk_id"])) {
-			array_push($names, "vk_id");
-			array_push($values, "'" . $_POST["vk_id"] . "'");
-		}
-		if (isset($_POST["group_of_rights"])) {
-			array_push($names, "group_of_rights");
-			array_push($values, "'" . $_POST["group_of_rights"] . "'");
-		}
-		if (isset($_POST["name"])) {
-			array_push($names, "name");
-			array_push($values, "'" . $_POST["name"] . "'");
+		if ($_POST["status"] == 3) {
+			// боец
+			$res2 = inserter($link, "UsersFighters", array("id" => $result["id"], "year_of_entrance" => $_POST["year_of_entrance"]));
 		}
 
-		if (isset($_POST["surname"])) {
-			array_push($names, "surname");
-			array_push($values, "'" . $_POST["surname"] . "'");
+		if ($_POST["status"] == 2) {
+			// кандидат
+			$res2 = inserter($link, "UsersCandidats", array("id" => $result["id"]));
 		}
-		if (isset($_POST["birthdate"])) {
-			array_push($names, "birthdate");
-			array_push($values, "'" . $_POST["birthdate"] . "'");
-		}
-		if (isset($_POST["year_of_entrance"])) {
-			array_push($names, "year_of_entrance");
-			array_push($values, "'" . $_POST["year_of_entrance"] . "'");
-		}
-
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO fighters (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
 	}

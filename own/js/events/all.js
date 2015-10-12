@@ -36,7 +36,7 @@
     $scope.formatDate = window.formatDate;
 
     var data = {
-      action: "all",
+      action: "get_all_events",
     };
     $http.post('/handlers/event.php', data).success(function(response) {
       $scope.events = {}

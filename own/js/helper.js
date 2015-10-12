@@ -108,7 +108,6 @@ function setPeople(callback) {
             _.each(json.users, function(element, index, list) {
               var user = _.pick(response[element.uid], 'uid', "domain", "photo_50");
               _.extend(user, element);
-              user.isFighter = true;
               user.id = user.id * 1;
               user.uid = user.uid * 1;
               user.isCandidate = Boolean(user.isCandidate * 1);

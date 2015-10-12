@@ -2,20 +2,32 @@
   /*логика ангулара*/
   function init_angular_f_c($scope, $http) {
     $scope.newperson = {}
-    $scope.newperson.pos_status = [{"id":0, "title": "--нет--"}, {"id":1, "title": "кандидат"}, , {"id":2, "title": "боец"}]
+    $scope.newperson.pos_status = [{
+      "id": 1,
+      "title": "--нет--"
+    }, {
+      "id": 2,
+      "title": "кандидат"
+    }, , {
+      "id": 3,
+      "title": "боец"
+    }]
     window.setPeople(function() {
       $("input.vk_input").vkinput()
     });
     $scope.window = window;
     /*инициализация*/
-    $scope.fighters = [];
+    $scope.users = [];
     window.setPeople(function(flag) {
-      $scope.fighters = _.chain(window.people)
+      $scope.users = _.chain(window.people)
         .filter(function(person) {
-          return person.isFighter
+          return person.isFighter || person.isCandidate;
         })
         .sortBy(function(person) {
           return person.id
+        })
+        .sortBy(function(person) {
+          return !person.isFighter;
         })
         .map(function(person) {
           return _.clone(person)
@@ -29,10 +41,46 @@
 
     // получаем информацию по-подробнее
     $scope.getMoreInfo = function() {
-      /*сначала - данные с сервера*/
-      allPeople.moreFromServer("all", $scope, $scope.fighters);
-      /*после - данные с ВК*/
-      allPeople.moreFromVK($scope.fighters, $scope)
+      $scope.app2 = _.after(3, $scope.$apply);
+      // сначала - данные с сервера
+      var data = {
+        "action": "get_all_more_info",
+      };
+      $.ajax({
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(response) {
+        _.each($scope.users, function(element, index, list) {
+          element.photo_100 = "http://vk.com/images/camera_b.gif";
+          _.extend(element,
+            _.findWhere(response.users, {
+              "id": element.id + ""
+            }))
+        })
+        $scope.app2();
+
+        // Если мы нашли несоответствие между закешированной версией и той, которую получили
+        if (response.users.length != people.length) {
+          window.clearPeople()
+          window.setPeople(function() {
+            $scope.app2()
+          })
+        } else {
+          $scope.app2();
+        }
+      });
+      getVkData(_.map($scope.users, function(user) {
+        return user.uid;
+      }), ["photo_100", "photo_200", "domain"],
+        function(response) {
+          _.each($scope.users, function(element, index, list) {
+            element.photo = response[element.uid].photo_100;
+          });
+          $scope.app2();
+        }
+      );
     }
 
     // просто изменение формата вывода телефона
@@ -114,17 +162,74 @@
       }
     });
 
+    // отправляем форму добавления человека
+    $scope.addNewPersonSubmit = function() {
+      var data = angular.copy($scope.newperson);
+      data.action = "add_new_person";
+      data.year_of_entrance = (new Date()).getFullYear();
+      $.ajax({
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        console.log(json)
+        window.clearPeople()
+        var lnk = document.createElement("a");
+        lnk.setAttribute("class", "ajax-nav")
+        $(lnk).attr("href", "/users/" + json.id);
+        $("#page-container").append(lnk);
+        $(lnk).trigger("click")
+      })
+    }
+
+
+    $scope.filterShow = function(what) {
+      console.log(what)
+
+      function cond(person) {
+        switch (what) {
+          case "candidats":
+            return person.isCandidate;
+            break;
+          case "fighters":
+            return person.isFighter;
+            break;
+          case "all":
+            return true;
+            break;
+          case "fightersANDcandidats":
+            return person.isFighter || person.isCandidate;
+            break;
+          case "last":
+            return !(person.isFighter || person.isCandidate);
+            break;
+
+        }
+
+      }
+      $scope.users = _.chain(window.people)
+        .filter(function(person) {
+          return cond(person)
+        })
+        .sortBy(function(person) {
+          return person.id
+        })
+        .sortBy(function(person) {
+          return !person.isFighter;
+        })
+        .map(function(person) {
+          return _.clone(person)
+        })
+        .value();
+    }
   }
-
-
-  /*добавить нового бойца*/
-  allPeople.addNewPerson("get_all_ids", "add_new_fighter", ".add-new-fighter", "/about/users/")
 
   function init() {
     window.setPeople(function() {
       $("input.vk_input").vkinput()
     });
-    window.init_ang("fightersApp", init_angular_f_c, "all-figh");
+    window.init_ang("usersApp", init_angular_f_c, "all-figh");
   }
   init();
   window.registerInit(init)

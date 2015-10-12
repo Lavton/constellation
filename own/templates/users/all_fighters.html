@@ -1,5 +1,5 @@
-<div id="all-figh" class="table-container" ng-cloak ng-controller="fightersApp">
-  <a href="">все</a> | <a href="">бойцы</a> | <a href="">кандидаты</a> | <a href="">бойцы и кандидаты</a> | <a href="">комсостав</a> | <a href="">остальные</a>
+<div id="all-figh" class="table-container" ng-cloak ng-controller="usersApp">
+  <a href="" ng-click="filterShow('all')">все</a> | <a href="" ng-click="filterShow('fighters')">бойцы</a> | <a href="" ng-click="filterShow('candidats')">кандидаты</a> | <a href="" ng-click="filterShow('fightersANDcandidats')">бойцы и кандидаты</a> | <a href="" ng-click="filterShow('last')">остальные</a>
   <!-- поиск по бойцам -->
   <div class="search_wrap"> Search:
     <input class="search" ng-model="query">
@@ -15,17 +15,17 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="fighter in fighters | filter:query" class="{{fighter.id}}">
-        <td><a href='users/{{fighter.id}}' class="ajax-nav">{{fighter.id}}</a></td>
-        <td><img ng-src="{{fighter.photo}}" /></td>
+      <tr ng-repeat="user in users | filter:query" class="{{user.id}}">
+        <td><a href='users/{{user.id}}' class="ajax-nav">{{user.id}}</a></td>
+        <td><img ng-src="{{user.photo}}" /></td>
         <td>
           <ul>
-            <li><strong>ФИ:</strong> {{fighter.FI}}</li>
-            <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
-            <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
-            <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
-            <li ng-show="fighter.domain"><strong>vk:</strong> <a target='_blank' href='//vk.com/{{fighter.domain}}'>vk.com/{{fighter.domain}}</a></li>
-            <li ng-show="fighter.Instagram_id"><strong>instagram:</strong> <a target='_blank' href='//instagram.com/{{fighter.Instagram_id}}'>instagram.com/{{fighter.Instagram_id}}</a></li>
+            <li><strong>ФИ:</strong> {{user.FI}}</li>
+            <li ng-show="user.phone"><strong>Телефон:</strong><a href='tel:+7{{user.phone}}'> {{goodView(user.phone)}} </a></li>
+            <li ng-show="user.second_phone"><strong>Телефон:</strong><a href='tel:+7{{user.second_phone}}'> {{goodView(user.second_phone)}} </a></li>
+            <li ng-show="user.email"><strong>e-mail:</strong><a href='mailto:{{user.email}}'> {{user.email}} </a></li>
+            <li ng-show="user.domain"><strong>vk:</strong> <a target='_blank' href='//vk.com/{{user.domain}}'>vk.com/{{user.domain}}</a></li>
+            <li ng-show="user.Instagram_id"><strong>instagram:</strong> <a target='_blank' href='//instagram.com/{{user.Instagram_id}}'>instagram.com/{{user.Instagram_id}}</a></li>
           </ul>
         </td>
       </tr>
@@ -55,12 +55,10 @@
       <br>
       дата рождения: <input ng-model="newperson.birthdate" class="date" placeholder="дата рождения человека"/> {{newperson.birthdate}}
       <br>
-      статус: <select ng-model="newperson.status" ng-options="value.id as value.title for (key , value) in newperson.pos_status"></select> {{newperson.status}}
+      статус*: <select ng-model="newperson.status" ng-init="newperson.status=2" ng-options="value.id as value.title for (key , value) in newperson.pos_status"></select> {{newperson.status}}
       <br>
       <button type="button" ng-click="addNewPersonSubmit()" ng-show="adding_new" class="btn btn-success">Добавить</button>
     </div>
-    <!-- <span class="add-new-input-w hidden">  <input type="text" class="add-new-d vk_input" placeholder="введите домен вконтакте" size=30 /> -->
-    <!-- id: <input type="number" class="add-new-id" /> -->
     </span>
   </div>
 </div>

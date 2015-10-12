@@ -9,7 +9,7 @@ if (is_ajax()) {
 		switch ($action) {
 			case "add_new_event":add_new_event();
 				break;
-			case "all":get_all();
+			case "get_all_events":get_all_events();
 				break;
 			case "arhive":arhive();
 				break;
@@ -72,7 +72,7 @@ function add_new_event() {
 }
 
 //get all shifts base info
-function get_all() {
+function get_all_events() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
