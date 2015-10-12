@@ -35,6 +35,8 @@
   <div id="after-js-container">
     <script type="text/javascript" src="//vk.com/js/api/openapi.js"></script>
     <script type="text/javascript">
+    window.clearPeople();
+
     /*при ajax загрузке не всегда опенАПИ к этому моменту подгружается.
       Ждём, пока это не произойдёт в цикле.*/
     var intID = setInterval(function() {

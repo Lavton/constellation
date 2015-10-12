@@ -2,7 +2,9 @@
 <div ng-cloak ng-controller="oneFighterApp" id="one-fighter">
   <div class="user-info hidden">
     <div class="col-xs-12">
-      <h2>{{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}} {{fighter.second_name}}
+
+      <h2>{{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}} {{fighter.second_name}} 
+        <em ng-show="fighter.nickname">({{fighter.nickname}})</em>
         <button type="button" class="btn btn-primary text-right" ng-click="editPerson()" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')">Редактировать</button>
       </h2>
       <hr>
@@ -18,7 +20,7 @@
           <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
           <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
           <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
-          <li ng-show="fighter.Instagram_id"><strong>id в Instagram:</strong><a href='https://instagram.com/{{fighter.Instagram_id}}' target="_blank"> {{fighter.Instagram_id}} </a></li>
+          <li ng-show="fighter.instagram_id"><strong>id в Instagram:</strong><a href='https://instagram.com/{{fighter.instagram_id}}' target="_blank"> {{fighter.instagram_id}} </a></li>
           <li ng-show="fighter.birthdate"><strong>День рождения: </strong>{{fighter.birthdate | date: 'dd.MM.yyyy'}}</li>
           <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
           <li ng-show="fighter.group_of_rights && window.current_group>=window.groups.COMMAND_STAFF.num"><strong>Права доступа: </strong>{{fighter.group_of_rights}} ({{window.groups[window.visibilities[fighter.group_of_rights]].rus}})</li>
@@ -63,7 +65,7 @@
                 <input type="email" ng-model="fighter.email" size="{{(fighter.email).length}}" />
               </li>
               <li><strong>id в Instagram:</strong>
-                <input ng-model="fighter.Instagram_id" size="{{(fighter.intagram_id).length}}" />
+                <input ng-model="fighter.instagram_id" size="{{(fighter.intagram_id).length}}" />
               </li>
               <li><strong>День рождения: </strong>
                 <input type="date" ng-model="fighter.birthdate" size="{{(fighter.birthdate).length}}" />
@@ -90,7 +92,7 @@
   </div>
   <!--  -->
   <!-- доп. информация -->
-  <div class="row own-row">
+  <div class="row own-row" ng-show="window.current_group>=window.groups.FIGHTER.num || fighter.uid == window.getCookie('vk_id')">
     <div class="col-xs-6">
       <h3>Смены</h3>
       <ul>
@@ -101,7 +103,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-6" >
       <h3>Достижения 
         <a href="" ng-click="addAch()">
           <img src="/own/images/plus.png" width="25px" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')">

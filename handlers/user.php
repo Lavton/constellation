@@ -95,7 +95,7 @@ function get_all_more_info() {
 		$link->set_charset("utf8");
 		// поиск юзера
 		$query = 'SELECT  UM.id, UM.birthdate, UM.phone, UF.second_phone, UF.email, UF.instagram_id 
-		FROM UsersMain AS UM 
+		FROM UsersMain AS UM
 		LEFT JOIN UsersFighters AS UF ON UM.id = UF.id;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["users"] = array();
@@ -112,7 +112,7 @@ function get_all_more_info() {
 function get_one_info() {
 	check_session();
 	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+	// if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -127,14 +127,27 @@ function get_one_info() {
 		$link->set_charset("utf8");
 
 		// поиск юзера
-		$query = "SELECT id, vk_id as uid, name as first_name, second_name, surname as last_name, maiden_name, nickname, phone, second_phone, email, birthdate, year_of_entrance, group_of_rights, Instagram_id FROM fighters WHERE id='" . $_POST['id'] . "' ORDER BY id;";
+		$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, IFNULL(UF.id, 0) AS isFighter, 
+			IFNULL(UC.id, 0) AS isCandidate FROM UsersMain AS UM
+			LEFT JOIN UsersFighters AS UF ON UF.id=UM.id
+			LEFT JOIN UsersCandidats AS UC ON UC.id= UM.id
+			WHERE UM.id='" . $_POST['id'] . "';";
+
+		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+			$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, UM.middle_name, UM.phone,
+			UM.birthdate, UM.group_of_rights, IFNULL(UF.id, 0) AS isFighter, UF.second_phone,
+			UF.email, UF.instagram_id, UF.year_of_entrance, UF.nickname, UF.maiden_name, 
+			IFNULL(UC.id, 0) AS isCandidate FROM UsersMain AS UM
+			LEFT JOIN UsersFighters AS UF ON UF.id=UM.id
+			LEFT JOIN UsersCandidats AS UC ON UC.id= UM.id
+			WHERE UM.id='" . $_POST['id'] . "';";
+		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-
-		$query = "select min(id) as mid FROM fighters where id > " . $_POST['id'] . ";";
+		$query = "select min(id) as mid FROM UsersMain where id > " . $_POST['id'] . ";";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$query = "select max(id) as mid FROM fighters where id < " . $_POST['id'] . ";";
+		$query = "select max(id) as mid FROM UsersMain where id < " . $_POST['id'] . ";";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
@@ -142,7 +155,7 @@ function get_one_info() {
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
-	}
+	// }
 }
 
 //change one user info in profile
@@ -698,6 +711,8 @@ function get_common_inf() {
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
+	} else {
+		echo json_encode(array("users" => [], "result" => "notAuth"));
 	}
 }
 

@@ -22,16 +22,10 @@ if (isset($_GET["id"]) && $_GET["id"] == 0) {
 	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/own.php';
 
 	/*смотрим на чужой профиль (доступно >=бойцам)*/
-} elseif (($_SESSION["fighter_id"] == $_GET["id"]) || isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+} else {
 	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_fighter.html';
-	/*не боец попытался посмотреть профиль*/
-} elseif (isset($_GET["id"])) {
-	echo "Access denied";
-	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/footer.php';
-	echo '</div></body>
-        </html>';
-	exit();
 }
+
 /*не смотрим конкретный профиль*/
 if (!isset($_GET["id"])) {
 	/*если не кандидат, то нельзя посмотреть людей в отряде*/

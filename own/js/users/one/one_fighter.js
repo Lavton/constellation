@@ -3,6 +3,7 @@
 
   function init_angular_o_f_c($scope, $http) {
     $scope.window = window;
+    $scope.fighter = {}
     var fid = window.location.href.split("/")
     var userid = fid[fid.length - 1] * 1;
 
@@ -18,30 +19,35 @@
     window.setPeople(function(flag) {
       $scope.fighter = _.clone(_.find(window.people, function(person) {
         return person.id == userid && person.isFighter == true;
-      }))
+      })) || {}
       if (flag) {
         $scope.$apply();
       }
       initialize();
     });
-
+    // console.log("NOOOOOOOO")
     function initialize() {
-      $scope.app2 = _.after(2, $scope.$apply)
-        /*c cервера*/
+      // $scope.app2 = _.after(2, $scope.$apply)
+      // c cервера
       var data = {
         action: "get_one_info",
         id: userid
       }
+      console.log(data)
       $.ajax({
         type: "POST",
         url: "/handlers/user.php",
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
+        console.log(json)
+
         _.extend($scope.fighter, json.user);
 
-        $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
-        $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
+        if ($scope.fighter.year_of_entrance) {
+          $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
+          $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
+        }
         $("a.profile_priv").attr("href", json.prev.mid)
         $("a.profile_next").attr("href", json.next.mid)
         if (!json.prev.mid) {
@@ -70,19 +76,19 @@
           }
         });
 
-        $scope.app2();
-      });
-      /*с ВК*/
-      var data_vk = {
-        user_ids: $scope.fighter.domain,
-        fields: ["photo_200", "domain"]
-      }
-      getVkData($scope.fighter.domain, ["photo_200", "domain"],
-        function(response) {
-          $scope.fighter.photo = response[$scope.fighter.domain].photo_200;
-          $scope.app2();
+        $scope.$apply();
+        /*с ВК*/
+        var data_vk = {
+          user_ids: $scope.fighter.uid,
+          fields: ["photo_200", "domain"]
         }
-      );
+        getVkData($scope.fighter.uid, ["photo_200", "domain"],
+          function(response) {
+            $scope.fighter.photo = response[$scope.fighter.uid].photo_200;
+            $scope.$apply();
+          }
+        );
+      });
     }
 
     /*конец инициализации*/
