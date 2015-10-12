@@ -21,7 +21,7 @@ if (is_ajax()) {
 				break;
 			case 'fighter_modify':fighter_modify();
 				break;
-			case "kill_fighter":kill_fighter();
+			case "kill_user":kill_user();
 				break;
 			case "get_own_info":get_own_info();
 				break;
@@ -327,7 +327,7 @@ function add_new_person() {
 }
 
 // удаляет пользователя
-function kill_fighter() {
+function kill_user() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
@@ -345,9 +345,7 @@ function kill_fighter() {
 		$link->set_charset("utf8");
 
 		//удаляем бойца по id
-		$query = "DELETE FROM fighters WHERE id=" . $_POST["id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = deleter($link, "UsersMain", "id=" . $_POST["id"]);
 		mysqli_close($link);
 		echo json_encode($result);
 	}

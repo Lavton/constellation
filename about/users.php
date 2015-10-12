@@ -22,7 +22,7 @@ if (isset($_GET["id"]) && $_GET["id"] == 0) {
 	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/own.php';
 
 	/*смотрим на чужой профиль (доступно >=бойцам)*/
-} else {
+} elseif (isset($_GET["id"])) {
 	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_fighter.html';
 }
 

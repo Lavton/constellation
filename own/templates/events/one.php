@@ -10,7 +10,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <div class="col-xs-12">
         <h2><span ng-hide="event.base_id">{{event.name}}</span>
         <span ng-show="event.base_id"><abbr title="{{event.base_dis}}">{{event.name}}</abbr></span>
-        <button type="button" ng-show="event.editable" class="btn btn-primary text-right" ng-click="editEventInfo(true)">Редактировать описание мероприятия</button>
+        <button type="button" ng-show="event.editable" class="btn btn-primary text-right" ng-click="editEventInfo()">Редактировать описание мероприятия</button>
       </h2>
         <hr>
         <span class="saved">  (Изменения сохранены)</span>

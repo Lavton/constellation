@@ -113,7 +113,7 @@
     });
 
     // показывает реактирование
-    $scope.editEventInfo = function(flag) {
+    $scope.editEventInfo = function() {
 
       $(".event-edit").removeClass("hidden");
       $(".event-edit").hide();
@@ -235,9 +235,6 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(response) {
-          $('html, body').animate({
-            scrollTop: $("nav").offset().top
-          }, 500, function() {
             var lnk = document.createElement("a");
             lnk.setAttribute("class", "ajax-nav")
             $(lnk).attr("href", "/events/");

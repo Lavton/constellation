@@ -1,9 +1,11 @@
 <!-- просмотр профиля одного бойца -->
 <div ng-cloak ng-controller="oneFighterApp" id="one-fighter">
+    <span class="scrl"></span>
   <div class="user-info hidden">
+<!-- просмотр -->
     <div class="col-xs-12">
 
-      <h2>{{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}} {{fighter.second_name}} 
+      <h2>{{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}} {{fighter.middle_name}} 
         <em ng-show="fighter.nickname">({{fighter.nickname}})</em>
         <button type="button" class="btn btn-primary text-right" ng-click="editPerson()" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')">Редактировать</button>
       </h2>
@@ -16,6 +18,10 @@
       </div>
       <div class="col-xs-9 info-str">
         <ul>
+          <li> <strong>статус:</strong> <span ng-show="fighter.isFighter">боец</span> 
+          <span ng-show="fighter.isCandidate">кандидат</span>
+            
+          </li>
           <li ng-show="fighter.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{fighter.domain}}'>vk.com/{{fighter.domain}}</a></li>
           <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
           <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
@@ -28,10 +34,10 @@
       </div>
     </div>
   </div>
+
+  <!-- редактирование -->
   <div ng-show="window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')">
     <div class="user-edit hidden">
-      <form ng-submit="submit({{fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num}})">
-        <div class="col-xs-12">
           <h2>
           <span ng-show="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num">
         {{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}}
@@ -42,11 +48,14 @@
 
           <input type="text" ng-model="fighter.first_name" size="{{(fighter.first_name).length}}+1" placeholder="Имя" />
           </span>
-          <input type="text" ng-model="fighter.second_name"  size="{{(fighter.second_name).length}}+1" placeholder="Отчество"/>
-          <input type="submit" class="btn btn-primary text-right" ng-click="editPerson()" value="Сохранить"></input>
-          <button type="button" class="btn btn-primary text-right" ng-click="resetInfo(); editPerson()" >Отменить</input>
+          <input type="text" ng-model="fighter.middle_name"  size="{{(fighter.middle_name).length}}+1" placeholder="Отчество"/>
+
+            <input type="submit" class="btn btn-success text-right" ng-click="editPersonSubmit()" value="Сохранить"></input>
+            <button type="button" class="btn btn-primary text-right" ng-click="hideEdit()" >Отменить</input>
         </h2>
           <hr>
+      <form ng-submit="editPersonSubmit({{fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num}})">
+        <div class="col-xs-12">
         </div>
         <div class="row own-row">
           <div class="col-xs-3">
@@ -79,6 +88,7 @@
               <li ng-show="fighter.group_of_rights && window.current_group>=window.groups.COMMAND_STAFF.num || fighter.uid == window.getCookie('vk_id')"><strong>Права доступа: </strong>{{fighter.group_of_rights}} ({{window.groups[window.visibilities[fighter.group_of_rights]].rus}})</li>
             </ul>
           </div>
+          <input type="submit" class="btn btn-success text-right" value="Сохранить"></input>
         </div>
       </form>
       <h2>Выбрать категорию доступа</h2>
@@ -88,8 +98,9 @@
       <span ng-repeat="group in f_groups">
       <input type="radio" value="{{group.num}}" name="group_r" ng-checked="window.getCookie('current_group')*1 == group.num*1" >{{group.rus}}<br></span>
     </div>
-    <button type="button" class="btn btn-danger kill-fighter" ng-click="killFighter()" ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num">Удалить профиль</button>
+    <button type="button" class="btn btn-danger kill-fighter" ng-click="killUser()" ng-hide="fighter.uid == window.getCookie('vk_id') && window.current_group<=window.groups.COMMAND_STAFF.num">Удалить профиль</button>
   </div>
+
   <!--  -->
   <!-- доп. информация -->
   <div class="row own-row" ng-show="window.current_group>=window.groups.FIGHTER.num || fighter.uid == window.getCookie('vk_id')">

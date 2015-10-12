@@ -25,29 +25,29 @@
       }
       initialize();
     });
-    // console.log("NOOOOOOOO")
+
     function initialize() {
-      // $scope.app2 = _.after(2, $scope.$apply)
       // c cервера
       var data = {
         action: "get_one_info",
         id: userid
       }
-      console.log(data)
       $.ajax({
         type: "POST",
         url: "/handlers/user.php",
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-        console.log(json)
-
         _.extend($scope.fighter, json.user);
 
         if ($scope.fighter.year_of_entrance) {
           $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
           $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
+          $scope.fighter.id = $scope.fighter.id * 1;
+          $scope.fighter.uid = $scope.fighter.uid * 1;
         }
+        $scope.fighter.isCandidate = Boolean($scope.fighter.isCandidate * 1);
+        $scope.fighter.isFighter = Boolean($scope.fighter.isFighter * 1);
         $("a.profile_priv").attr("href", json.prev.mid)
         $("a.profile_next").attr("href", json.next.mid)
         if (!json.prev.mid) {
@@ -97,9 +97,18 @@
 
     /* меняет местами просмотр и редактирование*/
     $scope.editPerson = function() {
-      $(".user-info").toggleClass("hidden");
-      $(".user-edit").toggleClass("hidden");
+      $(".user-edit").removeClass("hidden");
+      $(".user-edit").hide();
+      $(".user-info").hide("slow");
+      $(".user-edit").show("slow", function() {
+        $('html, body').animate({
+          scrollTop: $(".scrl").offset().top
+        }, 500); // анимируем скроолинг к элементу
+
+      });
       $scope.master = angular.copy($scope.fighter);
+      $scope.newuser = angular.copy($scope.fighter);
+
     };
 
     /*отправляет на сервер изменения*/
@@ -136,16 +145,17 @@
       );
     }
 
-    /*отменяет редактирование*/
-    $scope.resetInfo = function() {
-      $scope.fighter = angular.copy($scope.master);
+    // убирает форму редактирования
+    $scope.hideEdit = function() {
+      $(".user-edit").hide("slow");
+      $(".user-info").show("slow");
     }
 
     /*удаляет бойца*/
-    $scope.killFighter = function() {
+    $scope.killUser = function() {
       if (confirm("Точно удалить профиль?")) {
         var data = {
-          action: "kill_fighter",
+          action: "kill_user",
           id: userid
         }
         $.ajax({ //TODO: make with angular
@@ -156,7 +166,11 @@
         }).done(function(response) {
           if (response.result == "Success") {
             window.clearPeople()
-            window.location = "/about/users";
+            var lnk = document.createElement("a");
+            lnk.setAttribute("class", "ajax-nav")
+            $(lnk).attr("href", "/about/users");
+            $("#page-container").append(lnk);
+            $(lnk).trigger("click");
           }
         });
       }
