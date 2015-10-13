@@ -3,7 +3,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/php_globals.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 
 // упрощает вставку
-function inserter($link, $table, $data, $needId=False) {
+function inserter($link, $table, $data, $needId=False, $onDubl=False) {
 	$names = array();
 	$values = array();
 
@@ -16,9 +16,25 @@ function inserter($link, $table, $data, $needId=False) {
 			$values[$key] = "NULL";
 		}
 	}
+	$conc = array();
+	if ($onDubl) {
+		foreach ($names as $key => $value) {
+			array_push($conc, "" . $value . "=" . $values[$key]);
+		}
+	}
+	$conc = implode(", ", $conc);
+
 	$names = implode(", ", $names);
 	$values = implode(", ", $values);
-	$query = "INSERT INTO ".$table." (" . $names . ") VALUES (" . $values . ");";
+	$query = "";
+	if (!$onDubl) {
+		// обычная вставка
+		$query = "INSERT INTO ".$table." (" . $names . ") VALUES (" . $values . ");";
+	} else {
+		// вставка, но при наличии ключей - обновление
+		$query = "INSERT INTO ".$table." (" . $names . ") VALUES (" . $values . ") 
+		ON DUPLICATE KEY UPDATE ".$conc.";";
+	}
 	$link->query($query);
 	$result = array();
 	$result["result"] = "Success";

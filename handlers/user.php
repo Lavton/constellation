@@ -19,7 +19,7 @@ if (is_ajax()) {
 
 			case "get_one_info":get_one_info();
 				break;
-			case 'fighter_modify':fighter_modify();
+			case 'user_modify':user_modify();
 				break;
 			case "kill_user":kill_user();
 				break;
@@ -159,7 +159,7 @@ function get_one_info() {
 }
 
 //change one user info in profile
-function fighter_modify() {
+function user_modify() {
 	check_session();
 	session_start();
 	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) || ($_POST["id"] == 0)) {
@@ -175,81 +175,45 @@ function fighter_modify() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$names = array();
-		$values = array();
-		if ($_POST["id"] != 0) {
-			if (isset($_POST["uid"])) {
-				array_push($values, "'" . $_POST["uid"] . "'");
-				array_push($names, "vk_id");
-			}
-			if (isset($_POST["group_of_rights"])) {
-				array_push($values, "'" . $_POST["group_of_rights"] . "'");
-				array_push($names, "group_of_rights");
-			}
-			if (isset($_POST["first_name"])) {
-				array_push($values, "'" . $_POST["first_name"] . "'");
-				array_push($names, "name");
-			}
-			if (isset($_POST["last_name"])) {
-				array_push($values, "'" . $_POST["last_name"] . "'");
-				array_push($names, "surname");
-			}
-			if (isset($_POST["maiden_name"])) {
-				array_push($values, "'" . $_POST["maiden_name"] . "'");
-				array_push($names, "maiden_name");
-			}
-			if (isset($_POST["year_of_entrance"])) {
-				array_push($values, "'" . $_POST["year_of_entrance"] . "'");
-				array_push($names, "year_of_entrance");
-			}
-		}
-		if (isset($_POST["second_name"])) {
-			array_push($values, "'" . $_POST["second_name"] . "'");
-			array_push($names, "second_name");
-		}
-
-		if (isset($_POST["phone"])) {
-			array_push($values, "'" . $_POST["phone"] . "'");
-			array_push($names, "phone");
-		}
-		if (isset($_POST["second_phone"])) {
-			array_push($values, "'" . $_POST["second_phone"] . "'");
-			array_push($names, "second_phone");
-		}
-		if (isset($_POST["email"])) {
-			array_push($values, "'" . $_POST["email"] . "'");
-			array_push($names, "email");
-		}
-		array_push($values, "'" . $_POST["Instagram_id"] . "'");
-		array_push($names, "Instagram_id");
-
-		if (isset($_POST["birthdate"])) {
-			array_push($values, "'" . $_POST["birthdate"] . "'");
-			array_push($names, "birthdate");
-		}
-		$conc = array();
-		foreach ($names as $key => $value) {
-			array_push($conc, "" . $value . "=" . $values[$key]);
-		}
-		$conc = implode(", ", $conc);
-		$query = "";
+		$result = array();
+		// запись базовой инфы
+		// если запись себя
 		if ($_POST["id"] == 0) {
-			if (!(isset($_SESSION["fighter_id"]))) {
-
-				$query = 'SELECT id FROM fighters where vk_id=\'' . $_SESSION["vk_id"] . '\';';
-				$_SESSION["fighter_id"] = mysqli_query($link, $query) or die('Запрос не удался: ');
-				$_SESSION["fighter_id"] = mysqli_fetch_array($_SESSION["fighter_id"], MYSQL_ASSOC);
-				$_SESSION["fighter_id"] = $_SESSION["fighter_id"]["id"];
-
-			}
-			$query = "UPDATE fighters SET " . $conc . " WHERE id='" . $_SESSION['fighter_id'] . "';";
+			$result = updater($link, "UsersMain", array("id" => $_SESSION["fighter_id"],
+				"middle_name" => $_POST["middle_name"], "phone" => $_POST["phone"], "birthdate" => $_POST["birthdate"]));
 		} else {
-			$query = "UPDATE fighters SET " . $conc . " WHERE id='" . $_POST['id'] . "';";
+			$result = updater($link, "UsersMain", array("id" => $_POST["id"], 
+				"uid" => $_POST["uid"], "first_name" => $_POST["first_name"], "last_name" => $_POST["last_name"],
+				"middle_name" => $_POST["middle_name"], "phone" => $_POST["phone"], "birthdate" => $_POST["birthdate"],
+				"group_of_rights" => $_POST["group_of_rights"]));
 		}
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		//	$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["result"] = "Success";
-		// $result["query"] = $query;
+		if ($_POST["status"] != 3) {
+			// если и не был бойцом, ничего не получится удалить
+			$res = deleter($link, "UsersFighters",  "id=" . $_POST["id"]);
+		}
+		if ($_POST["status"] != 2) {
+			$res = deleter($link, "UsersCandidats", "id=" . $_POST["id"]);
+		}
+		if ($_POST["status"] == 2) {
+			if ($_POST["id"] == 0) {
+				$res = inserter($link, "UsersCandidats", array("id" => $_SESSION["fighter_id"]), True, True);
+			} else {
+				$res = inserter($link, "UsersCandidats", array("id" => $_POST["id"]), True, True);
+			}
+		}
+		if ($_POST["status"] == 3) {
+			if ($_POST["id"] == 0) {
+				$res = inserter($link, "UsersFighters", array("id" => $_SESSION["fighter_id"], 
+					"nickname" => $_POST["nickname"], "second_phone" => $_POST["second_phone"], 
+					"email" => $_POST["email"], "instagram_id" => $_POST["instagram_id"]), True, True);
+			} else {
+				$res = inserter($link, "UsersFighters", array("id" => $_POST["id"], "maiden_name" => $_POST["maiden_name"], 
+					"nickname" => $_POST["nickname"], "second_phone" => $_POST["second_phone"], 
+					"email" => $_POST["email"], "instagram_id" => $_POST["instagram_id"], 
+					"year_of_entrance" => $_POST["year_of_entrance"]), True, True);
+			}
+
+		}
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {

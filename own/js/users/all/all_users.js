@@ -72,8 +72,8 @@
         }
       });
       getVkData(_.map($scope.users, function(user) {
-        return user.uid;
-      }), ["photo_100", "photo_200", "domain"],
+          return user.uid;
+        }), ["photo_100", "photo_200", "domain"],
         function(response) {
           _.each($scope.users, function(element, index, list) {
             element.photo = response[element.uid].photo_100;
@@ -156,6 +156,7 @@
         return true;
       }
     });
+
     $(document).keyup(function(e) {
       if (e.keyCode == 27) {
         $('.date').pickmeup('hide');

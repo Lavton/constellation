@@ -42,6 +42,9 @@ function isNumeric(input) {
 
 // из разных вариантов ввода телефона делает его цифрами
 function getPhone(input) {
+  if (!input) {
+    return input;
+  }
   var out = "";
   _.each(input, function(ch) {
     if (isNumeric(ch)) {
