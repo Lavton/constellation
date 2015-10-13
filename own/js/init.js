@@ -43,49 +43,26 @@
   window.state = {
     "about": {
       "users": {
-        "users": {
-          "all": {
-            "js": [
-              "/standart/js/jquery.hideseek.js",
-              "/own/js/vk_input.js",
-              "/standart/js/jquery.pickmeup.min.js",
-              "/own/js/users/all/all_users.js",
-            ],
-            "title": "отряд в лицах | СПО \"СОзвездие\"",
-            "loc": /^\/about\/users$/
-          },
-          "one": {
-            "js": [
-              "/standart/js/jquery.hideseek.js",
-              "/own/js/vk_input.js",
-              "/standart/js/jquery.pickmeup.min.js",
-              "/own/js/users/one/one_fighter.js",
-              "/own/js/users/own_profile.js"
-            ],
-            "title": "бойцы | отряд в лицах | СПО \"СОзвездие\"",
-            "loc": /^\/about\/users\/[1-9][0-9]*$/
-          }
+        "all": {
+          "js": [
+            "/standart/js/jquery.hideseek.js",
+            "/own/js/vk_input.js",
+            "/standart/js/jquery.pickmeup.min.js",
+            "/own/js/users/all/all_users.js",
+          ],
+          "title": "отряд в лицах | СПО \"СОзвездие\"",
+          "loc": /^\/about\/users$/
         },
-        "candidats": {
-          "all": {
-            "js": [
-              "/standart/js/jquery.hideseek.js",
-              "/own/js/vk_input.js",
-              "/own/js/users/all/all_in_common.js",
-              "/own/js/users/all/all_candidats.js",
-            ],
-            "title": "кандидаты | отряд в лицах | СПО \"СОзвездие\"",
-            "loc": /^\/about\/candidats$/
-          },
-          "one": {
-            "js": [
-              "/standart/js/jquery.hideseek.js",
-              "/own/js/vk_input.js",
-              "/own/js/users/one/one_candidate.js",
-            ],
-            "title": "кандидаты | отряд в лицах | СПО \"СОзвездие\"",
-            "loc": /^\/about\/candidats\/[1-9][0-9]*$/
-          }
+        "one": {
+          "js": [
+            "/standart/js/jquery.hideseek.js",
+            "/own/js/vk_input.js",
+            "/standart/js/jquery.pickmeup.min.js",
+            "/own/js/users/one/one_user.js",
+            "/own/js/users/own_profile.js"
+          ],
+          "title": "отряд в лицах | СПО \"СОзвездие\"",
+          "loc": /^\/about\/users\/[1-9][0-9]*$/
         }
       },
       "glossary": {

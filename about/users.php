@@ -23,7 +23,7 @@ if (isset($_GET["id"]) && $_GET["id"] == 0) {
 
 	/*смотрим на чужой профиль (доступно >=бойцам)*/
 } elseif (isset($_GET["id"])) {
-	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_fighter.html';
+	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_user.html';
 }
 
 /*не смотрим конкретный профиль*/
