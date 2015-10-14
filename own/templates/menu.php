@@ -42,10 +42,8 @@
           <i class="">&nbsp<span class="menu_login"><?php
             require_once $_SERVER['DOCUMENT_ROOT'].'/own/templates/php_globals.php';
 
-            if (isset($_SESSION["fighter_id"])) {
-              echo '<a href="/about/users/'.$_SESSION["fighter_id"].'" class="ajax-nav"><img class="user_ava" src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
-            } elseif (isset($_SESSION["vk_id"])) {
-              echo '<img class="user_ava" src="'.$_SESSION["photo"].'"/>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
+            if (isset($_SESSION["id"])) {
+              echo '<a href="/about/users/'.$_SESSION["id"].'" class="ajax-nav"><img class="user_ava" src="'.$_SESSION["photo"].'"/></a>&nbsp;<span class="logout-url">(<a href="/logout">выйти</a>)</span>';
             } else {
               echo '<a href="/login" class="ajax-nav">Войти</a>';
             }

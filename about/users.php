@@ -17,12 +17,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/menu.php';
     <?php
 check_session();
 session_start();
-/*настройки своего профиля*/
-if (isset($_GET["id"]) && $_GET["id"] == 0) {
-	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/own.php';
-
-	/*смотрим на чужой профиль (доступно >=бойцам)*/
-} elseif (isset($_GET["id"])) {
+if (isset($_GET["id"])) {
 	include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/users/one_user.html';
 }
 
@@ -50,26 +45,6 @@ if (!isset($_GET["id"])) {
 include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/footer.php';
 ?>
 <div id="after-js-container">
-  <script type="text/javascript">
-      document.title = 'Отряд в лицах | СПО "СОзвездие"';
-  </script>
-  <script type="text/javascript" src="/own/js/users/own_profile.js"></script>
-
-  <?php
-if (isset($_GET["id"]) && ($_GET["id"] == 0)) {
-	?>
-  <script type="text/javascript">
-    var intofID = setInterval(function(){
-      if ((typeof(get_own_info) != "undefined") && (get_own_info != undefined)) {
-        clearInterval(intofID);
-        get_own_info(<?=$_SESSION["fighter_id"]?>);
-      }
-    }, 50);
-  </script>
-  <?php
-}
-?>
-
 </div>
 </body>
 </html>

@@ -4,12 +4,17 @@
   /*убираем инфу с сессии и возвращаемся на страницу логина*/
   session_start();
   $_SESSION = array();
-    setcookie ("vk_id", "", time() - 10, "/");
-    setcookie ("hash", "", time() - 10, "/");
-    setcookie ("photo", "", time() - 10, "/");
-    setcookie ("current_group", "", time() - 10,"/");
-    $_COOKIE = array();
-   session_destroy();
+  if (isset($_SERVER['HTTP_COOKIE'])) {
+      $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+      foreach($cookies as $cookie) {
+          $parts = explode('=', $cookie);
+          $name = trim($parts[0]);
+          setcookie($name, '', time()-1000);
+          setcookie($name, '', time()-1000, '/');
+      }
+  }
+  $_COOKIE = array();
+  session_destroy();
 
 
   ?>

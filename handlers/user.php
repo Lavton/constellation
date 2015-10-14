@@ -160,7 +160,7 @@ function user_modify() {
 		// запись базовой инфы
 		// если запись себя
 		if ($_POST["id"] == 0) {
-			$result = updater($link, "UsersMain", array("id" => $_SESSION["fighter_id"],
+			$result = updater($link, "UsersMain", array("id" => $_SESSION["id"],
 				"middle_name" => $_POST["middle_name"], "phone" => $_POST["phone"], "birthdate" => $_POST["birthdate"]));
 		} else {
 			$result = updater($link, "UsersMain", array("id" => $_POST["id"], 
@@ -177,14 +177,14 @@ function user_modify() {
 		}
 		if ($_POST["status"] == 2) {
 			if ($_POST["id"] == 0) {
-				$res = inserter($link, "UsersCandidats", array("id" => $_SESSION["fighter_id"]), True, True);
+				$res = inserter($link, "UsersCandidats", array("id" => $_SESSION["id"]), True, True);
 			} else {
 				$res = inserter($link, "UsersCandidats", array("id" => $_POST["id"]), True, True);
 			}
 		}
 		if ($_POST["status"] == 3) {
 			if ($_POST["id"] == 0) {
-				$res = inserter($link, "UsersFighters", array("id" => $_SESSION["fighter_id"], 
+				$res = inserter($link, "UsersFighters", array("id" => $_SESSION["id"], 
 					"nickname" => $_POST["nickname"], "second_phone" => $_POST["second_phone"], 
 					"email" => $_POST["email"], "instagram_id" => $_POST["instagram_id"]), True, True);
 			} else {
@@ -280,12 +280,12 @@ function get_own_info() {
 		exit;
 	}
 	$link->set_charset("utf8");
-	if (!(isset($_SESSION["fighter_id"]))) {
+	if (!(isset($_SESSION["id"]))) {
 
 		$query = 'SELECT id FROM fighters where vk_id=\'' . $_SESSION["vk_id"] . '\';';
-		$_SESSION["fighter_id"] = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$_SESSION["fighter_id"] = mysqli_fetch_array($_SESSION["fighter_id"], MYSQL_ASSOC);
-		$_SESSION["fighter_id"] = $_SESSION["fighter_id"]["id"];
+		$_SESSION["id"] = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$_SESSION["id"] = mysqli_fetch_array($_SESSION["id"], MYSQL_ASSOC);
+		$_SESSION["id"] = $_SESSION["id"]["id"];
 	}
 	// поиск юзера
 	$query = "SELECT * FROM fighters WHERE id='" . $_SESSION['fighter_id'] . "' ORDER BY id;";
@@ -437,7 +437,7 @@ function get_shifts_nd_ach() {
 function ok_edit_achv() {
 	check_session();
 	session_start();
-	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["fighter_id"]*1 == $_POST["fighter_id"]*1)) {
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["fighter_id"]*1)) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -486,7 +486,7 @@ function ok_edit_achv() {
 function delete_achv() {
 	check_session();
 	session_start();
-	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["fighter_id"]*1 == $_POST["fighter_id"]*1)) {
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["fighter_id"]*1)) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -513,7 +513,7 @@ function delete_achv() {
 function add_achv() {
 	check_session();
 	session_start();
-	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["fighter_id"]*1 == $_POST["fighter_id"]*1)) {
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["fighter_id"]*1)) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */

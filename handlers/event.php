@@ -189,7 +189,7 @@ function get_one_info() {
 			array_push($result["editors"], $line);
 		}
 
-		$userId = $_SESSION["fighter_id"]; //TODO: модифицировать потом
+		$userId = $_SESSION["id"]; //TODO: модифицировать потом
 		$result["event"]["editable"] = canEditEvent($link, $userId, $_POST["id"]);;
 
 		// смотрим предыдущее и следующее
@@ -244,7 +244,7 @@ function edit_event() {
 		exit;
 	}
 	$link->set_charset("utf8");
-	$userId = $_SESSION["fighter_id"]; //TODO: модифицировать потом
+	$userId = $_SESSION["id"]; //TODO: модифицировать потом
 	
 	if (canEditEvent($link, $userId, $_POST["id"])) {
 		// запись в главную БД мероприятий
@@ -278,7 +278,7 @@ function kill_event() {
 	}
 	$link->set_charset("utf8");
 	
-	if (canEditEvent($link, $_SESSION["fighter_id"], $_POST["id"])) {
+	if (canEditEvent($link, $_SESSION["id"], $_POST["id"])) {
 		//удаляем мероприятие по id и всех потомков
 		$result["result"] = deleter($link, "EventsMain", "id=" . $_POST["id"]);;
 		mysqli_close($link);
@@ -369,14 +369,14 @@ function apply_to_event() {
 		$link->set_charset("utf8");
 
 		if (isset($_POST["id"])) {
-			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+			if (!(canEditEvent($link, $_SESSION["id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array(
-					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
+					'result' => canEditEvent($link, $_SESSION["id"], $_POST["event_id"]))
 				);
 				return;
 			}
 		} else {
-			$_POST["id"] = $_SESSION["fighter_id"];
+			$_POST["id"] = $_SESSION["id"];
 		}
 
 		$result = inserter($link, "EventsSupply", array("user" => $_POST["id"], "event" => $_POST["event_id"]));
@@ -405,14 +405,14 @@ function delete_apply_from_event() {
 		$link->set_charset("utf8");
 
 		if (isset($_POST["id"])) {
-			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+			if (!(canEditEvent($link, $_SESSION["id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array(
-					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
+					'result' => canEditEvent($link, $_SESSION["id"], $_POST["event_id"]))
 				);
 				return;
 			}
 		} else {
-			$_POST["id"] = $_SESSION["fighter_id"];
+			$_POST["id"] = $_SESSION["id"];
 		}
 		$result["result"] = deleter($link, "EventsSupply", "user=".$_POST["id"]." AND event=".$_POST["event_id"]);
 
@@ -440,9 +440,9 @@ function add_to_event_editors() {
 		$link->set_charset("utf8");
 
 		if (isset($_POST["id"])) {
-			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+			if (!(canEditEvent($link, $_SESSION["id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array(
-					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
+					'result' => canEditEvent($link, $_SESSION["id"], $_POST["event_id"]))
 				);
 				return;
 			}
@@ -473,9 +473,9 @@ function delete_editor_from_event() {
 		$link->set_charset("utf8");
 
 		if (isset($_POST["id"])) {
-			if (!(canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
+			if (!(canEditEvent($link, $_SESSION["id"], $_POST["event_id"]) || (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array(
-					'result' => canEditEvent($link, $_SESSION["fighter_id"], $_POST["event_id"]))
+					'result' => canEditEvent($link, $_SESSION["id"], $_POST["event_id"]))
 				);
 				return;
 			}

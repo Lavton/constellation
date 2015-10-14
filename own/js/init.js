@@ -79,6 +79,14 @@
         "loc": /^\/about\/history$/
       }
     },
+    "login": {
+      "js": [
+      "//vk.com/js/api/openapi.js",
+      "/own/js/login.js"
+      ],
+      "title": "логин | СПО \"СОзвездие\"",
+      "loc": /^\/login$/
+    },
     "method": {
       "index": {
         "js": [],
