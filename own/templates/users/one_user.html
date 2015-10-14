@@ -121,7 +121,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-xs-6" >
+    <div class="col-xs-6" class="achiv-info hidden">
       <h3>Достижения 
         <a href="" ng-click="addAch()">
           <img src="/own/images/plus.png" width="25px" ng-show="isCS || fighter.uid == window.getCookie('vk_id')">
@@ -129,13 +129,14 @@
         <a href="" ng-click="editAchvs()"><img src="/own/images/edit.png" width="20px" ng-show="isCS || fighter.uid == window.getCookie('vk_id')"></a>
       </h3>
       <span ng-show="add_achiv">
-        <input type="text" placeholder="Достижение" ng-model="new_achv.achiev"> <input type="number" ng-model="new_achv.start_year" placeholder="год начала"> <input type="number" placeholder="год окончания" ng-model="new_achv.finish_year">
-        <a href="" ng-click="okAddAchv()"><img src="/own/images/check.png" width="20px"></a>
+        <input type="text" placeholder="Достижение" ng-model="new_achv.achievement"> <input type="number" ng-model="new_achv.start_year" placeholder="год начала"> <input type="number" placeholder="год окончания" ng-model="new_achv.finish_year">
+        <a href="" ng-click="addAchvSubmit()"><img src="/own/images/check.png" width="20px"></a>
       </span>
       <ul>
         <li ng-repeat="achv in achievements">
           <span ng-hide="achv.edit_flag">
-            {{achv.achiev}}, {{achv.start_year}} <span ng-show="achv.finish_year && achv.finish_year != achv.start_year">- {{achv.finish_year}}</span> г. &nbsp;&nbsp;
+            {{achv.achievement}}, {{achv.start_year}} <span ng-show="achv.finish_year && achv.finish_year != achv.start_year">- {{achv.finish_year}}</span> г. 
+            <span ng-hide="achv.finish_year"> - н.в.</span>  &nbsp;&nbsp;
           <a href="" ng-click="editAchv(achv)"><img src="/own/images/edit.png" width="15px" ng-show="edit_achiv"></a>
           <a href="" ng-click="deleteAchv(achv)"><img src="/own/images/delete.png" width="15px" ng-show="edit_achiv"></a>
           </span>

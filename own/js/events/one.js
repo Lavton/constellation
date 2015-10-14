@@ -235,13 +235,12 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(response) {
-            var lnk = document.createElement("a");
-            lnk.setAttribute("class", "ajax-nav")
-            $(lnk).attr("href", "/events/");
-            $("#page-container").append(lnk);
-            $(lnk).trigger("click")
-          }); // анимируем скроолинг к элементу
-        });
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", "/events/");
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
+        }); // анимируем скроолинг к элементу
       }
     }
 

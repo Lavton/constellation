@@ -15,6 +15,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
             var url = $(self).attr('href');
             setPage(url, false, function() {
+              console.log("noooooooooooooooooooooo")
               $('html, body').animate({
                 scrollTop: $("nav").offset().top
               }, 500, function() {

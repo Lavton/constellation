@@ -24,7 +24,11 @@ window.formatDate = function(date) {
 
 // форматирует timestamp в удобный вид
 window.formatTimestamp = function(date) {
-  date = new Date(date);
+  if (!date) {
+    return "";
+  }
+  var time = date.split(" ")[1];
+  date = new Date(date.split(" ")[0]);
   Number.prototype.toMonthName = function() {
     var month = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
       'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
@@ -32,7 +36,7 @@ window.formatTimestamp = function(date) {
     return month[this];
   };
   return date.getDate() + " " + date.getMonth().toMonthName() + " " + date.getFullYear() + " " +
-    date.getHours() + ":" + date.getMinutes();
+    time;
 }
 
 // говорит, число ли строка)

@@ -100,7 +100,7 @@
         var data = {
           action: "get_shifts_nd_ach",
           uid: $scope.fighter.uid,
-          fighter_id: userid
+          fighter: userid
         }
         $.ajax({ //TODO: make with angular
           type: "POST",
@@ -110,6 +110,7 @@
         }).done(function(response) {
           if (response.result == "Success") {
             showShifts(response);
+            $(".achiv-info").removeClass("hidden");
             $scope.$apply();
           }
         });
@@ -174,26 +175,26 @@
       }
       data.action = "user_modify"
       $.ajax({
-          type: "POST",
-          url: "/handlers/user.php",
-          dataType: "json",
-          data: $.param(data)
-        }).done(function(json) {
-          console.log(json)
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        console.log(json)
           // анимация на выходе
-          $(".user-edit").hide("slow");
-          $(".user-info").show("slow", function() {
-            setTimeout(function() {
-              var saved = $(".saved");
-              $(saved).stop(true, true);
-              $(saved).fadeIn("slow");
-              $(saved).fadeOut("slow");
-            }, 1000);
-          });
-          $('html, body').animate({
-            scrollTop: $("nav").offset().top
-          }, 500); // анимируем скроолинг к элементу
-        })
+        $(".user-edit").hide("slow");
+        $(".user-info").show("slow", function() {
+          setTimeout(function() {
+            var saved = $(".saved");
+            $(saved).stop(true, true);
+            $(saved).fadeIn("slow");
+            $(saved).fadeOut("slow");
+          }, 1000);
+        });
+        $('html, body').animate({
+          scrollTop: $("nav").offset().top
+        }, 500); // анимируем скроолинг к элементу
+      })
     }
 
     // убирает форму редактирования
@@ -300,13 +301,9 @@
           data: $.param(data)
         }).done(function(response) {
           if (response.result == "Success") {
-            var achievements = []
-            for (var i = 0; i < $scope.achievements.length; i++) {
-              if ($scope.achievements[i].id != achv.id) {
-                achievements.push($scope.achievements[i])
-              }
-            };
-            $scope.achievements = achievements;
+            $scope.achievements = _.reject($scope.achievements, function(achiv) {
+              return achiv.id * 1 == achv.id * 1;
+            })
             $scope.$apply();
           }
         });
@@ -322,23 +319,22 @@
     }
 
     // добавляет достижение на сервер
-    $scope.okAddAchv = function() {
+    $scope.addAchvSubmit = function() {
       var data = angular.copy($scope.new_achv);
       data.action = "add_achv";
-      data.fighter_id = userid;
+      data.fighter = userid;
       $.ajax({ //TODO: make with angular
         type: "POST",
         url: "/handlers/user.php",
         dataType: "json",
         data: $.param(data)
       }).done(function(response) {
-        if (response.result == "Success") {
-          var lnk = document.createElement("a");
-          lnk.setAttribute("class", "ajax-nav")
-          $(lnk).attr("href", window.location.href);
-          $("#page-container").append(lnk);
-          $(lnk).trigger("click")
+        if (response.id) {
+          $scope.achievements.push(angular.copy($scope.new_achv));
         }
+        $scope.new_achv = {};
+        $scope.$apply();
+
       });
     }
   }

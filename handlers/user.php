@@ -12,8 +12,6 @@ if (is_ajax()) {
 				break;
 			case "get_all_more_info":get_all_more_info();
 				break;
-			case "get_all_ids":get_all_ids();
-				break;
 			case "add_new_person":add_new_person();
 				break;
 
@@ -23,7 +21,7 @@ if (is_ajax()) {
 				break;
 			case "kill_user":kill_user();
 				break;
-			case "get_own_info":get_own_info();
+			case "get_own_info":get_own_info(); // DELETE
 				break;
 				// смены и достижения
 			case 'get_shifts_nd_ach':get_shifts_nd_ach();
@@ -34,28 +32,11 @@ if (is_ajax()) {
 				break;
 			case "add_achv": add_achv();
 				break;
-
-			/*то, что относится ко всем кандидатам*/
-			case "get_all_candidats_ids":get_all_candidats_ids();
-				break;
-			case "add_new_candidate":add_new_candidate();
-				break;
-			case "all_candidats":all_candidats();
-				break;
-
-			/*1 кандидат*/
-			case "get_one_candidate_info":get_one_candidate_info();
-				break;
-			case "set_new_cand_data":set_new_cand_data();
-				break;
-			case "kill_candidate":kill_candidate();
-				break;
-
 			case "own_add_candidate":own_add_candidate();
 				break;
 
 			/*общая инфа о всех*/
-			case "get_common_inf":get_common_inf();
+			case "get_common_inf":get_common_inf(); //DELETE
 				break;
 		}
 	}
@@ -222,37 +203,6 @@ function user_modify() {
 	}
 }
 
-//get list of existing ids and vk_ids
-function get_all_ids() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-
-		// поиск юзера
-		$query = "SELECT id, vk_id FROM fighters ORDER BY id;";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["ids"] = array();
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["ids"], $line);
-		}
-		$result["result"] = "Success";
-		mysqli_close($link);
-		echo json_encode($result);
-	}
-}
-
 //добавляет человека
 function add_new_person() {
 	check_session();
@@ -345,244 +295,6 @@ function get_own_info() {
 	// $result["session"] = $_SESSION;
 	mysqli_close($link);
 	echo json_encode($result);
-}
-
-function get_all_candidats_ids() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-
-		// поиск юзера
-		$query = "SELECT id, vk_id FROM candidats ORDER BY id;";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["ids"] = array();
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["ids"], $line);
-		}
-		$result["result"] = "Success";
-		mysqli_close($link);
-		echo json_encode($result);
-	}
-}
-
-//добавляет кандидата
-function add_new_candidate() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-
-		//добавляем id и vk_id
-		// $query = "INSERT INTO fighters (id, vk_id) VALUES (".$_POST["id"].", '".$_POST["vk_id"]."');";
-
-		$names = array();
-		$values = array();
-		if (isset($_POST["id"])) {
-			array_push($names, "id");
-			array_push($values, "'" . $_POST["id"] . "'");
-		}
-		if (isset($_POST["vk_id"])) {
-			array_push($names, "vk_id");
-			array_push($values, "'" . $_POST["vk_id"] . "'");
-		}
-		if (isset($_POST["birthdate"])) {
-			array_push($names, "birthdate");
-			array_push($values, "'" . $_POST["birthdate"] . "'");
-		}
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO candidats (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
-		mysqli_close($link);
-		echo json_encode($result);
-	}
-}
-
-function all_candidats() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-		// поиск юзера
-		$query = 'SELECT id, vk_id, birthdate, phone, second_name FROM candidats ORDER BY id;';
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["users"] = array();
-
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["users"], $line);
-		}
-		$result["result"] = "Success";
-		mysqli_close($link);
-		echo json_encode($result);
-	}
-
-}
-
-function get_one_candidate_info() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-
-		// поиск юзера
-		$query = "SELECT * FROM candidats WHERE id='" . $_POST['id'] . "' ORDER BY id;";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-
-		$query = "select min(id) as mid FROM candidats where id > " . $_POST['id'] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$query = "select max(id) as mid FROM candidats where id < " . $_POST['id'] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-
-		// $result["q"] = $query;
-		$result["result"] = "Success";
-		mysqli_close($link);
-		echo json_encode($result);
-	}
-}
-
-function set_new_cand_data() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) || ($_POST["id"] == 0)) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-		$names = array();
-		$values = array();
-		if ($_POST["id"] != 0) {
-			if (isset($_POST["vk_id"])) {
-				array_push($names, "vk_id");
-				array_push($values, "'" . $_POST["vk_id"] . "'");
-			}
-		}
-		if (isset($_POST["second_name"])) {
-			array_push($names, "second_name");
-			array_push($values, "'" . $_POST["second_name"] . "'");
-		}
-		if (isset($_POST["phone"])) {
-			array_push($names, "phone");
-			array_push($values, "'" . $_POST["phone"] . "'");
-		}
-		if (isset($_POST["birthdate"])) {
-			array_push($names, "birthdate");
-			array_push($values, "'" . $_POST["birthdate"] . "'");
-		}
-		$conc = array();
-		foreach ($names as $key => $value) {
-			array_push($conc, "" . $value . "=" . $values[$key]);
-		}
-		$conc = implode(", ", $conc);
-		$query = "";
-		if ($_POST["id"] == 0) {
-			if (!(isset($_SESSION["fighter_id"]))) {
-
-				$query = 'SELECT id FROM candidats where vk_id=\'' . $_SESSION["vk_id"] . '\';';
-				$_SESSION["fighter_id"] = mysqli_query($link, $query) or die('Запрос не удался: ');
-				$_SESSION["fighter_id"] = mysqli_fetch_array($_SESSION["fighter_id"], MYSQL_ASSOC);
-				$_SESSION["fighter_id"] = $_SESSION["fighter_id"]["id"];
-
-			}
-			$query = "UPDATE candidats SET " . $conc . " WHERE id='" . $_SESSION['fighter_id'] . "';";
-		} else {
-			$query = "UPDATE candidats SET " . $conc . " WHERE id='" . $_POST['id'] . "';";
-		}
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		//  $result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["result"] = "Success";
-		// $result["query"] = $query;
-		mysqli_close($link);
-		echo json_encode($result);
-	} else {
-		mysqli_close($link);
-		echo json_encode(Array('result' => 'Fail'));
-	}
-}
-
-/*удаляет кандидата из БД*/
-function kill_candidate() {
-	check_session();
-	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
-		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-		$link = mysqli_connect(
-			Passwords::$db_host, /* Хост, к которому мы подключаемся */
-			Passwords::$db_user, /* Имя пользователя */
-			Passwords::$db_pass, /* Используемый пароль */
-			Passwords::$db_name); /* База данных для запросов по умолчанию */
-
-		if (!$link) {
-			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
-			exit;
-		}
-		$link->set_charset("utf8");
-
-		//удаляем бойца по id
-		$query = "DELETE FROM candidats WHERE id=" . $_POST["id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
-		mysqli_close($link);
-		echo json_encode($result);
-	}
-
 }
 
 /*кандидат сам вносит себя в БД со страницы с логином*/
@@ -697,6 +409,7 @@ function get_shifts_nd_ach() {
 		}
 		$link->set_charset("utf8");
 		// смены, на которых был боец
+		// $query = "SELECT * FROM EventsMain AS EM JOIN EventsShifts AS ES ON ES.id=EM.id JOIN EventsShiftsRanking AS ESR ON ES.id=ESR.shift JOIN EventsShiftsDetachments AS ESD ON ESR.id=ESD.ranking JOIN EventsShiftsDetachmentsPeople AS ESDP ON ESD.id=ESDP.detachment  WHERE ESDP.user=41;"
 		$query = 'SELECT detachments.shift_id as id, shifts.place, shifts.finish_date, shifts.time_name FROM detachments, shifts WHERE (ranking IS NULL AND people LIKE \'%'.$_POST["uid"].'%\' AND shifts.id=detachments.shift_id) ORDER BY shifts.finish_date DESC';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
@@ -706,7 +419,7 @@ function get_shifts_nd_ach() {
 		}
 
 		// достижения
-		$query = 'SELECT * FROM achievements WHERE (fighter_id='.$_POST["fighter_id"].') ORDER BY start_year DESC';
+		$query = "SELECT * FROM UsersFightersAchievements  WHERE (fighter=".$_POST["fighter"].") ORDER BY start_year DESC";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["achievements"] = array();
 
@@ -786,10 +499,7 @@ function delete_achv() {
 			exit;
 		}
 		$link->set_charset("utf8");
-
-		$query = "DELETE FROM achievements WHERE id=" . $_POST["id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = deleter($link, "UsersFightersAchievements", "id=" . $_POST["id"]);
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {
@@ -816,34 +526,9 @@ function add_achv() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$names = array();
-		$values = array();
-		
-		if (isset($_POST["fighter_id"])) {
-			array_push($values, "'" . $_POST["fighter_id"] . "'");
-			array_push($names, "fighter_id");
-		}
-
-		if (isset($_POST["start_year"])) {
-			array_push($values, "'" . $_POST["start_year"] . "'");
-			array_push($names, "start_year");
-		}
-
-		if (isset($_POST["finish_year"])) {
-			array_push($values, "'" . $_POST["finish_year"] . "'");
-			array_push($names, "finish_year");
-		}
-		if (isset($_POST["achiev"])) {
-			array_push($values, "'" . $_POST["achiev"] . "'");
-			array_push($names, "achiev");
-		}
-
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-
-		$query = "INSERT INTO achievements (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = inserter($link, "UsersFightersAchievements", array("fighter" => $_POST["fighter"],
+			"start_year" => $_POST["start_year"], "finish_year" => $_POST["finish_year"], 
+			"achievement" => $_POST["achievement"]), True);
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {
