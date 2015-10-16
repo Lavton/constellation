@@ -6,24 +6,16 @@
     $scope.newevent = {}
 
     // инициируем для выбора даты
-    $('input.date').pickmeup({
-      format: 'Y-m-d',
-      hide_on_select: true,
-      change: function() {
-        var path = this.getAttribute("ng-model").split(".")
-        var self = $scope;
-        for (var i = 0; i < path.length - 1; i++) {
-          self = self[path[i]]
-        };
-        console.log($(this).val())
-        console.log(path)
-        console.log(self[path[path.length - 1]])
-        self[path[path.length - 1]] = $(this).val();
-        if (!$scope.newevent.finish_date) {
-          $scope.newevent.finish_date = $scope.newevent.start_date;
-        }
-        $scope.$apply();
-        return true;
+    _.each($('input.date'), function(self) {
+      // если нет встроенной поддержки от браузера
+      if (!window.checkIfInput(self.getAttribute("type"))) {
+        $(self).pickmeup({
+          format: 'Y-m-d',
+          hide_on_select: true,
+          change: function() {
+            return $scope.onSetDate(self);
+          }
+        });
       }
     });
     $(document).keyup(function(e) {
@@ -32,7 +24,25 @@
       }
     });
 
-    // возращает дату в формате "6 мая 2015"
+    $scope.onSetDate = function(self2) {
+      if (self2) {
+        var path = self2.getAttribute("ng-model").split(".");
+        var self = $scope;
+        for (var i = 0; i < path.length - 1; i++) {
+          self = self[path[i]]
+        };
+        console.log($(self2).val())
+        console.log(path)
+        console.log(self[path[path.length - 1]])
+        self[path[path.length - 1]] = $(self2).val();
+      }
+      if (!$scope.newevent.finish_date) {
+        $scope.newevent.finish_date = $scope.newevent.start_date;
+      }
+      $scope.$apply();
+      return true;
+    }
+      // возращает дату в формате "6 мая 2015"
     $scope.formatDate = window.formatDate;
 
     var data = {
@@ -67,10 +77,10 @@
     });
 
     // получить список архивных мероприятий
-    $scope.get_arhive = function(month) {
+    $scope.get_arhive = function(date) {
       var data = {
         action: "arhive",
-        month: month
+        date: date
       };
       $http.post('/handlers/event.php', data).success(function(response) {
         var today = new Date();
@@ -106,6 +116,7 @@
           data: $.param(data)
         }).done(function(response) {
           console.log(response);
+          // debugger;
           $scope.pos_parents = response.pos_parents;
           $scope.newevent.contact = response.me.first_name + " " + response.me.last_name + " +7" + response.me.phone;
           $scope.newevent.editor = response.me.id;
@@ -140,6 +151,17 @@
       }
     }
 
+    // выполняется при выборе мероприятия-родителя
+    $scope.changeParent = function(parent_id) {
+      if (!$scope.newevent.name) {
+        $scope.newevent.name = _.findWhere($scope.pos_parents, {
+          id: parent_id
+        }).name + ": подготовка";
+        $scope.newevent.visibility = _.findWhere($scope.pos_parents, {
+          id: parent_id
+        }).visibility * 1;
+      }
+    }
 
     // создаёт новое базовое мероприятие
     $scope.addNewEventSubmit = function() {
@@ -162,6 +184,11 @@
         $("#page-container").append(lnk);
         $(lnk).trigger("click")
       })
+    }
+
+    // показывает планируемые мероприятия - те, которые могут и не быть
+    $scope.showEvent = function(planning) {
+      return !Boolean(planning * 1) || Boolean($scope.show_planning * 1);
     }
   }
 

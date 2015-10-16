@@ -1,7 +1,7 @@
 <?php
 /*для незарегистрированных содержание главной страницы*/
 
-if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["vk_id"])))) {
+if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG) || (!(isset($_SESSION["vk_id"])))) {
 ?>
 <div class="starter-template">
   <div class="row own-row">

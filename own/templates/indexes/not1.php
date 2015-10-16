@@ -1,6 +1,6 @@
 <?php
 /*для зарегистрированных содержание главной страницы*/
-if (!(isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["vk_id"]))))) {
+if (!(isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG) || (!(isset($_SESSION["uid"]))))) {
 ?>
 
 <div class="starter-template">
@@ -15,7 +15,7 @@ if (!(isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG)
         </ul>
       </p>
       <p class="lead">
-        Поздравляем! вы попали на альфа-версию сайта! <br/>
+        Поздравляем! вы попали на бета-версию сайта! <br/>
         Ещё много вы не увидите тут. А если хотите поторопить момент - вливайтесь в разработку!
       </p>
 <iframe src='/standart/inwidget/index.php?width=800&inline=7&view=14&toolbar=false' scrolling='no' frameborder='no' style='border:none;width:800px;height:295px;overflow:hidden;'></iframe>

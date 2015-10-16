@@ -89,10 +89,12 @@ function get_all_events() {
 		}
 		$link->set_charset("utf8");
 		// поиск мероприятий
-		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EM.parent_id AS parent_id, EvB.name AS parent_name 
+		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, EM.finish_date, EM.finish_time, 
+		EM.visibility, EM.parent_id AS parent_id, EvB.name AS parent_name, EE.planning
 		FROM EventsMain AS EM 
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
 		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
+		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
 		WHERE (EM.finish_date >= CURRENT_DATE) 
 		ORDER BY EM.start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
@@ -131,7 +133,7 @@ function arhive() {
 		FROM EventsMain AS EM 
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
 		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
-		WHERE (EM.finish_date < CURRENT_DATE AND EM.start_date >= "' . $_POST["month"] . '-01") 
+		WHERE (EM.finish_date < CURRENT_DATE AND EM.start_date >= "' . $_POST["date"] . '") 
 		ORDER BY EM.start_date DESC;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: '.$query);
 		$result["events"] = array();
@@ -304,7 +306,7 @@ function get_base_and_par() {
 		}
 		$link->set_charset("utf8");
 		// поиск мероприятий
-		$query = 'SELECT id, name FROM `EventsMain` WHERE parent_id IS NULL AND start_date>=CURRENT_DATE;';
+		$query = 'SELECT id, name, visibility FROM `EventsMain` WHERE parent_id IS NULL AND start_date>=CURRENT_DATE;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["pos_parents"] = array();
 
@@ -323,7 +325,7 @@ function get_base_and_par() {
 			array_push($result["eventsBase"], $line);
 		}
 
-		$query = "SELECT id, first_name, last_name, phone FROM UsersMain WHERE uid='" . $_SESSION["vk_id"] . "';";
+		$query = "SELECT id, first_name, last_name, phone FROM UsersMain WHERE uid='" . $_SESSION["uid"] . "';";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["me"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		// $result["me"] = $result["me"]["first_name"]." ".$result["me"]["last_name"]." +7".$result["me"]["phone"];

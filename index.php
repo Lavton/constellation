@@ -17,7 +17,7 @@
     /*Если незарег, то одно показываем, иначе - другое*/
       check_session();
       session_start();
-      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == UNREG) || (!(isset($_SESSION["vk_id"])))) {
+      if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG) || (!(isset($_SESSION["uid"])))) {
         include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/indexes/1.php');
       } else {
         include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/indexes/not1.php');

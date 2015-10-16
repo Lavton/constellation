@@ -10,7 +10,7 @@
   <?php include( 'own/templates/menu.php'); ?>
   <div id="page-container">
     <div id="auth_wrapper">
-  Если вы не видете виджет ВКонтакте ниже - пишите комсоставу.
+  Если вы не видите виджет ВКонтакте ниже - пишите комсоставу.
       <div id="vk_auth"></div>
     </div>
     <br>

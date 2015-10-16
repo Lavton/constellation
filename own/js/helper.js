@@ -7,6 +7,14 @@ window.goodTelephoneView = function(tel) {
   return tel ? "+7 (" + tel[0] + tel[1] + tel[2] + ") " + tel[3] + tel[4] + tel[5] + "-" + tel[6] + tel[7] + "-" + tel[8] + tel[9] : ""
 }
 
+window.checkIfInput = function (type){
+  var input = document.createElement("input");
+  input.setAttribute("type", type);
+  var notAValidValue='not-a-date';
+  input.setAttribute("value", notAValidValue);
+  return !(input.value==notAValidValue);
+}
+
 // форматирует строку вида '2015-10-20' в '20 ноября 2015'
 window.formatDate = function(date) {
   if (!date) {

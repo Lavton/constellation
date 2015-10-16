@@ -24,14 +24,14 @@ $groups_rus[7] = "Администратор";
 
 function check_session() {
 	session_start();
-	if (!isset($_SESSION["vk_id"])) {
-		if (isset($_COOKIE['vk_id'])) {
+	if (!isset($_SESSION["uid"])) {
+		if (isset($_COOKIE['uid'])) {
 			
 			session_start();
 			require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
-			$ownMd5 = md5((Passwords::$vk_app_id) . ((string) $_COOKIE["vk_id"]) . (Passwords::$vk_secret_key));
+			$ownMd5 = md5((Passwords::$vk_app_id) . ((string) $_COOKIE["uid"]) . (Passwords::$vk_secret_key));
 			if ($ownMd5 == $_COOKIE["hash"]) {
-				$_SESSION["vk_id"] = $_COOKIE["vk_id"];
+				$_SESSION["uid"] = $_COOKIE["uid"];
 				$_SESSION["photo"] = $_COOKIE["photo"];
 
 				$link = mysqli_connect(
@@ -47,7 +47,7 @@ function check_session() {
 				$link->set_charset("utf8");
 
 				// поиск юзера
-				$query = 'SELECT id, group_of_rights FROM fighters where vk_id=\'' . $_COOKIE["vk_id"] . '\';';
+				$query = "SELECT id, uid, group_of_rights from UsersMain WHERE uid='" . $_COOKIE["uid"] . "';";
 				$result = mysqli_query($link, $query) or die('Запрос не удался: ');
 				$result = mysqli_fetch_array($result, MYSQL_ASSOC);
 				$_SESSION["group"] = $result["group_of_rights"];
@@ -57,7 +57,8 @@ function check_session() {
 				} else {
 					$_SESSION["group"] = $_SESSION["group"] + 0;
 				}
-				$_SESSION["current_group"] = $_COOKIE["current_group"] <= $_SESSION["group"] ? $_COOKIE["current_group"] : $_SESSION["group"];
+				$_SESSION["current_group"] = ($_COOKIE["current_group"]+0) <= $_SESSION["group"] ? ($_COOKIE["current_group"]+0) : $_SESSION["group"];
+				$_SESSION["current_group"] = $_SESSION["current_group"] * 1;
 				setcookie("uid", $_COOKIE["uid"], time() + 60 * 60 * 24 * 100, "/");
 				setcookie("id", $_COOKIE["id"], time() + 60 * 60 * 24 * 100, "/");
 				setcookie("hash", $_COOKIE["hash"], time() + 60 * 60 * 24 * 100, "/");

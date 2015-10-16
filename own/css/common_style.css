@@ -181,6 +181,9 @@ footer .social a:hover {
   color: green;
   display: none;
 }
+.planning {
+  color: red;
+}
 
 .text-right {
   float: right;
