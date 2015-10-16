@@ -42,7 +42,14 @@ if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER
 <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
 <br> 
  <span ng-hide="newevent.parent_id"> Базовое мероприятие:  <select ng-change="changeBase(newevent.base_id)" ng-model="newevent.base_id" ng-options="value.id as value.name for (key , value) in eventsBase"></select> </span><br>
- <span ng-hide="newevent.base_id"> Головное мероприятие: <select ng-change="changeParent(newevent.parent_id)" ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select></span> <br><br>
+ <span ng-hide="newevent.base_id"> Головное мероприятие: <select ng-change="changeParent(newevent.parent_id)" ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select>  
+   <span ng-show="newevent.parent_id">  
+     <input type="checkbox" ng-model="newevent.auto_parent" ng-init="newevent.auto_parent=true"> Записать на мероприятие всех с головного 
+   </span>
+ </span>  <br><br>
+ отметить как <abbr title="отмечая мероприятие как планируемое, вы показываете людям, что только думаете о проведении мероприятия, без каких-либо гарантий">планируемое</abbr>
+ <input type="checkbox" ng-model="newevent.planning">
+ <br><br>
  название*: <input ng-model="newevent.name" placeholder="название мероприятия" size=50 /> <br>
  место: <input ng-model="newevent.place" placeholder="место мероприятия" size=50 /> <br><br>
  Дата начала*: <input type="date" class="date" ng-model="newevent.start_date" ng-change="onSetDate()">  {{newevent.start_date}}<br>

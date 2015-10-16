@@ -39,10 +39,13 @@
       if (!$scope.newevent.finish_date) {
         $scope.newevent.finish_date = $scope.newevent.start_date;
       }
-      $scope.$apply();
+      if (self2) {
+        $scope.$apply();
+      }
       return true;
     }
-      // возращает дату в формате "6 мая 2015"
+
+    // возращает дату в формате "6 мая 2015"
     $scope.formatDate = window.formatDate;
 
     var data = {
@@ -101,7 +104,9 @@
       $scope.newevent = {
         "visibility": 3,
         "start_time": "00:00",
-        "finish_time": "23:59"
+        "finish_time": "23:59",
+        "auto_parent": true,
+        "planning": false
       }
 
       // если ещё не получали список
@@ -167,7 +172,6 @@
     $scope.addNewEventSubmit = function() {
       var data = angular.copy($scope.newevent);
       data.action = "add_new_event";
-
       $.ajax({
         type: "POST",
         url: "/handlers/event.php",

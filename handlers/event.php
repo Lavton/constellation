@@ -60,11 +60,22 @@ function add_new_event() {
 			"visibility" => $_POST["visibility"], "comments" => $_POST["comments"]), True);
 
 		// записываем в мероприятия
-		$res2 = inserter($link, "EventsEvents", array("id" => $result["id"], "contact" => $_POST["contact"]));
+		$res2 = inserter($link, "EventsEvents", array("id" => $result["id"], "contact" => $_POST["contact"], 
+			"planning" => ((bool)$_POST["planning"])));
 		// записываем редактирующего
 		$res3 = inserter($link, "EventsEventsEditors", array("editor" => $_POST["editor"], "event" => $result["id"]));
 		// автоматическая запись на мероприятие для человека, создавшего его.
 		$res4 = inserter($link, "EventsSupply", array("user" => $_POST["editor"], "event" => $result["id"]));
+
+		// Если человек сказал автоматически записать всех людей с головного
+		if ($_POST["parent_id"] && ((bool)$_POST["auto_parent"])) {
+			$query = "SELECT ES.user FROM EventsSupply AS ES WHERE event=".$_POST["parent_id"].";";
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+				$res = inserter($link, "EventsSupply", array("user" => $line["user"], "event" => $result["id"]));
+			}
+
+		}
 		mysqli_close($link);
 
 		echo json_encode($result);
