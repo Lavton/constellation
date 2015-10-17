@@ -8,8 +8,11 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
     <span class="scrl"></span>
     <div class="event-info hidden">
       <div class="col-xs-12">
-        <h2><span ng-hide="event.base_id">{{event.name}}</span>
+        <h2><span ng-hide="event.base_id">{{event.name}}</span> 
         <span ng-show="event.base_id"><abbr title="{{event.base_dis}}">{{event.name}}</abbr></span>
+        <span ng-show="event.planning" class="planning"><abbr title="Это мероприятие только лишь в планах. Будет ли оно и в какое точно время, если будет - пока неизвестно!">пока в планах</abbr></span>
+
+        <button type="button" ng-show="event.shift_id" class="btn btn-info text-right" ng-click="goToShift()">смотреть как смену =></button>
         <button type="button" ng-show="event.editable" class="btn btn-primary text-right" ng-click="editEventInfo()">Редактировать описание мероприятия</button>
       </h2>
         <hr>
@@ -48,10 +51,10 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <ul>
             <li ng-repeat="person in appliers"> <a href="//vk.com/{{person.domain}}" target="_blank"><img ng-src="{{person.photo}}" width="20"></a> 
              <a href="/about/users/{{person.user}}">{{person.IF}}</a> 
-              <span ng-show="person.user==window.getCookie('fighter_id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
+              <span ng-show="person.user==window.getCookie('id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
             </li>
           </ul>
-          <button ng-click="exportToVK()" ng-show="event.editable">Сгенерировать запись для ВКонтакте</button>
+          <button ng-click="exportToVK()" class="export-scrl" ng-show="event.editable">Сгенерировать запись для ВКонтакте</button>
         <div ng-show="vk_export">
           <textarea ng-model="vk_export" rows="10" cols="80"></textarea> <br>
           Это шаблонная концовка новости про мероприятие. Добавьте, что хотите, 
@@ -75,14 +78,17 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
     <form ng-submit="editEventSubmit()">
         <div class="col-xs-5 info-str">
           <ul>
-            <li><span ng-hide="newevent.parent_id"> Базовое мероприятие:  <select ng-change="changeBase(newevent.base_id)" ng-model="newevent.base_id" ng-options="value.id as value.name for (key , value) in eventsBase"></select> </span></li>
-            <li><span ng-hide="newevent.base_id"> Головное мероприятие: <select ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select></span> <br></li> <br>
+            <li ng-hide="event.shift_id">  отметить как <abbr title="отмечая мероприятие как планируемое, вы показываете людям, что только думаете о проведении мероприятия, без каких-либо гарантий">планируемое</abbr>
+               <input type="checkbox" ng-model="newevent.planning"> 
+            </li>
+            <li ng-hide="event.shift_id"><span ng-hide="newevent.parent_id"> Базовое мероприятие:  <select ng-change="changeBase(newevent.base_id)" ng-model="newevent.base_id" ng-options="value.id as value.name for (key , value) in eventsBase"></select> </span></li>
+            <li ng-hide="event.shift_id"><span ng-hide="newevent.base_id"> Головное мероприятие: <select ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select></span> <br></li> <br>
             <li>место: <input ng-model="newevent.place" placeholder="место мероприятия" size=50 /> </li><br>
-            <li>Дата начала*: <input type="text" class="date" ng-model="newevent.start_date">  {{newevent.start_date}}<br>
+            <li>Дата начала*: <input type="date" class="date" ng-model="newevent.start_date">  {{newevent.start_date}}<br>
             Время начала*: <input type="text" ng-model="newevent.start_time"> {{newevent.start_time}}</li>
-            <li>Дата окончания*: <input type="text" class="date" ng-model="newevent.finish_date">  {{newevent.finish_date}}<br>
+            <li>Дата окончания*: <input type="date" class="date" ng-model="newevent.finish_date">  {{newevent.finish_date}}<br>
             Время окончания*: <input type="text" ng-model="newevent.finish_time"> {{newevent.finish_time}} </li><br>
-            <li>Контактое лицо: <input type="text" ng-model="newevent.contact"></li>
+            <li ng-hide="event.shift_id">Контактое лицо: <input type="text" ng-model="newevent.contact"></li>
            <?php if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) { ?> 
              <li><strong>Виден для: </strong><input type="number" min="1" max="7" ng-model="newevent.visibility" size="{{(newevent.visibility).length}}" ng-init="newevent.visibility=3"/> ({{window.groups[window.visibilities[newevent.visibility]].rus}})</li>
            <?php } else { ?> 
@@ -95,7 +101,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           </ul>
         </div>
     </form>
-        <div class="col-xs-7 info-str">
+        <div class="col-xs-7 info-str" ng-hide="event.shift_id">
             <li>Редактируют: <br>
             <div>
              <button ng-click="addToEventEditors(personToAdd)">Добавить к редакторам</button>

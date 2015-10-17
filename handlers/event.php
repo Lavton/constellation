@@ -21,6 +21,8 @@ if (is_ajax()) {
 				break;
 			case "get_base_and_par":get_base_and_par();
 				break;
+			case "get_nearest_events": get_nearest_events();
+				break;
 
 			case "apply_to_event":apply_to_event();
 				break;
@@ -86,7 +88,6 @@ function add_new_event() {
 function get_all_events() {
 	check_session();
 	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -106,7 +107,7 @@ function get_all_events() {
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
 		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
 		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
-		WHERE (EM.finish_date >= CURRENT_DATE) 
+		WHERE (EM.finish_date >= CURRENT_DATE AND EM.visibility <= '.$_SESSION["current_group"].') 
 		ORDER BY EM.start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["events"] = array();
@@ -119,14 +120,12 @@ function get_all_events() {
 		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
-	}
 }
 
 //get arhive events base info
 function arhive() {
 	check_session();
 	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -144,7 +143,8 @@ function arhive() {
 		FROM EventsMain AS EM 
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
 		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
-		WHERE (EM.finish_date < CURRENT_DATE AND EM.start_date >= "' . $_POST["date"] . '") 
+		WHERE (EM.finish_date < CURRENT_DATE AND EM.start_date >= "' . $_POST["date"] . '"
+			AND EM.visibility <= '.$_SESSION["current_group"].') 
 		ORDER BY EM.start_date DESC;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: '.$query);
 		$result["events"] = array();
@@ -158,14 +158,12 @@ function arhive() {
 		$result["qw"] = $query;
 		mysqli_close($link);
 		echo json_encode($result);
-	}
 }
 
 // инфа об одном мероприятии
 function get_one_info() {
 	check_session();
 	session_start();
-	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -182,12 +180,15 @@ function get_one_info() {
 		// поиск мероприятия
 		$query = "SELECT EM.id, EM.base_id, EM.parent_id, EM.name, EM.place, EM.start_date,
 		EM.start_time, EM.finish_date, EM.finish_time, EM.visibility, EM.comments, EM.last_updated, 
-		EvM.name AS parent_name, EvM.start_date AS parent_date, EE.contact, 
-		EB.comments AS base_dis, EB.name AS base_name FROM EventsMain AS EM 
+		EvM.name AS parent_name, EvM.start_date AS parent_date, EE.contact, EE.planning,
+		EB.comments AS base_dis, EB.name AS base_name,
+		ES.id AS shift_id 
+		FROM EventsMain AS EM 
 		LEFT JOIN EventsMain AS EvM ON EM.parent_id=EvM.id
 		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
 		LEFT JOIN EventsBase AS EB ON EB.id=EM.base_id
-		 WHERE EM.id='" . $_POST['id'] . "';";
+		LEFT JOIN EventsShifts AS ES ON ES.id=EM.id
+		 WHERE (EM.id='" . $_POST['id'] . "');";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["event"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
@@ -237,8 +238,11 @@ function get_one_info() {
 		}
 
 		mysqli_close($link);
-		echo json_encode($result);
-	}
+		// выдаём результат только при наличии прав
+		if (($result["event"]["visibility"] + 0) <= ($_SESSION["current_group"] + 0)) {
+			echo json_encode($result);
+		}
+
 }
 
 // сохраняет изменения мероприятия
@@ -267,9 +271,10 @@ function edit_event() {
 			"visibility" => $_POST["visibility"], "comments" => $_POST["comments"]));
 
 		// записываем в мероприятия
-		$res2 = updater($link, "EventsEvents", array("id" => $_POST["id"], "contact" => $_POST["contact"]));
+		$res2 = updater($link, "EventsEvents", array("id" => $_POST["id"], "contact" => $_POST["contact"],
+			"planning" => ($_POST["planning"])));
 		mysqli_close($link);
-		echo json_encode($result);
+		echo json_encode($res2);
 	} else {
 		echo json_encode(Array('result' => 'Fail'));
 	}
@@ -299,7 +304,7 @@ function kill_event() {
 	}
 }
 
-/* выдаёт всех базовых мероприятий и возможных родителей (событий, которые сами не дети)*/
+ // выдаёт всех базовых мероприятий и возможных родителей (событий, которые сами не дети)
 function get_base_and_par() {
 	check_session();
 	session_start();
@@ -346,6 +351,39 @@ function get_base_and_par() {
 	}
 }
 
+// выводит 5 ближайших мероприятий
+function get_nearest_events() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		// поиск мероприятий
+		$query = 'SELECT id, name, start_date FROM EventsMain 
+		WHERE (start_date>=CURRENT_DATE AND visibility<='.$_SESSION["current_group"].')
+		ORDER BY start_date LIMIT 0, 5;';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["events"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["events"], $line);
+		}
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+
+}
 
 // проверяет, может ли человек редактировать мероприятие
 function canEditEvent($link, $userId, $eventId) {

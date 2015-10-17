@@ -19,19 +19,12 @@
       session_start();
       if (isset($_GET["id"])) {
         include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/one.php');
-        if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] < FIGHTER) || (!(isset($_SESSION["vk_id"])))) { ?>
-    У нас много мероприятий в течение года! <br/>
-    Станьте бойцами и узнаете
-          <?php 
-        } 
-          ?>
+    ?>
           <br>
 
         <?php 
       } else {
-        if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE)) {
-          include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/all.php');
-        }
+        include_once($_SERVER['DOCUMENT_ROOT'].'/own/templates/events/all.php');
       }
     ?>
   </div><!-- page-container -->

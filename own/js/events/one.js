@@ -9,29 +9,16 @@
     $scope.formatDate = window.formatDate;
     $scope.formatTimestamp = window.formatTimestamp;
 
-    // инициируем для выбора даты
-    $('input.date').pickmeup({
-      format: 'Y-m-d',
-      hide_on_select: true,
-      change: function() {
-        var path = this.getAttribute("ng-model").split(".")
-        var self = $scope;
-        for (var i = 0; i < path.length - 1; i++) {
-          self = self[path[i]]
-        };
-        self[path[path.length - 1]] = $(this).val();
-        if (!$scope.newevent.finish_date) {
-          $scope.newevent.finish_date = $scope.newevent.start_date;
-        }
-        $scope.$apply();
-        return true;
+    window.initDatePicker($scope, function() {
+      if (!$scope.newevent.finish_date) {
+        $scope.newevent.finish_date = $scope.newevent.start_date;
       }
-    });
-    $(document).keyup(function(e) {
-      if (e.keyCode == 27) {
-        $('.date').pickmeup('hide');
+    })
+    $scope.onSetDate = function() {
+      if (!$scope.newevent.finish_date) {
+        $scope.newevent.finish_date = $scope.newevent.start_date;
       }
-    });
+    }
 
 
     $(".event-info").removeClass("hidden")
@@ -51,6 +38,7 @@
 
       $scope.event = json.event;
       $scope.event.visibility = $scope.event.visibility * 1;
+      $scope.event.planning = (Boolean)($scope.event.planning * 1);
       $scope.editors = json.editors;
       $scope.appliers = json.appliers;
       $scope.children = json.children;
@@ -102,7 +90,7 @@
             "id": person.user * 1
           }));
           // если мы уже записаны на мероприятие - кнопку убираем
-          if (person.user == window.getCookie("fighter_id") * 1) {
+          if (person.user == window.getCookie("id") * 1) {
             $scope.IAmIn = true;
           }
         })
@@ -165,7 +153,6 @@
       var data = angular.copy($scope.newevent);
       data.action = "edit_event";
       $scope.event = angular.copy($scope.newevent);
-      console.log(data);
 
       // чтобы показывать изменённые данные
       var bbdata = {
@@ -207,7 +194,8 @@
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-        // анимация на выходе
+        console.log(json)
+          // анимация на выходе
         $(".event-edit").hide("slow");
         $(".event-info").show("slow", function() {
           setTimeout(function() {
@@ -246,16 +234,47 @@
 
     // создаём текст поста для ВК. Пока заглушка
     $scope.exportToVK = function() {
+      $('html, body').animate({
+          scrollTop: $(".export-scrl").offset().top
+      }, 500);
       $scope.vk_export = "\n__________\n";
-      $scope.vk_export += $scope.event.name + ($scope.parent_event.name ? (" (" + $scope.parent_event.name + ")\n") : "\n");
-      $scope.vk_export += "Начало: " + $scope.event.start_time + "\n";
-      $scope.vk_export += "Место: " + $scope.event.place + "\n";
-      $scope.vk_export += "Контактное лицо: " + $scope.event.contact + "\n";
+      $scope.vk_export += $scope.event.name + "\n";
+      $scope.vk_export += "Начало: " + $scope.formatDate($scope.event.start_date) +
+        " в " + $scope.event.start_time + " (через " +
+        Math.round(((new Date($scope.event.start_date)) - (new Date())) / (1000 * 60 * 60 * 24)) +
+        " дней)\n";
+      $scope.vk_export += "Место: " + ($scope.event.place || "") + "\n";
+      $scope.vk_export += "Контактное лицо: " + ($scope.event.contact || "") + "\n";
+      $scope.vk_export += "http://spo-sozvezdie.hol.es/events/" + eventid + "\n";
       $scope.vk_export += "\n__________\n";
-      _.each($scope.event.users, function(person) {
-        var pers_string = "*" + person.domain + " (" + person.first_name + "), ";
-        $scope.vk_export += pers_string
-      })
+      var data = {
+        action: "get_nearest_events",
+        id: eventid
+      }
+      $.ajax({ //TODO: make with angular
+        type: "POST",
+        url: "/handlers/event.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(response) {
+        $scope.vk_export += "напоминаем про 5 ближайших мероприятий:\n";
+        _.each(response.events, function(event) {
+          $scope.vk_export += "- " + event.name + "\n";
+          $scope.vk_export += "--> Начало: " + $scope.formatDate(event.start_date) +
+            " (через " +
+            Math.round(((new Date(event.start_date)) - (new Date())) / (1000 * 60 * 60 * 24)) +
+            " дней)\n";
+          $scope.vk_export += "--> http://spo-sozvezdie.hol.es/events/" + event.id + "\n";
+
+        })
+        $scope.vk_export += "\n__________\n";
+        _.each($scope.appliers, function(person) {
+          var pers_string = "*" + person.domain + " (" + person.first_name + "), ";
+          $scope.vk_export += pers_string
+        })
+        $scope.$apply();
+      });
+
     }
 
     // добавляем на мероприятие. По умолчанию - себя
@@ -263,16 +282,10 @@
       var data = {
         "action": "apply_to_event",
         "event_id": $scope.event.id,
+        "id": person || window.getCookie("id")
       }
-      if (person) {
-        data.id = _.find(window.people, function(p) {
-          return person == p.domain;
-        }).id
-      } else {
+      if (!person) {
         $scope.IAmIn = true;
-        $scope.appliers.push(_.findWhere(window.people, {
-          "id": window.getCookie("fighter_id") * 1
-        }))
       }
       console.log("apply", data.id)
 
@@ -316,7 +329,7 @@
           data.id = person.id
           id = person.id * 1;
         } else {
-          id = window.getCookie("fighter_id") * 1;
+          id = window.getCookie("id") * 1;
           $scope.IAmIn = false;
         }
         $scope.appliers = _.reject($scope.appliers, function(user) {
@@ -336,10 +349,8 @@
       var data = {
         "action": "add_to_event_editors",
         "event_id": $scope.event.id,
+        "id": person
       }
-      data.id = _.find(window.people, function(p) {
-        return person == p.domain;
-      }).id
 
       $.ajax({ //TODO: make with angular
         type: "POST",
@@ -378,14 +389,21 @@
           console.log(response)
         });
       }
+    }
 
+    $scope.goToShift = function() {
+      var lnk = document.createElement("a");
+      lnk.setAttribute("class", "ajax-nav")
+      $(lnk).attr("href", "/events/shifts/" + eventid);
+      $("#page-container").append(lnk);
+      $(lnk).trigger("click")
     }
 
   }
 
   function init() {
     window.setPeople(function() {
-      $("input.vk_input").vkinput()
+      $("input.vk_input").siteInput()
     });
     window.init_ang("oneEventApp", init_angular_o_e_c, "event-one");
   }

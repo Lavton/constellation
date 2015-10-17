@@ -10,6 +10,11 @@
         $scope.newevent.finish_date = $scope.newevent.start_date;
       }
     })
+    $scope.onSetDate = function() {
+      if (!$scope.newevent.finish_date) {
+        $scope.newevent.finish_date = $scope.newevent.start_date;
+      }
+    }
 
     // возращает дату в формате "6 мая 2015"
     $scope.formatDate = window.formatDate;

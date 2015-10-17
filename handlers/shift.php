@@ -75,7 +75,10 @@ function all_shifts() {
 		}
 		$link->set_charset("utf8");
 		// поиск смены
-		$query = 'SELECT id, place, start_date, finish_date, time_name, visibility FROM shifts WHERE (finish_date >= CURRENT_DATE) ORDER BY start_date;';
+		$query = 'SELECT EM.id, EM.place, EM.start_date, EM.finish_date, EM.name, EM.visibility 
+			FROM EventsMain AS EM JOIN EventsShifts AS ES ON EM.id=ES.id 
+			WHERE (EM.finish_date >= CURRENT_DATE AND EM.visibility<='.$_SESSION["current_group"].')
+			 ORDER BY EM.start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 
