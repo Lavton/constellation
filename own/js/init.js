@@ -166,6 +166,7 @@
       "shifts": {
         "js": [
           "/own/js/cs/shifts.js",
+          "/standart/js/jquery.pickmeup.min.js"
         ],
         "title": "смены | комсостав | СПО \"СОзвездие\"",
         "loc": /^\/cs\/shifts$/
@@ -173,6 +174,7 @@
       "people": {
         "js": [
           "/own/js/cs/people.js",
+          "/standart/js/jquery.pickmeup.min.js"
         ],
         "title": "люди | комсостав | СПО \"СОзвездие\"",
         "loc": /^\/cs\/people$/

@@ -140,28 +140,7 @@
     }
 
     // чтобы дату вводить
-    $('input.date').pickmeup({
-      format: 'Y-m-d',
-      hide_on_select: true,
-      position: "top",
-      change: function() {
-        var path = this.getAttribute("ng-model").split(".")
-        var self = $scope;
-        for (var i = 0; i < path.length - 1; i++) {
-          self = self[path[i]]
-        };
-        self[path[path.length - 1]] = $(this).val();
-
-        $scope.$apply();
-        return true;
-      }
-    });
-
-    $(document).keyup(function(e) {
-      if (e.keyCode == 27) {
-        $('.date').pickmeup('hide');
-      }
-    });
+    window.initDatePicker($scope)
 
     // отправляем форму добавления человека
     $scope.addNewPersonSubmit = function() {

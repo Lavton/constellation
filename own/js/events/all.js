@@ -5,45 +5,11 @@
     $scope.window = window;
     $scope.newevent = {}
 
-    // инициируем для выбора даты
-    _.each($('input.date'), function(self) {
-      // если нет встроенной поддержки от браузера
-      if (!window.checkIfInput(self.getAttribute("type"))) {
-        $(self).pickmeup({
-          format: 'Y-m-d',
-          hide_on_select: true,
-          change: function() {
-            return $scope.onSetDate(self);
-          }
-        });
-      }
-    });
-    $(document).keyup(function(e) {
-      if (e.keyCode == 27) {
-        $('.date').pickmeup('hide');
-      }
-    });
-
-    $scope.onSetDate = function(self2) {
-      if (self2) {
-        var path = self2.getAttribute("ng-model").split(".");
-        var self = $scope;
-        for (var i = 0; i < path.length - 1; i++) {
-          self = self[path[i]]
-        };
-        console.log($(self2).val())
-        console.log(path)
-        console.log(self[path[path.length - 1]])
-        self[path[path.length - 1]] = $(self2).val();
-      }
+    window.initDatePicker($scope, function() {
       if (!$scope.newevent.finish_date) {
         $scope.newevent.finish_date = $scope.newevent.start_date;
       }
-      if (self2) {
-        $scope.$apply();
-      }
-      return true;
-    }
+    })
 
     // возращает дату в формате "6 мая 2015"
     $scope.formatDate = window.formatDate;

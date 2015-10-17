@@ -1,41 +1,41 @@
 <!-- просмотр профиля одного бойца -->
-<div ng-cloak ng-controller="oneFighterApp" id="one-fighter">
+<div ng-cloak ng-controller="oneFighterApp" id="one-user">
     <span class="scrl"></span>
   <div class="user-info hidden">
 <!-- просмотр -->
     <div class="col-xs-12">
 
-      <h2>{{fighter.last_name}}<span ng-show="fighter.maiden_name"> ({{fighter.maiden_name}})</span> {{fighter.first_name}} {{fighter.middle_name}} 
-        <em ng-show="fighter.nickname">({{fighter.nickname}})</em>
-        <button type="button" class="btn btn-primary text-right" ng-click="editPerson()" ng-show="isCS || fighter.uid == window.getCookie('vk_id')">Редактировать</button>
+      <h2>{{user.last_name}}<span ng-show="user.maiden_name"> ({{user.maiden_name}})</span> {{user.first_name}} {{user.middle_name}} 
+        <em ng-show="user.nickname">({{user.nickname}})</em>
+        <button type="button" class="btn btn-primary text-right" ng-click="editPerson()" ng-show="isCS || user.id == window.getCookie('id')">Редактировать</button>
       </h2>
       <hr>
       <span class="saved">  (Изменения сохранены)</span>
     </div>
     <div class="row own-row">
       <div class="col-xs-3">
-        <img class="pull-left ava" ng-src="{{fighter.photo}}" width="200" height="200">
+        <img class="pull-left ava" ng-src="{{user.photo}}" width="200" height="200">
       </div>
       <div class="col-xs-9 info-str">
         <ul>
-          <li> <strong>статус:</strong> <span ng-show="fighter.isFighter">боец</span> 
-          <span ng-show="fighter.isCandidate">кандидат</span>
+          <li> <strong>статус:</strong> <span ng-show="user.isFighter">боец</span> 
+          <span ng-show="user.isCandidate">кандидат</span>
           </li>
-          <li ng-show="fighter.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{fighter.domain}}'>vk.com/{{fighter.domain}}</a></li>
-          <li ng-show="fighter.phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.phone}}'> {{goodView(fighter.phone)}} </a></li>
-          <li ng-show="fighter.second_phone"><strong>Телефон:</strong><a href='tel:+7{{fighter.second_phone}}'> {{goodView(fighter.second_phone)}} </a></li>
-          <li ng-show="fighter.email"><strong>e-mail:</strong><a href='mailto:{{fighter.email}}'> {{fighter.email}} </a></li>
-          <li ng-show="fighter.instagram_id"><strong>id в Instagram:</strong><a href='https://instagram.com/{{fighter.instagram_id}}' target="_blank"> {{fighter.instagram_id}} </a></li>
-          <li ng-show="fighter.birthdate"><strong>День рождения: </strong> <span class="date {{fighter.birthdate}}">{{window.formatDate(fighter.birthdate)}}</span></li>
-          <li ng-show="fighter.year_of_entrance"><strong>Год вступления в отряд: </strong>{{fighter.year_of_entrance}}</li>
-          <li ng-show="fighter.group_of_rights && isCS"><strong>Права доступа: </strong>{{fighter.group_of_rights}} ({{window.groups[window.visibilities[fighter.group_of_rights]].rus}})</li>
+          <li ng-show="user.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{user.domain}}'>vk.com/{{user.domain}}</a></li>
+          <li ng-show="user.phone"><strong>Телефон:</strong><a href='tel:+7{{user.phone}}'> {{goodView(user.phone)}} </a></li>
+          <li ng-show="user.second_phone"><strong>Телефон:</strong><a href='tel:+7{{user.second_phone}}'> {{goodView(user.second_phone)}} </a></li>
+          <li ng-show="user.email"><strong>e-mail:</strong><a href='mailto:{{user.email}}'> {{user.email}} </a></li>
+          <li ng-show="user.instagram_id"><strong>id в Instagram:</strong><a href='https://instagram.com/{{user.instagram_id}}' target="_blank"> {{user.instagram_id}} </a></li>
+          <li ng-show="user.birthdate"><strong>День рождения: </strong> <span class="date {{user.birthdate}}">{{window.formatDate(user.birthdate)}}</span></li>
+          <li ng-show="user.year_of_entrance"><strong>Год вступления в отряд: </strong>{{user.year_of_entrance}}</li>
+          <li ng-show="user.group_of_rights && isCS"><strong>Права доступа: </strong>{{user.group_of_rights}} ({{window.groups[window.visibilities[user.group_of_rights]].rus}})</li>
         </ul>
       </div>
     </div>
   </div>
 
   <!-- редактирование -->
-  <div ng-show="isCS || fighter.uid == window.getCookie('vk_id')">
+  <div ng-show="isCS || user.id == window.getCookie('id')">
     <div class="user-edit hidden">
           <h2>
           <span ng-show="canEdit">
@@ -72,7 +72,7 @@
               <li><strong>Телефон:</strong>
                 <input type="text" ng-model="newperson.phone" size="{{(newperson.phone).length}}" /></li>
               <li><strong>День рождения: </strong>
-                <input type="text" ng-model="newperson.birthdate" class="date" size="{{(newperson.birthdate).length}}" /> {{newperson.birthdate}}
+                <input type="date" ng-model="newperson.birthdate" class="date" size="{{(newperson.birthdate).length}}" /> {{newperson.birthdate}}
               </li>
               <li ng-hide="canEdit"><strong>Права доступа*: </strong>
                 <input type="number" min="1" max="7" ng-model="newperson.group_of_rights" /> ({{window.groups[window.visibilities[newperson.group_of_rights]].rus}})</li>
@@ -98,25 +98,27 @@
           </div>
         </div>
       </form>
-      <h2>Выбрать категорию доступа</h2>
-      <i>данное поле влияет на то, как вы видите страницы.</i>
-      <span class="saved">  (Изменения сохранены)</span>
-      <br/>
-      <span ng-repeat="group in f_groups">
-      <input type="radio" value="{{group.num}}" name="group_r" ng-checked="window.getCookie('current_group')*1 == group.num*1" >{{group.rus}}<br></span>
+      <div ng-show="user.id == window.getCookie('id')">
+        <h2>Выбрать категорию доступа</h2>
+        <i>данное поле влияет на то, как вы видите страницы.</i>
+        <span class="saved">  (Изменения сохранены)</span>
+        <br/>
+        <span ng-repeat="group in f_groups">
+        <input type="radio" value="{{group.num}}" name="group_r" ng-checked="window.getCookie('current_group')*1 == group.num*1" >{{group.rus}}<br></span>
+      </div>
     </div>
-    <button type="button" class="btn btn-danger kill-fighter" ng-click="killUser()" ng-hide="canEdit">Удалить профиль</button>
+    <button type="button" class="btn btn-danger kill-user" ng-click="killUser()" ng-hide="canEdit">Удалить профиль</button>
   </div>
 
   <!--  -->
   <!-- доп. информация -->
-  <div class="row own-row" ng-show="window.current_group>=window.groups.FIGHTER.num || fighter.uid == window.getCookie('vk_id')">
+  <div class="row own-row" ng-show="window.current_group>=window.groups.FIGHTER.num || user.id == window.getCookie('id')">
     <div class="col-xs-6">
       <h3>Смены</h3>
       <ul>
         <li ng-repeat="shift in shifts">
           <a href="/events/shifts/{{shift.id}}" class="ajax-nav">
-                      {{shift.time_name}} <span ng-show="shift.place">({{shift.place}})</span>, {{shift.fn_date.getFullYear()}} г.
+                      {{shift.name}} <span ng-show="shift.place">({{shift.place}})</span>, {{shift.fn_date.getFullYear()}} г.
           </a>
         </li>
       </ul>
@@ -124,9 +126,9 @@
     <div class="col-xs-6" class="achiv-info hidden">
       <h3>Достижения 
         <a href="" ng-click="addAch()">
-          <img src="/own/images/plus.png" width="25px" ng-show="isCS || fighter.uid == window.getCookie('vk_id')">
+          <img src="/own/images/plus.png" width="25px" ng-show="isCS || user.id == window.getCookie('id')">
         </a> 
-        <a href="" ng-click="editAchvs()"><img src="/own/images/edit.png" width="20px" ng-show="isCS || fighter.uid == window.getCookie('vk_id')"></a>
+        <a href="" ng-click="editAchvs()"><img src="/own/images/edit.png" width="20px" ng-show="isCS || user.id == window.getCookie('id')"></a>
       </h3>
       <span ng-show="add_achiv">
         <input type="text" placeholder="Достижение" ng-model="new_achv.achievement"> <input type="number" ng-model="new_achv.start_year" placeholder="год начала"> <input type="number" placeholder="год окончания" ng-model="new_achv.finish_year">

@@ -7,12 +7,12 @@ window.goodTelephoneView = function(tel) {
   return tel ? "+7 (" + tel[0] + tel[1] + tel[2] + ") " + tel[3] + tel[4] + tel[5] + "-" + tel[6] + tel[7] + "-" + tel[8] + tel[9] : ""
 }
 
-window.checkIfInput = function (type){
+window.checkIfInput = function(type) {
   var input = document.createElement("input");
   input.setAttribute("type", type);
-  var notAValidValue='not-a-date';
+  var notAValidValue = 'not-a-date';
   input.setAttribute("value", notAValidValue);
-  return !(input.value==notAValidValue);
+  return !(input.value == notAValidValue);
 }
 
 // форматирует строку вида '2015-10-20' в '20 ноября 2015'
@@ -49,7 +49,7 @@ window.formatTimestamp = function(date) {
 
 // говорит, число ли строка)
 function isNumeric(input) {
-    return (input - 0) == input && (''+input).trim().length > 0;
+  return (input - 0) == input && ('' + input).trim().length > 0;
 }
 
 // из разных вариантов ввода телефона делает его цифрами
@@ -77,6 +77,50 @@ function getPhone(input) {
 }
 
 window.getPhone = getPhone;
+
+// для выбора даты пикер
+window.initDatePicker = function($scope, before_in) {
+  // инициируем для выбора даты
+  _.each($('input.date'), function(self) {
+    // если нет встроенной поддержки от браузера
+    if (!window.checkIfInput(self.getAttribute("type"))) {
+      $(self).pickmeup({
+        format: 'Y-m-d',
+        hide_on_select: true,
+        change: function() {
+          return onSetDate(self, before_in);
+        }
+      });
+    }
+  });
+  $(document).keyup(function(e) {
+    if (e.keyCode == 27) {
+      $('.date').pickmeup('hide');
+    }
+  });
+
+  function onSetDate(self2, before_in) {
+    if (self2) {
+      var path = self2.getAttribute("ng-model").split(".");
+      var self = $scope;
+      for (var i = 0; i < path.length - 1; i++) {
+        self = self[path[i]]
+      };
+      console.log($(self2).val())
+      console.log(path)
+      console.log(self[path[path.length - 1]])
+      self[path[path.length - 1]] = $(self2).val();
+    }
+    if (before_in) {
+      before_in();
+    }
+    
+    if (self2) {
+      $scope.$apply();
+    }
+    return true;
+  }
+}
 
 // вернуть куки по имени
 function getCookie(name) {

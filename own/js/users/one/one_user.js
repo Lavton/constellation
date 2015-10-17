@@ -3,7 +3,7 @@
 
   function init_angular_o_f_c($scope, $http) {
     $scope.window = window;
-    $scope.fighter = {}
+    $scope.user = {}
     $scope.isCS = window.current_group >= window.groups.COMMAND_STAFF.num
     $scope.newperson = {}
     $scope.pos_status = [{
@@ -21,39 +21,18 @@
     var userid = fid[fid.length - 1] * 1;
 
     $("#page-container").on("_final_select", "input", function(e) {
-        $scope.fighter.domain = $(this).val()
+        $scope.user.domain = $(this).val()
         $scope.$apply()
       })
       // чтобы дату вводить
-    $('input.date').pickmeup({
-      format: 'Y-m-d',
-      hide_on_select: true,
-      position: "top",
-      change: function() {
-        var path = this.getAttribute("ng-model").split(".")
-        var self = $scope;
-        for (var i = 0; i < path.length - 1; i++) {
-          self = self[path[i]]
-        };
-        self[path[path.length - 1]] = $(this).val();
-
-        $scope.$apply();
-        return true;
-      }
-    });
-
-    $(document).keyup(function(e) {
-      if (e.keyCode == 27) {
-        $('.date').pickmeup('hide');
-      }
-    });
-
+    window.initDatePicker($scope);
+    
     /*инициализация*/
-    $scope.fighter = {};
+    $scope.user = {};
     $scope.f_groups = _.toArray(window.groups)
     $(".user-info").removeClass("hidden")
     window.setPeople(function(flag) {
-      $scope.fighter = _.clone(_.find(window.people, function(person) {
+      $scope.user = _.clone(_.find(window.people, function(person) {
         return person.id == userid && person.isFighter == true;
       })) || {}
       if (flag) {
@@ -74,17 +53,17 @@
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-        _.extend($scope.fighter, json.user);
+        _.extend($scope.user, json.user);
 
-        if ($scope.fighter.year_of_entrance) {
-          $scope.fighter.year_of_entrance = 1 * $scope.fighter.year_of_entrance;
-          $scope.fighter.group_of_rights = 1 * $scope.fighter.group_of_rights;
-          $scope.fighter.id = $scope.fighter.id * 1;
-          $scope.fighter.uid = $scope.fighter.uid * 1;
-          $scope.canEdit = ($scope.fighter.uid == window.getCookie('vk_id') * 1) && window.current_group < window.groups.COMMAND_STAFF.num
+        if ($scope.user.year_of_entrance) {
+          $scope.user.year_of_entrance = 1 * $scope.user.year_of_entrance;
+          $scope.user.group_of_rights = 1 * $scope.user.group_of_rights;
+          $scope.user.id = $scope.user.id * 1;
+          $scope.user.uid = $scope.user.uid * 1;
+          $scope.canEdit = ($scope.user.id == window.getCookie('id') * 1) && window.current_group < window.groups.COMMAND_STAFF.num
         }
-        $scope.fighter.isCandidate = Boolean($scope.fighter.isCandidate * 1);
-        $scope.fighter.isFighter = Boolean($scope.fighter.isFighter * 1);
+        $scope.user.isCandidate = Boolean($scope.user.isCandidate * 1);
+        $scope.user.isFighter = Boolean($scope.user.isFighter * 1);
 
         $("a.profile_priv").attr("href", json.prev.mid)
         $("a.profile_next").attr("href", json.next.mid)
@@ -99,8 +78,8 @@
         // отображение смен
         var data = {
           action: "get_shifts_nd_ach",
-          uid: $scope.fighter.uid,
-          fighter: userid
+          uid: $scope.user.uid,
+          id: userid
         }
         $.ajax({ //TODO: make with angular
           type: "POST",
@@ -108,8 +87,17 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(response) {
+          console.log(response);
           if (response.result == "Success") {
-            showShifts(response);
+            $scope.shifts = response.shifts;
+            $scope.achievements = response.achievements;
+            _.each($scope.shifts, function(detachment, index, list) {
+              detachment.fn_date = new Date(detachment.finish_date);
+            });
+            _.each($scope.achievements, function(element) {
+              element.start_year *= 1;
+              element.finish_year *= 1;
+            })
             $(".achiv-info").removeClass("hidden");
             $scope.$apply();
           }
@@ -126,12 +114,12 @@
           })
           /*с ВК*/
         var data_vk = {
-          user_ids: $scope.fighter.uid,
+          user_ids: $scope.user.uid,
           fields: ["photo_200", "domain"]
         }
-        getVkData($scope.fighter.uid, ["photo_200", "domain"],
+        getVkData($scope.user.uid, ["photo_200", "domain"],
           function(response) {
-            $scope.fighter.photo = response[$scope.fighter.uid].photo_200;
+            $scope.user.photo = response[$scope.user.uid].photo_200;
             $scope.$apply();
           }
         );
@@ -153,13 +141,13 @@
         }, 500); // анимируем скроолинг к элементу
 
       });
-      $scope.master = angular.copy($scope.fighter);
-      $scope.newperson = angular.copy($scope.fighter);
+      $scope.master = angular.copy($scope.user);
+      $scope.newperson = angular.copy($scope.user);
       $scope.newperson.status = 1;
-      if ($scope.fighter.isCandidate) {
+      if ($scope.user.isCandidate) {
         $scope.newperson.status = 2
       }
-      if ($scope.fighter.isFighter) {
+      if ($scope.user.isFighter) {
         $scope.newperson.status = 3;
       }
     };
@@ -169,7 +157,7 @@
       $scope.newperson.phone = window.getPhone($scope.newperson.phone);
       $scope.newperson.second_phone = window.getPhone($scope.newperson.second_phone);
       var data = angular.copy($scope.newperson);
-      $scope.fighter = angular.copy($scope.newperson);
+      $scope.user = angular.copy($scope.newperson);
       if (is_me) {
         data.id = 0;
       }
@@ -236,19 +224,6 @@
           }
         });
       }
-    }
-
-    // готовит данные для отображения прошедших смен
-    function showShifts(json) {
-      $scope.shifts = json.shifts;
-      $scope.achievements = json.achievements;
-      _.each($scope.shifts, function(detachment, index, list) {
-        detachment.fn_date = new Date(detachment.finish_date);
-      });
-      _.each($scope.achievements, function(element) {
-        element.start_year *= 1;
-        element.finish_year *= 1;
-      })
     }
 
     // отображает панель для редактирования
@@ -322,7 +297,7 @@
     $scope.addAchvSubmit = function() {
       var data = angular.copy($scope.new_achv);
       data.action = "add_achv";
-      data.fighter = userid;
+      data.user = userid;
       $.ajax({ //TODO: make with angular
         type: "POST",
         url: "/handlers/user.php",
@@ -343,7 +318,7 @@
     window.setPeople(function() {
       $("input.vk_input").vkinput()
     });
-    window.init_ang("oneFighterApp", init_angular_o_f_c, "one-fighter");
+    window.init_ang("oneFighterApp", init_angular_o_f_c, "one-user");
   }
   init();
   window.registerInit(init)

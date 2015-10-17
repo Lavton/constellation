@@ -53,11 +53,12 @@
       <br>
       телефон: <input ng-model="newperson.phone" placeholder="телефон человека" size=30 /> 
       <br>
-      дата рождения: <input ng-model="newperson.birthdate" class="date" placeholder="дата рождения человека"/> {{newperson.birthdate}}
+      дата рождения: <input ng-model="newperson.birthdate" type="date" class="date" placeholder="дата рождения человека"/> {{newperson.birthdate}}
       <br>
       статус*: <select ng-model="newperson.status" ng-init="newperson.status=2" ng-options="value.id as value.title for (key , value) in newperson.pos_status"></select> {{newperson.status}}
       <br>
       <button type="button" ng-click="addNewPersonSubmit()" ng-show="adding_new" class="btn btn-success">Добавить</button>
+      <hr><br><br>
     </div>
     </span>
   </div>

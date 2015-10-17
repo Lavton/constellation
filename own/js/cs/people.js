@@ -7,6 +7,10 @@
     var today = new Date();
     $scope.today = dayFromYear(today);
 
+    // возращает дату в формате "6 мая 2015"
+    $scope.formatDate = window.formatDate;
+    window.initDatePicker($scope)
+
     function dayFromYear(date) {
       var start = new Date(date.getFullYear(), 0, 0);
       var diff = date - start;
@@ -30,32 +34,20 @@
       }).done(function(json) {
 
         // получаем норм отображение.
-        $scope.people = [];
-        _.each(json.fighters, function(person, id, list) {
-          $scope.people.push(person)
-          window.getPerson(person.vk_id * 1, function(pers, flag) {
+        $scope.people = json.people
+        _.each($scope.people, function(person, id, list) {
+          window.getPerson(person.uid * 1, function(pers, flag) {
             _.extend(person, pers)
-            person.url_s = "users"
             if (flag) {
               $scope.$apply();
             }
           });
         });
-        _.each(json.candidats, function(person, id, list) {
-          $scope.people.push(person)
-          window.getPerson(person.vk_id * 1, function(pers, flag) {
-            _.extend(person, pers)
-            person.url_s = "candidats"
-            if (flag) {
-              $scope.$apply();
-            }
-          });
-        });
-
         // отображаем, сколько дней осталось + сортируем по этому параметру
         _.each($scope.people, function(person) {
           person.bd = new Date(person.birthdate)
           person.dayFromYear = dayFromYear(person.bd)
+          person.dbThisYear = (new Date()).getFullYear()+"-"+((person.bd).getMonth()+1)+"-"+((person.bd).getDate())
         })
         $scope.people = _.sortBy($scope.people, function(person) {
           return (person.dayFromYear - dayFromYear(today) + 365) % 365;
@@ -67,13 +59,25 @@
           shift.dEnd = dayFromYear(new Date(shift.finish_date))
           shift.fn_date = new Date(shift.finish_date);
           _.each(_.filter($scope.people, function(person) {
-            return (shift.dStart <= person.dayFromYear) && (shift.dEnd >= person.dayFromYear) && (shift.vk_id*1 == person.uid * 1)
+            return (shift.dStart <= person.dayFromYear) && (shift.dEnd >= person.dayFromYear) && (shift.vk_id * 1 == person.uid * 1)
           }), function(person) {
             person.shift = shift;
             happyPeople.push(person)
           })
         })
         $scope.$apply();
+
+        // хотим привязку, но в этот момент элементы ещё не созданы
+        setTimeout(function() {
+          _.each($("span.date"), function(self) {
+            $(self).pickmeup({
+              format: 'Y-m-d',
+              hide_on_select: true,
+              date: new Date($(self).attr("class").split(" ")[1])
+            });
+          })
+        }, 500);
+
       })
 
     }

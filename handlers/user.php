@@ -409,8 +409,14 @@ function get_shifts_nd_ach() {
 		}
 		$link->set_charset("utf8");
 		// смены, на которых был боец
-		// $query = "SELECT * FROM EventsMain AS EM JOIN EventsShifts AS ES ON ES.id=EM.id JOIN EventsShiftsRanking AS ESR ON ES.id=ESR.shift JOIN EventsShiftsDetachments AS ESD ON ESR.id=ESD.ranking JOIN EventsShiftsDetachmentsPeople AS ESDP ON ESD.id=ESDP.detachment  WHERE ESDP.user=41;"
-		$query = 'SELECT detachments.shift_id as id, shifts.place, shifts.finish_date, shifts.time_name FROM detachments, shifts WHERE (ranking IS NULL AND people LIKE \'%'.$_POST["uid"].'%\' AND shifts.id=detachments.shift_id) ORDER BY shifts.finish_date DESC';
+		$query = "SELECT EM.id, EM.name, EM.place, EM.finish_date 
+		FROM EventsMain AS EM 
+		JOIN EventsShifts AS ES ON ES.id=EM.id 
+		JOIN EventsShiftsRanking AS ESR ON ES.id=ESR.shift 
+		JOIN EventsShiftsDetachments AS ESD ON ESR.id=ESD.ranking 
+		JOIN EventsShiftsDetachmentsPeople AS ESDP ON ESD.id=ESDP.detachment  
+		WHERE ESDP.user=".$_POST["id"].";";
+		// $query = 'SELECT detachments.shift_id as id, shifts.place, shifts.finish_date, shifts.time_name FROM detachments, shifts WHERE (ranking IS NULL AND people LIKE \'%'.$_POST["uid"].'%\' AND shifts.id=detachments.shift_id) ORDER BY shifts.finish_date DESC';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 
@@ -419,7 +425,7 @@ function get_shifts_nd_ach() {
 		}
 
 		// достижения
-		$query = "SELECT * FROM UsersFightersAchievements  WHERE (fighter=".$_POST["fighter"].") ORDER BY start_year DESC";
+		$query = "SELECT * FROM UsersFightersAchievements  WHERE (fighter=".$_POST["id"].") ORDER BY start_year DESC";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["achievements"] = array();
 

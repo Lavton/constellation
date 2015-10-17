@@ -112,24 +112,20 @@ function get_birthdays() {
 		}
 		$link->set_charset("utf8");
 
-		// ДР бойцов
-		$query = "SELECT id, vk_id, name, surname, birthdate FROM fighters";
+		// ДР людей
+		$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, UM.birthdate FROM UsersMain AS UM";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["fighters"] = array();
+		$result["people"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["fighters"], $line);
+			array_push($result["people"], $line);
 		}
 
-		// ДР кандидатов
-		$query = "SELECT id, vk_id, birthdate FROM candidats";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["candidats"] = array();
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["candidats"], $line);
-		}
 
 		// предстоящие смены. Если ДР выходит на них - отображаем это
-		$query = "SELECT shifts.id, shifts.place, shifts.start_date, shifts.finish_date, shifts.time_name, guess_shift.vk_id FROM shifts, guess_shift WHERE (shifts.finish_date >= CURRENT_DATE AND guess_shift.shift_id=shifts.id) ORDER BY start_date;";
+		// SELECT EM.id, EM.place, EM.start_date, EM.finish_date, EM.name,
+		$query = "
+
+		shifts.id, shifts.place, shifts.start_date, shifts.finish_date, shifts.time_name, guess_shift.vk_id FROM shifts, guess_shift WHERE (shifts.finish_date >= CURRENT_DATE AND guess_shift.shift_id=shifts.id) ORDER BY start_date;";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
