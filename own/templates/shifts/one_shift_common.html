@@ -3,8 +3,8 @@
   <div class="shift-info hidden">
     <ul>
       <!-- информация по смене -->
-      <li ng-show="shift.start_date"><strong>Дата начала:</strong> {{shift.start_date | date: 'dd.MM.yyyy'}} </li>
-      <li ng-show="shift.finish_date"><strong>Дата окончания:</strong> {{shift.finish_date | date: 'dd.MM.yyyy'}} </li>
+      <li ng-show="shift.start_date"><strong>Дата начала:</strong> <span class="date {{shift.start_date}}">{{formatDate(shift.start_date)}}</span></li>
+      <li ng-show="shift.finish_date"><strong>Дата окончания:</strong> <span class="date {{shift.finish_date}}">{{formatDate(shift.finish_date)}}</span></li>
       <li ng-show="shift.place"><strong>Место:</strong> {{shift.place}} </li>
       <li ng-show="shift.visibility && window.current_group>=window.groups.COMMAND_STAFF.num"><strong>Виден для: </strong>{{shift.visibility}} ({{window.groups[window.visibilities[shift.visibility]].rus}})</li>
       <li ng-show="shift.bbcomments"><strong>Комментарии:</strong>
@@ -14,19 +14,21 @@
     </ul>
     <button ng-show="window.current_group>=window.groups.COMMAND_STAFF.num" type="button" class="btn btn-danger kill-shift" ng-click="killShift()">Удалить смену</button>
   </div>
+
+  <!-- редактирование -->
   <div class="shift-edit hidden">
     <ul>
       <li><strong>Дата начала:</strong>
-        <input type="date" ng-model="shift.start_date" size="{{(shift.start_date).length}}" /> </li>
+        <input type="date" ng-model="newshift.start_date" size="{{(newshift.start_date).length}}" /> </li>
       <li><strong>Дата окончания:</strong>
-        <input type="date" ng-model="shift.finish_date" size="{{(shift.finish_date).length}}" /> </li>
+        <input type="date" ng-model="newshift.finish_date" size="{{(newshift.finish_date).length}}" /> </li>
       <li><strong>Место:</strong>
-        <input type="text" ng-model="shift.place" size="{{(shift.place).length}}" /> </li>
+        <input type="text" ng-model="newshift.place" size="{{(newshift.place).length}}" /> </li>
       <li><strong>Виден для: </strong>
-        <input type="number" min="1" max="7" ng-model="shift.visibility" size="{{(shift.visibility).length}}" /> ({{window.groups[window.visibilities[shift.visibility]].rus}})</li>
+        <input type="number" min="1" max="7" ng-model="newshift.visibility" size="{{(newshift.visibility).length}}" /> ({{window.groups[window.visibilities[newshift.visibility]].rus}})</li>
       <li><strong>Комментарии:</strong>
         <br/>
-        <textarea ng-model="shift.comments" class="bbcode" cols="20" rows="5"></textarea>
+        <textarea ng-model="newshift.comments" class="bbcode" cols="20" rows="5"></textarea>
       </li>
     </ul>
   </div>

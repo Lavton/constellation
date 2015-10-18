@@ -70,7 +70,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <div class="col-xs-12">
         <h2>название* <input type="text" ng-model="newevent.name"/> 
           <input type="submit" class="btn btn-success text-right" ng-click="editEventSubmit()" value="Сохранить"></input>
-            <button type="button" class="btn btn-primary text-right" ng-click="hideEdit()" >Отменить</input>
+            <button type="button" class="btn btn-primary text-right" ng-click="hideEdit()" >Отменить</button>
         </h2>        
         <hr>
       </div>

@@ -81,8 +81,8 @@
     },
     "login": {
       "js": [
-      "//vk.com/js/api/openapi.js",
-      "/own/js/login.js"
+        "//vk.com/js/api/openapi.js",
+        "/own/js/login.js"
       ],
       "title": "логин | СПО \"СОзвездие\"",
       "loc": /^\/login$/
@@ -132,6 +132,7 @@
       "shifts": {
         "all": {
           "js": [
+            "/standart/js/jquery.pickmeup.min.js",
             "/own/js/shifts/all/all.js",
             "/own/js/shifts/all/all_people.js",
             "/own/js/shifts/all/all_archive_and_new.js"
@@ -139,8 +140,9 @@
           "title": "смены | СПО \"СОзвездие\"",
           "loc": /^\/events\/shifts$/
         },
-        "all_edit": {
+        "one_edit": {
           "js": [
+            "/standart/js/jquery.pickmeup.min.js",
             "/standart/js/jquery.hideseek.js",
             "/own/js/vk_input.js",
             "/own/js/shifts/detach_edit.js",
@@ -152,6 +154,7 @@
           "js": [
             "/standart/js/jquery.hideseek.js",
             "/own/js/vk_input.js",
+            "/standart/js/jquery.pickmeup.min.js",
             "/own/js/shifts/one/one_shift_common.js",
             "/own/js/shifts/one/one_shift_people.js",
             "/own/js/shifts/one/one_shift_add_apply.js"

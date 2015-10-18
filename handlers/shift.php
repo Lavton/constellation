@@ -1,5 +1,7 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . '/own/templates/php_globals.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/handlers/helper.php';
+
 if (is_ajax()) {
 	if (isset($_POST["action"]) && !empty($_POST["action"])) {
 		//Checks if action value exists
@@ -25,7 +27,7 @@ if (is_ajax()) {
 			case 'get_one_detach_info':get_one_detach_info();
 				break;
 
-			case 'set_new_data':set_new_data();
+			case 'edit_shift':edit_shift();
 				break;
 			case "kill_shift":kill_shift();
 				break;
@@ -259,7 +261,7 @@ function get_one_info() {
 	}
 }
 
-/*возвращает нужные для имени смены вещи*/
+// возвращает нужные для имени смены вещи
 function get_one_info_name() {
 	check_session();
 	session_start();
@@ -278,7 +280,7 @@ function get_one_info_name() {
 		$link->set_charset("utf8");
 
 		// поиск смены
-		$query = "SELECT id, time_name, finish_date, place FROM shifts WHERE (id='" . $_POST['id'] . "' AND visibility <= " . $_SESSION["current_group"] . " );";
+		$query = "SELECT id, name, finish_date, place FROM EventsMain WHERE (id='" . $_POST['id'] . "' AND visibility <= " . $_SESSION["current_group"] . " );";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shift_name"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		$result["result"] = "Success";
@@ -288,7 +290,7 @@ function get_one_info_name() {
 	}
 }
 
-/*возвращает инфу по смене*/
+// возвращает инфу по смене
 function get_one_info_shift() {
 	check_session();
 	session_start();
@@ -307,15 +309,15 @@ function get_one_info_shift() {
 		$link->set_charset("utf8");
 
 		// поиск смены
-		$query = "SELECT * FROM shifts WHERE (id='" . $_POST['id'] . "' AND visibility <= " . $_SESSION["current_group"] . " );";
+		$query = "SELECT * FROM EventsMain WHERE (id='" . $_POST['id'] . "' AND visibility <= " . $_SESSION["current_group"] . " );";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shift"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		$st = "'" . $result["shift"]["start_date"] . "'";
-		$query = "SELECT min(id) as mid FROM shifts where visibility <= " . $_SESSION["current_group"] . " AND (start_date > " . $st . " OR (start_date = " . $st . " AND id > " . $_POST['id'] . "));";
+		$query = "SELECT min(EM.id) AS mid FROM EventsMain AS EM JOIN EventsShifts AS ES ON ES.id=EM.id WHERE visibility <= " . $_SESSION["current_group"] . " AND (start_date > " . $st . " OR (start_date = " . $st . " AND EM.id > " . $_POST['id'] . "));";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["next"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
-		$query = "SELECT max(id) as mid FROM shifts where visibility <= " . $_SESSION["current_group"] . " AND (start_date < " . $st . " OR (start_date = " . $st . " AND id < " . $_POST['id'] . "));";
+		$query = "SELECT max(EM.id) AS mid FROM EventsMain AS EM JOIN EventsShifts AS ES ON ES.id=EM.id WHERE visibility <= " . $_SESSION["current_group"] . " AND (start_date < " . $st . " OR (start_date = " . $st . " AND EM.id < " . $_POST['id'] . "));";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
@@ -458,8 +460,8 @@ function get_one_detach_info() {
 	}
 }
 
-/*изменения по смене*/
-function set_new_data() {
+// изменения по смене
+function edit_shift() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)) {
@@ -475,45 +477,17 @@ function set_new_data() {
 			exit;
 		}
 		$link->set_charset("utf8");
-
-		$names = array();
-		$values = array();
-		if (isset($_POST["place"])) {
-			array_push($names, "place");
-			array_push($values, "'" . $_POST["place"] . "'");
-		}
-		if (isset($_POST["start_date"])) {
-			array_push($names, "start_date");
-			array_push($values, "'" . $_POST["start_date"] . "'");
-		}
-		if (isset($_POST["finish_date"])) {
-			array_push($names, "finish_date");
-			array_push($values, "'" . $_POST["finish_date"] . "'");
-		}
-		if (isset($_POST["time_name"])) {
-			array_push($names, "time_name");
-			array_push($values, "'" . $_POST["time_name"] . "'");
-		}
-		if (isset($_POST["visibility"])) {
-			array_push($names, "visibility");
-			array_push($values, "'" . $_POST["visibility"] . "'");
-		}
-		array_push($names, "comments");
-		array_push($values, "'" . $_POST["comments"] . "'");
-		$conc = array();
-		foreach ($names as $key => $value) {
-			array_push($conc, "" . $value . "=" . $values[$key]);
-		}
-		$conc = implode(", ", $conc);
-		$query = "UPDATE shifts SET " . $conc . " WHERE id='" . $_POST['id'] . "';";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = updater($link, "EventsMain", array("id" => $_POST["id"], 
+			"place" => $_POST["place"], "name" => $_POST["name"], "start_date" => $_POST["start_date"],
+			"finish_date" => $_POST["finish_date"], "visibility" => $_POST["visibility"],
+			"comments" => $_POST["comments"]));
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {
 		echo json_encode(Array('result' => 'Fail'));
 	}
 }
+
 // удаляет смену
 function kill_shift() {
 	check_session();
@@ -532,16 +506,7 @@ function kill_shift() {
 		}
 		$link->set_charset("utf8");
 
-		//удаляем все foreign keys
-		$query = "DELETE FROM detachments WHERE shift_id=" . $_POST["id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$query = "DELETE FROM guess_shift WHERE shift_id=" . $_POST["id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-
-		//удаляем смену по id
-		$query = "DELETE FROM shifts WHERE id=" . $_POST["id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = deleter($link, "EventsMain", "id=".$_POST["id"]);
 		mysqli_close($link);
 		echo json_encode($result);
 	}

@@ -44,32 +44,43 @@
       $scope.$apply();
     });
 
-    /*переход между режимами редактирования и просмотра*/
+    // показывает редактирование
     $scope.editShiftInfo = function() {
-      $(".shift-info").toggleClass("hidden");
-      $(".shift-edit").toggleClass("hidden");
-      $scope.master = angular.copy($scope.shift);
+      $(".shift-edit").removeClass("hidden");
+      $(".shift-edit").hide();
+      $(".shift-info").hide("slow");
+      $(".shift-edit").show("slow", function() {
+        $('html, body').animate({
+          scrollTop: $(".scrl").offset().top
+        }, 500); // анимируем скроолинг к элементу
+      });
+
+      $scope.newshift = angular.copy($scope.shift);
     };
 
-    /*отмена редактирования*/
-    $scope.resetInfo = function() {
-      $scope.shift = angular.copy($scope.master);
+    // убирает форму редактирования
+    $scope.hideEdit = function() {
+      $(".shift-edit").hide("slow");
+      $(".shift-info").show("slow");
     }
 
-    $scope.applyShift = function() {
+
+    $scope.editShiftSubmit = function() {
       $("#page-container").trigger("_apply_shift", [{
-        "time_name": $scope.shift.time_name,
+        "name": $scope.newshift.name,
         "shiftid": shiftid
       }]);
+      $scope.shift = angular.copy($scope.newshift);
     }
   }
 
 
-  /*часть, отвечающая за само отображение смены*/
+  // часть, отвечающая за само отображение смены
   function init_angular_base($scope, $http) {
     $scope.window = window;
     var fid = window.location.href.split("/")
     var shiftid = fid[fid.length - 1] * 1;
+    $scope.formatDate = window.formatDate;
 
     /*инициализация*/
     $scope.id = shiftid;
@@ -111,49 +122,49 @@
         $scope.shift.bbcomments = rdata;
         $scope.$apply();
         $(".bbcomments-shift").html($scope.shift.bbcomments) // почему-то иначе не работает()
+        _.each($("span.date"), function(self) {
+          $(self).pickmeup({
+            format: 'Y-m-d',
+            hide_on_select: true,
+            date: new Date($(self).attr("class").split(" ")[1])
+          });
+        })
+
       });
     });
-
-    /*отменить редактирование*/
-    $scope.resetInfo = function() {
-      $scope.shift = angular.copy($scope.master);
-    }
-
-    /*переход между режимами редактирования и просмотра*/
-    $("body").on("click", "button.edit-shift", function() {
-      $scope.master = angular.copy($scope.shift);
-      $scope.$apply();
-    })
-
-    /*отменить редактирование: кнопка*/
-    $("body").on("click", "button.cansel-shift", function() {
-      $scope.resetInfo();
-      $scope.$apply();
-    })
-
-    /*сохранить редактирование: кнопка*/
-    $("#page-container").on("_apply_shift", function(e, json) {
-      if (shiftid * 1 == json.shiftid) {
-        $scope.shift.time_name = json.time_name;
-        $scope.$apply();
-        $scope.submit();
+    $(document).keyup(function(e) {
+      if (e.keyCode == 27) {
+        $('.date').pickmeup('hide');
       }
     });
 
-    /*сохранить редактирование*/
-    $scope.submit = function() {
-      $scope.shift.st_date = new Date($scope.shift.start_date);
-      $scope.shift.fn_date = new Date($scope.shift.finish_date);
-      var data = angular.copy($scope.shift);
-      data.action = "set_new_data"
-      _.each(data, function(element, index, list) {
-        if (!element) {
-          data[index] = null;
-        }
-      })
+
+    // показывает редактирование
+    $("body").on("click", "button.edit-shift", function() {
+      $scope.newshift = angular.copy($scope.shift);
+      $scope.$apply();
+    })
+
+    // сохранить редактирование: кнопка
+    $("#page-container").on("_apply_shift", function(e, json) {
+      if (shiftid * 1 == json.shiftid) {
+        console.log("get", json)
+        $scope.newshift.name = json.name;
+        $scope.$apply();
+        $scope.editShiftSubmit();
+      }
+    });
+
+    // сохранить редактирование
+    $scope.editShiftSubmit = function() {
+      $scope.newshift.st_date = new Date($scope.newshift.start_date);
+      $scope.newshift.fn_date = new Date($scope.newshift.finish_date);
+      var data = angular.copy($scope.newshift);
+      $scope.shift = angular.copy($scope.newshift);
+      data.action = "edit_shift"
 
       var bbdata = {
-        bbcode: $scope.shift.comments,
+        bbcode: $scope.newshift.comments,
         ownaction: "bbcodeToHtml"
       };
       $.ajax({
@@ -163,7 +174,7 @@
         global: false,
         data: $.param(bbdata)
       }).done(function(rdata) {
-        $scope.shift.bbcomments = rdata;
+        $scope.newshift.bbcomments = rdata;
         $(".bbcomments-shift").html($scope.shift.bbcomments) // почему-то иначе не работает(
         $scope.$apply();
       });
@@ -174,10 +185,19 @@
         global: false,
         data: $.param(data)
       }).done(function(response) {
-        var saved = $(".saved");
-        $(saved).stop(true, true);
-        $(saved).fadeIn("slow");
-        $(saved).fadeOut("slow");
+        console.log(response);
+        $(".shift-edit").hide("slow");
+        $(".shift-info").show("slow", function() {
+          setTimeout(function() {
+            var saved = $(".saved");
+            $(saved).stop(true, true);
+            $(saved).fadeIn("slow");
+            $(saved).fadeOut("slow");
+          }, 1000);
+        });
+        $('html, body').animate({
+          scrollTop: $("nav").offset().top
+        }, 500); // анимируем скроолинг к элементу
       });
     }
 
@@ -194,9 +214,11 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(response) {
-          if (response.result == "Success") {
-            window.location = "/";
-          }
+          var lnk = document.createElement("a");
+          lnk.setAttribute("class", "ajax-nav")
+          $(lnk).attr("href", "/shifts/");
+          $("#page-container").append(lnk);
+          $(lnk).trigger("click")
         });
       }
     }
@@ -205,7 +227,7 @@
 
   function init() {
     window.setPeople(function() {
-      $("input.vk_input").vkinput()
+      $("input.vk_input").siteInput()
     });
 
     window.init_ang("oneShiftAppName", init_angular_name, "shift-name");
