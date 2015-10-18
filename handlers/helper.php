@@ -38,6 +38,7 @@ function inserter($link, $table, $data, $needId=False, $onDubl=False) {
 	$link->query($query);
 	$result = array();
 	$result["result"] = "Success";
+	$result["qw"] = $query;
 	if ($needId) {
 		$result["id"] = $link->insert_id;
 	}

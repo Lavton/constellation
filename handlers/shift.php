@@ -377,7 +377,7 @@ function get_one_info_people() {
 	}
 }
 
-/*получает нужную инфу для добавления. А именно, кому нравится человек*/
+// получает нужную инфу для добавления. А именно, кому нравится человек
 function get_one_info_adding() {
 	check_session();
 	session_start();
@@ -564,13 +564,13 @@ function apply_to_shift() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"])) {
-		if (isset($_POST["vk_id"])) {
+		if (isset($_POST["smbdy"])) {
 			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array('result' => "Fail"));
 				return;
 			}
 		} else {
-			$_POST["vk_id"] = $_SESSION["vk_id"];
+			$_POST["smbdy"] = $_SESSION["id"];
 		}
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
@@ -585,78 +585,23 @@ function apply_to_shift() {
 		}
 		$link->set_charset("utf8");
 
-		$names = array();
-		$values = array();
-		if (isset($_POST["vk_id"])) {
-			array_push($names, "vk_id");
-			array_push($values, "'" . $_POST["vk_id"] . "'");
+		$result = inserter($link, "EventsSupply", array("user" => $_POST["smbdy"], 
+			"event" => $_POST["id"]), True);
+		$res2 = inserter($link, "EventsSupplyShifts", array("supply_id" => $result["id"],
+			"probability" => $_POST["prob"], "min_age" => $_POST["min_age"],
+			"max_age" => $_POST["max_age"], "comments" => $_POST["comments"]));
+		$result["lks"] = array();
+		foreach ($_POST["likes"] as $key => $value) {
+			$res = inserter($link, "EventsSupplyShiftsLikes", array("supply_id" => $result["id"],
+				"other" => $value, "pole" => "1"));
+			array_push($result["lks"], $res["qw"]);
 		}
-		if (isset($_POST["shift_id"])) {
-			array_push($names, "shift_id");
-			array_push($values, "'" . $_POST["shift_id"] . "'");
-		}
-		if (isset($_POST["prob"])) {
-			array_push($names, "probability");
-			array_push($values, "'" . $_POST["prob"] . "'");
-		}
-		if (isset($_POST["social"])) {
-			array_push($names, "social");
-			array_push($values, "'" . $_POST["social"] . "'");
-		}
-		if (isset($_POST["profile"])) {
-			array_push($names, "profile");
-			array_push($values, "'" . $_POST["profile"] . "'");
+		foreach ($_POST["dislikes"] as $key => $value) {
+			$res = inserter($link, "EventsSupplyShiftsLikes", array("supply_id" => $result["id"],
+				"other" => $value, "pole" => "-1"));
+			array_push($result["lks"], $res["qw"]);
 		}
 
-		if (isset($_POST["min_age"])) {
-			array_push($names, "min_age");
-			array_push($values, "'" . $_POST["min_age"] . "'");
-		}
-		if (isset($_POST["max_age"])) {
-			array_push($names, "max_age");
-			array_push($values, "'" . $_POST["max_age"] . "'");
-		}
-
-		array_push($names, "like_one");
-		array_push($values, "'" . $_POST["like_one"] . "'");
-
-		array_push($names, "like_two");
-		array_push($values, "'" . $_POST["like_two"] . "'");
-
-		array_push($names, "like_three");
-		array_push($values, "'" . $_POST["like_three"] . "'");
-
-		array_push($names, "dislike_one");
-		array_push($values, "'" . $_POST["dislike_one"] . "'");
-
-		array_push($names, "dislike_two");
-		array_push($values, "'" . $_POST["dislike_two"] . "'");
-
-		array_push($names, "dislike_three");
-		array_push($values, "'" . $_POST["dislike_three"] . "'");
-
-		array_push($names, "comments");
-		array_push($values, "'" . $_POST["comments"] . "'");
-		foreach ($values as $key => $value) {
-			if ($value == "''") {
-				$values[$key] = "NULL";
-			}
-		}
-
-		// cначала проверим, боец ли этот человек
-		$query = "SELECT id FROM fighters where vk_id=" . $_POST["vk_id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		if (isset($line["id"])) {
-			array_push($names, "fighter_id");
-			array_push($values, "'" . $line["id"] . "'");
-		}
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO guess_shift (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		// $result["qw"] = $query;
-		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
 	}
