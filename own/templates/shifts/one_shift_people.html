@@ -1,27 +1,24 @@
 <div ng-cloak ng-controller="oneShiftAppPeople" id="shift-people">
   <hr>
   <!-- выписываем инфу про себя -->
-  <span ng-show="me.vk_id">Вы:</span>
-  <table class="table-bordered" ng-show="me.vk_id" width="100%">
+  <span ng-show="me.user">Вы:</span>
+  <table class="table-bordered" ng-show="me.user" width="100%">
     <thead>
       <tr>
         <th></th>
         <th>ФИО</th>
         <th>Вер.
           <br>поехать</th>
-        <!-- <th>Хочет <br> работать<br>на</th> -->
         <th>Возраст</th>
         <th>Хочет работать с</th>
         <th>не хочет работать с</th>
         <th>Комментарии</th>
-        <th>Последнее
-          <br> обновление</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>
-          <a href="//vk.com/{{me.domain}}" target="_blank"> <img ng-src="{{me.photo}}" /></a>
+          <a href="/about/users/{{me.id}}" target="_blank"> <img ng-src="{{me.photo}}" /></a>
           <br/>
           <a ng-click="editGuess(me, false)" href="">
         ред&nbsp;-&nbsp;вать
@@ -34,12 +31,6 @@
         <td>{{me.first_name}}
           <br/> {{me.last_name}} &nbsp;</td>
         <td>{{me.probability}}%</td>
-        <!--     <td>
-      <span ng-show="me.social > 1">социальные</span><br>
-      <span ng-show="me.social%2">домашние</span><br>
-      <span ng-show="me.profile > 1">профильные</span><br>
-      <span ng-show="me.profile%2">непрофильные</span><br>
-    </td> -->
         <td>от {{me.min_age}} до {{me.max_age}}</td>
         <td>
           <table>
@@ -68,10 +59,10 @@
         <td>
           <div class="table-bordered me-comments" ng-bind-html="me.comments" ng-show="me.comments"></div>
         </td>
-        <td>{{me.cr_time}} </td>
       </tr>
     </tbody>
   </table>
+
   <hr>
   <div class="row">
     <!-- информация про бойцов -->
@@ -84,7 +75,6 @@
             <th>ФИО</th>
             <th>Вер.
               <br>поехать</th>
-            <!-- <th>Хочет <br> работать<br>на</th> -->
             <th>Возраст</th>
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">Хочет работать с</th>
             <th ng-show="window.current_group==window.groups.COMMAND_STAFF.num">не хочет работать с</th>
@@ -96,33 +86,21 @@
             <td>
               <a href="//vk.com/{{fighter.domain}}" target="_blank"> <img ng-src="{{fighter.photo}}" /></a>
               <br/>
-              <a ng-click="editGuess(fighter, true)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <a ng-click="editGuess(fighter, true)" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
         ред&nbsp;-&nbsp;вать
       </a>
               <br>
-              <a ng-click="deleteGuess()" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <a ng-click="deleteGuess()" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
         удалить
       </a>
             </td>
             <td>
-              <span ng-show="window.current_group>=window.groups.FIGHTER.num">
                 <a href="/about/users/{{fighter.id}}" class="ajax-nav">
             {{fighter.first_name}}
               <br/> {{fighter.last_name}} &nbsp;
                 </a>
-              </span>
-              <span ng-hide="window.current_group>=window.groups.FIGHTER.num">
-            {{fighter.first_name}}
-              <br/> {{fighter.last_name}} &nbsp;
-              </span>
             </td>
             <td>{{fighter.probability}}%</td>
-            <!--     <td>
-      <span ng-show="fighter.social > 1">социальные</span><br>
-      <span ng-show="fighter.social%2">домашние</span><br>
-      <span ng-show="fighter.profile > 1">профильные</span><br>
-      <span ng-show="fighter.profile%2">непрофильные</span><br>
-    </td> -->
             <td>от {{fighter.min_age}} до {{fighter.max_age}}</td>
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <table>
@@ -149,7 +127,7 @@
               </table>
             </td>
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
-              <div class="table-bordered {{fighter.uid}}-comments" ng-bind-html="fighter.bbcomments" ng-show="fighter.comments"></div>
+              <div class="table-bordered {{fighter.id}}-comments" ng-bind-html="fighter.bbcomments" ng-show="fighter.comments"></div>
             </td>
           </tr>
         </tbody>
@@ -177,33 +155,21 @@
             <td>
               <a href="//vk.com/{{candidate.domain}}" target="_blank"> <img ng-src="{{candidate.photo}}" /></a>
               <br/>
-              <a ng-click="editGuess(candidate, true)" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <a ng-click="editGuess(candidate, true)" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
         ред&nbsp;-&nbsp;вать
       </a>
               <br>
-              <a ng-click="deleteGuess()" href="" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+              <a ng-click="deleteGuess()" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
         удалить
       </a>
             </td>
             <td>
-              <span ng-show="window.current_group>=window.groups.FIGHTER.num">
-                <a href="/about/candidats/{{candidate.id}}" class="ajax-nav">
+                <a href="/about/users/{{candidate.id}}" class="ajax-nav">
             {{candidate.first_name}}
               <br/> {{candidate.last_name}} &nbsp;
                 </a>
-              </span>
-              <span ng-hide="window.current_group>=window.groups.FIGHTER.num">
-            {{candidate.first_name}}
-              <br/> {{candidate.last_name}} &nbsp;
-              </span>
             </td>
             <td>{{candidate.probability}}%</td>
-            <!--     <td>
-      <span ng-show="candidate.social > 1">социальные</span><br>
-      <span ng-show="candidate.social%2">домашние</span><br>
-      <span ng-show="candidate.profile > 1">профильные</span><br>
-      <span ng-show="candidate.profile%2">непрофильные</span><br>
-    </td> -->
             <td>от {{candidate.min_age}} до {{candidate.max_age}}</td>
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <table>
@@ -230,7 +196,7 @@
               </table>
             </td>
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
-              <div class="table-bordered {{candidate.uid}}-comments" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
+              <div class="table-bordered {{candidate.uidid}}-comments" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
             </td>
           </tr>
         </tbody>

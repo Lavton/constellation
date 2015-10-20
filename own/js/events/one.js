@@ -306,7 +306,7 @@
     }
 
     /*синхронизируемся, где надо*/
-    $("#page-container").on("_final_select", "input", function(e) {
+    $("#event-one").on("_final_select", "input", function(e) {
       /*в ng-model лежит путь. Но не прямое значение(( Пройдём по нему до почти конца и впишем*/
       var path = this.getAttribute("ng-model").split(".")
       var self = $scope;

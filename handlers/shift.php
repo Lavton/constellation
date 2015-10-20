@@ -102,16 +102,16 @@ function all_shifts() {
 		}
 
 		/*выведем сводную таблицу по людям*/
-		$query = 'SELECT vk_id, shift_id, fighter_id, probability FROM `guess_shift` WHERE shift_id IN (SELECT id from shifts WHERE (start_date >= CURRENT_DATE AND visibility <= ' . $_SESSION["current_group"] . '));';
+		$query = 'SELECT uid, shift_id, fighter_id, probability FROM `guess_shift` WHERE shift_id IN (SELECT id from shifts WHERE (start_date >= CURRENT_DATE AND visibility <= ' . $_SESSION["current_group"] . '));';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["people"] = array();
 
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			/*группируем по людям сразу*/
-			if (!isset($result["people"][$line["vk_id"]])) {
-				$result["people"][$line["vk_id"]] = array();
+			if (!isset($result["people"][$line["uid"]])) {
+				$result["people"][$line["uid"]] = array();
 			}
-			array_push($result["people"][$line["vk_id"]], $line);
+			array_push($result["people"][$line["uid"]], $line);
 		}
 		$result["result"] = "Success";
 		mysqli_close($link);
@@ -137,16 +137,16 @@ function all_people() {
 		}
 		$link->set_charset("utf8");
 		// поиск смены
-		$query = 'SELECT guess_shift.vk_id, guess_shift.shift_id, guess_shift.fighter_id, guess_shift.probability, shifts.time_name, shifts.place FROM guess_shift, shifts WHERE ((shifts.start_date >= CURRENT_DATE) AND (shifts.id=guess_shift.shift_id)  AND (shifts.visibility <= ' . $_SESSION["current_group"] . '));';
+		$query = 'SELECT guess_shift.uid, guess_shift.shift_id, guess_shift.fighter_id, guess_shift.probability, shifts.time_name, shifts.place FROM guess_shift, shifts WHERE ((shifts.start_date >= CURRENT_DATE) AND (shifts.id=guess_shift.shift_id)  AND (shifts.visibility <= ' . $_SESSION["current_group"] . '));';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["people"] = array();
 
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			/*группируем по людям сразу*/
-			if (!isset($result["people"][$line["vk_id"]])) {
-				$result["people"][$line["vk_id"]] = array();
+			if (!isset($result["people"][$line["uid"]])) {
+				$result["people"][$line["uid"]] = array();
 			}
-			array_push($result["people"][$line["vk_id"]], $line);
+			array_push($result["people"][$line["uid"]], $line);
 		}
 		$result["result"] = "Success";
 		mysqli_close($link);
@@ -219,22 +219,22 @@ function get_one_info() {
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["prev"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
-		$_POST["vk_id"] = $_SESSION["vk_id"];
-		$query = "SELECT vk_id, fighter_id FROM guess_shift where (shift_id=" . $_POST["id"] . " AND (like_one=" . $_POST["vk_id"] . " OR like_two=" . $_POST["vk_id"] . " OR like_three=" . $_POST["vk_id"] . "));";
+		$_POST["uid"] = $_SESSION["uid"];
+		$query = "SELECT uid, fighter_id FROM guess_shift where (shift_id=" . $_POST["id"] . " AND (like_one=" . $_POST["uid"] . " OR like_two=" . $_POST["uid"] . " OR like_three=" . $_POST["uid"] . "));";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["like_h"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["like_h"], $line);
 		}
 
-		$query = "SELECT * FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
+		$query = "SELECT * FROM guess_shift where (uid=" . $_POST["uid"] . " AND shift_id=" . $_POST["id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
 		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
-			$query = "SELECT * FROM guess_shift where (vk_id!=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
+			$query = "SELECT * FROM guess_shift where (uid!=" . $_POST["uid"] . " AND shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
 		} else {
-			$query = "SELECT vk_id, shift_id, fighter_id, probability, social, profile, min_age, max_age, comments, cr_time FROM guess_shift where (vk_id!=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
+			$query = "SELECT uid, shift_id, fighter_id, probability, social, profile, min_age, max_age, comments, cr_time FROM guess_shift where (uid!=" . $_POST["uid"] . " AND shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
 		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["all_apply"] = array();
@@ -347,29 +347,50 @@ function get_one_info_people() {
 		}
 		$link->set_charset("utf8");
 
-		$_POST["vk_id"] = $_SESSION["vk_id"];
+		$_POST["uid"] = $_SESSION["uid"];
 
-		$query = "SELECT * FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
+		$query = "SELECT ES.id, ES.user, ES.event, ESS.probability, ESS.min_age, ESS.max_age,
+		ESS.comments FROM EventsSupply AS ES JOIN EventsSupplyShifts AS ESS ON ES.id=ESS.supply_id 
+		WHERE (ES.user=".$_SESSION["id"]." AND ES.event=".$_POST["id"].");";
+
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["myself"]["likes"] = Array($result["myself"]["like_one"], $result["myself"]["like_two"], $result["myself"]["like_three"]);
-		$result["myself"]["dislikes"] = Array($result["myself"]["dislike_one"], $result["myself"]["dislike_two"], $result["myself"]["dislike_three"]);
+
+		if (isset($result["myself"])) {
+			$query = "SELECT * FROM EventsSupplyShiftsLikes WHERE supply_id=".$result["myself"]["id"].";";
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			$result["myself"]["likes"] = array();
+			while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+				array_push($result["myself"]["likes"], $line);
+			}
+
+		}
 
 		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] == COMMAND_STAFF))) {
-			$query = "SELECT * FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
+			$query = "SELECT ES.id, ES.user, ES.event, ESS.probability, ESS.min_age, ESS.max_age,
+			ESS.comments FROM EventsSupply AS ES JOIN EventsSupplyShifts AS ESS ON ES.id=ESS.supply_id 
+			WHERE (ES.event=".$_POST["id"].") ORDER BY last_updated DESC;";
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			$result["all_apply"] = array();
+			while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+				$query2 = "SELECT * FROM EventsSupplyShiftsLikes WHERE supply_id=".$line["id"].";";
+				$rt2 = mysqli_query($link, $query2) or die('Запрос не удался: ');
+				$line["likes"] = array();
+				while ($line2 = mysqli_fetch_array($rt2, MYSQL_ASSOC)) {
+					array_push($line["likes"], $line2);
+				}
+				array_push($result["all_apply"], $line);
+			}
 		} else {
-			$query = "SELECT vk_id, shift_id, fighter_id, probability, social, profile, min_age, max_age, cr_time FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
-		}
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["all_apply"] = array();
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			$line["likes"] = Array($line["like_one"], $line["like_two"], $line["like_three"]);
-			$line["dislikes"] = Array($line["dislike_one"], $line["dislike_two"], $line["dislike_three"]);
-			array_push($result["all_apply"], $line);
-		}
-
-		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
-			$result = array();
+			$query = "SELECT ES.id, ES.user, ES.event, ESS.probability, ESS.min_age, ESS.max_age 
+			FROM EventsSupply AS ES JOIN EventsSupplyShifts AS ESS ON ES.id=ESS.supply_id 
+			WHERE (ES.event=".$_POST["id"].") ORDER BY last_updated DESC;";
+			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+			$result["all_apply"] = array();
+			while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+				$line["likes"] = array();
+				array_push($result["all_apply"], $line);
+			}
 		}
 		$result["result"] = "Success";
 		mysqli_close($link);
@@ -394,14 +415,14 @@ function get_one_info_adding() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$_POST["vk_id"] = $_SESSION["vk_id"];
-		$query = "SELECT vk_id, fighter_id FROM guess_shift where (shift_id=" . $_POST["id"] . " AND (like_one=" . $_POST["vk_id"] . " OR like_two=" . $_POST["vk_id"] . " OR like_three=" . $_POST["vk_id"] . "));";
+		$_POST["uid"] = $_SESSION["uid"];
+		$query = "SELECT uid, fighter_id FROM guess_shift where (shift_id=" . $_POST["id"] . " AND (like_one=" . $_POST["uid"] . " OR like_two=" . $_POST["uid"] . " OR like_three=" . $_POST["uid"] . "));";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["like_h"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["like_h"], $line);
 		}
-		$query = "SELECT vk_id FROM guess_shift where (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["id"] . ");";
+		$query = "SELECT uid FROM guess_shift where (uid=" . $_POST["uid"] . " AND shift_id=" . $_POST["id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["myself"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		if (($result["shift"]["visibility"] + 0) > ($_SESSION["current_group"] + 0)) {
@@ -436,7 +457,7 @@ function get_one_detach_info() {
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shift"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
-		$query = "SELECT vk_id, shift_id  FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
+		$query = "SELECT uid, shift_id  FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["all_apply"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
@@ -611,13 +632,13 @@ function del_from_shift() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"])) {
-		if (isset($_POST["vk_id"])) {
+		if (isset($_POST["uid"])) {
 			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array('result' => "Fail"));
 				return;
 			}
 		} else {
-			$_POST["vk_id"] = $_SESSION["vk_id"];
+			$_POST["uid"] = $_SESSION["uid"];
 		}
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
@@ -631,7 +652,7 @@ function del_from_shift() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$query = "DELETE FROM guess_shift WHERE (vk_id=" . $_POST["vk_id"] . " AND shift_id=" . $_POST["shift_id"] . ");";
+		$query = "DELETE FROM guess_shift WHERE (uid=" . $_POST["uid"] . " AND shift_id=" . $_POST["shift_id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
 		mysqli_close($link);
@@ -643,13 +664,13 @@ function edit_appliing() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"])) {
-		if (isset($_POST["vk_id"])) {
+		if (isset($_POST["uid"])) {
 			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array('result' => "Fail"));
 				return;
 			}
 		} else {
-			$_POST["vk_id"] = $_SESSION["vk_id"];
+			$_POST["uid"] = $_SESSION["uid"];
 		}
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
@@ -666,9 +687,9 @@ function edit_appliing() {
 
 		$names = array();
 		$values = array();
-		if (isset($_POST["vk_id"])) {
-			array_push($names, "vk_id");
-			array_push($values, "'" . $_POST["vk_id"] . "'");
+		if (isset($_POST["uid"])) {
+			array_push($names, "uid");
+			array_push($values, "'" . $_POST["uid"] . "'");
 		}
 		if (isset($_POST["shift_id"])) {
 			array_push($names, "shift_id");
@@ -721,7 +742,7 @@ function edit_appliing() {
 		array_push($names, "cr_time");
 		array_push($values, "'" . date('Y-m-d H:i:s', time()) . "'");
 		// cначала проверим, боец ли этот человек
-		$query = "SELECT id FROM fighters where vk_id=" . $_POST["vk_id"] . ";";
+		$query = "SELECT id FROM fighters where uid=" . $_POST["uid"] . ";";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		if (isset($line["id"])) {
@@ -733,7 +754,7 @@ function edit_appliing() {
 			array_push($conc, "" . $value . "=" . $values[$key]);
 		}
 		$conc = implode(", ", $conc);
-		$query = "UPDATE guess_shift SET " . $conc . " WHERE (vk_id='" . $_POST['vk_id'] . "' AND shift_id=" . $_POST["shift_id"] . ");";
+		$query = "UPDATE guess_shift SET " . $conc . " WHERE (uid='" . $_POST['uid'] . "' AND shift_id=" . $_POST["shift_id"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["result"] = "Success";
 		mysqli_close($link);

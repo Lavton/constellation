@@ -260,7 +260,7 @@ function clearPeople() {
 }
 window.clearPeople = clearPeople;
 
-/*возвращает или генерит и возвращает человека по uid */
+/*возвращает или генерит и возвращает человека по id */
 window.getPerson = function(uid, callback) {
   window.setPeople(function(flag) {
     var cached = _.find(window.people, function(p) {

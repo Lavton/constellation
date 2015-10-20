@@ -7,7 +7,7 @@
     var fid = window.location.href.split("/")
     var shiftid = fid[fid.length - 1] * 1;
     // кс доступно больше инфы. Поэтому и лучше расположить друг под другом
-    if (window.current_group==window.groups.COMMAND_STAFF.num) {
+    if (window.current_group == window.groups.COMMAND_STAFF.num) {
       $(".table-all-sh").attr("style", "width:100% !important;");
     }
     $scope.id = shiftid;
@@ -27,29 +27,53 @@
         action: "get_one_info_people",
         id: shiftid
       }
+      console.log("YEAH", data)
       $.ajax({
         type: "POST",
         url: "/handlers/shift.php",
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
+        console.log(json)
         $scope.fighters = []
         $scope.candidats = []
         $scope.all_apply = json.all_apply;
         // автоматически не сбиндить. Делаем вручную после всех загрузок
         var bind_comments = _.after(json.all_apply.length + 1, function() {
           _.each(json.all_apply, function(application) {
-            $("div." + application.vk_id + "-comments").html(application.bbcomments)
+            $("div." + application.id + "-comments").html(application.bbcomments)
           });
         })
         _.each(json.all_apply, function(person, id, list) {
-          window.getPerson(person.vk_id * 1, function(pers, flag) {
+          console.log("all_apply", json.all_apply)
+            var cached_person = _.find(window.people, function(p) {
+              return p.id * 1 == person.user * 1;
+            })
+            _.extend(person, cached_person);
+
+            _.each(person.likes, function(person2, ind, list) {
+              var cached = _.find(window.people, function(p) {
+                return p.id * 1 == person2.other * 1;
+              })
+              _.extend(list[ind], cached);
+            })
+            person.dislikes = _.filter(person.likes, function(person2) {
+              return person2.pole * 1 < 0;
+            })
+            person.likes = _.filter(person.likes, function(person2) {
+              return person2.pole * 1 > 0;
+            })
+
+            if (person.isFighter == true) {
+              $scope.fighters.push(person)
+            } else {
+              $scope.candidats.push(person)
+            }
+
+
+
+          window.getPerson(person.uid * 1, function(pers, flag) {
             var set_f = _.after(7, function() {
-              if (pers.isFighter == true) {
-                $scope.fighters.push(person)
-              } else {
-                $scope.candidats.push(person)
-              }
               bind_comments();
 
             })
@@ -84,32 +108,26 @@
           })
         });
 
-        /*отдельно обрабатываем запрос про себя. Ибо инфы в нём больше*/
+        // отдельно обрабатываем запрос про себя. Ибо инфы в нём больше
         $scope.me = json.myself;
         if ($scope.me) {
           _.extend($scope.me, _.find(window.people, function(p) {
-            return p.uid * 1 == $scope.me.vk_id * 1;
+            return p.id * 1 == $scope.me.user * 1;
           }))
           _.each($scope.me.likes, function(person, ind, list) {
-            if (person) {
-              window.getPerson(person, function(pers, flag) {
-                list[ind] = pers;
-                if (flag) {
-                  $scope.$apply();
-                }
-              })
-            }
+            var cached = _.find(window.people, function(p) {
+              return p.id * 1 == person.other * 1;
+            })
+            _.extend(list[ind], cached);
           })
-          _.each($scope.me.dislikes, function(person, ind, list) {
-            if (person) {
-              window.getPerson(person, function(pers, flag) {
-                list[ind] = pers;
-                if (flag) {
-                  $scope.$apply();
-                }
-              })
-            }
+          $scope.me.dislikes = _.filter($scope.me.likes, function(person) {
+            return person.pole * 1 < 0;
           })
+          $scope.me.likes = _.filter($scope.me.likes, function(person) {
+            return person.pole * 1 > 0;
+          })
+          $scope.$apply();
+
           var bbdata = {
             bbcode: json.myself.comments,
             ownaction: "bbcodeToHtml"
@@ -130,7 +148,7 @@
         var comments = [];
         _.each(json.all_apply, function(element, index, list) {
           comments.push({
-            id: element.vk_id,
+            id: element.uid,
             comment: element.comments
           });
         });
@@ -145,13 +163,13 @@
           global: false,
           data: $.param(bbdata)
         }).done(function(rdata) {
-          _.each($scope.all_apply, function(element, index, list) {
-            element.bbcomments = _.findWhere(rdata, {
-              id: element.vk_id
-            }).bbcomment;
-          });
-          bind_comments();
-          $scope.$apply();
+          // _.each($scope.all_apply, function(element, index, list) {
+          //   element.bbcomments = _.findWhere(rdata, {
+          //     id: element.uid
+          //   }).bbcomment;
+          // });
+          // bind_comments();
+          // $scope.$apply();
         });
       })
     }
@@ -208,7 +226,7 @@
           var data = {};
           data.action = "del_from_shift";
           data.shift_id = shiftid;
-          data.vk_id = element.vk_id;
+          data.uid = element.uid;
           _.each(data, function(element, index, list) {
             if (!element) {
               data[index] = null;
@@ -233,7 +251,7 @@
         data.action = "del_from_shift";
         data.shift_id = shiftid;
         if (delid) {
-          data.vk_id = delid;
+          data.uid = delid;
         }
         _.each(data, function(element, index, list) {
           if (!element) {
