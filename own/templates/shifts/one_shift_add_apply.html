@@ -28,8 +28,8 @@
 
   <!-- вот форма записи на смену -->
   <span class="scrl-apply"></span>
-  <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id || (shift.today > shift.st_date)">Записаться на смену</button>
-  <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-show="myself.vk_id && window.current_group>=window.groups.COMMAND_STAFF.num">Записать на смену</button>
+  <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.id || (shift.today > shift.st_date)">Записаться на смену</button>
+  <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-show="myself.id && window.current_group>=window.groups.COMMAND_STAFF.num">Записать на смену</button>
   <button class="btn" ng-click="show_edit=false" ng-init="show_add=false" ng-show="show_edit">Скрыть редактирование</button>
   <div ng-show="show_add || show_edit" ng-init="show_edit=false">
     <form ng-submit="guessAdd(show_edit)">

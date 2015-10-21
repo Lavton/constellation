@@ -2,7 +2,6 @@
   <hr>
   <!-- выписываем инфу про себя -->
 
-  {{me | json}}
   <span ng-show="me.user">Вы:</span>
   <table class="table-bordered" ng-show="me.user" width="100%">
     <thead>
@@ -189,7 +188,7 @@
               </table>
             </td>
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
-              <div class="table-bordered {{candidate.uidid}}-comments" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
+              <div class="table-bordered {{candidate.id}}-comments" ng-bind-html="candidate.bbcomments" ng-show="candidate.comments"></div>
             </td>
           </tr>
         </tbody>

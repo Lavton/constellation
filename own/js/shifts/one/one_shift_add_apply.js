@@ -150,6 +150,7 @@
         qw = "Записаться на смену?"
         data.action = "apply_to_shift";
       }
+      data.is_edit = is_edit;
       if (confirm(qw)) {
         _.each(data, function(element, index, list) {
           if (!element) {
@@ -187,18 +188,13 @@
         }).done(function(json) {
           console.log(json)
           data.shiftid = shiftid
-          $scope.tableToAdd()
+          if (is_edit) {
+            $scope.show_edit = false;
+          } else {
+            $scope.tableToAdd()
+          }
           $("#page-container").trigger("_guess_apply_shift", [data]);
           $scope.$apply();
-          // var saved = $(".saved");
-          // $(saed).stop(true, true);
-          // $(saved).fadeIn("slow");
-          // $(saved).fadeOut("slow");
-          // var lnk = document.createElement("a");
-          // lnk.setAttribute("class", "ajax-nav")
-          // $(lnk).attr("href", window.location.href);
-          // $("#page-container").append(lnk);
-          // $(lnk).trigger("click")
         });
       }
     }

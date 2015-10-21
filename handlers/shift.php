@@ -660,17 +660,18 @@ function del_from_shift() {
 	}
 }
 
+// редактирует заявку на смену
 function edit_appliing() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"])) {
-		if (isset($_POST["uid"])) {
+		if (isset($_POST["smbdy"])) {
 			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array('result' => "Fail"));
 				return;
 			}
 		} else {
-			$_POST["uid"] = $_SESSION["uid"];
+			$_POST["smbdy"] = $_SESSION["id"];
 		}
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
@@ -684,83 +685,25 @@ function edit_appliing() {
 			exit;
 		}
 		$link->set_charset("utf8");
-
-		$names = array();
-		$values = array();
-		if (isset($_POST["uid"])) {
-			array_push($names, "uid");
-			array_push($values, "'" . $_POST["uid"] . "'");
-		}
-		if (isset($_POST["shift_id"])) {
-			array_push($names, "shift_id");
-			array_push($values, "'" . $_POST["shift_id"] . "'");
-		}
-		if (isset($_POST["probability"])) {
-			array_push($names, "probability");
-			array_push($values, "'" . $_POST["probability"] . "'");
-		}
-		if (isset($_POST["social"])) {
-			array_push($names, "social");
-			array_push($values, "'" . $_POST["social"] . "'");
-		}
-		if (isset($_POST["profile"])) {
-			array_push($names, "profile");
-			array_push($values, "'" . $_POST["profile"] . "'");
-		}
-
-		if (isset($_POST["min_age"])) {
-			array_push($names, "min_age");
-			array_push($values, "'" . $_POST["min_age"] . "'");
-		}
-		if (isset($_POST["max_age"])) {
-			array_push($names, "max_age");
-			array_push($values, "'" . $_POST["max_age"] . "'");
-		}
-
-		array_push($names, "like_one");
-		array_push($values, "'" . $_POST["like_one"] . "'");
-		array_push($names, "like_two");
-		array_push($values, "'" . $_POST["like_two"] . "'");
-		array_push($names, "like_three");
-		array_push($values, "'" . $_POST["like_three"] . "'");
-		array_push($names, "dislike_one");
-		array_push($values, "'" . $_POST["dislike_one"] . "'");
-		array_push($names, "dislike_two");
-		array_push($values, "'" . $_POST["dislike_two"] . "'");
-		array_push($names, "dislike_three");
-		array_push($values, "'" . $_POST["dislike_three"] . "'");
-		foreach ($values as $key => $value) {
-			if ($value == "''") {
-				$values[$key] = "NULL";
-			}
-		}
-
-		if (isset($_POST["comments"])) {
-			array_push($names, "comments");
-			array_push($values, "'" . $_POST["comments"] . "'");
-		}
-		array_push($names, "cr_time");
-		array_push($values, "'" . date('Y-m-d H:i:s', time()) . "'");
-		// cначала проверим, боец ли этот человек
-		$query = "SELECT id FROM fighters where uid=" . $_POST["uid"] . ";";
+		$query = "SELECT id FROM EventsSupply WHERE (user=".$_POST["smbdy"]." AND event=".$_POST["id"].");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		if (isset($line["id"])) {
-			array_push($names, "fighter_id");
-			array_push($values, "'" . $line["id"] . "'");
+		$result = updater($link, "EventsSupplyShifts", array("supply_id" => $line["id"],
+			"probability" => $_POST["probability"], "min_age" => $_POST["min_age"],
+			"max_age" => $_POST["max_age"], "comments" => $_POST["comments"]), False, "supply_id=".$line["id"]);
+		$res3 = deleter($link, "EventsSupplyShiftsLikes", "supply_id=".$line["id"]);
+		foreach ($_POST["likes"] as $key => $value) {
+			$res = inserter($link, "EventsSupplyShiftsLikes", array("supply_id" => $line["id"],
+				"other" => $value, "pole" => "1"));
 		}
-		$conc = array();
-		foreach ($names as $key => $value) {
-			array_push($conc, "" . $value . "=" . $values[$key]);
+		foreach ($_POST["dislikes"] as $key => $value) {
+			$res = inserter($link, "EventsSupplyShiftsLikes", array("supply_id" => $line["id"],
+				"other" => $value, "pole" => "-1"));
 		}
-		$conc = implode(", ", $conc);
-		$query = "UPDATE guess_shift SET " . $conc . " WHERE (uid='" . $_POST['uid'] . "' AND shift_id=" . $_POST["shift_id"] . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+
 		mysqli_close($link);
 		echo json_encode($result);
 	}
-
 }
 
 function add_detachment() {

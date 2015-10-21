@@ -147,28 +147,28 @@
       var paste_data = angular.copy(who);
       $scope.adding = {}
       if (is_smbdy) {
-        $scope.adding.smbdy = paste_data.domain;
+        $scope.adding.smbdy = paste_data.id;
       }
-      $scope.adding.prob = paste_data.probability;
+      $scope.adding.probability = paste_data.probability;
       $scope.adding.min_age = paste_data.min_age;
       $scope.adding.max_age = paste_data.max_age;
       if (paste_data.likes[0]) {
-        $scope.adding.like1 = paste_data.likes[0].domain;
+        $scope.adding.like1 = paste_data.likes[0].id;
       }
       if (paste_data.likes[1]) {
-        $scope.adding.like2 = paste_data.likes[1].domain;
+        $scope.adding.like2 = paste_data.likes[1].id;
       }
       if (paste_data.likes[2]) {
-        $scope.adding.like3 = paste_data.likes[2].domain;
+        $scope.adding.like3 = paste_data.likes[2].id;
       }
       if (paste_data.dislikes[0]) {
-        $scope.adding.dislike1 = paste_data.dislikes[0].domain;
+        $scope.adding.dislike1 = paste_data.dislikes[0].id;
       }
       if (paste_data.dislikes[1]) {
-        $scope.adding.dislike2 = paste_data.dislikes[1].domain;
+        $scope.adding.dislike2 = paste_data.dislikes[1].id;
       }
       if (paste_data.dislikes[2]) {
-        $scope.adding.dislike3 = paste_data.dislikes[2].domain;
+        $scope.adding.dislike3 = paste_data.dislikes[2].id;
       }
       $scope.adding.comments = paste_data.comments;
       $("#page-container").trigger("_edit_guess", [$scope.adding, shiftid]);
@@ -213,8 +213,20 @@
 
     // после записи человека на смену
     $("#page-container").on("_guess_apply_shift", function(e, json) {
-
       if (shiftid * 1 == json.shiftid) {
+        var delid = json.smbdy;
+        if (!json.is_edit) {
+          delid = $scope.me.id;
+          $scope.me = {}
+
+        }
+        $scope.fighters = _.reject($scope.fighters, function(user) {
+          return user.id * 1 == delid * 1;
+        })
+        $scope.candidats = _.reject($scope.candidats, function(user) {
+          return user.id * 1 == delid * 1;
+        })
+
         json.likes = [];
         if (json.like1) {
           (json.likes).push({
