@@ -117,6 +117,9 @@
       }
       $scope.show_add = !$scope.show_add;
       $scope.show_edit = false;
+      $('html, body').animate({
+        scrollTop: $(".scrl-apply").offset().top
+      }, 500);
     }
 
     /*синхронизируемся, где надо*/
@@ -183,6 +186,10 @@
           data: $.param(data)
         }).done(function(json) {
           console.log(json)
+          data.shiftid = shiftid
+          $scope.tableToAdd()
+          $("#page-container").trigger("_guess_apply_shift", [data]);
+          $scope.$apply();
           // var saved = $(".saved");
           // $(saed).stop(true, true);
           // $(saved).fadeIn("slow");

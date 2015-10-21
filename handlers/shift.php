@@ -609,7 +609,7 @@ function apply_to_shift() {
 		$result = inserter($link, "EventsSupply", array("user" => $_POST["smbdy"], 
 			"event" => $_POST["id"]), True);
 		$res2 = inserter($link, "EventsSupplyShifts", array("supply_id" => $result["id"],
-			"probability" => $_POST["prob"], "min_age" => $_POST["min_age"],
+			"probability" => $_POST["probability"], "min_age" => $_POST["min_age"],
 			"max_age" => $_POST["max_age"], "comments" => $_POST["comments"]));
 		$result["lks"] = array();
 		foreach ($_POST["likes"] as $key => $value) {
@@ -628,17 +628,19 @@ function apply_to_shift() {
 	}
 }
 
+
+// удаляет заявку на смену
 function del_from_shift() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"])) {
-		if (isset($_POST["uid"])) {
+		if (isset($_POST["id"])) {
 			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array('result' => "Fail"));
 				return;
 			}
 		} else {
-			$_POST["uid"] = $_SESSION["uid"];
+			$_POST["user"] = $_SESSION["id"];
 		}
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
@@ -652,9 +654,7 @@ function del_from_shift() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$query = "DELETE FROM guess_shift WHERE (uid=" . $_POST["uid"] . " AND shift_id=" . $_POST["shift_id"] . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = deleter($link, "EventsSupply", "user=".$_POST["user"]." AND event=".$_POST["event"]);
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -695,9 +695,9 @@ function edit_appliing() {
 			array_push($names, "shift_id");
 			array_push($values, "'" . $_POST["shift_id"] . "'");
 		}
-		if (isset($_POST["prob"])) {
+		if (isset($_POST["probability"])) {
 			array_push($names, "probability");
-			array_push($values, "'" . $_POST["prob"] . "'");
+			array_push($values, "'" . $_POST["probability"] . "'");
 		}
 		if (isset($_POST["social"])) {
 			array_push($names, "social");

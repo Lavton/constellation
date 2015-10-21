@@ -1,6 +1,8 @@
 <div ng-cloak ng-controller="oneShiftAppPeople" id="shift-people">
   <hr>
   <!-- выписываем инфу про себя -->
+
+  {{me | json}}
   <span ng-show="me.user">Вы:</span>
   <table class="table-bordered" ng-show="me.user" width="100%">
     <thead>
@@ -35,11 +37,9 @@
         <td>
           <table>
             <tr ng-repeat="ls in  me.likes" ng-show="ls">
-              <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
+              <td><a href="/about/users/{{ls.other}}" target="_blank"> <img ng-src="{{ls.photo}}" /></a>&nbsp; </td>
               <td>
-                <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
-                <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
-                <br> {{ls.first_name}} {{ls.last_name}}
+                {{ls.first_name}} {{ls.last_name}}
               </td>
             </tr>
           </table>
@@ -47,11 +47,9 @@
         <td>
           <table>
             <tr ng-repeat="ls in  me.dislikes" ng-show="ls">
-              <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
+              <td><a href="/about/users/{{ls.other}}" target="_blank"> <img ng-src="{{ls.photo}}" /></a>&nbsp; </td>
               <td>
-                <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
-                <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
-                <br> {{ls.first_name}} {{ls.last_name}}
+               {{ls.first_name}} {{ls.last_name}}
               </td>
             </tr>
           </table>
@@ -62,7 +60,6 @@
       </tr>
     </tbody>
   </table>
-
   <hr>
   <div class="row">
     <!-- информация про бойцов -->
@@ -90,7 +87,7 @@
         ред&nbsp;-&nbsp;вать
       </a>
               <br>
-              <a ng-click="deleteGuess()" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
+              <a ng-click="deleteGuess(fighter.id)" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
         удалить
       </a>
             </td>
@@ -105,24 +102,20 @@
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <table>
                 <tr ng-repeat="ls in  fighter.likes" ng-show="ls">
-                  <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
-                  <td>
-                    <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
-                    <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
-                    <br> {{ls.first_name}} {{ls.last_name}}
-                  </td>
+                <td><a href="/about/users/{{ls.other}}" target="_blank"> <img ng-src="{{ls.photo}}" /></a>&nbsp; </td>
+                <td>
+                  {{ls.first_name}} {{ls.last_name}}
+                </td>
                 </tr>
               </table>
             </td>
             <td ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
               <table>
                 <tr ng-repeat="ls in  fighter.dislikes" ng-show="ls">
-                  <td><img ng-src="{{ls.photo}}" />&nbsp; </td>
-                  <td>
-                    <a href="//vk.com/{{ls.domain}}" target="_blank">vk.com/</a>
-                    <input type="text" readonly ng-model="ls.domain" size="{{(ls.domain).length}}">
-                    <br> {{ls.first_name}} {{ls.last_name}}
-                  </td>
+                <td><a href="/about/users/{{ls.other}}" target="_blank"> <img ng-src="{{ls.photo}}" /></a>&nbsp; </td>
+                <td>
+                  {{ls.first_name}} {{ls.last_name}}
+                </td>
                 </tr>
               </table>
             </td>
@@ -159,7 +152,7 @@
         ред&nbsp;-&nbsp;вать
       </a>
               <br>
-              <a ng-click="deleteGuess()" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
+              <a ng-click="deleteGuess(candidate.id)" href="" ng-show="window.current_group==window.groups.COMMAND_STAFF.num">
         удалить
       </a>
             </td>
@@ -203,5 +196,4 @@
       </table>
     </div>
   </div>
-  <button ng-show="window.current_group==window.groups.COMMAND_STAFF.num" type="button" class="btn btn-danger kill-shift" ng-click="killappsShift()">Удалить все заявки на смену</button>
 </div>

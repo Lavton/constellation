@@ -27,13 +27,14 @@
 
 
   <!-- вот форма записи на смену -->
+  <span class="scrl-apply"></span>
   <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.vk_id || (shift.today > shift.st_date)">Записаться на смену</button>
   <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-show="myself.vk_id && window.current_group>=window.groups.COMMAND_STAFF.num">Записать на смену</button>
   <button class="btn" ng-click="show_edit=false" ng-init="show_add=false" ng-show="show_edit">Скрыть редактирование</button>
   <div ng-show="show_add || show_edit" ng-init="show_edit=false">
     <form ng-submit="guessAdd(show_edit)">
-      <input type="submit" class="btn btn-primary text-right" value="Записаться" ng-hide="show_edit"></input>
-      <input type="submit" class="btn btn-primary text-right" value="Сохранить изменения" ng-show="show_edit"></input>
+      <input type="submit" class="btn btn-success text-right" value="Записаться" ng-hide="show_edit"></input>
+      <input type="submit" class="btn btn-success text-right" value="Сохранить изменения" ng-show="show_edit"></input>
       <ul>
         <li ng-show="window.current_group>=window.groups.COMMAND_STAFF.num"><b>Кого добавить?</b> (как комсостав, можно добавить другого. Хотите добавиться сами - просто проигнорируйте поле)
           <br/> id человека:
@@ -42,8 +43,8 @@
         <li> <i>С какой вероятностью вы поедете на смену?</i> (будет видно всем)
           <br>
           <u><strong>Укажите причины, могущие помешать, в комментариях</strong></u>
-          <br/> {{adding.prob}}
-          <input type="range" ng-model="adding.prob" ng-init="adding.prob=100" min="0" max="100" scale="1" style="width: 70%" />
+          <br/> {{adding.probability}}
+          <input type="range" ng-model="adding.probability" ng-init="adding.probability=100" min="0" max="100" scale="1" style="width: 70%" />
           <br/>
         </li>
 
@@ -102,8 +103,8 @@
           <textarea ng-model="adding.comments" class="bbcode" cols=50 rows=5></textarea>
         </li>
       </ul>
-      <input type="submit" class="btn btn-primary text-right" value="Записаться" ng-hide="show_edit"></input>
-      <input type="submit" class="btn btn-primary text-right" value="Сохранить изменения" ng-show="show_edit"></input>
+      <input type="submit" class="btn btn-success text-right" value="Записаться" ng-hide="show_edit"></input>
+      <input type="submit" class="btn btn-success text-right" value="Сохранить изменения" ng-show="show_edit"></input>
     </form>
   </div>
   <!-- </details> -->
