@@ -48,6 +48,13 @@ if (is_ajax()) {
 			case "edit_detachment":edit_detachment();
 				break;
 
+			case "new_rank": new_rank();
+				break;
+			case "save_rank_comment": save_rank_comment();
+				break;
+			case "del_rank": del_rank();
+				break;
+
 			case "publish_rank":publish_rank();
 				break;
 			case "remove_rank":remove_rank();
@@ -453,19 +460,29 @@ function get_one_detach_info() {
 		$link->set_charset("utf8");
 
 		// поиск смены
-		$query = "SELECT time_name, place, finish_date, visibility FROM shifts WHERE id='" . $_POST['id'] . "' ORDER BY id;";
+		$query = "SELECT name, place, finish_date, visibility FROM EventsMain WHERE id='" . $_POST['id'] . "' ORDER BY id;";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shift"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 
-		$query = "SELECT uid, shift_id  FROM guess_shift where (shift_id=" . $_POST["id"] . ") ORDER BY cr_time DESC;";
+		$query = "SELECT user, event  FROM EventsSupply where (event=" . $_POST["id"] . ") ORDER BY last_updated DESC;";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["all_apply"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["all_apply"], $line);
 		}
-		$query = "SELECT in_id, people, children_num, children_dis, comments FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NULL) ORDER BY in_id;";
+		$query = "SELECT ESD.id, ESD.children_num, ESD.children_discription, ESR.show_it, ESR.id AS ranking, 
+		ESR.comments, ESDP.user, ESDP.name 
+		FROM EventsShiftsDetachmentsPeople AS ESDP
+		RIGHT JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
+		RIGHT JOIN EventsShiftsRanking AS ESR ON ESR.id=ESD.ranking
+		 WHERE (ESR.shift='" . $_POST['id'] . "' AND ESR.show_it=1);";
 		if (isset($_POST["edit"]) && ($_POST["edit"] == true)) {
-			$query = "SELECT in_id, people, children_num, children_dis, comments, ranking FROM detachments WHERE (shift_id='" . $_POST['id'] . "' AND ranking IS NOT NULL) ORDER BY in_id;";
+			$query = "SELECT ESD.id, ESD.children_num, ESD.children_discription, ESR.show_it, ESR.id AS ranking, 
+			ESR.comments, ESDP.user, ESDP.name 
+			FROM EventsShiftsDetachmentsPeople AS ESDP
+			RIGHT JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
+			RIGHT JOIN EventsShiftsRanking AS ESR ON ESR.id=ESD.ranking
+			 WHERE (ESR.shift='" . $_POST['id'] . "' AND ESR.show_it=0);";
 		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["detachments"] = array();
@@ -476,6 +493,7 @@ function get_one_detach_info() {
 			$result = array();
 		}
 		$result["result"] = "Success";
+		$result["qw"]=$query;
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -817,6 +835,76 @@ function edit_detachment() {
 		mysqli_close($link);
 		echo json_encode($result);
 	}
+}
+
+// создаёт расстановку
+function new_rank() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$result = inserter($link, "EventsShiftsRanking", array("shift" => $_POST["shift"], "show_it" => $_POST["show_it"]), True);
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+// сохранить комментарий
+function save_rank_comment() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$result = updater($link, "EventsShiftsRanking", array("id" => $_POST["id"], "comments" => $_POST["comments"]));
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+}
+
+// удаляет расстановку
+function del_rank() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$result = deleter($link, "EventsShiftsRanking", "id=".$_POST["id"]);
+		mysqli_close($link);
+		echo json_encode($result);
+	}
+
 }
 
 /*публикует расстановку*/

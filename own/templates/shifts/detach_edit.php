@@ -1,18 +1,18 @@
 <?php if (isset($_GET[ "id"]) && (isset($_SESSION[ "current_group"]) && ($_SESSION[ "current_group"]>= COMMAND_STAFF))) { ?>
 <div ng-cloak ng-controller="oneShiftAppEditDetach" id="shift-edit-detach">
-  <h2>{{shift.time_name}}, {{shift.fn_date.getFullYear()}} <span ng-show="shift.place">({{shift.place}})</span></h2>
+  <h2>{{shift.name}}, {{shift.fn_date.getFullYear()}} <span ng-show="shift.place">({{shift.place}})</span></h2>
   <div class="row" ng-hide="new_rank.ranking">
     <div class="col-md-3" ng-repeat="(index, value) in rankings" style="border: 4px outset green">
-      <h2>Расстановка  № {{index}} 
-        <a href="" ng-click="editRanking(index)"><img src="/own/images/edit.png" width="20px"></a><a href="" ng-click="deleteRanking(index)"><img src="/own/images/delete.png" width="20px"></a>
-        </h2>
-      <ul>
+      <h3>Расстановка  № {{index}} 
+         <a href="" ng-click="editRanking(index)"><img src="/own/images/edit.png" width="20px"></a><a href="" ng-click="deleteRanking(index)"><img src="/own/images/delete.png" width="20px"></a>
+        </h3>
+<!--      <ul>
         <li ng-repeat="(key, detachment) in value">
           {{key+1}}
           <ul>
             <li ng-repeat="person in detachment.people">
               <span ng-show="person.uid">
-                    <!-- <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a> -->
+                    <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
                   {{person.first_name}} {{person.last_name}}
                   </span> <span ng-hide="person.uid">{{person}}</span>
             </li>
@@ -20,7 +20,8 @@
           <div class="table-bordered {{detachment.in_id}}-bbcomment" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
         </li>
       </ul>
-      <a href="" ng-click="publish(index)">Опубликовать эту расстановку</a>
+ -->      
+ <br/>
     </div>
   </div>
   <div class="shift-info">
@@ -39,7 +40,7 @@
         </ul>
       </div>
       <div class="col-xs-7 info-str">
-        <button ng-click="newRanking(false)">Создать новую расстановку</button>
+        <button ng-click="newRanking()">Создать новую расстановку</button>
         <button ng-show="new_rank.ranking" ng-click="hideRanking()">Скрыть</button>
         <div class="table-bordered" ng-show="new_rank.ranking">
           <h2>Расстановка № {{new_rank.ranking}}
@@ -87,6 +88,13 @@
               <div class="table-bordered {{detachment.in_id}}-bbcomments" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
             </li>
           </ul>
+
+          <br>Комментарии к расстановке: <br>
+          <textarea class="bbcode" ng-model="new_rank.comments">
+            
+          </textarea>
+          <span class="saved">  (Изменения сохранены)</span>
+          <button ng-click="saveComment(new_rank.ranking)">(сохранить комментарий)</button>
           <!-- расстановка -->
         </div>
       </div>
