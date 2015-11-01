@@ -412,14 +412,33 @@ function get_shifts_nd_ach() {
 		}
 		$link->set_charset("utf8");
 		// смены, на которых был боец
-		$query = "SELECT EM.id, EM.name, EM.place, EM.finish_date 
-		FROM EventsMain AS EM 
-		JOIN EventsShifts AS ES ON ES.id=EM.id 
-		JOIN EventsShiftsRanking AS ESR ON ES.id=ESR.shift 
-		JOIN EventsShiftsDetachments AS ESD ON ESR.id=ESD.ranking 
-		JOIN EventsShiftsDetachmentsPeople AS ESDP ON ESD.id=ESDP.detachment  
-		WHERE ESDP.user=".$_POST["id"].";";
-		// $query = 'SELECT detachments.shift_id as id, shifts.place, shifts.finish_date, shifts.time_name FROM detachments, shifts WHERE (ranking IS NULL AND people LIKE \'%'.$_POST["uid"].'%\' AND shifts.id=detachments.shift_id) ORDER BY shifts.finish_date DESC';
+		$query = "SELECT * FROM (SELECT BN.*, 
+			EM.name, EM.place, EM.start_date, EM.finish_date, EM.visibility
+			FROM EventsMain AS EM
+			JOIN
+			(SELECT ESDP.user, ESR.shift, 100 AS probability, 1 AS isDet
+			FROM EventsShiftsDetachmentsPeople AS ESDP
+			JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
+			JOIN EventsShiftsRanking AS ESR ON ESR.id=ESD.ranking
+			WHERE (ESDP.user IS NOT NULL
+			 AND ESR.show_it=1
+			)
+			GROUP BY ESDP.user, ESR.shift, probability, isDet
+			UNION ALL
+			SELECT 
+				CASE 
+					WHEN ESR.id IS NULL THEN ES.user
+				END AS user,
+				CASE 
+					WHEN ESR.id IS NULL THEN ES.event
+				END AS shift, 
+			ESS.probability, 0 AS isDet
+			FROM EventsSupply AS ES
+			JOIN EventsSupplyShifts AS ESS ON ES.id=ESS.supply_id
+			LEFT JOIN (
+			    SELECT * FROM EventsShiftsRanking WHERE show_it=1) AS ESR ON ESR.shift=ES.event
+			) AS BN ON BN.shift=EM.id) AS AllUsersShiftsConnections
+			WHERE user=".$_POST["id"].";";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 

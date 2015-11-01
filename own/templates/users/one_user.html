@@ -117,7 +117,7 @@
       <h3>Смены</h3>
       <ul>
         <li ng-repeat="shift in shifts">
-          <a href="/events/shifts/{{shift.id}}" class="ajax-nav">
+          <a href="/events/shifts/{{shift.shift}}" class="ajax-nav">
                       {{shift.name}} <span ng-show="shift.place">({{shift.place}})</span>, {{shift.fn_date.getFullYear()}} г.
           </a>
         </li>

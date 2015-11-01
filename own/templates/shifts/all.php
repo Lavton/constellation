@@ -58,7 +58,7 @@
               <td>
                 <ol>
                   <li ng-repeat="shift in person">
-                    <a href="/events/shifts/{{shift.shift_id}}" class="ajax-nav">
+                    <a href="/events/shifts/{{shift.event}}" class="ajax-nav">
                 {{shift.name}} <span ng-show="shift.place">({{shift.place}})</span>
               </a> ({{shift.probability}}%)
                   </li>
@@ -101,7 +101,7 @@
               <td>
                 <ol>
                   <li ng-repeat="shift in person">
-                    <a href="/events/shifts/{{shift.shift_id}}" class="ajax-nav">
+                    <a href="/events/shifts/{{shift.event}}" class="ajax-nav">
                     {{shift.name}} <span ng-show="shift.place">({{shift.place}})</span>
               </a> ({{shift.probability}}%)
                   </li>
