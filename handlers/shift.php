@@ -740,41 +740,18 @@ function add_detachment() {
 			exit;
 		}
 		$link->set_charset("utf8");
+		$result = inserter($link, "EventsShiftsDetachments", array("ranking" => $_POST["ranking"]), True);
 
-		$names = array();
-		$values = array();
-		if (isset($_POST["shift_id"])) {
-			array_push($names, "shift_id");
-			array_push($values, "'" . $_POST["shift_id"] . "'");
+		foreach ($_POST["people"] as $key_p => $person) {
+			$res = inserter($link, "EventsShiftsDetachmentsPeople", array("detachment" => $result["id"],
+				"user"=> $person["user"], "name" => $person["name"]));
 		}
-		if (isset($_POST["people"])) {
-			array_push($names, "people");
-			array_push($values, "'" . $_POST["people"] . "'");
-		}
-		if (isset($_POST["comments"])) {
-			array_push($names, "comments");
-			array_push($values, "'" . $_POST["comments"] . "'");
-		}
-		if (isset($_POST["ranking"])) {
-			array_push($names, "ranking");
-			array_push($values, "'" . $_POST["ranking"] . "'");
-		}
-
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO detachments (" . $names . ") VALUES (" . $values . ");";
-		// $result["qw"] = $query;
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$query = "SELECT MAX(in_id) AS in_id FROM detachments";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["in_id"] = $line["in_id"];
-		$result["result"] = "Success";
 		mysqli_close($link);
 		echo json_encode($result);
 	}
 }
 
+// удаляет отряд со смены
 function del_detach_shift() {
 	check_session();
 	session_start();
@@ -791,14 +768,13 @@ function del_detach_shift() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$query = "DELETE FROM detachments WHERE (in_id=" . $_POST["in_id"] . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = deleter($link, "EventsShiftsDetachments", "id=".$_POST["id"]);
 		mysqli_close($link);
 		echo json_encode($result);
 	}
 }
 
+// редактирование отряда (состава людей)
 function edit_detachment() {
 	check_session();
 	session_start();
@@ -815,23 +791,13 @@ function edit_detachment() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$names = array();
-		$values = array();
-		if (isset($_POST["people"])) {
-			array_push($names, "people");
-			array_push($values, "'" . $_POST["people"] . "'");
+		$res = deleter($link, "EventsShiftsDetachmentsPeople", "detachment=".$_POST["id"]);
+		foreach ($_POST["people"] as $key_p => $person) {
+			$res = inserter($link, "EventsShiftsDetachmentsPeople", array("detachment" => $_POST["id"],
+				"user"=> $person["user"], "name" => $person["name"]));
 		}
-		array_push($names, "comments");
-		array_push($values, "'" . $_POST["comments"] . "'");
-		$conc = array();
-		foreach ($names as $key => $value) {
-			array_push($conc, "" . $value . "=" . $values[$key]);
-		}
-		$conc = implode(", ", $conc);
-		$query = "UPDATE detachments SET " . $conc . " WHERE (in_id='" . $_POST['in_id'] . "');";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["id"] = $_POST["id"];
 		$result["result"] = "Success";
-		$result["qw"] = $query;
 		mysqli_close($link);
 		echo json_encode($result);
 	}
@@ -907,7 +873,7 @@ function del_rank() {
 
 }
 
-/*публикует расстановку*/
+// публикует расстановку
 function publish_rank() {
 	check_session();
 	session_start();
@@ -924,13 +890,12 @@ function publish_rank() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$query = "SELECT 1 FROM detachments WHERE (ranking IS NULL AND shift_id=" . $_POST["shift_id"] . ");";
+		// сначала проверим, нет ли опубликованных расстановок уже
+		$query = "SELECT 1 FROM EventsShiftsRanking WHERE (show_it=1 AND shift=" . $_POST["shift"] . ");";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		if (is_null($line)) {
-			$query = "UPDATE detachments SET ranking=NULL WHERE (ranking=" . $_POST["rank_id"] . " AND shift_id=" . $_POST["shift_id"] . ");";
-			$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-			$result["result"] = "Success";
+			$result = updater($link, "EventsShiftsRanking", array('id' => $_POST["id"], "show_it" => 1));
 		} else {
 			$result["result"] = "Fail";
 		}
