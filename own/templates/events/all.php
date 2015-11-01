@@ -1,5 +1,14 @@
 <br>
 <div class="events-container" ng-cloak ng-controller="eventsApp" id="events-all">
+  <h2 ng-show="events.actual">Текущие</h2>
+  <ul>
+    <li ng-repeat="event in events.actual">
+      <p>{{formatDate(event.start_date)}}, в {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
+       <br></p>
+    </li>
+  </ul>
+
+  
   <h2 ng-show="events.future">Грядущие</h2>
   <ul>
     <li ng-repeat="event in events.future" ng-show="showEvent(event.planning)">
@@ -9,13 +18,6 @@
     </li>
   </ul>
 
-  <h2 ng-show="events.actual">Текущие</h2>
-  <ul>
-    <li ng-repeat="event in events.actual">
-      <p>{{formatDate(event.start_date)}}, в {{event.start_time}} <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
-       <br></p>
-    </li>
-  </ul>
 
   <hr>
   <button class="btn" ng-click="get_arhive(events.arhive_month)">Архив</button> с <input type="date" class="date" ng-model="events.arhive_month"> {{events.arhive_month}}

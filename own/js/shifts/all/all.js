@@ -11,6 +11,7 @@
       action: "all_shifts",
     };
     $http.post('/handlers/shift.php', data).success(function(response) {
+      console.log(response)
       $scope.shifts.all = response.shifts;
 
       $scope.shifts.actual = [];

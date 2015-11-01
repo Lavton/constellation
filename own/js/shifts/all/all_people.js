@@ -12,32 +12,28 @@
       action: "all_people",
     };
     $http.post('/handlers/shift.php', data).success(function(response) {
-      $scope.shifts.people = response.people;
+      console.log(response)
 
-      $scope.shifts.actual = [];
-      $scope.shifts.future = [];
-      $scope.Object = Object;
-      
-      window.setPeople(function(flag) {
-        $scope.fighters = {}
-        $scope.candidats = {}
-        _.each($scope.shifts.people, function(person, uid, list) {
-          var cached_person = _.find(window.people, function(p) {
-            return p.uid * 1 == uid;
-          })
-          _.extend(person[0], cached_person)
-          if (cached_person.isFighter == true) {
-            $scope.fighters[uid] = person
-          } else {
-            $scope.candidats[uid] = person
-          }
-        });
+      // добавляем фото
+      window.setPeople(function() {
+        _.each(response.people, function(person) {
+          _.extend(person, _.findWhere(window.people, {
+            "id": person.user * 1
+          }));
+        })
+      });
 
-        if (flag) {
-          $scope.$apply();
-        }
+      // группируем по людям
+      $scope.shifts.people = _.groupBy(response.people, function(person) {
+        return person.user;
+      });
+      console.log($scope.shifts.people)
+      $scope.fighters = _.filter($scope.shifts.people, function(person) {
+        return person[0].fighter_id;
       })
-
+      $scope.candidats = _.filter($scope.shifts.people, function(person) {
+        return !person[0].fighter_id;
+      })
     }); //end http
 
   }
