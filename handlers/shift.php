@@ -581,31 +581,14 @@ function add_new_shift() {
 			exit;
 		}
 		$link->set_charset("utf8");
+		// записываем в головное
+		$result = inserter($link, "EventsMain", array("name" => $_POST["name"], "place" => $_POST["place"], 
+			"start_date" => $_POST["start_date"], "finish_date" => $_POST["finish_date"],
+			"visibility" => $_POST["visibility"], "comments" => $_POST["comments"]), True);
 
-		$names = array();
-		$values = array();
-		if (isset($_POST["start_date"])) {
-			array_push($names, "start_date");
-			array_push($values, "'" . $_POST["start_date"] . "'");
-		}
-		if (isset($_POST["finish_date"])) {
-			array_push($names, "finish_date");
-			array_push($values, "'" . $_POST["finish_date"] . "'");
-		}
-		if (isset($_POST["time_name"])) {
-			array_push($names, "time_name");
-			array_push($values, "'" . $_POST["time_name"] . "'");
-		}
+		// записываем в смены
+		$res2 = inserter($link, "EventsShifts", array("id" => $result["id"]));
 
-		$names = implode(", ", $names);
-		$values = implode(", ", $values);
-		$query = "INSERT INTO shifts (" . $names . ") VALUES (" . $values . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
-		$query = "select max(id) as id FROM shifts;";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		$result["id"] = $line["id"];
 		mysqli_close($link);
 		echo json_encode($result);
 	}

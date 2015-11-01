@@ -5,6 +5,7 @@
     $scope.window = window;
     $scope.shifts = {}
     var today = new Date();
+    
 
     /*инициализация*/
     var data = {

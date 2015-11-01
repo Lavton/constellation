@@ -128,8 +128,31 @@
         </a>
       </li>
     </ul>
-    <!-- добавить новую смену -->
-    <div class="add-new-shift" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+
+<!-- создание мероприятия -->
+<div ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
+<br/><br/>
+      <button type="button" ng-click="addNewEvent()" class="btn btn-warning" >Создать смену?</button> 
+  <div ng-show="adding_new" ng-init="adding_new=false"> 
+  <em>Поля, отмеченные * обязательны для заполнения<br></em>
+      <span class="scrl"></span>
+<br>
+<button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
+<br> 
+ Дата начала*: <input type="date" class="date" ng-model="newevent.start_date" ng-change="onSetDate()">  {{newevent.start_date}}<br>
+ Дата окончания*: <input type="date" class="date" ng-model="newevent.finish_date">  {{newevent.finish_date}}<br>
+ название*: <input ng-model="newevent.name" placeholder="название смены" size=50 /> <em>например "Лето 1 смена" или "весна"</em> <br>
+ место: <input ng-model="newevent.place" placeholder="место проведения смены" size=50 /> <br><br>
+ Виден для*: <input type="number" min="1" max="7" ng-model="newevent.visibility" size="{{(newevent.visibility).length}}" ng-init="newevent.visibility=3"/> ({{window.groups[window.visibilities[newevent.visibility]].rus}}) <br>
+ Описание: <br> <textarea ng-model="newevent.comments" class="bbcode" cols="20" rows="5"></textarea>
+ <br>
+ <button type="button" ng-click="addNewEventSubmit()" ng-show="adding_new" class="btn btn-success">Создать</button>
+ </div>
+ </div>
+<!-- конец добавления -->
+
+
+<!--     <div class="add-new-shift" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">
       <br/>
       <br/>
       <button type="button" class="btn btn-warning pre-add-new">Добавить новую смену?</button>
@@ -140,5 +163,5 @@
         <input type="date" class="add-new-end-date" />
       </div>
     </div>
-  </div>
+ -->  </div>
 </div>

@@ -63,6 +63,7 @@
       $scope.detachments = _.groupBy(json.detachments, function(detach) {
         return detach.id
       })
+      if (_.toArray($scope.detachments)[0]) {
         var bbdata = {
           bbcode: _.toArray($scope.detachments)[0][0].comments,
           ownaction: "bbcodeToHtml"
@@ -74,9 +75,10 @@
           global: false,
           data: $.param(bbdata)
         }).done(function(rdata) {
-            $("div.rank-comments").html(rdata)
+          $("div.rank-comments").html(rdata)
           $scope.$apply();
         });
+      }
       $scope.$apply();
     });
 
