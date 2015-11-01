@@ -43,72 +43,28 @@
         data: $.param(data)
       }).done(function(json) {
         console.log(json)
-        $scope.people = {};
-        var detach_shifts = {};
-        for (var i = 0; i < json.detachments.length; i++) {
-          _.each(json.detachments[i].people.split("$"), function(person) {
-            if (!$scope.people[person]) {
-              $scope.people[person] = {
-                "shifts": []
-              };
-            }
-            $scope.people[person].shifts.push({
-              "id": json.detachments[i].shift_id
-            })
+        window.setPeople(function() {
+          _.each(json.people, function(person) {
+            _.extend(person, _.findWhere(window.people, {
+              "id": person.user * 1
+            }));
+            person.fn_date = new Date(person.finish_date);
           })
-          detach_shifts[json.detachments[i].shift_id] = true;
-        };
-        _.each(_.reject(json.guesses, function(guess) {
-          return detach_shifts[guess.shift_id];
-        }), function(rj_guess) {
-          if (!$scope.people[rj_guess.vk_id]) {
-            $scope.people[rj_guess.vk_id] = {
-              "shifts": []
-            };
-          }
-          $scope.people[rj_guess.vk_id].shifts.push({
-            "id": rj_guess.shift_id,
-            "probability": rj_guess.probability
-          })
+        });
+
+        // группируем по людям
+        $scope.people = _.groupBy(json.people, function(person) {
+          return person.user;
+        });
+        console.log("people")
+        $scope.fighters = _.filter($scope.people, function(person) {
+          return person[0].isFighter;
         })
-
-        // получаем норм инфу про смены
-        _.each($scope.people, function(person) {
-          _.each(person.shifts, function(shift) {
-            _.extend(shift, _.findWhere($scope.shifts, {
-              id: shift.id
-            }))
-          })
-        })
-
-        // получаем норм инфу про людей
-        window.setPeople(function(flag) {
-          $scope.fighters = {}
-          $scope.candidats = {}
-          _.each($scope.people, function(person, uid, list) {
-            window.getPerson(uid * 1, function(pers, flag) {
-              _.extend(person, pers)
-              if (pers.isFighter == true) {
-                $scope.fighters[uid] = person
-              } else if (pers.isFighter == false) {
-                $scope.candidats[uid] = person
-              }
-              if (flag) {
-                $scope.$apply();
-              }
-            })
-
-          });
-
-          if (flag) {
-            $scope.$apply();
-          }
+        $scope.candidats = _.filter($scope.people, function(person) {
+          return !person[0].isFighter;
         })
         $scope.$apply();
-
-        console.log($scope.people)
       })
-
     }
   }
 

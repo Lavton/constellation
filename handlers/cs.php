@@ -43,7 +43,8 @@ function shifts() {
 		}
 		$link->set_charset("utf8");
 		// поиск смены
-		$query = 'SELECT id, place, start_date, finish_date, time_name FROM shifts ORDER BY start_date DESC;';
+		$query = 'SELECT EM.id, EM.place, EM.start_date, EM.finish_date, EM.name FROM EventsMain AS EM
+		JOIN EventsShifts AS ES ON ES.id=EM.id  ORDER BY EM.start_date DESC;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 
@@ -72,23 +73,43 @@ function get_people() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		// люди
 		$ids = join(',',$_POST["ids"]);
-		// возможно поедут
-		$query = "SELECT vk_id, probability, shift_id FROM guess_shift WHERE (shift_id IN ($ids));";
+		// люди
+		$query = "SELECT * FROM (SELECT BN.*, 
+		EM.name, EM.place, EM.start_date, EM.finish_date, EM.visibility,
+		UM.uid, UM.first_name, UM.last_name, UM.middle_name
+		FROM EventsMain AS EM
+		JOIN
+		(SELECT ESDP.user, ESR.shift, 100 AS probability, 1 AS isDet
+		FROM EventsShiftsDetachmentsPeople AS ESDP
+		JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
+		JOIN EventsShiftsRanking AS ESR ON ESR.id=ESD.ranking
+		WHERE (ESDP.user IS NOT NULL
+		 AND ESR.show_it=1
+		)
+		GROUP BY ESDP.user, ESR.shift, probability, isDet
+		UNION ALL
+		SELECT 
+			CASE 
+				WHEN ESR.id IS NULL THEN ES.user
+			END AS user,
+			CASE 
+				WHEN ESR.id IS NULL THEN ES.event
+			END AS shift, 
+		ESS.probability, 0 AS isDet
+		FROM EventsSupply AS ES
+		JOIN EventsSupplyShifts AS ESS ON ES.id=ESS.supply_id
+		LEFT JOIN (
+		    SELECT * FROM EventsShiftsRanking WHERE show_it=1) AS ESR ON ESR.shift=ES.event
+		) AS BN ON BN.shift=EM.id
+		LEFT JOIN UsersMain AS UM ON UM.id=BN.user
+		) AS AllUsersShiftsConnections
+		WHERE 
+		(shift IN ($ids));";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["guesses"] = array();
+		$result["people"] = array();
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["guesses"], $line);
-		}
-
-		// уже съездили
-		$query = "SELECT people, shift_id FROM detachments WHERE (shift_id IN ($ids) AND ranking IS NULL);";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["detachments"] = array();
-
-		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-			array_push($result["detachments"], $line);
+			array_push($result["people"], $line);
 		}
 		echo json_encode($result);
 	}

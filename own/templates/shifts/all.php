@@ -64,7 +64,7 @@
                   </li>
                 </ol>
               </td>
-              <td>{{person.length}}</td>
+              <td>{{person[0].length}}</td>
             </tr>
           </tbody>
         </table>
