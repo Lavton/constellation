@@ -23,19 +23,6 @@
               </li>
             </ul>
           </li>
-          <!--         <li ng-repeat="(key, detachment) in value">
-          {{key+1}}
-          <ul>
-            <li ng-repeat="person in detachment.people">
-              <span ng-show="person.uid">
-                    <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}"/></a>
-                  {{person.first_name}} {{person.last_name}}
-                  </span> <span ng-hide="person.uid">{{person}}</span>
-            </li>
-          </ul>
-          <div class="table-bordered {{detachment.id}}-bbcomment" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
-        </li>
- -->
         </ul>
         <br/>
         <div ng-show="_.toArray(value)[0][0].comments">
@@ -91,9 +78,7 @@
             </form>
             <!-- создание расстановки по отрядам -->
             <ul>
-                <!-- {{rankings[new_rank.ranking] | json}} -->
               <li ng-repeat="(index, detachment) in rankings[new_rank.ranking]" ng-show="index!='null'">
-              <!-- {{index}} {{detachment | json}} -->
                 <a href="" ng-click="editDetachment(index, new_rank.ranking)"><img src="/own/images/edit.png" width="10px"></a>&nbsp;&nbsp;&nbsp;
                 <a href="" ng-click="deleteDetachment(index, new_rank.ranking)"><img src="/own/images/delete.png" width="10px"></a>
                 <ul>
@@ -111,21 +96,6 @@
                   </li>
                 </ul>
               </li>
-              <!--             <li ng-repeat="(key, detachment) in detachments" ng-show="detachment.ranking*1==new_rank.ranking*1 && detachment.id">
-              {{key+1}}
-              <a href="" ng-click="editDetachment(key)"><img src="/own/images/edit.png" width="10px"></a>&nbsp;&nbsp;&nbsp;
-              <a href="" ng-click="deleteDetachment(key)"><img src="/own/images/delete.png" width="10px"></a>
-              <ul>
-                <li ng-repeat="person in detachment.people">
-                  <span ng-show="person.uid">
-                    <a href="//vk.com/{{person.domain}}" target="_blank"> <img ng-src="{{person.photo}}"/></a>
-                  {{person.first_name}} {{person.last_name}}
-                  </span> <span ng-hide="person.uid">{{person}}</span>
-                </li>
-              </ul>
-              <div class="table-bordered {{detachment.id}}-bbcomments" ng-bind-html="detachment.bbcomments" ng-show="detachment.comments"></div>
-            </li>
- -->
             </ul>
             <hr>
             <br>Комментарии к расстановке:

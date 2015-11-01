@@ -12,7 +12,6 @@
     $scope.adding = {};
     $scope.adding.vk_likes = {};
     $scope.rankings = {}
-    $scope.max_rank = 0; // изначально расстановок нет
     $scope.new_rank = {}
     $scope.detachment = [];
     $scope.newdetachment = {
@@ -33,7 +32,6 @@
       dataType: "json",
       data: $.param(data)
     }).done(function(json) {
-      console.log(json)
       $scope.shift = json.shift;
       $scope.shift.fn_date = new Date($scope.shift.finish_date);
       $scope.all_apply = json.all_apply;
@@ -52,7 +50,6 @@
       var rankings = _.groupBy($scope.detachments, function(detach) {
         return detach.ranking;
       })
-      console.log("rankings", rankings)
       _.each(rankings, function(ranking, id, list) {
         $scope.rankings[id] = _.groupBy(ranking, function(detach) {
           return detach.id
@@ -88,57 +85,6 @@
         });
 
       })
-
-
-
-      $scope.$apply();
-      $scope.max_rank = _.chain($scope.rankings).keys().map(function(key) {
-        return key * 1
-      }).max().value()
-      if (!_.isFinite($scope.max_rank)) {
-        $scope.max_rank = 0
-      }
-
-      /*запись комментариев*/
-      // var comments = []
-      // _.each(json.detachments, function(element, index, list) {
-      //   comments.push({
-      //     id: element.in_id,
-      //     comment: element.comments
-      //   });
-      // });
-      // var bbdata = {
-      //   bbcode: comments,
-      //   ownaction: "bbcodesToHtml"
-      // };
-      // $.ajax({
-      //   type: "POST",
-      //   url: "/standart/markitup/sets/bbcode/parser.php",
-      //   dataType: 'json',
-      //   global: false,
-      //   data: $.param(bbdata)
-      // }).done(function(comment_data) {
-      //   _.each($scope.detachments, function(detachment, index, list) {
-      //     detachment.bbcomments = _.findWhere(comment_data, {
-      //       id: detachment.in_id
-      //     }).bbcomment;
-      //     $("div." + detachment.in_id + "-bbcomment").html(detachment.bbcomments)
-      //   });
-      // });
-
-      /*люди*/
-      // _.each($scope.detachments, function(detachment, index, list) {
-      //   detachment.people = detachment.people.split("$");
-      //   _.each(detachment.people, function(person, index, list) {
-      //     window.getPerson(person, function(pers, flag) {
-      //       list[index] = pers;
-      //       if (flag) {
-      //         $scope.$apply();
-      //       }
-      //     })
-      //   })
-      // });
-
       $scope.$apply();
     });
 
@@ -206,7 +152,6 @@
         id: id,
         comments: $scope.new_rank.comments
       }
-      console.log(data);
       $.ajax({ //TODO: make with angular
         type: "POST",
         url: "/handlers/shift.php",
@@ -241,20 +186,6 @@
       $scope.new_rank.ranking = index
       $scope.new_rank.comments = _.toArray($scope.new_rank)[0][0].comments
       $scope.new_rank.edit = true;
-      // _.each($scope.detachments, function(detachment) {
-      //   if (detachment.ranking * 1 == $scope.new_rank.ranking * 1) {
-      //     $("div." + detachment.id + "-bbcomments").html(detachment.bbcomments)
-      //     _.each(detachment.people, function(person) {
-      //       var per = _.find($scope.all_apply, function(pers) {
-      //         return pers.user * 1 == person.id * 1;
-      //       })
-      //       if (per) {
-      //         per.have_in_det = true;
-      //       }
-      //     })
-      //   }
-      // })
-
     }
 
     /*инвертирует видимость ддля создания / редактирования отряда*/
@@ -312,17 +243,14 @@
         }
       })
 
-      console.log(data)
       $.ajax({ //TODO: make with angular
         type: "POST",
         url: "/handlers/shift.php",
         dataType: "json",
         data: $.param(data)
       }).done(function(json_detach) {
-        console.log(json_detach)
           // debugger;
         _.each(data.people, function(person) {
-          console.log(person)
           var cached = _.find(window.people, function(p) {
             return p.id * 1 == person.user * 1;
           })
@@ -340,100 +268,6 @@
         $scope.$apply();
 
       })
-
-      // getVkData($scope.newdetachment.people, ["domain"],
-      //   function(response) {
-      //     /*если передали имя ВК - заменяем на uid*/
-      //     for (var i = 0; i < $scope.newdetachment.people.length; i++) {
-      //       if (response[$scope.newdetachment.people[i]]) {
-      //         $scope.newdetachment.people[i] = response[$scope.newdetachment.people[i]].uid;
-      //       }
-      //     };
-      //     var new_people = [];
-      //     for (var i = 0; i < $scope.newdetachment.people.length; i++) {
-      //       if ($scope.newdetachment.people[i]) {
-      //         new_people.push($scope.newdetachment.people[i] + "")
-      //       }
-      //     };
-      //     /*пушим в БД, конкатинируя имена*/
-      //     var data = {
-      //       comments: $scope.newdetachment.comments,
-      //       people: new_people.join("$"),
-      //       action: "add_detachment",
-      //       shift_id: shiftid,
-      //       ranking: $scope.new_rank.ranking
-      //     }
-      //     if (_.isNumber(key)) { // если редактируем
-      //       data.action = "edit_detachment";
-      //       data.in_id = $scope.cached_detach.in_id;
-      //     }
-      //     console.log(data)
-      //     $.ajax({ //TODO: make with angular
-      //       type: "POST",
-      //       url: "/handlers/shift.php",
-      //       dataType: "json",
-      //       data: $.param(data)
-      //     }).done(function(json_detach) {
-      //       _.each(new_people, function(person) {
-      //         var per = _.find($scope.all_apply, function(pers) {
-      //           return pers.user * 1 == person * 1;
-      //         })
-      //         if (per) {
-      //           per.have_in_det = true;
-      //         }
-      //       })
-      //       var vk_idsD = new_people
-      //       getVkData(vk_idsD, ["domain", "photo_50"],
-      //         function(response) {
-      //           var detachment = {
-      //             people: new_people,
-      //             "ranking": $scope.new_rank.ranking,
-      //             "comments": $scope.newdetachment.comments
-      //           }
-      //           _.each(detachment.people, function(person, index_p, list) {
-      //             var vk_d = response[person];
-      //             if (vk_d) {
-      //               detachment.people[index_p] = vk_d;
-      //             }
-      //           })
-
-      //           // чтобы показать и комментарии
-      //           if (_.isNumber(key)) {
-      //             detachment.in_id = $scope.cached_detach.in_id;
-      //           } else {
-      //             detachment.in_id = json_detach.in_id;
-      //           }
-      //           var bbdata = {
-      //             bbcode: detachment.comments,
-      //             ownaction: "bbcodeToHtml"
-      //           };
-      //           $.ajax({
-      //             type: "POST",
-      //             url: "/standart/markitup/sets/bbcode/parser.php",
-      //             dataType: 'text',
-      //             global: false,
-      //             data: $.param(bbdata)
-      //           }).done(function(comment_data) {
-      //             detachment.bbcomments = comment_data;
-      //             $("div." + detachment.in_id + "-bbcomments").html(detachment.bbcomments)
-      //             $scope.$apply();
-      //           });
-      //           if (_.isNumber(key)) {
-      //             $scope.add_det = false;
-      //             $(".addDetachment").text("добавить отряд в расстановку")
-      //           }
-      //           $scope.detachments.push(detachment)
-      //           $scope.newdetachment = {
-      //             people: []
-      //           };
-      //           $scope.setFieldKeys();
-      //           $scope.$apply();
-      //         });
-
-      //       console.log(new_people);
-      //       $scope.$apply();
-      //     });
-      //   });
     }
 
     /*редактировать отряд*/
@@ -461,6 +295,7 @@
 
     // удаляет расстановку
     $scope.deleteRanking = function(index) {
+      debugger;
       if (confirm("удалить расстановку №" + index + "?")) {
         var data = {
           "action": "del_rank",
@@ -472,7 +307,8 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(json) {
-          console.log(json);
+          delete $scope.rankings[index];
+          $scope.$apply();
         });
       }
     }
@@ -497,7 +333,6 @@
 
     /*публикуем расстановку*/
     $scope.publish = function(index) {
-      console.log(index)
       if (confirm("Расстановка "+index+" станет видна всем. Опубликовать?")) {
         var data = {
           action: "publish_rank",
@@ -511,7 +346,6 @@
           dataType: "json",
           data: $.param(data)
         }).done(function(json) {
-          console.log(json)
           if (json.result == "Success") {
             window.location.href = "/events/shifts/" + shiftid;
           } else {
