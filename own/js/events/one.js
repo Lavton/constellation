@@ -235,7 +235,7 @@
     // создаём текст поста для ВК. Пока заглушка
     $scope.exportToVK = function() {
       $('html, body').animate({
-          scrollTop: $(".export-scrl").offset().top
+        scrollTop: $(".export-scrl").offset().top
       }, 500);
       $scope.vk_export = "\n__________\n";
       $scope.vk_export += $scope.event.name + "\n";
@@ -397,6 +397,40 @@
       $(lnk).attr("href", "/events/shifts/" + eventid);
       $("#page-container").append(lnk);
       $(lnk).trigger("click")
+    }
+
+    // выводит ещё инфу о записанных людях: онлайн ли они и телефон
+    $scope.getMoreInfo = function() {
+      var uids = _.pluck($scope.appliers, "uid")
+      getVkData(uids, ["online"],
+        function(response) {
+          for (var i = 0; i < $scope.appliers.length; i++) {
+            $scope.appliers[i].online = response[uids[i]].online;
+          };
+          $scope.$apply();
+        }
+      )
+
+      var ids = _.pluck($scope.appliers, "id")
+      var data = {
+        "action": "get_phones",
+        "ids": ids
+      }
+      $.ajax({ //TODO: make with angular
+        type: "POST",
+        url: "/handlers/user.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(response) {
+        _.each($scope.appliers, function(person) {
+          person.phone = _.findWhere(response.phones, {"id": person.id+""})
+          if (person.phone) {
+            person.phone = person.phone.phone
+          }
+        })
+        console.log(response)
+        $scope.$apply();
+      });
     }
 
   }
