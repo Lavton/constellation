@@ -1,31 +1,43 @@
 <!-- форма записи на смену -->
 <div class="col-xs-7 adding-apply-shift common-info" ng-cloak ng-controller="oneShiftAppAdd" id="shift-add-self">
-  <div ng-show="detachments.length">
+  <!-- {{detachments | json}} -->
+  <div ng-hide="_.isEmpty(detachments)">
     <ul>
       <li ng-repeat="(key, detachment) in detachments">
-        <span ng-repeat="(ind, person) in detachment.people">
-          <span ng-show="person.uid">
-          <a href={{"//vk.com/"+person.domain}} target="_blank"> <img ng-src="{{person.photo_50}}" width="20px" /></a>
-          {{person.first_name}} {{person.last_name}}
-          </span> <span ng-hide="person.uid"><img src="/own/images/plus.png" width="20px" /> {{person}}</span>
+        <!-- {{key}} {{detachment | json}} -->
+        <span ng-repeat="(ind, person) in detachment">
+        <!-- {{person | json}} -->
+          <span ng-show="person.user">
+            <a href="/about/users/{{person.id}}" target="_blank">
+              <img ng-src="{{person.photo}}" width="20">
+            </a>
+            {{person.first_name}} {{person.last_name}}
+          </span>
+        <span ng-show="person.name">
+            <img src="/own/images/plus.png" width="20">
+            {{person.name}}
+          </span>
         <br>
         </span>
-        <span ng-show="detachment.children_num || canEditDet(key)"><strong>количество детей:</strong> <input type="number" ng-model="detachment.children_num" ng-show="detachment.childrenEdit"> {{detachment.children_num}}  </span>
+        <span ng-show="detachment[0].children_num || canEditDet(key)"><strong>количество детей:</strong> <input type="number" ng-model="detachment[0].children_num" ng-show="detachment.childrenEdit"> {{detachment[0].children_num}}  </span>
         <span ng-show="canEditDet(key)">
           <img src="/own/images/edit.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&& !detachment.childrenEdit" ng-click="editChildren(key)"> <img src="/own/images/white.jpg" width="15px"  style="display: block;" align="right"><img src="/own/images/white.jpg" width="15px"  style="display: block;" align="right">
           <img src="/own/images/close.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&&detachment.childrenEdit" ng-click="editChildrenDel(key)"><img src="/own/images/white.jpg" width="15px"  style="display: block;" align="right">
           <img src="/own/images/check.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&&detachment.childrenEdit" ng-click="editChildrenOK(key)">
         </span>
-        <br ng-show="canEditDet(key) || detachment.children_num">  
-        <span ng-show="detachment.children_dis || canEditDet(key)"><strong>описание отряда:</strong> <input type="text" ng-show="detachment.childrenEdit" ng-model="detachment.children_dis"> {{detachment.children_dis}}</span>
-        <div class="table-bordered {{detachment.in_id}}-bbcomment-detach" ng-bind-html="detachment.bbcomments"></div>
+        <br ng-show="canEditDet(key) || detachment[0].children_num">
+        <span ng-show="detachment[0].children_dis || canEditDet(key)"><strong>описание отряда:</strong> <input type="text" ng-show="detachment.childrenEdit" ng-model="detachment[0].children_dis"> {{detachment[0].children_dis}}</span>
       </li>
     </ul>
+    <hr>
+    <div ng-show="_.toArray(detachments)[0][0].comments">
+       Комментарии к расстановке:
+      <div class="rank-comments table-bordered"></div>
+      <hr>
+    </div>
     <a href="" ng-click="removeRank()" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num">убрать расстановку для редактирования</a>
   </div>
   <span class="text-right" ng-show="window.current_group>=window.groups.COMMAND_STAFF.num"><a href="{{window.location.pathname}}/edit" class="ajax-nav">расстановка</a></span>
-
-
   <!-- вот форма записи на смену -->
   <span class="scrl-apply"></span>
   <button class="btn show_button" ng-click="tableToAdd()" ng-init="show_add=false" ng-hide="myself.id || (shift.today > shift.st_date)">Записаться на смену</button>
@@ -47,7 +59,6 @@
           <input type="range" ng-model="adding.probability" ng-init="adding.probability=100" min="0" max="100" scale="1" style="width: 70%" />
           <br/>
         </li>
-
         <li> <i>Желаемый возраст детей</i> (будет видно всем)
           <br/> От: {{adding.min_age}}
           <input type="range" ng-model="adding.min_age" ng-init="adding.min_age=4" min="4" max={{adding.max_age}} scale="1" style="width: 40%" />

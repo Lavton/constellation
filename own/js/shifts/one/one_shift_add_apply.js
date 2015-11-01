@@ -4,6 +4,7 @@
 
   function init_angular_o_s_c($scope, $http) {
     $scope.window = window;
+    $scope._ = _;
     var fid = window.location.href.split("/")
     var shiftid = fid[fid.length - 1] * 1;
 
@@ -50,48 +51,32 @@
       data: $.param(data)
     }).done(function(json) {
       $scope.detachments = json.detachments;
-
-      /*запись комментариев*/
-      var comments = []
-      _.each(json.detachments, function(element, index, list) {
-        comments.push({
-          id: element.in_id,
-          comment: element.comments
-        });
-      });
-      var bbdata = {
-        bbcode: comments,
-        ownaction: "bbcodesToHtml"
-      };
-      $.ajax({
-        type: "POST",
-        url: "/standart/markitup/sets/bbcode/parser.php",
-        dataType: 'json',
-        global: false,
-        data: $.param(bbdata)
-      }).done(function(comment_data) {
-        _.each($scope.detachments, function(detachment, index, list) {
-          detachment.bbcomments = _.findWhere(comment_data, {
-            id: detachment.in_id
-          }).bbcomment;
-          $("div." + detachment.in_id + "-bbcomment-detach").html(detachment.bbcomments)
-        });
-      });
-
-      /*люди*/
-      _.each($scope.detachments, function(detachment, index, list) {
-        detachment.children_num *= 1;
-        detachment.people = detachment.people.split("$");
-        _.each(detachment.people, function(person, index, list) {
-          window.getPerson(person, function(pers, flag) {
-            list[index] = pers;
-            if (flag) {
-              $scope.$apply();
-            }
-          })
+      _.each(json.detachments, function(detachment) {
+        var cached = _.find(window.people, function(p) {
+          return p.id * 1 == detachment.user * 1;
         })
-      });
-
+        if (cached) {
+          cached = _.omit(cached, "id")
+        }
+        _.extend(detachment, cached)
+      })
+      $scope.detachments = _.groupBy(json.detachments, function(detach) {
+        return detach.id
+      })
+        var bbdata = {
+          bbcode: _.toArray($scope.detachments)[0][0].comments,
+          ownaction: "bbcodeToHtml"
+        };
+        $.ajax({
+          type: "POST",
+          url: "/standart/markitup/sets/bbcode/parser.php",
+          dataType: 'text',
+          global: false,
+          data: $.param(bbdata)
+        }).done(function(rdata) {
+            $("div.rank-comments").html(rdata)
+          $scope.$apply();
+        });
       $scope.$apply();
     });
 
@@ -225,9 +210,9 @@
       if (window.current_group >= window.groups.COMMAND_STAFF.num) {
         return true;
       }
-      var ouid = window.getCookie("vk_id") * 1;
-      return _.find($scope.detachments[key].people, function(element) {
-        return element.uid * 1 == ouid;
+      var ouid = window.getCookie("id") * 1;
+      return _.find($scope.detachments[key], function(element) {
+        return element.user * 1 == ouid;
       })
     }
 
@@ -250,9 +235,9 @@
       $scope.detachments[key].childrenEdit = false;
       var data = {
         action: "set_children",
-        in_id: $scope.detachments[key].in_id,
-        "children_num": $scope.detachments[key].children_num,
-        "children_dis": $scope.detachments[key].children_dis
+        id: key,
+        "children_num": $scope.detachments[key][0].children_num,
+        "children_dis": $scope.detachments[key][0].children_dis
       }
       $.ajax({
         type: "POST",

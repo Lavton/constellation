@@ -470,14 +470,16 @@ function get_one_detach_info() {
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["all_apply"], $line);
 		}
-		$query = "SELECT ESD.id, ESD.children_num, ESD.children_discription, ESR.show_it, ESR.id AS ranking, 
+		$query = "SELECT ESD.id, ESD.children_num, 
+		ESD.children_discription AS children_dis, ESR.show_it, ESR.id AS ranking, 
 		ESR.comments, ESDP.user, ESDP.name 
 		FROM EventsShiftsDetachmentsPeople AS ESDP
 		RIGHT JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
 		RIGHT JOIN EventsShiftsRanking AS ESR ON ESR.id=ESD.ranking
 		 WHERE (ESR.shift='" . $_POST['id'] . "' AND ESR.show_it=1);";
+
 		if (isset($_POST["edit"]) && ($_POST["edit"] == true)) {
-			$query = "SELECT ESD.id, ESD.children_num, ESD.children_discription, ESR.show_it, ESR.id AS ranking, 
+			$query = "SELECT ESD.id, ESR.show_it, ESR.id AS ranking, 
 			ESR.comments, ESDP.user, ESDP.name 
 			FROM EventsShiftsDetachmentsPeople AS ESDP
 			RIGHT JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
@@ -904,7 +906,7 @@ function publish_rank() {
 	}
 }
 
-/*убирает расстановку для редактирования*/
+// убирает расстановку для редактирования
 function remove_rank() {
 	check_session();
 	session_start();
@@ -921,22 +923,13 @@ function remove_rank() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$query = "SELECT (MAX(ranking)+1) AS MR FROM detachments WHERE shift_id=" . $_POST["shift_id"] . ";";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$line = mysqli_fetch_array($rt, MYSQL_ASSOC);
-		if (is_null($line["MR"])) {
-			$line["MR"] = 1;
-		}
-		$query = "UPDATE detachments SET ranking=" . $line["MR"] . " WHERE (ranking IS NULL AND shift_id=" . $_POST["shift_id"] . ");";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
-		// $result["qw"] = $query;
+		$result = updater($link, "EventsShiftsRanking", array("show_it" => 0), False, "shift=". $_POST["shift_id"]);
 		mysqli_close($link);
 		echo json_encode($result);
 	}
 }
 
-/*вставляет информацию про детей в отряде*/
+// вставляет информацию про детей в отряде
 function set_children() {
 	check_session();
 	session_start();
@@ -953,26 +946,9 @@ function set_children() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$names = array();
-		$values = array();
-		array_push($names, "children_num");
-		array_push($values, "'" . $_POST["children_num"] . "'");
-
-		array_push($names, "children_dis");
-		array_push($values, "'" . $_POST["children_dis"] . "'");
-		foreach ($values as $key => $value) {
-			if ($value == "''") {
-				$values[$key] = "NULL";
-			}
-		}
-		$conc = array();
-		foreach ($names as $key => $value) {
-			array_push($conc, "" . $value . "=" . $values[$key]);
-		}
-		$conc = implode(", ", $conc);
-		$query = "UPDATE detachments SET " . $conc . " WHERE (in_id='" . $_POST['in_id'] . "');";
-		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
-		$result["result"] = "Success";
+		$result = updater($link, "EventsShiftsDetachments", array("id" => $_POST["id"], 
+			"children_num" => $_POST["children_num"],
+			"children_discription" => $_POST["children_dis"]));
 		mysqli_close($link);
 		echo json_encode($result);
 	}
