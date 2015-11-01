@@ -22,9 +22,9 @@
           ДР: 
             <span class="date {{person.dbThisYear}}">{{formatDate(person.birthdate)}}</span>
             Осталось дней: {{(person.dayFromYear - today + 365 - 1) % 365}} <img src="/own/images/warning.png" width="40px" ng-show="((person.dayFromYear - today + 365 - 1) % 365) < 7">
-          <span ng-show="person.shift"> <img src="/own/images/warning.png" width="40px">
+          <span ng-show="person.shift"> <img src="/own/images/warning.png" width="30px">
             <a href="/events/shifts/{{person.shift.id}}" class="ajax-nav">
-              {{person.shift.time_name}} <span ng-show="person.shift.place">({{person.shift.place}})</span>, {{person.shift.fn_date.getFullYear()}} г.
+              {{person.shift.name}} <span ng-show="person.shift.place">({{person.shift.place}})</span>, {{person.shift.fn_date.getFullYear()}} г.
             </a>
           </span>
         </li>

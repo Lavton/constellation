@@ -32,7 +32,6 @@
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-
         // получаем норм отображение.
         $scope.people = json.people
         _.each($scope.people, function(person, id, list) {
@@ -47,21 +46,24 @@
         _.each($scope.people, function(person) {
           person.bd = new Date(person.birthdate)
           person.dayFromYear = dayFromYear(person.bd)
-          person.dbThisYear = (new Date()).getFullYear()+"-"+((person.bd).getMonth()+1)+"-"+((person.bd).getDate())
+          person.dbThisYear = (new Date()).getFullYear() + "-" + ((person.bd).getMonth() + 1) + "-" + ((person.bd).getDate())
         })
         $scope.people = _.sortBy($scope.people, function(person) {
           return (person.dayFromYear - dayFromYear(today) + 365) % 365;
         })
         var happyPeople = [];
         // смотрим, какие смены совпадают с ДР этого человека.
-        _.each(json.shifts, function(shift) {
-          shift.dStart = dayFromYear(new Date(shift.start_date))
-          shift.dEnd = dayFromYear(new Date(shift.finish_date))
-          shift.fn_date = new Date(shift.finish_date);
+        _.each(_.groupBy(json.shifts, function(shift) {
+          return shift.shift
+        }), function(shift) {
+          console.log(shift[0].start_date)
+          shift[0].dStart = dayFromYear(new Date(shift[0].start_date))
+          shift[0].dEnd = dayFromYear(new Date(shift[0].finish_date))
+          shift[0].fn_date = new Date(shift[0].finish_date);
           _.each(_.filter($scope.people, function(person) {
-            return (shift.dStart <= person.dayFromYear) && (shift.dEnd >= person.dayFromYear) && (shift.vk_id * 1 == person.uid * 1)
+            return (shift[0].dStart <= person.dayFromYear) && (shift[0].dEnd >= person.dayFromYear) && (shift[0].user * 1 == person.id * 1)
           }), function(person) {
-            person.shift = shift;
+            person.shift = shift[0];
             happyPeople.push(person)
           })
         })

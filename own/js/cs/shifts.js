@@ -1,7 +1,7 @@
 (function() {
   /*логика ангулара*/
   function init_angular_s_c($scope, $http) {
-    /*инициализация по умолочанию*/
+    /*инициализация по умолчанию*/
     $scope.window = window;
     $scope.Object = Object;
     $scope.shifts = {}
