@@ -36,7 +36,7 @@ $link->set_charset("utf8");
     LEFT JOIN EventsMain AS EvM ON EvM.id=EM.parent_id
     LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
     WHERE (EM.finish_date >= CURRENT_DATE AND EM.visibility <= 2
-      AND  EE.planning=0) ORDER BY EM.start_date;';
+       AND (EE.planning = 0 OR EE.planning IS NULL)) ORDER BY EM.start_date;';
     $rt = mysqli_query($link, $query) or die('Запрос не удался: ');
     while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
       $in = array(   '/\[b\](.*?)\[\/b\]/ms', 

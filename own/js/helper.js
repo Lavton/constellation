@@ -438,3 +438,47 @@ function getVkData(ids, fields, callback) {
   });
 
 }
+
+// сохраняет мероприятия в кеш для доступа к ним оффлайн
+window.getEventsToOffline = function() {
+  if ((!(_.isArray(window.events))) || (!window.events.length)) {
+    var events = [];
+
+    function supports_html5_storage() {
+      try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+      } catch (e) {
+        return false;
+      }
+    }
+    var hasLocal = supports_html5_storage();
+    if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("events"))) {
+      var data = {
+        "action": "get_events_for_offline"
+      }
+      $.ajax({
+        type: "POST",
+        url: "/handlers/event.php",
+        dataType: "json",
+        data: $.param(data)
+      }).done(function(json) {
+        window.events = json.events;
+        if (hasLocal) {
+          window.localStorage.setItem("events", JSON.stringify(window.events))
+        }
+      });
+    } else {
+      if (hasLocal) {
+        console.log("cached")
+        window.events = JSON.parse(window.localStorage.getItem("events"))
+      }
+    }
+  } else {
+  }
+}
+
+window.clearEventsOffline = function() {
+  delete window.events;
+  window.localStorage.removeItem("events_ts");
+  window.localStorage.removeItem("events");
+}

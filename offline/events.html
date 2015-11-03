@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>просмотр мероприятий оффлайн</title>
+</head>
+
+<body>
+  <a href="/events" target="_blank">вернуться</a>
+  <hr>
+  <div id="container_event">
+  </div>
+  <script type="text/template" id="events_temp">
+    <ul>
+      <% _.each(events, function(one_event) { %>
+        <li>
+          <details>
+            <summary>
+              <%= one_event.EMname%> (
+                <%= window.formatDate(one_event.start_date)%>)
+            </summary>
+            <br>
+            <table style="width: 100%">
+              <thead>
+                <tr>
+                  <th>информация</th>
+                  <th>люди</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                <td>
+                <ul>
+                  <li><strong>Имя: </strong> <%= one_event.EMname %> </li>
+                  <li>(<strong>головное мероприятие: </strong> <%= one_event.parent_name %>) </li>
+                  <li><strong>Место:</strong> <%= one_event.place %></li>
+                  <li><strong><strong>Начало:</strong> <%= window.formatDate(one_event.start_date) %> в <%= one_event.start_time %> </li>
+                  <li><strong><strong>Окончание:</strong> <%= window.formatDate(one_event.finish_date) %> в <%= one_event.finish_time %> </li>
+                </ul>
+                </td>
+
+                <td>
+                  <strong>организаторы/редакторы</strong>
+                  <ul>
+                    <% _.each(one_event.editors, function(person) { %>
+                      <li> <%=person.first_name %> <%=person.last_name %>,  <%=window.goodTelephoneView(person.phone) %> </li>
+                    <% }); %>
+                  </ul>
+                  <hr>
+                  <strong>записавшиеся люди</strong>
+                  <ul>
+                    <% _.each(one_event.appliers, function(person) { %>
+                      <li> <%=person.first_name %> <%=person.last_name %>,  <%=window.goodTelephoneView(person.phone) %> </li>
+                    <% }); %>
+                  </ul>
+
+                </td>
+                </tr>
+              </tbody>
+            </table>
+          </details>
+          <hr>
+        </li>
+        <% }); %>
+    </ul>
+  </script>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="underscore.js"></script>
+  <script type="text/javascript" src="event.js"></script>
+</body>
+
+</html>

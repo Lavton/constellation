@@ -1,6 +1,7 @@
 <div id="all-figh" class="table-container" ng-cloak ng-controller="usersApp">
   <a href="" ng-click="filterShow('all')">все</a> | <a href="" ng-click="filterShow('fighters')">бойцы</a> | <a href="" ng-click="filterShow('candidats')">кандидаты</a> | <a href="" ng-click="filterShow('fightersANDcandidats')">бойцы и кандидаты</a> | <a href="" ng-click="filterShow('last')">остальные</a> 
-  <a href="/offline/people.html" class="text-right" target="_blank">оффлайн</a>
+  <a href="/offline/people.html" class="text-right" target="_blank"> оффлайн </a>
+  <a href="" class="text-right" ng-click="window.clearPeople(); window.setPeople()">Обновить информацию в кеше | </a>
   <!-- поиск по бойцам -->
   <div class="search_wrap"> Search:
     <input class="search" ng-model="query">

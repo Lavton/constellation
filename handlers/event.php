@@ -33,6 +33,9 @@ if (is_ajax()) {
 				break;
 			case "delete_editor_from_event": delete_editor_from_event();
 				break;
+
+			case "get_events_for_offline": get_events_for_offline();
+				break;
 		}
 	}
 }
@@ -567,5 +570,100 @@ function delete_editor_from_event() {
 		mysqli_close($link);
 		echo json_encode($result);
 	}
+}
+
+// выдаёт список мероприятий для доступа к ним из оффлайн
+function get_events_for_offline() {
+	check_session();
+	session_start();
+	if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= CANDIDATE))) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		// берём ещё не прошедшие
+		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, 
+		EM.finish_date, EM.finish_time, EM.place,
+		EM.visibility, EM.parent_id AS parent_id, EvB.name AS parent_name, EE.planning
+		FROM EventsMain AS EM 
+		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
+		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
+		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
+		WHERE (EM.finish_date >= CURRENT_DATE AND (EE.planning = 0 OR EE.planning IS NULL)
+			AND EM.visibility <= '.$_SESSION["current_group"].') 
+		ORDER BY EM.start_date;';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["events"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			$query2 = "SELECT EEE.editor FROM EventsEventsEditors AS EEE
+			 WHERE event=".$line["id"].";";
+			$rt2 = mysqli_query($link, $query2) or die('Запрос не удался: ');
+			$line["editors"]=array();
+			while ($line2 = mysqli_fetch_array($rt2, MYSQL_ASSOC)) {
+				array_push($line["editors"], $line2);
+			}
+
+			// список записавшихся людей
+			$query2 = 'SELECT user FROM EventsSupply WHERE (event='.$line["id"].');';
+
+			if ((isset($line["shift_id"])) && (!(is_null($line["shift_id"])))) {
+				$query2 = "SELECT * FROM (SELECT BN.*, 
+				UM.id, UM.uid, UM.first_name, UM.last_name, UM.middle_name
+				FROM EventsMain AS EM
+				JOIN
+				(SELECT ESDP.user, ESR.shift, 100 AS probability, 1 AS isDet
+				FROM EventsShiftsDetachmentsPeople AS ESDP
+				JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
+				JOIN EventsShiftsRanking AS ESR ON ESR.id=ESD.ranking
+				WHERE (ESDP.user IS NOT NULL
+				 AND ESR.show_it=1
+				)
+				GROUP BY ESDP.user, ESR.shift, probability, isDet
+				UNION ALL
+				SELECT 
+					CASE 
+						WHEN ESR.id IS NULL THEN ES.user
+					END AS user,
+					CASE 
+						WHEN ESR.id IS NULL THEN ES.event
+					END AS shift, 
+				ESS.probability, 0 AS isDet
+				FROM EventsSupply AS ES
+				JOIN EventsSupplyShifts AS ESS ON ES.id=ESS.supply_id
+				LEFT JOIN (
+				    SELECT * FROM EventsShiftsRanking WHERE show_it=1) AS ESR ON ESR.shift=ES.event
+				) AS BN ON BN.shift=EM.id
+				LEFT JOIN UsersMain AS UM ON UM.id=BN.user
+				) AS AllUsersShiftsConnections
+				WHERE shift=".$line["id"].";";
+			}
+			$rt2 = mysqli_query($link, $query2) or die('Запрос не удался: ');
+			$line["appliers"] = array();
+
+			while ($line2 = mysqli_fetch_array($rt2, MYSQL_ASSOC)) {
+				array_push($line["appliers"], $line2);
+			}
+
+			if (($line["visibility"] + 0) <= ($_SESSION["current_group"] + 0)) {
+				array_push($result["events"], $line);
+			}
+		}
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	} else {
+		echo json_encode(array("users" => [], "result" => "notAuth"));
+	}
+
 }
 ?>
