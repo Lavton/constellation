@@ -379,9 +379,18 @@ function get_common_inf() {
 		LEFT JOIN UsersFighters AS UF ON UF.id=UM.id
 		LEFT JOIN UsersCandidats AS UC  ON UC.id=UM.id
 		ORDER BY UM.id;";
+		if ($_SESSION["current_group"] >= FIGHTER) {
+			$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, 
+			UM.phone,
+			IFNULL(UF.id, 0) AS isFighter, 
+			UF.nickname, UF.maiden_name, IFNULL(UC.id, 0) AS isCandidate FROM UsersMain AS UM 
+			LEFT JOIN UsersFighters AS UF ON UF.id=UM.id
+			LEFT JOIN UsersCandidats AS UC  ON UC.id=UM.id
+			ORDER BY UM.id;";
+		}
+
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["users"] = array();
-
 		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
 			array_push($result["users"], $line);
 		}
