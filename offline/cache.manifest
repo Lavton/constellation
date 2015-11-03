@@ -1,10 +1,10 @@
 CACHE MANIFEST
-# Версия 3
+# Версия 7
 
 CACHE:
 jquery.js
 underscore.js
-res.js
+res.min.js
 
 #не получилось сделать так, чтобы эта секция работала((
 #FALLBACK:

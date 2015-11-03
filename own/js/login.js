@@ -21,11 +21,7 @@
             }).done(function(json) {
               console.log(json)
               window.clearPeople()
-              var lnk = document.createElement("a");
-              lnk.setAttribute("class", "ajax-nav")
-              $(lnk).attr("href", "/");
-              $("#page-container").append(lnk);
-              $(lnk).trigger("click")
+              window.location.href = "/";
             });
           }
         });
