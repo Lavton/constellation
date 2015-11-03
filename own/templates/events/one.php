@@ -45,7 +45,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           </ul>
         </div>
         <div class="col-xs-7 info-str">
-          <button ng-click="applyToEvent()" ng-hide="IAmIn">Записаться на мероприятие</button>
+          <span ng-hide="event.shift_id"><button ng-click="applyToEvent()" ng-hide="IAmIn">Записаться на мероприятие</button></span>
           <br>
           <h4>Записавшиеся люди:
           <a href="" ng-click="getMoreInfo()">
