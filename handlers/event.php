@@ -230,6 +230,38 @@ function get_one_info() {
 
 		// список записавшихся людей
 		$query = 'SELECT user FROM EventsSupply WHERE (event='.$result["event"]["id"].');';
+
+		if ((isset($result["event"]["shift_id"])) && (!(is_null($result["event"]["shift_id"])))) {
+			$query = "SELECT * FROM (SELECT BN.*, 
+			UM.id, UM.uid, UM.first_name, UM.last_name, UM.middle_name
+			FROM EventsMain AS EM
+			JOIN
+			(SELECT ESDP.user, ESR.shift, 100 AS probability, 1 AS isDet
+			FROM EventsShiftsDetachmentsPeople AS ESDP
+			JOIN EventsShiftsDetachments AS ESD ON ESD.id=ESDP.detachment
+			JOIN EventsShiftsRanking AS ESR ON ESR.id=ESD.ranking
+			WHERE (ESDP.user IS NOT NULL
+			 AND ESR.show_it=1
+			)
+			GROUP BY ESDP.user, ESR.shift, probability, isDet
+			UNION ALL
+			SELECT 
+				CASE 
+					WHEN ESR.id IS NULL THEN ES.user
+				END AS user,
+				CASE 
+					WHEN ESR.id IS NULL THEN ES.event
+				END AS shift, 
+			ESS.probability, 0 AS isDet
+			FROM EventsSupply AS ES
+			JOIN EventsSupplyShifts AS ESS ON ES.id=ESS.supply_id
+			LEFT JOIN (
+			    SELECT * FROM EventsShiftsRanking WHERE show_it=1) AS ESR ON ESR.shift=ES.event
+			) AS BN ON BN.shift=EM.id
+			LEFT JOIN UsersMain AS UM ON UM.id=BN.user
+			) AS AllUsersShiftsConnections
+			WHERE shift=".$result["event"]["id"].";";
+		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["appliers"] = array();
 

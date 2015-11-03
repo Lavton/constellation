@@ -48,16 +48,16 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
           <button ng-click="applyToEvent()" ng-hide="IAmIn">Записаться на мероприятие</button>
           <br>
           <h4>Записавшиеся люди:
-          <a href="" ng-show="event.editable" ng-click="getMoreInfo()">
+          <a href="" ng-click="getMoreInfo()">
           <img src="/own/images/get_more.png" width="20"></a>
           </h4>
           <ul>
             <li ng-repeat="person in appliers">
               <a href="//vk.com/{{person.domain}}" target="_blank"><img ng-src="{{person.photo}}" width="20"></a>
               <a href="/about/users/{{person.user}}">{{person.IF}}</a>
-              <span ng-show="person.phone"> {{window.goodTelephoneView(person.phone)}}</span>
+              <span ng-show="person.phone"> {{window.goodTelephoneView(person.r_phone)}}</span>
               <span ng-show="person.online">online</span>
-              <span ng-show="person.user==window.getCookie('id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span>
+              <span ng-hide="event.shift_id"> <span ng-show="person.user==window.getCookie('id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span></span>
             </li>
           </ul>
           <button ng-click="exportToVK()" class="export-scrl" ng-show="event.editable">Сгенерировать запись для ВКонтакте</button>
@@ -128,7 +128,7 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
       <li ng-repeat="person in appliers">
         <a href="//vk.com/{{person.domain}}" target="_blank"><img ng-src="{{person.photo}}" width="20"></a>
         <a href="/about/users/{{person.user}}">{{person.IF}}</a>
-        <img src="/own/images/delete.png" width="20" ng-click="deleteApply(person)">
+        <span ng-hide="event.shift_id"><img src="/own/images/delete.png" width="20" ng-click="deleteApply(person)"></span>
       </li>
     </ul>
     <hr>

@@ -85,7 +85,6 @@
 
       window.setPeople(function() {
         _.each($scope.appliers, function(person) {
-          console.log(person)
           _.extend(person, _.findWhere(window.people, {
             "id": person.user * 1
           }));
@@ -425,7 +424,7 @@
         _.each($scope.appliers, function(person) {
           person.phone = _.findWhere(response.phones, {"id": person.id+""})
           if (person.phone) {
-            person.phone = person.phone.phone
+            person.r_phone = person.phone.phone
           }
         })
         console.log(response)
