@@ -1,7 +1,11 @@
 CACHE MANIFEST
-# Версия 1
+# Версия 3
 
 CACHE:
 jquery.js
 underscore.js
 res.js
+
+#не получилось сделать так, чтобы эта секция работала((
+#FALLBACK:
+#* people.html
