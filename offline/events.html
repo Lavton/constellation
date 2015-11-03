@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html manifest="cache.manifest">
 <head>
   <meta charset="UTF-8">
   <title>просмотр мероприятий оффлайн</title>
@@ -11,13 +10,19 @@
   <hr>
   <div id="container_event">
   </div>
+<hr>
+  <br>
+  <input type="radio" name="what_appl" checked="true" value="only_me" onchange="window.cMe(true)"/>только на которые я записан 
+  <input type="radio" name="what_appl" value="all_a" onchange="window.cMe(false)" />все <br><br>
+  <input type="radio" name="what_plan" checked="true" value="plan" onchange="window.cPl(true)" />показать и те, которые лишь в планах
+  <input type="radio" name="what_plan" value="not_plan" onchange="window.cPl(false)" />скрыть их
   <script type="text/template" id="events_temp">
     <ul>
       <% _.each(events, function(one_event) { %>
         <li>
           <details>
             <summary>
-              <%= one_event.EMname%> (
+              <%= one_event.EMname %> (
                 <%= window.formatDate(one_event.start_date)%>)
             </summary>
             <br>
@@ -65,7 +70,6 @@
         <% }); %>
     </ul>
   </script>
-  <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="underscore.js"></script>
   <script type="text/javascript" src="event.js"></script>
 </body>

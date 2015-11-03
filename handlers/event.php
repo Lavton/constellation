@@ -598,7 +598,7 @@ function get_events_for_offline() {
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
 		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 
 		LEFT JOIN EventsEvents AS EE ON EE.id=EM.id
-		WHERE (EM.finish_date >= CURRENT_DATE AND (EE.planning = 0 OR EE.planning IS NULL)
+		WHERE (EM.finish_date >= CURRENT_DATE
 			AND EM.visibility <= '.$_SESSION["current_group"].') 
 		ORDER BY EM.start_date;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
@@ -651,6 +651,9 @@ function get_events_for_offline() {
 			$line["appliers"] = array();
 
 			while ($line2 = mysqli_fetch_array($rt2, MYSQL_ASSOC)) {
+				if ($line2["user"]+0 ==$_SESSION["id"]+0) {
+					$line["me_in"]=True;
+				}
 				array_push($line["appliers"], $line2);
 			}
 

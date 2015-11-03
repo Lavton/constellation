@@ -440,8 +440,9 @@ function getVkData(ids, fields, callback) {
 }
 
 // сохраняет мероприятия в кеш для доступа к ним оффлайн
-window.getEventsToOffline = function() {
-  if ((!(_.isArray(window.events))) || (!window.events.length)) {
+window.getEventsToOffline = function(force) {
+  console.log("events loaded")
+  if (force || ((!(_.isArray(window.events))) || (!window.events.length))) {
     var events = [];
 
     function supports_html5_storage() {
@@ -452,7 +453,7 @@ window.getEventsToOffline = function() {
       }
     }
     var hasLocal = supports_html5_storage();
-    if ((!hasLocal) || (hasLocal && !window.localStorage.getItem("events"))) {
+    if (force || ((!hasLocal) || (hasLocal && !window.localStorage.getItem("events")))) {
       var data = {
         "action": "get_events_for_offline"
       }
@@ -476,6 +477,8 @@ window.getEventsToOffline = function() {
   } else {
   }
 }
+// при каждой перезагрузке подгружаем и это
+window.getEventsToOffline(true)
 
 window.clearEventsOffline = function() {
   delete window.events;

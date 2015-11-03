@@ -2,9 +2,12 @@ CACHE MANIFEST
 # Версия 7
 
 CACHE:
-jquery.js
 underscore.js
-res.min.js
+people.min.js
+event.min.js
+
+people.html
+events.html
 
 #не получилось сделать так, чтобы эта секция работала((
 #FALLBACK:

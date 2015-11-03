@@ -77,10 +77,11 @@
       }
     }
   }
-  var result = _.template($("#people_temp").html())
+  var result = _.template(document.getElementById("people_temp").innerHTML)
   setPeople(function() {
-    $("#container").append(result({
+    document.getElementById("container_people").innerHTML = 
+    result({
       "users": window.people
-    }));
+    });
   })
 })();

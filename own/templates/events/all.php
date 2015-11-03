@@ -10,6 +10,9 @@
 
   
   <h2 ng-show="events.future">Грядущие</h2>
+    <a href="/offline/events.html" class="text-right" target="_blank"> оффлайн </a>
+  <a href="" class="text-right" ng-click="window.getEventsToOffline(true)">Обновить информацию в кеше | </a>
+
   <ul>
     <li ng-repeat="event in events.future" ng-show="showEvent(event.planning)">
        <p><span class="date {{event.start_date}}">{{formatDate(event.start_date)}}</span> <a href="/events/{{event.id}}" class="ajax-nav">{{event.EMname}}</a>  <a ng-show="event.parent_id" href="/events/{{event.parent_id}}"><em>({{event.parent_name}})</em></a>
