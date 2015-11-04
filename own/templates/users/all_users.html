@@ -7,7 +7,7 @@
     <input class="search" ng-model="query">
   </div>
   <!-- табличка, в которой будут все контакты бойцов -->
-  <button ng-click="getMoreInfo()" ng-show="window.current_group>=window.groups.FIGHTER.num">Получить подробную информацию</button>
+  <button ng-click="getMoreInfo()" ng-show="window.current_group>=window.groups.FIGHTER.num">Получить подробную информацию</button> <a href="" ng-click="onlineStatus()">online статус</a>
   <table class="table common-contacts">
     <thead>
       <tr>
@@ -19,10 +19,10 @@
     <tbody>
       <tr ng-repeat="user in users | filter:query" class="{{user.id}}">
         <td><a href='users/{{user.id}}' class="ajax-nav">{{user.id}}</a></td>
-        <td><img ng-src="{{user.photo}}" /></td>
+        <td><img ng-src="{{user.photo}}" /> </td>
         <td>
           <ul>
-            <li><strong>ФИ:</strong> {{user.FI}}</li>
+            <li><strong>ФИ:</strong> {{user.FI}} <span ng-show="user.online"><em> <u> online </u></em></span></li>
             <li ng-show="user.phone"><strong>Телефон:</strong><a href='tel:+7{{user.phone}}'> {{goodView(user.phone)}} </a></li>
             <li ng-show="user.second_phone"><strong>Телефон:</strong><a href='tel:+7{{user.second_phone}}'> {{goodView(user.second_phone)}} </a></li>
             <li ng-show="user.email"><strong>e-mail:</strong><a href='mailto:{{user.email}}'> {{user.email}} </a></li>

@@ -203,6 +203,20 @@
         })
         .value();
     }
+
+    // выдаёт онлайн статус бойцов
+    $scope.onlineStatus = function() {
+      var uids = _.pluck($scope.users, "uid")
+      getVkData(uids, ["online"],
+        function(response) {
+          for (var i = 0; i < $scope.users.length; i++) {
+            $scope.users[i].online = response[uids[i]].online;
+          };
+          $scope.$apply();
+        }
+      )
+
+    }
   }
 
   function init() {
