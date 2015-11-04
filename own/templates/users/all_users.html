@@ -23,7 +23,9 @@
         <td>
           <ul>
             <li><strong>ФИ:</strong> {{user.FI}} 
-              <span ng-show="user.online"><em> <u> online </u></em></span>
+              <span ng-show="user.online"><em> <u> online</u> 
+                <span ng-show="user.online_mobile"> (моб)</span> </em>
+              </span>
             </li>
             <li ng-show="user.phone"><strong>Телефон:</strong><a href='tel:+7{{user.phone}}'> {{goodView(user.phone)}} </a></li>
             <li ng-show="user.second_phone"><strong>Телефон:</strong><a href='tel:+7{{user.second_phone}}'> {{goodView(user.second_phone)}} </a></li>

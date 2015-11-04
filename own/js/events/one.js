@@ -405,6 +405,7 @@
         function(response) {
           for (var i = 0; i < $scope.appliers.length; i++) {
             $scope.appliers[i].online = response[uids[i]].online;
+            $scope.users[i].online_mobile = response[uids[i]].online_mobile;
           };
           $scope.$apply();
         }
@@ -422,7 +423,9 @@
         data: $.param(data)
       }).done(function(response) {
         _.each($scope.appliers, function(person) {
-          person.phone = _.findWhere(response.phones, {"id": person.id+""})
+          person.phone = _.findWhere(response.phones, {
+            "id": person.id + ""
+          })
           if (person.phone) {
             person.r_phone = person.phone.phone
           }

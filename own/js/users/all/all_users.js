@@ -211,6 +211,8 @@
         function(response) {
           for (var i = 0; i < $scope.users.length; i++) {
             $scope.users[i].online = response[uids[i]].online;
+            $scope.users[i].online_mobile = response[uids[i]].online_mobile;
+
           };
           $scope.$apply();
         }

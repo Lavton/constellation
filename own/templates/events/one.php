@@ -56,7 +56,9 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
               <a href="//vk.com/{{person.domain}}" target="_blank"><img ng-src="{{person.photo}}" width="20"></a>
               <a href="/about/users/{{person.user}}">{{person.IF}}</a>
               <span ng-show="person.phone"> {{window.goodTelephoneView(person.r_phone)}}</span>
-              <span ng-show="person.online">online</span>
+              <span ng-show="person.online"><em> <u> online</u> 
+                <span ng-show="person.online_mobile"> (моб)</span> </em>
+              </span>
               <span ng-hide="event.shift_id"> <span ng-show="person.user==window.getCookie('id')*1"><img src="/own/images/delete.png" width="20" ng-click='deleteApply()'> </span></span>
             </li>
           </ul>
