@@ -593,7 +593,8 @@ function get_events_for_offline() {
 		// берём ещё не прошедшие
 		$query = 'SELECT EM.id, EB.name AS base, EM.base_id, EM.name AS EMname, EM.start_date, EM.start_time, 
 		EM.finish_date, EM.finish_time, EM.place,
-		EM.visibility, EM.parent_id AS parent_id, EvB.name AS parent_name, EE.planning
+		EM.visibility, EM.parent_id AS parent_id, EvB.name AS parent_name, EE.planning, 
+		EE.contact, EM.comments
 		FROM EventsMain AS EM 
 		LEFT JOIN EventsBase AS EB ON EB.id=base_id 
 		LEFT JOIN EventsMain AS EvB ON EM.parent_id=EvB.id 

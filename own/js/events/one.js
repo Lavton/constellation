@@ -405,7 +405,7 @@
         function(response) {
           for (var i = 0; i < $scope.appliers.length; i++) {
             $scope.appliers[i].online = response[uids[i]].online;
-            $scope.users[i].online_mobile = response[uids[i]].online_mobile;
+            $scope.appliers[i].online_mobile = response[uids[i]].online_mobile;
           };
           $scope.$apply();
         }
