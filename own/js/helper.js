@@ -463,10 +463,35 @@ window.getEventsToOffline = function(force) {
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-        window.events = json.events;
-        if (hasLocal) {
-          window.localStorage.setItem("events", JSON.stringify(window.events))
-        }
+        var comments = []
+        _.each(json.events, function(element, index, list) {
+          comments.push({
+            id: element.id,
+            comment: element.comments
+          });
+        });
+        var bbdata = {
+          bbcode: comments,
+          ownaction: "bbcodesToHtml"
+        };
+        $.ajax({
+          type: "POST",
+          url: "/standart/markitup/sets/bbcode/parser.php",
+          dataType: 'json',
+          global: false,
+          data: $.param(bbdata)
+        }).done(function(rdata) {
+          _.each(json.events, function(element, index, list) {
+            element.comments = _.findWhere(rdata, {
+              id: element.id + ""
+            }).bbcomment;
+          });
+          window.events = json.events;
+          if (hasLocal) {
+            window.localStorage.setItem("events", JSON.stringify(window.events))
+          }
+        })
+
       });
     } else {
       if (hasLocal) {
