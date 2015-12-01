@@ -43,7 +43,8 @@
   window.state = {
     "main": {
       "js": [
-        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
+        "/own/js/index/starter.js"
       ],
       "title": "СПО \"СОзвездие\"",
       "loc": /^\/$/

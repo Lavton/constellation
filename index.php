@@ -44,6 +44,7 @@
       }
     }, 50);
   </script>
+
   <script type="text/javascript">
       document.title = 'CПО "СОзвездие" | сайт отряда';
   </script>
