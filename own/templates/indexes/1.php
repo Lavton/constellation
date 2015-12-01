@@ -25,9 +25,9 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG)
                 <div class="carousel-caption">
                   <div class="container">
                     <div class="carousel-caption">
-                      <h1>С</h1>
-                      <h2>Студенческий </h2>
-                      <p>Мы - сообщество студентов, собравшихся вместе для вожатства, но кроме этого мы занимаемся множеством других вещей - поем, танцуем, инсценируем, развиваемся.</p>
+                      <h1> <span>С</span></h1>
+                      <h2> <span>Студенческий</span> </h2>
+                      <p><span>Мы - сообщество студентов, собравшихся вместе для вожатства, но кроме этого мы занимаемся множеством других вещей - поем, танцуем, инсценируем, развиваемся.</span></p>
                     </div>
                   </div>
                 </div>
@@ -38,9 +38,9 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG)
                 <div class="carousel-caption">
                   <div class="container">
                     <div class="carousel-caption">
-                      <h1>П</h1>
-                      <h2>Педагогический</h2>
-                      <p>Мы - проходим курс Школ Вожатского Мастерства, по прохождении которого получаем сертификат, но на этом наше обучение не останавливается, ведь совершенству нет предела.</p>
+                      <h1><span>П</span></h1>
+                      <h2><span>Педагогический</span></h2>
+                      <p><span>Мы - проходим курс Школ Вожатского Мастерства, по прохождении которого получаем сертификат, но на этом наше обучение не останавливается, ведь совершенству нет предела.</span></p>
                     </div>
                   </div>
                 </div>
@@ -51,23 +51,24 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG)
                 <div class="carousel-caption">
                   <div class="container">
                     <div class="carousel-caption">
-                      <h1>О</h1>
-                      <h2>Отряд</h2>
-                      <p>Мы - отряд, а это значит, что мы всегда вместе. У нас есть традиции и устои, истории и легенды. А познакомить с ними мы хотим именно ТЕБЯ!</p>
+                      <h1><span>О</span></h1>
+                      <h2><span>Отряд</span></h2>
+                      <p><span>Мы - отряд, а это значит, что мы всегда вместе. У нас есть традиции и устои, истории и легенды. А познакомить с ними мы хотим именно ТЕБЯ!</span></p>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="item">
-                <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+                <!-- <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide"> -->
+                <img class="first-slide" src="/own/templates/indexes/images/all.jpg" alt="First slide">
                 <div class="carousel-caption">
                   <div class="container">
                     <div class="carousel-caption">
-                      <h1>хотите узнать больше?</h1>
-                      <p>Если Вы заинтересовались в нас, как в работниках - наш командир с радостью ответит на все вопросы<br>
+                      <h1><span>хотите узнать больше?</span></h1>
+                      <p><span>Если Вы заинтересовались в нас, как в работниках - наш командир с радостью ответит на все вопросы</span><br>
                         <a class="btn btn-lg btn-primary" href="/about/command_staff#commander" role="button">связаться с командиром</a></p>
                       <hr>
-                      <p>Если же ты живёшь и грёзишь работать вожатым, пиши нашему методисту! Он обязательно расскажет всё, что тебя интересует<br>
+                      <p><span>Если же ты живёшь и грёзишь работать вожатым, пиши нашему методисту! Он обязательно расскажет всё, что тебя интересует</span><br>
                         <a class="btn btn-lg btn-primary" href="/about/command_staff#methodist" role="button">связаться с методистом</a></p>
                     </div>
                   </div>
