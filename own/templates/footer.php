@@ -22,7 +22,6 @@
   <script type="text/javascript">
     VK.init({apiId: 4602552, onlyWidgets: true});
   </script>
-
 	<script type="text/javascript" src="/standart/js/underscore.js"></script>
   <script type="text/javascript" src="/standart/markitup/jquery.markitup.js"></script>
   <script type="text/javascript" src="/standart/markitup/sets/bbcode/set.js"></script>

@@ -41,6 +41,13 @@
   }
 
   window.state = {
+    "main": {
+      "js": [
+        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+      ],
+      "title": "СПО \"СОзвездие\"",
+      "loc": /^\/$/
+    },
     "about": {
       "users": {
         "all": {

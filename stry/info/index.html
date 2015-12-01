@@ -1,0 +1,229 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache">
+</head>
+<body>
+<textarea class="direct_m" rows="10" cols="40"></textarea><br>
+<button class="direct_but">модифицировать</button><br><br>
+
+  <button class="get_stro">Получить данные с сервера</button>
+<img src="stro.png" class="cam">
+<canvas id="can" style="z-index:1"></canvas>
+<img id="uploaded">
+<img src="stro.png" id="cam-r"> <br>
+<button class="Server_side">Отправить данные на сервер</button>
+<div style="position:fixed; background-color: white; left:50; top:50; z-index:4; display:none; border: 4px outset green" class="text_div">
+  <button class="save">Сохранить</button> <button class="reset">Отмена</button><br>
+<textarea class="content_text"></textarea>
+</div>
+
+<div style="position:fixed; background-color: white; left:50; top:50; z-index:4; display:none; border: 4px outset green" class="res_div">
+  <button class="OK_button">OK</button><br>
+  <div>
+  </div>
+</div>
+
+
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+var img = document.getElementById('cam-r');
+var canvas = document.getElementById('can');
+var cotx = canvas.getContext("2d");
+
+$(document).ready(function(){ 
+  $("canvas")[0].oncontextmenu = function() {return false;};
+
+  $("canvas").mousedown(function(e){ 
+    if( e.button == 2 ) { 
+      var mm_pic = $("#can")
+      var x_abs = e.offsetX;
+      var y_abs = e.offsetY;
+      var w = mm_pic.width();
+      var h = mm_pic.height();
+      var x_o = x_abs/w;
+      var y_o = y_abs/h;
+      console.log("r_click", x_o, y_o);
+      var tm_res = [];
+      var j = 0;
+      for (var i = 0; i < result_text_stro.length; i++) {
+        if ((x_o>=result_text_stro[i].x_o) && (y_o>=result_text_stro[i].y_o) && (x_o<=result_text_stro[i].x_k) && (y_o<=result_text_stro[i].y_k)) {
+          console.log(result_text_stro[i].comments)
+        } else {
+          tm_res[j] = result_text_stro[i]
+          j++;
+        }
+      };
+      cotx.drawImage(img, 0, 0);
+
+      result_text_stro = tm_res;
+      window.localStorage.setItem("stro", JSON.stringify(result_text_stro));
+      cotx.strokeStyle = "yellow"
+      var mm_pic = $("#can")
+      var w = mm_pic.width();
+      var h = mm_pic.height();
+
+      for (var i = 0; i < result_text_stro.length; i++) {
+        cotx.strokeRect(result_text_stro[i].x_o*w, result_text_stro[i].y_o*h, (result_text_stro[i].x_k- result_text_stro[i].x_o)*w, (result_text_stro[i].y_k- result_text_stro[i].y_o)*h);
+      };      
+      return false; 
+    } 
+    return true; 
+  }); 
+});
+$(".direct_m").val(window.localStorage.getItem("stro"))
+$('body').on('click', ".direct_but", function(e) {
+  window.localStorage.setItem("stro", $(".direct_m").val());
+});
+var condition = 0;
+var x_rec_l = 0;
+var y_rec_l = 0;
+var x_rec_r = 0;
+var y_rec_r = 0;
+
+var result_text_stro = JSON.parse(window.localStorage.getItem("stro"));
+if (! result_text_stro) {
+  result_text_stro = [];
+}
+var callback = function(image) {
+  if(!image) image = this;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  cotx.drawImage(image, 0, 0);
+
+  cotx.strokeStyle = "yellow"
+  var mm_pic = $("#can")
+  var w = mm_pic.width();
+  var h = mm_pic.height();
+
+  for (var i = 0; i < result_text_stro.length; i++) {
+    cotx.strokeRect(result_text_stro[i].x_o*w, result_text_stro[i].y_o*h, (result_text_stro[i].x_k- result_text_stro[i].x_o)*w, (result_text_stro[i].y_k- result_text_stro[i].y_o)*h);
+  };
+
+  $('body').on('click', "#can", function(e) {
+    cotx.strokeStyle = "#ffddff"
+  	var mm_pic = $("#can")
+  	var x_abs = e.offsetX;
+  	var y_abs = e.offsetY;
+  	var w = mm_pic.width();
+  	var h = mm_pic.height();
+  	var x_o = x_abs/w;
+    var y_o = y_abs/h;
+    if (condition == 0) {
+      x_rec_l = x_abs;
+      y_rec_l = y_abs;
+      condition = 1;
+    } else if (condition == 1) {
+      cotx.strokeRect(x_rec_l, y_rec_l, x_abs- x_rec_l, y_abs- y_rec_l);
+      condition = 2;
+      x_rec_r = x_abs;
+      y_rec_r = y_abs;
+      $(".text_div").show()
+    }
+    console.log("click", x_o, y_o);
+  });
+
+  $('body').on('click', "button.save", function(e) {
+    var mm_pic = $("#can")
+    var w = mm_pic.width();
+    var h = mm_pic.height();
+    var x_o = x_rec_l/w;
+    var y_o = y_rec_l/h;
+    var x_k = x_rec_r/w;
+    var y_k = y_rec_r/h;
+    result_text_stro.push({
+      x_o: Math.min(x_o, x_k),
+      y_o: Math.min(y_o, y_k),
+      x_k: Math.max(x_o, x_k),
+      y_k: Math.max(y_o, y_k),
+      comments: $("textarea.content_text").val()
+    })
+    window.localStorage.setItem("stro", JSON.stringify(result_text_stro));
+    condition = 0;
+    cotx.strokeStyle = "yellow"
+    cotx.strokeRect(x_rec_l, y_rec_l, x_rec_r- x_rec_l, y_rec_r- y_rec_l);
+    console.log(x_o, y_o, $("textarea.content_text").val())
+    $("textarea.content_text").val("")
+    $(".text_div").hide();
+  });
+
+  $('body').on('click', "button.reset", function(e) {
+    condition = 0;
+    $(".text_div").hide();
+    cotx.drawImage(image, 0, 0);
+
+    cotx.strokeStyle = "yellow"
+    var mm_pic = $("#can")
+    var w = mm_pic.width();
+    var h = mm_pic.height();
+
+    for (var i = 0; i < result_text_stro.length; i++) {
+      cotx.strokeRect(result_text_stro[i].x_o*w, result_text_stro[i].y_o*h, (result_text_stro[i].x_k- result_text_stro[i].x_o)*w, (result_text_stro[i].y_k- result_text_stro[i].y_o)*h);
+    };
+  });
+}
+
+if(img.complete) { //check if image was already loaded by the browser
+   callback(img);
+}else {
+   img.onload = callback;
+}
+
+
+$('body').on('click', "img.cam", function(e) {
+	var mm_pic = $(".cam")
+	var x_abs = e.offsetX;
+	var y_abs = e.offsetY;
+	var w = mm_pic.width();
+	var h = mm_pic.height();
+	var x_o = x_abs/w;
+	var y_o = y_abs/h;
+	console.log("click", x_o, y_o);
+  for (var i = 0; i < result_text_stro.length; i++) {
+    if ((x_o>=result_text_stro[i].x_o) && (y_o>=result_text_stro[i].y_o) && (x_o<=result_text_stro[i].x_k) && (y_o<=result_text_stro[i].y_k)) {
+      $(".res_div").show();
+      $(".res_div > div").html(result_text_stro[i].comments);
+      console.log(result_text_stro[i].comments)
+    }
+  };
+});
+
+$('body').on('click', ".OK_button", function(e) {
+  $(".res_div").hide();
+  $(".res_div > div").html("");
+});
+
+$('body').on('click', ".get_stro", function(e) {
+  $.ajax({
+    type: "POST",
+    url: "save_c.php",
+    dataType: "json",
+    data:  $.param({"action": "get"})
+  }).done(function(json) {
+    console.log(json)
+    var result_text_stro = json["cam"];
+    if (! result_text_stro) {
+      result_text_stro = [];
+    }
+    window.localStorage.setItem("stro", JSON.stringify(result_text_stro));
+    document.getElementById("uploaded").src = canvas.toDataURL()
+  });
+
+});
+
+
+$('body').on('click', ".Server_side", function(e) {
+  $.ajax({
+    type: "POST",
+    url: "save_c.php",
+    dataType: "json",
+    data:  $.param({"action": "put", "cam":{"cam": result_text_stro}})
+  }).done(function(json) {
+    console.log(json)
+  });
+});
+
+</script>
+
+</body></html>
+
