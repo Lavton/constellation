@@ -63,6 +63,11 @@ var SnailBait =  function () {
    this.SNAIL_BOMB_CELLS_WIDTH = 20,
    this.SNAIL_CELLS_WIDTH = 64,
    this.SNAIL_CELLS_HEIGHT = 34,
+   this.ORANGE_STAR_CELLS_HEIGHT=36,
+   this.RED_STAR_CELLS_HEIGHT=41,
+   this.CLOUD_CELLS_HEIGHT=48,
+   this.OLD_MAN_CELLS_HEIGHT=60,
+
 
    // Constants are listed in alphabetical order from here on out
    
@@ -322,6 +327,58 @@ var SnailBait =  function () {
       { left: 376, top: 245, width: 52, height: this.RUNNER_CELLS_HEIGHT },
       { left: 445, top: 245, width: 46, height: this.RUNNER_CELLS_HEIGHT },
    ],
+
+   // оранжевая звезда..................................................
+   this.orangeStarCells = [
+      { left: 9,   top: 340, width: 43, height: this.ORANGE_STAR_CELLS_HEIGHT },
+      { left: 52,  top: 340, width: 34, height: this.ORANGE_STAR_CELLS_HEIGHT },
+      { left: 90,  top: 340, width: 23, height: this.ORANGE_STAR_CELLS_HEIGHT },
+      { left: 113, top: 340, width: 28, height: this.ORANGE_STAR_CELLS_HEIGHT },
+      { left: 139,   top: 340, width: 43, height: this.ORANGE_STAR_CELLS_HEIGHT },
+      { left: 183,  top: 340, width: 28, height: this.ORANGE_STAR_CELLS_HEIGHT },
+      { left: 209,  top: 340, width: 25, height: this.ORANGE_STAR_CELLS_HEIGHT },
+      { left: 236, top: 340, width: 33, height: this.ORANGE_STAR_CELLS_HEIGHT },
+   ],
+   // красная звезда..................................................
+   this.redStarCells = [
+      { left: 12,   top: 391, width: 44, height: this.RED_STAR_CELLS_HEIGHT },
+      { left: 57,  top: 391, width: 39, height: this.RED_STAR_CELLS_HEIGHT },
+      { left: 98,  top: 391, width: 22, height: this.RED_STAR_CELLS_HEIGHT },
+      { left: 123, top: 391, width: 29, height: this.RED_STAR_CELLS_HEIGHT },
+      { left: 154,   top: 391, width: 41, height: this.RED_STAR_CELLS_HEIGHT },
+      { left: 197,  top: 391, width: 30, height: this.RED_STAR_CELLS_HEIGHT },
+      { left: 227,  top: 391, width: 25, height: this.RED_STAR_CELLS_HEIGHT },
+      { left: 253, top: 391, width: 38, height: this.RED_STAR_CELLS_HEIGHT },
+   ],
+
+   // тучка............................................................
+   this.cloudCells = [
+      { left: 13,   top: 449, width: 48, height: 48 },
+      { left: 66,  top: 449, width: 48, height: 30 },
+   ],
+
+   // старик............................................................
+   this.oldManCellsRight = [
+      { left: 12,   top: 509, width: 36, height: this.OLD_MAN_CELLS_HEIGHT },
+      { left: 48,  top: 509, width: 33, height: this.OLD_MAN_CELLS_HEIGHT },
+      { left: 84,   top: 509, width: 36, height: this.OLD_MAN_CELLS_HEIGHT },
+      { left: 123,  top: 509, width: 36, height: this.OLD_MAN_CELLS_HEIGHT },
+   ],
+   this.oldManCellsLeft = [
+      { left: 13,   top: 576, width: 36, height: this.OLD_MAN_CELLS_HEIGHT },
+      { left: 48,  top: 576, width: 36, height: this.OLD_MAN_CELLS_HEIGHT },
+      { left: 85,   top: 576, width: 33, height: this.OLD_MAN_CELLS_HEIGHT },
+      { left: 120,  top: 576, width: 36, height: this.OLD_MAN_CELLS_HEIGHT },
+   ],
+
+   // песок.............................................................
+   this.sandCells = [
+      { left: 19,   top: 656, width: 30, height: 14 },
+      { left: 45,  top: 659, width: 32, height: 13 },
+      { left: 80,   top: 651, width: 29, height: 20 },
+   ],
+
+
    // Bats..............................................................
    
    this.batData = [
