@@ -118,3 +118,66 @@ body {
    z-index: 2;
    display: none;
 }
+
+
+#man-or-woman {
+   position: absolute;
+   width: 600px;
+   margin-top: 85px;
+   margin-left: 90px;
+   text-align: center;
+   background: rgba(255,255,255,0.85);
+   padding: 0px 20px 20px 20px;
+   color: navy;
+   text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+
+   -webkit-transition: opacity 1s;
+   -moz-transition: opacity 1s;
+   -o-transition: opacity 1s;
+   transition: opacity 1s;
+   
+   -webkit-box-shadow: rgba(0,0,0,0.5) 4px 4px 8px;
+   -moz-box-shadow: rgba(0,0,0,0.5) 4px 4px 8px;
+   -o-box-shadow: rgba(0,0,0,0.5) 4px 4px 8px;
+   box-shadow: rgba(0,0,0,0.5) 4px 4px 8px;
+
+   opacity: 0;
+   display: none;
+
+   z-index: 2;
+}
+#man-or-woman > table {
+   /*background-color: red;*/
+}
+#running-slowly h1 {
+   padding-top: 0;
+   text-align: center;
+   color: rgb(50,50,250);
+}
+
+#slowly-okay:hover {
+   color: blue;
+}
+
+#slowly-dont-show:hover {
+   color: blue;
+}
+
+#slowly-okay {
+   margin-top: 20px;
+   float: left;
+   margin-left: 50px;
+   font-size: 1.2em;
+}
+
+#slowly-dont-show {
+   margin-top: 20px;
+   float: right;
+   margin-right: 50px;
+   font-size: 1.2em;
+}
+
+#running-slowly p {
+   color: navy;
+   font-size: 1.05em;
+}
