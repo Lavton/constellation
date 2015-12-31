@@ -24,7 +24,12 @@ var dataFactory = function() {
     }, {
       left: 2450,
       top: 275
-    }, ];
+    }, 
 
+    ];
 
+// старик
+  this.oldManData = [
+      { platformIndex: 1 },
+  ];
 }

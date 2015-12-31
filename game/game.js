@@ -513,7 +513,7 @@ var ConstellationGame = function() {
     this.platforms = [],
     // this.rubies = [],
     // this.sapphires = [],
-    // this.snails = [],
+    this.oldMans = [],
     // this.snailBombs = [],
 
     // Sprite artists...................................................
@@ -670,6 +670,7 @@ ConstellationGame.prototype = {
 
   stopRun: function() {
     this.bgVelocity = this.STARTING_BACKGROUND_VELOCITY;
+    this.runner.runAnimationRate = 0;
   },
 
   // Sprites..............................................................
@@ -806,9 +807,9 @@ ConstellationGame.prototype = {
     //   this.sprites.push(this.sapphires[i]);
     // }
 
-    // for (var i = 0; i < this.snails.length; ++i) {
-    //   this.sprites.push(this.snails[i]);
-    // }
+    for (var i = 0; i < this.oldMans.length; ++i) {
+      this.sprites.push(this.oldMans[i]);
+    }
 
     // for (var i = 0; i < this.snailBombs.length; ++i) {
     //   this.sprites.push(this.snailBombs[i]);
@@ -908,30 +909,31 @@ ConstellationGame.prototype = {
   //   }
   // },
 
-  // createSnailSprites: function() {
-  //   var snail,
-  //     snailArtist = new SpriteSheetArtist(this.spritesheet,
-  //       this.rubyCells),
-  //     snailBombArtist = new SpriteSheetArtist(this.spritesheet,
-  //       this.snailBombCells);
+  createOldManSprites: function() {
+    var oldMan,
+      oldManArtist = new SpriteSheetArtist(this.spritesheet,
+        this.oldManCellsRight);
+      // snailBombArtist = new SpriteSheetArtist(this.spritesheet,
+      //   this.snailBombCells);
 
-  //   for (var i = 0; i < this.snailData.length; ++i) {
-  //     snail = new Sprite('snail', snailArtist);
+    for (var i = 0; i < this.oldManData.length; ++i) {
+      oldMan = new Sprite('oldMan', oldManArtist);
 
-  //     snail.width = this.SNAIL_CELLS_WIDTH;
-  //     snail.height = this.SNAIL_CELLS_HEIGHT;
+      oldMan.width = _.max(this.oldManCellsRight, function(cell) {
+        return cell.width
+      }).width;
+      oldMan.height = magicNumbers.OLD_MAN_CELLS_HEIGHT;
+      // snail.bomb = new Sprite('snailBomb', snailBombArtist);
 
-  //     snail.bomb = new Sprite('snailBomb', snailBombArtist);
+      // snail.bomb.width = this.SNAILBOMB_CELLS_WIDTH;
+      // snail.bomb.height = this.SNAILBOMB_CELLS_HEIGHT;
 
-  //     snail.bomb.width = this.SNAILBOMB_CELLS_WIDTH;
-  //     snail.bomb.height = this.SNAILBOMB_CELLS_HEIGHT;
+      // snail.bomb.snail = snail; // Snail bombs maintain a reference to their snail
 
-  //     snail.bomb.snail = snail; // Snail bombs maintain a reference to their snail
-
-  //     this.snails.push(snail);
-  //     this.snailBombs.push(snail.bomb);
-  //   }
-  // },
+      this.oldMans.push(oldMan);
+      // this.snailBombs.push(snail.bomb);
+    }
+  },
 
   updateSprites: function(now) {
     var sprite;
@@ -988,7 +990,7 @@ ConstellationGame.prototype = {
     // this.createCoinSprites();
     // this.createRubySprites();
     // this.createSapphireSprites();
-    // this.createSnailSprites();
+    this.createOldManSprites();
 
     this.initializeSprites();
 
@@ -1002,7 +1004,7 @@ ConstellationGame.prototype = {
     // this.positionSprites(this.coins, this.coinData);
     // this.positionSprites(this.rubies, this.rubyData);
     // this.positionSprites(this.sapphires, this.sapphireData);
-    // this.positionSprites(this.snails, this.snailData);
+    this.positionSprites(this.oldMans, this.oldManData);
     // this.positionSprites(this.snailBombs, this.snailBombData);
   },
 
