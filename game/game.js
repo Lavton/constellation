@@ -913,23 +913,25 @@ ConstellationGame.prototype = {
     var oldMan,
       oldManArtist = new SpriteSheetArtist(this.spritesheet,
         this.oldManCellsRight);
-      // snailBombArtist = new SpriteSheetArtist(this.spritesheet,
-      //   this.snailBombCells);
+    // snailBombArtist = new SpriteSheetArtist(this.spritesheet,
+    //   this.snailBombCells);
 
     for (var i = 0; i < this.oldManData.length; ++i) {
-      oldMan = new Sprite('oldMan', oldManArtist);
+      oldMan = new Sprite('oldMan', oldManArtist, [new Pace(this.oldManCellsLeft, this.oldManCellsRight)]);
 
       oldMan.width = _.max(this.oldManCellsRight, function(cell) {
         return cell.width
       }).width;
       oldMan.height = magicNumbers.OLD_MAN_CELLS_HEIGHT;
+
       // snail.bomb = new Sprite('snailBomb', snailBombArtist);
 
       // snail.bomb.width = this.SNAILBOMB_CELLS_WIDTH;
       // snail.bomb.height = this.SNAILBOMB_CELLS_HEIGHT;
 
       // snail.bomb.snail = snail; // Snail bombs maintain a reference to their snail
-
+      oldMan.velocityX = this.OLDMAN_PACE_VELOCITY;
+      oldMan.direction = this.RIGHT;
       this.oldMans.push(oldMan);
       // this.snailBombs.push(snail.bomb);
     }
@@ -1039,9 +1041,9 @@ ConstellationGame.prototype = {
 // Event handlers.......................................................
 
 window.onkeydown = function(e) {
-    if (constellationGame == null) {
-        return;
-    }
+  if (constellationGame == null) {
+    return;
+  }
   var key = e.keyCode;
   if (key === 80 || (constellationGame.paused && key !== 80)) { // 'p'
     constellationGame.togglePaused();
@@ -1070,9 +1072,9 @@ window.onkeydown = function(e) {
 };
 
 window.onkeyup = function(e) {
-    if (constellationGame == null) {
-        return;
-    }
+  if (constellationGame == null) {
+    return;
+  }
   var key = e.keyCode;
   if (key === 80 || (constellationGame.paused && key !== 80)) { // 'p'
     constellationGame.togglePaused();
@@ -1086,9 +1088,9 @@ window.onkeyup = function(e) {
 };
 
 window.onblur = function(e) { // pause if unpaused
-    if (constellationGame == null) {
-        return;
-    }
+  if (constellationGame == null) {
+    return;
+  }
   constellationGame.windowHasFocus = false;
 
   if (!constellationGame.paused) {

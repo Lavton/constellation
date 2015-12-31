@@ -446,7 +446,7 @@ var cellsFactory = function() {
   this.oldManCellsLeft = [{
     left: 13,
     top: 576,
-    width: 36,
+    width: 34,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, {
     left: 48,

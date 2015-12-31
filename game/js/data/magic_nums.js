@@ -18,4 +18,5 @@ var magicNumbers = {
   TRACK_3_BASELINE: 123, // расположение 3 уровня
 
   RUN_ANIMATION_RATE: 7, // частота бега бегуна
+  OLDMAN_PACE_VELOCITY: 50, // скорость "снувания" старика
 }
