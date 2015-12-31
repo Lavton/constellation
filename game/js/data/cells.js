@@ -225,14 +225,14 @@ var cellsFactory = function() {
     width: 28,
     height: magicNumbers.ORANGE_STAR_CELLS_HEIGHT
   }, {
-    left: 209,
+    left: 210,
     top: 340,
     width: 25,
     height: magicNumbers.ORANGE_STAR_CELLS_HEIGHT
   }, {
     left: 236,
     top: 340,
-    width: 33,
+    width: 35,
     height: magicNumbers.ORANGE_STAR_CELLS_HEIGHT
   }, ];
 

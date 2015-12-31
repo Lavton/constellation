@@ -68,10 +68,12 @@ SpriteSheetArtist.prototype = {
    
    draw: function (sprite, context) {
       var cell = this.cells[this.cellIndex];
-
+      console.log(sprite.type, sprite.left)
       context.drawImage(this.spritesheet, cell.left, cell.top,
                                           cell.width, cell.height,
-                                          sprite.left, sprite.top,
+                                          (sprite.left+sprite.width -cell.width)/2 ,
+                                           // (sprite.top+sprite.height -cell.height)/2,
+                                           sprite.top,
                                           cell.width, cell.height);
    }
 };

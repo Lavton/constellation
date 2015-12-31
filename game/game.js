@@ -105,7 +105,6 @@ var ConstellationGame = function() {
 
     this.STARTING_BACKGROUND_OFFSET = 0,
 
-    this.STARTING_RUNNER_LEFT = 50,
     this.STARTING_PAGEFLIP_INTERVAL = -1,
     this.STARTING_RUNNER_TRACK = 1,
     this.STARTING_RUNNER_VELOCITY = 0,
@@ -833,11 +832,10 @@ ConstellationGame.prototype = {
   // },
 
   createOrangeStarSprites: function() {
-    var orangeStar,
-      orangeStarArtist = new SpriteSheetArtist(this.spritesheet, this.orangeStarCells);
-
+    var orangeStar;
     for (var i = 0; i < this.orangeStarData.length; ++i) {
-      orangeStar = new Sprite('orangeStar', orangeStarArtist);
+      orangeStar = new Sprite('orangeStar', new SpriteSheetArtist(this.spritesheet, this.orangeStarCells),
+        [new Cycle(100, 100)]);
       orangeStar.width = _.max(this.orangeStarCells, function(cell) {
         return cell.width
       }).width;

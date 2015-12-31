@@ -1,5 +1,7 @@
 var magicNumbers = {
   RUNNER_CELLS_HEIGHT: 60, // высота бегуна
+  STARTING_RUNNER_LEFT: 100, // начальное положение бегуна
+
   ORANGE_STAR_CELLS_HEIGHT: 38, // высота оранжевой звезды
   RED_STAR_CELLS_HEIGHT: 41, // высота красной звезды
   ORANGE_SURICANE_CELLS_HEIGHT: 25, // высота оранжевого сюрикена

@@ -32,4 +32,11 @@ var dataFactory = function() {
   this.oldManData = [
       { platformIndex: 1 },
   ];
+
+// тучка
+  this.cloudData = [
+      { left: 10,
+      top: 100 },
+  ];
+
 }
