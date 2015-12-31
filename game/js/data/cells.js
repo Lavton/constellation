@@ -89,89 +89,108 @@ var cellsFactory = function() {
 
   // Бегущий парень.........................................................
 
-  this.runnerManCellsRight = [{
+  this.runnerManCellsRight = [
+  {
       left: 128,
       top: 165,
       width: 62,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    },
+    {
       left: 198,
       top: 165,
       width: 57,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 264,
       top: 165,
       width: 50,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 322,
       top: 165,
       width: 54,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 181,
+    }, 
+    {
+      left: 380,
       top: 165,
-      width: 58,
+      width: 61,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 151,
+    }, 
+    {
+      left: 452,
       top: 165,
       width: 55,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 20,
       top: 165,
       width: 46,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 76,
       top: 165,
       width: 52,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, ],
+    }, 
+    ],
 
-    this.runnerManCellsLeft = [{
+    this.runnerManCellsLeft = [
+    {
       left: 67,
       top: 245,
       width: 58,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 133,
       top: 245,
       width: 54,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 196,
       top: 245,
       width: 50,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 255,
       top: 245,
       width: 57,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 316,
+    }, 
+    {
+      left: 317,
       top: 245,
       width: 62,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 376,
+    }, 
+    {
+      left: 380,
       top: 245,
       width: 52,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 445,
       top: 245,
       width: 46,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
+    }, 
+    {
       left: 4,
       top: 245,
       width: 55,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, ];
+    }, 
+
+    ];
 
 
   // оранжевая звезда..................................................

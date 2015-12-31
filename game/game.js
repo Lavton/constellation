@@ -31,6 +31,22 @@
 // constellationGame constructor --------------------------------------------
 
 var ConstellationGame = function() {
+  // получаем данные из других файлов
+  window.newself = this;
+  _.forEach(new cellsFactory(), function(el, ind) {
+    window.newself[ind] = el;
+  })
+  _.forEach(magicNumbers, function(el, ind) {
+    window.newself[ind] = el;
+  })
+  _.forEach(new platformFactory(), function(el, ind) {
+    window.newself[ind] = el;
+  })
+  _.forEach(new dataFactory(), function(el, ind) {
+    window.newself[ind] = el;
+  })
+
+
   this.canvas = document.getElementById('game-canvas'),
     this.context = this.canvas.getContext('2d'),
 
@@ -62,8 +78,8 @@ var ConstellationGame = function() {
     this.SNAIL_BOMB_CELLS_WIDTH = 20,
     this.SNAIL_CELLS_WIDTH = 64,
     this.SNAIL_CELLS_HEIGHT = 34,
-    
-    
+
+
     // Constants are listed in alphabetical order from here on out
 
     this.BACKGROUND_VELOCITY = 42,
@@ -525,7 +541,7 @@ var ConstellationGame = function() {
 
     // Sprites...........................................................
 
-    this.runner = new Sprite('runner', this.runnerArtist);
+    this.runner = new Sprite('runner', this.runnerArtist, [new Run()]);
 
   // All sprites.......................................................
   // 
@@ -541,21 +557,6 @@ var ConstellationGame = function() {
       sprite.exploding = false;
     }
   );
-
-  // получаем данные из других файлов
-  window.newself = this;
-  _.forEach(new cellsFactory(), function(el, ind) { 
-   window.newself[ind] = el;
-   })
-  _.forEach(magicNumbers, function(el, ind) { 
-   window.newself[ind] = el;
-   })
-  _.forEach(new platformFactory(), function(el, ind) { 
-   window.newself[ind] = el;
-   })
-  _.forEach(new dataFactory(), function(el, ind) { 
-   window.newself[ind] = el;
-   })
 };
 
 
@@ -652,6 +653,7 @@ ConstellationGame.prototype = {
   },
 
   turnLeft: function() {
+    this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
     this.bgVelocity = -this.BACKGROUND_VELOCITY;
     this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
     this.runnerArtist.cells = this.runnerCellsLeft;
@@ -659,6 +661,7 @@ ConstellationGame.prototype = {
   },
 
   turnRight: function() {
+    this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
     this.bgVelocity = this.BACKGROUND_VELOCITY;
     this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
     this.runnerArtist.cells = this.runnerCellsRight;
@@ -666,7 +669,7 @@ ConstellationGame.prototype = {
   },
 
   stopRun: function() {
-    this.bgVelocity = this.STARTING_BACKGROUND_VELOCITY;   
+    this.bgVelocity = this.STARTING_BACKGROUND_VELOCITY;
   },
 
   // Sprites..............................................................
@@ -834,7 +837,9 @@ ConstellationGame.prototype = {
 
     for (var i = 0; i < this.orangeStarData.length; ++i) {
       orangeStar = new Sprite('orangeStar', orangeStarArtist);
-      orangeStar.width = _.max(this.orangeStarCells, function(cell) {return cell.width}).width;
+      orangeStar.width = _.max(this.orangeStarCells, function(cell) {
+        return cell.width
+      }).width;
       orangeStar.height = magicNumbers.ORANGE_STAR_CELLS_HEIGHT;
       this.orangeStars.push(orangeStar);
     }
@@ -934,7 +939,7 @@ ConstellationGame.prototype = {
     for (var i = 0; i < this.sprites.length; ++i) {
       sprite = this.sprites[i];
       if (sprite.visible && this.spriteInView(sprite)) {
-        sprite.update(this.context, now, this.fps);
+        sprite.update(now, this.fps);
       }
     }
   },
@@ -1032,6 +1037,9 @@ ConstellationGame.prototype = {
 // Event handlers.......................................................
 
 window.onkeydown = function(e) {
+    if (constellationGame == null) {
+        return;
+    }
   var key = e.keyCode;
   if (key === 80 || (constellationGame.paused && key !== 80)) { // 'p'
     constellationGame.togglePaused();
@@ -1042,6 +1050,7 @@ window.onkeydown = function(e) {
   } else if (key === 75 || key === 39) { // 'k'or right arrow
     constellationGame.turnRight();
   } else if (key === 74 || key === 32) { // 'j' or space
+    e.preventDefault();
     if (constellationGame.runner.track === 3) {
       return;
     }
@@ -1059,6 +1068,9 @@ window.onkeydown = function(e) {
 };
 
 window.onkeyup = function(e) {
+    if (constellationGame == null) {
+        return;
+    }
   var key = e.keyCode;
   if (key === 80 || (constellationGame.paused && key !== 80)) { // 'p'
     constellationGame.togglePaused();
@@ -1072,6 +1084,9 @@ window.onkeyup = function(e) {
 };
 
 window.onblur = function(e) { // pause if unpaused
+    if (constellationGame == null) {
+        return;
+    }
   constellationGame.windowHasFocus = false;
 
   if (!constellationGame.paused) {
@@ -1080,6 +1095,9 @@ window.onblur = function(e) { // pause if unpaused
 };
 
 window.onfocus = function(e) { // unpause if paused
+  if (constellationGame == null) {
+    return;
+  }
   var originalFont = constellationGame.toast.style.fontSize;
 
   constellationGame.windowHasFocus = true;

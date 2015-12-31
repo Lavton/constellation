@@ -112,7 +112,7 @@ SpriteAnimator.prototype = {
 // be updated and drawn.
 //
 // A sprite's artist draws the sprite: draw(sprite, context)
-// A sprite's behavior executes: execute(sprite, context, time, fps)
+// A sprite's behavior executes: execute(sprite, time, fps)
 
 var Sprite = function (type, artist, behaviors) {
    this.type = type || '';
@@ -142,13 +142,13 @@ Sprite.prototype = {
      context.restore();
 	},
 
-   update: function (context, time, fps) {
+   update: function (time, fps) {
       for (var i = 0; i < this.behaviors.length; ++i) {
          if (this.behaviors[i] === undefined) { // Modified while looping?
             return;
          }
 
-         this.behaviors[i].execute(this, context, time, fps);
+         this.behaviors[i].execute(this, time, fps);
       }
    }
 };
