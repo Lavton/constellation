@@ -13,13 +13,13 @@ Pace.prototype = {
     var sRight = sprite.left + sprite.width,
       pRight = sprite.platform.left + sprite.platform.width;
 
-    if (sRight > pRight && sprite.direction === constellationGame.RIGHT) {
-      sprite.direction = constellationGame.LEFT;
+    if (sRight > pRight && sprite.direction === magicNumbers.direction.RIGHT) {
+      sprite.direction = magicNumbers.direction.LEFT;
       sprite.artist.cells=this.leftCells;
       this.wasTurned = true;
     } else if (sprite.left < sprite.platform.left &&
-      sprite.direction === constellationGame.LEFT) {
-      sprite.direction = constellationGame.RIGHT;
+      sprite.direction === magicNumbers.direction.LEFT) {
+      sprite.direction = magicNumbers.direction.RIGHT;
       sprite.artist.cells=this.rightCells;
       this.wasTurned = true;
     }
@@ -27,7 +27,7 @@ Pace.prototype = {
 
   moveSprite: function(sprite, fps) {
     var pixelsToMove = sprite.velocityX / fps;
-    if (sprite.direction === constellationGame.RIGHT) {
+    if (sprite.direction === magicNumbers.direction.RIGHT) {
       sprite.left += pixelsToMove;
     } else {
       sprite.left -= pixelsToMove;

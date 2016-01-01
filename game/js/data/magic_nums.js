@@ -21,11 +21,17 @@ var magicNumbers = {
 
   RUN_ANIMATION_RATE: 7, // частота бега бегуна
   OLDMAN_PACE_VELOCITY: 50, // скорость "снувания" старика
+  SAND_VALOCITY: 150, // скорость распространения песка
 
 
   pegging: { // привязка изображения спрайте к левому(верху)/центру/правому(низу)
     TOP: 1,
     CENTER: 2,
     BUTTON: 3,
-  }
+  },
+
+  direction: { // направление передвижения
+    LEFT: 1,
+    RIGHT: 2,
+  },
 }
