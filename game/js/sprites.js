@@ -82,8 +82,7 @@ SpriteSheetArtist.prototype = {
     } else if (sprite.vertical == magicNumbers.pegging.BUTTON) {
       top_coner = sprite.top + (sprite.height - cell.height)
     }
-
-
+    // console.log(sprite.type, sprite.left)
     context.drawImage(this.spritesheet, cell.left, cell.top,
       cell.width, cell.height,
       left_coner, top_coner,

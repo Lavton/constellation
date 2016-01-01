@@ -543,7 +543,7 @@ var ConstellationGame = function() {
     // Sprites...........................................................
 
     this.runner = new Sprite('runner', this.runnerArtist, [new Run()]);
-    this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
+  this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
   // All sprites.......................................................
   // 
   // (addSpritesToSpriteArray() adds sprites from the preceding sprite
@@ -841,8 +841,7 @@ ConstellationGame.prototype = {
   createOrangeStarSprites: function() {
     var orangeStar;
     for (var i = 0; i < this.orangeStarData.length; ++i) {
-      orangeStar = new Sprite('orangeStar', new SpriteSheetArtist(this.spritesheet, this.orangeStarCells),
-        [new Cycle(100, 100)]);
+      orangeStar = new Sprite('orangeStar', new SpriteSheetArtist(this.spritesheet, this.orangeStarCells), [new Cycle(100, 100)]);
       orangeStar.width = _.max(this.orangeStarCells, function(cell) {
         return cell.width
       }).width;
@@ -853,8 +852,7 @@ ConstellationGame.prototype = {
   createCloudSprites: function() {
     var cloud;
     for (var i = 0; i < this.cloudData.length; ++i) {
-      cloud = new Sprite('cloud', new SpriteSheetArtist(this.spritesheet, this.cloudCells),
-        [new Cycle(700)]);
+      cloud = new Sprite('cloud', new SpriteSheetArtist(this.spritesheet, this.cloudCells), [new Cycle(700)]);
       cloud.vertical = magicNumbers.pegging.TOP;
       cloud.width = _.max(this.cloudCells, function(cell) {
         return cell.width
@@ -869,8 +867,7 @@ ConstellationGame.prototype = {
   createRedStarSprites: function() {
     var redStar;
     for (var i = 0; i < this.redStarData.length; ++i) {
-      redStar = new Sprite('redStar', new SpriteSheetArtist(this.spritesheet, this.redStarCells),
-        [new Cycle(200)]);
+      redStar = new Sprite('redStar', new SpriteSheetArtist(this.spritesheet, this.redStarCells), [new Cycle(200)]);
       redStar.width = _.max(this.redStarCells, function(cell) {
         return cell.width
       }).width;
@@ -950,7 +947,8 @@ ConstellationGame.prototype = {
 
     for (var i = 0; i < this.oldManData.length; ++i) {
       oldMan = new Sprite('oldMan', oldManArtist, [new Pace(this.oldManCellsLeft, this.oldManCellsRight),
-        new Cycle(250)]);
+        new Cycle(250)
+      ]);
 
       oldMan.width = _.max(this.oldManCellsRight, function(cell) {
         return cell.width
@@ -1204,3 +1202,10 @@ document.getElementById('woman-play').onclick = function(e) {
   }, CREDITS_REVEAL_DELAY);
 
 };
+
+// чтобы располагать спрайты
+document.getElementById('game-canvas').onclick = function(e) {
+  var w = e.offsetX + constellationGame.spriteOffset;
+  var h = e.offsetY;
+  console.log(w, h)
+}

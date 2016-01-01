@@ -35,14 +35,14 @@ var dataFactory = function() {
 
 // тучка
   this.cloudData = [
-      { left: 100,
-      top: 100 },
+      { left: 828,
+      top: 165 },
   ];
 
 
 // красная звезда
   this.redStarData = [
-      { left: 10,
-      top: 100 },
+      { left: 1245,
+      top: 77 },
   ];
 }
