@@ -541,7 +541,7 @@ var ConstellationGame = function() {
     // Sprites...........................................................
 
     this.runner = new Sprite('runner', this.runnerArtist, [new Run()]);
-
+    this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
   // All sprites.......................................................
   // 
   // (addSpritesToSpriteArray() adds sprites from the preceding sprite
