@@ -5,7 +5,9 @@ oldManShoot = function() {
 oldManShoot.prototype = {
   execute: function(sprite, time, fps) {
     var sand = sprite.sand;
-
+    if (!constellationGame.spriteInView(sprite)) {
+      return;
+    }
     if (!sand.visible && sprite.artist.cellIndex === 2 && sprite.direction == magicNumbers.direction.LEFT) {
       sand.left = sprite.left;
       sand.visible = true;

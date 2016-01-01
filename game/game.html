@@ -28,82 +28,95 @@
 - FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 - OTHER DEALINGS IN THE SOFTWARE.
 -->
-
 <html>
-   <!-- Head........................................................-->
+<!-- Head........................................................-->
 
-	<head>
-	   <title>Star Capture</title>
-      <link rel='stylesheet' href='game.css'/>
-      <meta charset="UTF-8"/>
-   </head>
+<head>
+  <title>Star Capture</title>
+  <link rel='stylesheet' href='game.css' />
+  <meta charset="UTF-8" />
+</head>
+<!-- Body........................................................-->
 
-   <!-- Body........................................................-->
-
-   <body>
-      <!-- Wrapper..................................................-->
-
-      <div id='wrapper'>
-         <!-- Toast...................................................-->
-         <div id='toast'></div>
-   
-         <!-- Header..................................................-->
-
-         <div id='header'>
-            <div id='score'>0</div>
-            <div id='fps'></div>
-         </div>
-            
-         <!-- Arena..................................................-->
-
-         <div id='arena'>
-            <!-- The game canvas.....................................-->
-
-         <div id='man-or-woman'>
-
-            <h1>Выберете персонажа</h1>
-
-            <p>Приветсвуем в нашей игре!
-            </p>
-            <p>
-            Собирайте звёзды (расходуйте их с умом), не попадайтесь врагам!
-            </p>
-            <p>Кем вы хотите играть:
-            <table width="100%">
-               <tr>
-                  <td>Парнем</td>
-                  <td>Девушкой</td>
-               </tr>
-               <tr>
-                  <td><a href="" id="man-play"> <img src="images/man.png"></a></td>
-                  <td><a href="" id="woman-play"> <img src="images/woman.png"></a></td>
-               </tr>
-            </table>
-            </p>
-         </div> 
-
-
-            <canvas id='game-canvas' width='800' height='400'>
-               Your browser does not support HTML5 Canvas.
-            </canvas>
-         </div>
+<body>
+  <!-- Wrapper..................................................-->
+  <div id='wrapper'>
+    <!-- Toast...................................................-->
+    <div id='toast'></div>
+    <!-- Header..................................................-->
+    <div id='header'>
+      <div id='score'>0</div>
+      <div id='fps'></div>
+    </div>
+    <!-- Arena..................................................-->
+    <div id='arena'>
+      <!-- The game canvas.....................................-->
+      <div id='man-or-woman'>
+        <h1>Выберете персонажа</h1>
+        <p>Приветсвуем в нашей игре!
+        </p>
+        <p>
+          Собирайте звёзды (расходуйте их с умом), не попадайтесь врагам!
+        </p>
+        <p>Кем вы хотите играть:
+          <table width="100%">
+            <tr>
+              <td>Парнем</td>
+              <td>Девушкой</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="" id="man-play"> <img src="images/man.png"></a>
+              </td>
+              <td>
+                <a href="" id="woman-play"> <img src="images/woman.png"></a>
+              </td>
+            </tr>
+          </table>
+        </p>
       </div>
+      <canvas id='game-canvas' width='800' height='400'>
+        Your browser does not support HTML5 Canvas.
+      </canvas>
+      <!-- Instructions........................................-->
+      <div id='instructions'>
+        <div class='keys'>
+          d(&larr;) / k(&rarr;)
+          <div class='explanation'>
+            бег влево/вправо
+          </div>
+        </div>
+        <div class='keys'>
+          j(пробел)
+          <div class='explanation'>прыжок</div>
+        </div>
+        <div class='keys'>
+          f
+          <div class='explanation'>стельба</div>
+        </div>
+        <div class='keys'>
+          p
+          <div class='explanation'>пауза</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <!-- JavaScript................................................-->
+  <script type="text/javascript" src='js/data/magic_nums.js'></script>
+  <script type="text/javascript" src='js/data/cells.js'></script>
+  <script type="text/javascript" src='js/data/platforms.js'></script>
+  <script type="text/javascript" src='js/data/data.js'></script>
+  <script type="text/javascript" src="js/stopwatch.js"></script>
+  <script type="text/javascript" src="js/animationTimer.js"></script>
+  <script src='js/underscore.min.js'></script>
+  <script src='js/sprites.js'></script>
+  <script type="text/javascript" src="js/behaviors/character.js"></script>
+  <script type="text/javascript" src="js/behaviors/paceBehavior.js"></script>
+  <script type="text/javascript" src="js/behaviors/cycle.js"></script>
+  <script type="text/javascript" src="js/behaviors/sands.js"></script>
+  <script src='game.js'></script>
+  <script src='js/requestNextAnimationFrame.js'></script>
+</body>
 
-      <!-- JavaScript................................................-->
-      <script type="text/javascript" src='js/data/magic_nums.js'></script>
-      <script type="text/javascript" src='js/data/cells.js'></script>
-      <script type="text/javascript" src='js/data/platforms.js'></script>
-      <script type="text/javascript" src='js/data/data.js'></script>
-      
-      <script src='js/underscore.min.js'></script>
-      <script src='js/sprites.js'></script>
-
-      <script type="text/javascript" src="js/behaviors/character.js"></script>
-      <script type="text/javascript" src="js/behaviors/paceBehavior.js"></script>
-      <script type="text/javascript" src="js/behaviors/cycle.js"></script>
-      <script type="text/javascript" src="js/behaviors/sands.js"></script>
-
-      <script src='game.js'></script>
-      <script src='js/requestNextAnimationFrame.js'></script>
-  </body>
 </html>

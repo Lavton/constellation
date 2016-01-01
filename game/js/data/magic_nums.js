@@ -1,6 +1,8 @@
 var magicNumbers = {
   RUNNER_CELLS_HEIGHT: 60, // высота бегуна
   STARTING_RUNNER_LEFT: 100, // начальное положение бегуна
+  RUNNER_JUMP_DURATION: 1500, // время прыжка
+  RUNNER_JUMP_HEIGHT: 120, // высота прыжка в пикселях
 
   ORANGE_STAR_CELLS_HEIGHT: 38, // высота оранжевой звезды
   RED_STAR_CELLS_HEIGHT: 41, // высота красной звезды
@@ -35,4 +37,10 @@ var magicNumbers = {
     LEFT: 1,
     RIGHT: 2,
   },
+
+  now_going: { // показатель, что кнопка движения влево/вправо зажата
+    LEFT: 1,
+    RIGHT: 2,
+    NOWHERE: 3
+  }
 }

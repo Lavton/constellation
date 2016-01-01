@@ -123,6 +123,8 @@ var ConstellationGame = function() {
     this.TRACK_2_BASELINE = 223,
     this.TRACK_3_BASELINE = 123,
 
+    this.keyPress = magicNumbers.now_going.NOWHERE,
+
     // Fps indicator.....................................................
 
     this.fpsToast = document.getElementById('fps'),
@@ -187,7 +189,8 @@ var ConstellationGame = function() {
     this.runner = new Sprite('runner', this.runnerArtist, [
       new Run(),
       new runnerShoot(),
-      ]);
+      new Jump(),
+    ]);
   this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
   // All sprites.......................................................
   // 
@@ -299,34 +302,62 @@ ConstellationGame.prototype = {
   },
 
   turnLeft: function() {
-    this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
-    this.bgVelocity = -this.BACKGROUND_VELOCITY;
-    this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
-    this.runnerArtist.cells = this.runnerCellsLeft;
-    this.runner.direction = magicNumbers.direction.LEFT;
+    if (!this.runner.jumping) {
+      this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
+      this.bgVelocity = -this.BACKGROUND_VELOCITY;
+      this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
+      this.runnerArtist.cells = this.runnerCellsLeft;
+      this.runner.direction = magicNumbers.direction.LEFT;
+    }
   },
 
   turnRight: function() {
-    this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
-    this.bgVelocity = this.BACKGROUND_VELOCITY;
-    this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
-    this.runnerArtist.cells = this.runnerCellsRight;
-    this.runner.direction = magicNumbers.direction.RIGHT;
+    if (!this.runner.jumping) {
+      this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
+      this.bgVelocity = this.BACKGROUND_VELOCITY;
+      this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
+      this.runnerArtist.cells = this.runnerCellsRight;
+      this.runner.direction = magicNumbers.direction.RIGHT;
+    }
   },
 
   stopRun: function() {
-    this.bgVelocity = this.STARTING_BACKGROUND_VELOCITY;
-    this.runner.runAnimationRate = 0;
+    if (!this.runner.jumping && this.keyPress == magicNumbers.now_going.NOWHERE) {
+      this.bgVelocity = this.STARTING_BACKGROUND_VELOCITY;
+      this.runner.runAnimationRate = 0;
+    }
   },
 
   fire: function() {
     this.runner.shoot = true;
   },
-    // Sprites..............................................................
+  // Sprites..............................................................
 
-    explode: function(sprite, silent) {
+  explode: function(sprite, silent) {
     sprite.exploding = true;
     this.explosionAnimator.start(sprite, true); // true means sprite reappears
+  },
+
+  equipRunnerForJumping: function() {
+    this.runner.JUMP_DURATION = magicNumbers.RUNNER_JUMP_DURATION; // milliseconds
+    this.runner.JUMP_HEIGHT = magicNumbers.RUNNER_JUMP_HEIGHT;
+
+    this.runner.jumping = false;
+
+    this.runner.ascendStopwatch =
+      new Stopwatch(this.runner.JUMP_DURATION / 2);
+
+    this.runner.descendStopwatch =
+      new Stopwatch(this.runner.JUMP_DURATION / 2);
+
+    this.runner.jump = function() {
+      if (!this.jumping) { // 'this' is the runner
+        this.runAnimationRate = 0;
+        this.jumping = true;
+        this.verticalLaunchPosition = this.top;
+        this.ascendStopwatch.start();
+      }
+    };
   },
 
   equipRunner: function() {
@@ -339,6 +370,7 @@ ConstellationGame.prototype = {
 
     this.runner.artist.cells = this.runnerCellsRight;
     this.runner.direction = magicNumbers.direction.RIGHT;
+    this.equipRunnerForJumping();
     this.armRunner();
   },
 
@@ -377,12 +409,33 @@ ConstellationGame.prototype = {
       requestNextAnimationFrame(constellationGame.animate);
     }
   },
+  togglePausedStateOfAllBehaviors: function() {
+    var behavior;
+
+    for (var i = 0; i < this.sprites.length; ++i) {
+      sprite = this.sprites[i];
+
+      for (var j = 0; j < sprite.behaviors.length; ++j) {
+        behavior = sprite.behaviors[j];
+
+        if (this.paused) {
+          if (behavior.pause) {
+            behavior.pause(sprite);
+          }
+        } else {
+          if (behavior.unpause) {
+            behavior.unpause(sprite);
+          }
+        }
+      }
+    }
+  },
 
   togglePaused: function() {
     var now = +new Date();
 
     this.paused = !this.paused;
-
+    this.togglePausedStateOfAllBehaviors();
     if (this.paused) {
       this.pauseStartTime = now;
     } else {
@@ -432,7 +485,7 @@ ConstellationGame.prototype = {
   armRunner: function() {
     this.runner.suricane = new Sprite('suricane',
       new SpriteSheetArtist(this.spritesheet, this.orangeSuricaneCells), [
-      new suricaneMove(), new Cycle(10)
+        new suricaneMove(), new Cycle(10)
       ]
     );
     this.runner.suricane.width = _.max(this.orangeSuricaneCells, function(cell) {
@@ -631,7 +684,7 @@ ConstellationGame.prototype = {
     this.positionSprites(this.oldMans, this.oldManData);
     // this.positionSprites(this.snailBombs, this.snailBombData);
     this.armOldMans();
-    
+
   },
 
   // Toast................................................................
@@ -674,20 +727,19 @@ window.onkeydown = function(e) {
   }
 
   if (key === 68 || key === 37) { // 'd' or left arrow
-    constellationGame.turnLeft();
+    if (constellationGame.keyPress != magicNumbers.now_going.LEFT) {
+      constellationGame.turnLeft();
+      constellationGame.keyPress = magicNumbers.now_going.LEFT;
+    }
   } else if (key === 75 || key === 39) { // 'k'or right arrow
-    constellationGame.turnRight();
+    if (constellationGame.keyPress != magicNumbers.now_going.RIGHT) {
+      constellationGame.turnRight();
+      constellationGame.keyPress = magicNumbers.now_going.RIGHT;
+    }
+
   } else if (key === 74 || key === 32) { // 'j' or space
     e.preventDefault();
-    if (constellationGame.runner.track === 3) {
-      return;
-    }
-    constellationGame.runner.track++;
-  } else if (key === 71) { // 'g'
-    if (constellationGame.runner.track === 1) {
-      return;
-    }
-    constellationGame.runner.track--;
+    constellationGame.runner.jump();
   }
 
   constellationGame.runner.top = constellationGame.calculatePlatformTop(constellationGame.runner.track) -
@@ -704,8 +756,10 @@ window.onkeyup = function(e) {
   }
 
   if (key === 68 || key === 37) { // 'd' or left arrow
+    constellationGame.keyPress = magicNumbers.now_going.NOWHERE;
     constellationGame.stopRun();
   } else if (key === 75 || key === 39) { // 'k'or right arrow
+    constellationGame.keyPress = magicNumbers.now_going.NOWHERE;
     constellationGame.stopRun();
   } else if (key === 70) { // 'f'
     constellationGame.fire();

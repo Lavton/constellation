@@ -22,14 +22,14 @@ Run.prototype = {
 };
 
 // стрельба
-runnerShoot = function() {
-};
+runnerShoot = function() {};
 
 runnerShoot.prototype = {
   execute: function(sprite, time, fps) {
     var suricane = sprite.suricane;
-    if (!suricane.visible && sprite.shoot && sprite.direction == magicNumbers.direction.RIGHT ) {
+    if (!suricane.visible && sprite.shoot && sprite.direction == magicNumbers.direction.RIGHT) {
       suricane.left = constellationGame.spriteOffset + constellationGame.STARTING_RUNNER_LEFT + sprite.width;
+      suricane.top = constellationGame.runner.top //+ this.runner.suricane.height / 2;
       suricane.visible = true;
     } else if (sprite.shoot) {
       console.log(suricane.visible, sprite.direction)
@@ -51,6 +51,105 @@ sandMove.prototype = {
 
     if (!constellationGame.spriteInView(sprite)) {
       sprite.visible = false;
+    }
+  }
+};
+
+
+Jump = function() {};
+
+Jump.prototype = {
+  pause: function(sprite) {
+    if (sprite.ascendStopwatch.isRunning()) {
+      sprite.ascendStopwatch.pause();
+    } else if (!sprite.descendStopwatch.isRunning()) {
+      sprite.descendStopwatch.pause();
+    }
+  },
+
+  unpause: function(sprite) {
+    if (sprite.ascendStopwatch.isRunning()) {
+      sprite.ascendStopwatch.unpause();
+    } else if (sprite.descendStopwatch.isRunning()) {
+      sprite.descendStopwatch.unpause();
+    }
+  },
+
+  isJumpOver: function(sprite) {
+    return !sprite.ascendStopwatch.isRunning() &&
+      !sprite.descendStopwatch.isRunning();
+  },
+
+  // Ascent...............................................................
+
+  isAscending: function(sprite) {
+    return sprite.ascendStopwatch.isRunning();
+  },
+
+  ascend: function(sprite) {
+    var elapsed = sprite.ascendStopwatch.getElapsedTime(),
+      deltaY = elapsed / (sprite.JUMP_DURATION / 2) * sprite.JUMP_HEIGHT;
+
+    sprite.top = sprite.verticalLaunchPosition - deltaY;
+  },
+
+  isDoneAscending: function(sprite) {
+    return sprite.ascendStopwatch.getElapsedTime() > sprite.JUMP_DURATION / 2;
+  },
+
+  finishAscent: function(sprite) {
+    sprite.jumpApex = sprite.top;
+    sprite.ascendStopwatch.stop();
+    sprite.descendStopwatch.start();
+  },
+
+  // Descents.............................................................
+
+  isDescending: function(sprite) {
+    return sprite.descendStopwatch.isRunning();
+  },
+
+  descend: function(sprite, verticalVelocity, fps) {
+    var elapsed = sprite.descendStopwatch.getElapsedTime(),
+      deltaY = elapsed / (sprite.JUMP_DURATION / 2) * sprite.JUMP_HEIGHT;
+
+    sprite.top = sprite.jumpApex + deltaY;
+  },
+
+  isDoneDescending: function(sprite) {
+    return sprite.descendStopwatch.getElapsedTime() > sprite.JUMP_DURATION / 2;
+  },
+
+  finishDescent: function(sprite) {
+    sprite.top = sprite.verticalLaunchPosition;
+    sprite.descendStopwatch.stop();
+    sprite.jumping = false;
+    constellationGame.stopRun();
+    if (constellationGame.keyPress == magicNumbers.now_going.LEFT) {
+      constellationGame.turnLeft();
+    } else if (constellationGame.keyPress == magicNumbers.now_going.RIGHT) {
+      constellationGame.turnRight();
+    }
+  },
+
+  // Execute..............................................................
+
+  execute: function(sprite, time, fps) {
+    if (!sprite.jumping) {
+      return;
+    }
+
+    if (this.isJumpOver(sprite)) {
+      sprite.jumping = false;
+      return;
+    }
+
+    if (this.isAscending(sprite)) {
+      if (!this.isDoneAscending(sprite)) this.ascend(sprite);
+      else this.finishAscent(sprite);
+    } else if (this.isDescending(sprite)) {
+      if (!this.isDoneDescending(sprite)) this.descend(sprite);
+      else this.finishDescent(sprite);
     }
   }
 };
