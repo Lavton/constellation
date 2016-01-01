@@ -33,7 +33,7 @@
 
 Cycle = function (duration, interval) {
    this.duration = duration || 0;  //  milliseconds
-   this.interval = interval || 0;
+   this.interval = interval || duration;
    this.lastAdvance = 0;
 };
 

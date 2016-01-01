@@ -21,4 +21,11 @@ var magicNumbers = {
 
   RUN_ANIMATION_RATE: 7, // частота бега бегуна
   OLDMAN_PACE_VELOCITY: 50, // скорость "снувания" старика
+
+
+  pegging: { // привязка изображения спрайте к левому(верху)/центру/правому(низу)
+    TOP: 1,
+    CENTER: 2,
+    BUTTON: 3,
+  }
 }

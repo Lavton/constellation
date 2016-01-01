@@ -504,6 +504,8 @@ var ConstellationGame = function() {
 
     // Sprites...........................................................
     this.orangeStars = [],
+    this.clouds = [],
+    this.redStars = [],
     // this.clouds = [],
     // this.bats = [],
     // this.orangeStars = [],
@@ -789,7 +791,12 @@ ConstellationGame.prototype = {
     for (var i = 0; i < this.orangeStars.length; ++i) {
       this.sprites.push(this.orangeStars[i]);
     }
-
+    for (var i = 0; i < this.clouds.length; ++i) {
+      this.sprites.push(this.clouds[i]);
+    }
+    for (var i = 0; i < this.redStars.length; ++i) {
+      this.sprites.push(this.redStars[i]);
+    }
     // for (var i = 0; i < this.buttons.length; ++i) {
     //   this.sprites.push(this.buttons[i]);
     // }
@@ -843,7 +850,34 @@ ConstellationGame.prototype = {
       this.orangeStars.push(orangeStar);
     }
   },
-
+  createCloudSprites: function() {
+    var cloud;
+    for (var i = 0; i < this.cloudData.length; ++i) {
+      cloud = new Sprite('cloud', new SpriteSheetArtist(this.spritesheet, this.cloudCells),
+        [new Cycle(700)]);
+      cloud.vertical = magicNumbers.pegging.TOP;
+      cloud.width = _.max(this.cloudCells, function(cell) {
+        return cell.width
+      }).width;
+      cloud.height = _.max(this.cloudCells, function(cell) {
+        return cell.height
+      }).height;
+      console.log(cloud)
+      this.clouds.push(cloud);
+    }
+  },
+  createRedStarSprites: function() {
+    var redStar;
+    for (var i = 0; i < this.redStarData.length; ++i) {
+      redStar = new Sprite('redStar', new SpriteSheetArtist(this.spritesheet, this.redStarCells),
+        [new Cycle(200)]);
+      redStar.width = _.max(this.redStarCells, function(cell) {
+        return cell.width
+      }).width;
+      redStar.height = magicNumbers.ORANGE_STAR_CELLS_HEIGHT;
+      this.redStars.push(redStar);
+    }
+  },
   // createButtonSprites: function() {
   //   var button,
   //     buttonArtist = new SpriteSheetArtist(this.spritesheet,
@@ -915,7 +949,8 @@ ConstellationGame.prototype = {
     //   this.snailBombCells);
 
     for (var i = 0; i < this.oldManData.length; ++i) {
-      oldMan = new Sprite('oldMan', oldManArtist, [new Pace(this.oldManCellsLeft, this.oldManCellsRight)]);
+      oldMan = new Sprite('oldMan', oldManArtist, [new Pace(this.oldManCellsLeft, this.oldManCellsRight),
+        new Cycle(250)]);
 
       oldMan.width = _.max(this.oldManCellsRight, function(cell) {
         return cell.width
@@ -986,6 +1021,8 @@ ConstellationGame.prototype = {
 
     // this.createBatSprites();
     this.createOrangeStarSprites();
+    this.createCloudSprites();
+    this.createRedStarSprites();
     // this.createButtonSprites();
     // this.createCoinSprites();
     // this.createRubySprites();
@@ -1000,6 +1037,8 @@ ConstellationGame.prototype = {
   initializeSprites: function() {
     // this.positionSprites(this.bats, this.batData);
     this.positionSprites(this.orangeStars, this.orangeStarData);
+    this.positionSprites(this.clouds, this.cloudData);
+    this.positionSprites(this.redStars, this.redStarData);
     // this.positionSprites(this.buttons, this.buttonData);
     // this.positionSprites(this.coins, this.coinData);
     // this.positionSprites(this.rubies, this.rubyData);

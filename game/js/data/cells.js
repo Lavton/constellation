@@ -398,7 +398,7 @@ var cellsFactory = function() {
   // тучка............................................................
   this.cloudCells = [{
       left: 13,
-      top: 449,
+      top: 447,
       width: 48,
       height: 48
     }, {
