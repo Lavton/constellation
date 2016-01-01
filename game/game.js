@@ -184,7 +184,10 @@ var ConstellationGame = function() {
 
     // Sprites...........................................................
 
-    this.runner = new Sprite('runner', this.runnerArtist, [new Run()]);
+    this.runner = new Sprite('runner', this.runnerArtist, [
+      new Run(),
+      new runnerShoot(),
+      ]);
   this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
   // All sprites.......................................................
   // 
@@ -300,7 +303,7 @@ ConstellationGame.prototype = {
     this.bgVelocity = -this.BACKGROUND_VELOCITY;
     this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
     this.runnerArtist.cells = this.runnerCellsLeft;
-    this.runner.direction = this.LEFT;
+    this.runner.direction = magicNumbers.direction.LEFT;
   },
 
   turnRight: function() {
@@ -308,7 +311,7 @@ ConstellationGame.prototype = {
     this.bgVelocity = this.BACKGROUND_VELOCITY;
     this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
     this.runnerArtist.cells = this.runnerCellsRight;
-    this.runner.direction = this.RIGHT;
+    this.runner.direction = magicNumbers.direction.RIGHT;
   },
 
   stopRun: function() {
@@ -316,9 +319,12 @@ ConstellationGame.prototype = {
     this.runner.runAnimationRate = 0;
   },
 
-  // Sprites..............................................................
+  fire: function() {
+    this.runner.shoot = true;
+  },
+    // Sprites..............................................................
 
-  explode: function(sprite, silent) {
+    explode: function(sprite, silent) {
     sprite.exploding = true;
     this.explosionAnimator.start(sprite, true); // true means sprite reappears
   },
@@ -332,6 +338,8 @@ ConstellationGame.prototype = {
     this.runner.top = this.calculatePlatformTop(this.runner.track) - this.RUNNER_CELLS_HEIGHT;
 
     this.runner.artist.cells = this.runnerCellsRight;
+    this.runner.direction = magicNumbers.direction.RIGHT;
+    this.armRunner();
   },
 
   createPlatformSprites: function() {
@@ -421,14 +429,35 @@ ConstellationGame.prototype = {
     }
   },
 
+  armRunner: function() {
+    this.runner.suricane = new Sprite('suricane',
+      new SpriteSheetArtist(this.spritesheet, this.orangeSuricaneCells), [
+      new suricaneMove(), new Cycle(10)
+      ]
+    );
+    this.runner.suricane.width = _.max(this.orangeSuricaneCells, function(cell) {
+      return cell.width
+    }).width;
+    this.runner.suricane.height = _.max(this.orangeSuricaneCells, function(cell) {
+      return cell.height
+    }).height;
+    console.log(this.runner.suricane.top)
+    this.runner.suricane.top = this.runner.top //+ this.runner.suricane.height / 2;
+    this.runner.suricane.left = this.runner.left + this.runner.suricane.width / 2;
+    this.runner.suricane.visible = false;
+
+    this.runner.suricane.runner = this.runner;
+
+    this.sprites.push(this.runner.suricane);
+
+  },
   armOldMans: function() {
     var oldMan;
 
     for (var i = 0; i < this.oldMans.length; ++i) {
       oldMan = this.oldMans[i];
       oldMan.sand = new Sprite('oldMan_sand',
-        new SpriteSheetArtist(this.spritesheet, this.sandCells), 
-        [new sandMove(), new Cycle(300)]);
+        new SpriteSheetArtist(this.spritesheet, this.sandCells), [new sandMove(), new Cycle(300)]);
       oldMan.sand.vertical = magicNumbers.pegging.BUTTON;
 
       oldMan.sand.width = _.max(this.sandCells, function(cell) {
@@ -438,7 +467,7 @@ ConstellationGame.prototype = {
         return cell.height
       }).height;
 
-      oldMan.sand.top = oldMan.top+oldMan.height - oldMan.sand.height ;  //+ oldMan.sand.height / 2;
+      oldMan.sand.top = oldMan.top + oldMan.height - oldMan.sand.height; //+ oldMan.sand.height / 2;
       oldMan.sand.left = oldMan.left + oldMan.sand.width / 2;
       oldMan.sand.visible = false;
 
@@ -602,6 +631,7 @@ ConstellationGame.prototype = {
     this.positionSprites(this.oldMans, this.oldManData);
     // this.positionSprites(this.snailBombs, this.snailBombData);
     this.armOldMans();
+    
   },
 
   // Toast................................................................
@@ -653,11 +683,10 @@ window.onkeydown = function(e) {
       return;
     }
     constellationGame.runner.track++;
-  } else if (key === 70) { // 'f'
+  } else if (key === 71) { // 'g'
     if (constellationGame.runner.track === 1) {
       return;
     }
-
     constellationGame.runner.track--;
   }
 
@@ -678,6 +707,8 @@ window.onkeyup = function(e) {
     constellationGame.stopRun();
   } else if (key === 75 || key === 39) { // 'k'or right arrow
     constellationGame.stopRun();
+  } else if (key === 70) { // 'f'
+    constellationGame.fire();
   }
 };
 

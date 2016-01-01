@@ -13,19 +13,15 @@ oldManShoot.prototype = {
   }
 };
 
-sandMove = function() {
+suricaneMove = function() {
   this.lastAdvanceTime = 0; //  milliseconds
   this.spriteVelocity
 };
 
-sandMove.prototype = {
+suricaneMove.prototype = {
   execute: function(sprite, time, fps) {
     if (sprite.visible && constellationGame.spriteInView(sprite)) {
-      // if (sprite.oldMan.direction == magicNumbers.direction.LEFT) {
-         sprite.left -= magicNumbers.SAND_VALOCITY / fps;
-      // } else {
-         // sprite.left -= -magicNumbers.SAND_VALOCITY / fps;
-      // }
+      sprite.left -= -magicNumbers.SAND_VALOCITY / fps;
     }
 
     if (!constellationGame.spriteInView(sprite)) {
