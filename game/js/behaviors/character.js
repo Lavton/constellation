@@ -7,8 +7,8 @@ Run = function() {
 Run.prototype = {
   execute: function(sprite, time, fps) {
     // Realize that this is a method in an object (runBehavior), that resides
-    // in another object (snailBait), so the 'this' reference in this method
-    // refers to runBehavior, not snailBait.
+    // in another object (magicNumbers), so the 'this' reference in this method
+    // refers to runBehavior, not magicNumbers.
     if (sprite.runAnimationRate === 0) {
       return;
     }
@@ -60,70 +60,72 @@ Jump = function() {};
 
 Jump.prototype = {
   pause: function(sprite) {
-    if (sprite.ascendStopwatch.isRunning()) {
-      sprite.ascendStopwatch.pause();
-    } else if (!sprite.descendStopwatch.isRunning()) {
-      sprite.descendStopwatch.pause();
+    if (sprite.ascendAnimationTimer.isRunning()) {
+      sprite.ascendAnimationTimer.pause();
+    } else if (!sprite.descendAnimationTimer.isRunning()) {
+      sprite.descendAnimationTimer.pause();
     }
   },
 
   unpause: function(sprite) {
-    if (sprite.ascendStopwatch.isRunning()) {
-      sprite.ascendStopwatch.unpause();
-    } else if (sprite.descendStopwatch.isRunning()) {
-      sprite.descendStopwatch.unpause();
+    if (sprite.ascendAnimationTimer.isRunning()) {
+      sprite.ascendAnimationTimer.unpause();
+    } else if (sprite.descendAnimationTimer.isRunning()) {
+      sprite.descendAnimationTimer.unpause();
     }
   },
 
   isJumpOver: function(sprite) {
-    return !sprite.ascendStopwatch.isRunning() &&
-      !sprite.descendStopwatch.isRunning();
+    return !sprite.ascendAnimationTimer.isRunning() &&
+      !sprite.descendAnimationTimer.isRunning();
   },
 
   // Ascent...............................................................
 
   isAscending: function(sprite) {
-    return sprite.ascendStopwatch.isRunning();
+    return sprite.ascendAnimationTimer.isRunning();
   },
 
   ascend: function(sprite) {
-    var elapsed = sprite.ascendStopwatch.getElapsedTime(),
-      deltaY = elapsed / (sprite.JUMP_DURATION / 2) * sprite.JUMP_HEIGHT;
+    var elapsed = sprite.ascendAnimationTimer.getElapsedTime(),
+      deltaH = elapsed / (sprite.JUMP_DURATION / 2) * sprite.JUMP_HEIGHT;
 
-    sprite.top = sprite.verticalLaunchPosition - deltaY;
+    sprite.top = sprite.verticalLaunchPosition - deltaH;
   },
 
   isDoneAscending: function(sprite) {
-    return sprite.ascendStopwatch.getElapsedTime() > sprite.JUMP_DURATION / 2;
+    return sprite.ascendAnimationTimer.getElapsedTime() > sprite.JUMP_DURATION / 2;
   },
 
   finishAscent: function(sprite) {
     sprite.jumpApex = sprite.top;
-    sprite.ascendStopwatch.stop();
-    sprite.descendStopwatch.start();
+    sprite.ascendAnimationTimer.stop();
+    sprite.descendAnimationTimer.start();
   },
 
   // Descents.............................................................
 
   isDescending: function(sprite) {
-    return sprite.descendStopwatch.isRunning();
+    return sprite.descendAnimationTimer.isRunning();
   },
 
   descend: function(sprite, verticalVelocity, fps) {
-    var elapsed = sprite.descendStopwatch.getElapsedTime(),
-      deltaY = elapsed / (sprite.JUMP_DURATION / 2) * sprite.JUMP_HEIGHT;
+    var elapsed = sprite.descendAnimationTimer.getElapsedTime(),
+      deltaH = elapsed / (sprite.JUMP_DURATION / 2) * sprite.JUMP_HEIGHT;
 
-    sprite.top = sprite.jumpApex + deltaY;
+    sprite.top = sprite.jumpApex + deltaH;
   },
 
   isDoneDescending: function(sprite) {
-    return sprite.descendStopwatch.getElapsedTime() > sprite.JUMP_DURATION / 2;
+    return sprite.descendAnimationTimer.getElapsedTime() > sprite.JUMP_DURATION / 2;
   },
 
   finishDescent: function(sprite) {
     sprite.top = sprite.verticalLaunchPosition;
-    sprite.descendStopwatch.stop();
     sprite.jumping = false;
+    sprite.runAnimationRate = magicNumbers.RUN_ANIMATION_RATE;
+    sprite.ascendAnimationTimer.stop();
+    sprite.descendAnimationTimer.stop();
     constellationGame.stopRun();
     if (constellationGame.keyPress == magicNumbers.now_going.LEFT) {
       constellationGame.turnLeft();
@@ -144,12 +146,19 @@ Jump.prototype = {
       return;
     }
 
+
     if (this.isAscending(sprite)) {
-      if (!this.isDoneAscending(sprite)) this.ascend(sprite);
-      else this.finishAscent(sprite);
+      if (!this.isDoneAscending(sprite)) {
+        this.ascend(sprite);
+      } else {
+        this.finishAscent(sprite);
+      }
     } else if (this.isDescending(sprite)) {
-      if (!this.isDoneDescending(sprite)) this.descend(sprite);
-      else this.finishDescent(sprite);
+      if (!this.isDoneDescending(sprite)) {
+        this.descend(sprite);
+      } else {
+        this.finishDescent(sprite);
+      }
     }
   }
 };

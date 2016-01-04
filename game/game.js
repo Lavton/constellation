@@ -339,24 +339,27 @@ ConstellationGame.prototype = {
   },
 
   equipRunnerForJumping: function() {
-    this.runner.JUMP_DURATION = magicNumbers.RUNNER_JUMP_DURATION; // milliseconds
-    this.runner.JUMP_HEIGHT = magicNumbers.RUNNER_JUMP_HEIGHT;
+    this.runner.JUMP_DURATION = this.RUNNER_JUMP_DURATION; // milliseconds
+    this.runner.JUMP_HEIGHT = this.RUNNER_JUMP_HEIGHT;
 
     this.runner.jumping = false;
 
-    this.runner.ascendStopwatch =
-      new Stopwatch(this.runner.JUMP_DURATION / 2);
+    this.runner.ascendAnimationTimer =
+      new AnimationTimer(this.runner.JUMP_DURATION / 2,
+        AnimationTimer.makeEaseOutTransducer(2.0));
 
-    this.runner.descendStopwatch =
-      new Stopwatch(this.runner.JUMP_DURATION / 2);
+    this.runner.descendAnimationTimer =
+      new AnimationTimer(this.runner.JUMP_DURATION / 2,
+        AnimationTimer.makeEaseInTransducer(1.1));
 
     this.runner.jump = function() {
-      if (!this.jumping) { // 'this' is the runner
-        this.runAnimationRate = 0;
-        this.jumping = true;
-        this.verticalLaunchPosition = this.top;
-        this.ascendStopwatch.start();
-      }
+      if (this.jumping) // 'this' is the runner
+        return;
+
+      this.runAnimationRate = 0;
+      this.jumping = true;
+      this.verticalLaunchPosition = this.top;
+      this.ascendAnimationTimer.start();
     };
   },
 
