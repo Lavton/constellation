@@ -580,7 +580,10 @@ ConstellationGame.prototype = {
   createRedStarSprites: function() {
     var redStar;
     for (var i = 0; i < this.redStarData.length; ++i) {
-      redStar = new Sprite('redStar', new SpriteSheetArtist(this.spritesheet, this.redStarCells), [new Cycle(200)]);
+      redStar = new Sprite('redStar', new SpriteSheetArtist(this.spritesheet, this.redStarCells), 
+        [new Cycle(200),
+        new BounceBehavior()]
+        );
       redStar.width = _.max(this.redStarCells, function(cell) {
         return cell.width
       }).width;
@@ -785,22 +788,32 @@ window.onfocus = function(e) { // unpause if paused
     return;
   }
   var originalFont = constellationGame.toast.style.fontSize;
-
   constellationGame.windowHasFocus = true;
 
   if (constellationGame.paused) {
     constellationGame.toast.style.font = '128px fantasy';
 
     constellationGame.splashToast('3', 500); // Display 3 for one half second
+    setTimeout(function(e){
+      if (!constellationGame.paused) {
+        constellationGame.togglePaused();
+      }
 
+    }, 250)
     setTimeout(function(e) {
       constellationGame.splashToast('2', 500); // Display 2 for one half second
-
+      if (!constellationGame.paused) {
+        constellationGame.togglePaused();
+      }
       setTimeout(function(e) {
+        if (!constellationGame.paused) {
+          constellationGame.togglePaused();
+        }
+
         constellationGame.splashToast('1', 500); // Display 1 for one half second
 
         setTimeout(function(e) {
-          if (constellationGame.windowHasFocus) {
+          if (constellationGame.windowHasFocus && constellationGame.paused) {
             constellationGame.togglePaused();
           }
 

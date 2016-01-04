@@ -26,111 +26,109 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
-// BOUNCE: Bounce a sprite up and down, easing out on the way up
+// snailBait constructor --------------------------------------------
+// BOUNCE: BounceBehavior a sprite up and down, easing out on the way up
 //         and easing in on the way down.
 
-Bounce = function (riseTime, fallTime, distance) {
-   this.riseTime = riseTime || 800;
-   this.fallTime = fallTime || 800;
-   this.distance = distance || 30;
+BounceBehavior = function(riseTime, fallTime, distance) {
+  this.riseTime = riseTime || 1000;
+  this.fallTime = fallTime || 1000;
+  this.distance = distance || 30;
 
-   this.riseTimer = new AnimationTimer(this.riseTime,
-                                       AnimationTimer.makeEaseOut(1));
+  this.riseTimer = new AnimationTimer(this.riseTime,
+    AnimationTimer.makeEaseOutTransducer(1.2));
 
-   this.fallTimer = new AnimationTimer(this.fallTime,
-                                       AnimationTimer.makeEaseIn(1));
-   this.paused = false;
+  this.fallTimer = new AnimationTimer(this.fallTime,
+    AnimationTimer.makeEaseInTransducer(1.2));
+  this.paused = false;
 }
 
-Bounce.prototype = {
-   pause: function() {
-      if (!this.riseTimer.isPaused()) {
-         this.riseTimer.pause();
-      }
+BounceBehavior.prototype = {
+  pause: function() {
+    if (!this.riseTimer.isPaused()) {
+      this.riseTimer.pause();
+    }
 
-      if (!this.fallTimer.isPaused()) {
-         this.fallTimer.pause();
-      }
+    if (!this.fallTimer.isPaused()) {
+      this.fallTimer.pause();
+    }
 
-      this.paused = true;
-   },
+    this.paused = true;
+  },
 
-   unpause: function() {
-      if (this.riseTimer.isPaused()) {
-         this.riseTimer.unpause();
-      }
+  unpause: function() {
+    if (this.riseTimer.isPaused()) {
+      this.riseTimer.unpause();
+    }
 
-      if (this.fallTimer.isPaused()) {
-         this.fallTimer.unpause();
-      }
+    if (this.fallTimer.isPaused()) {
+      this.fallTimer.unpause();
+    }
 
-      this.paused = false;
-   },
-   
-   startRising: function (sprite) {
-      this.baseline = sprite.top;
-      this.bounceStart = sprite.top;
+    this.paused = false;
+  },
 
-      this.riseTimer.start();
-   },
-      
-   rise: function (sprite) {
-      var elapsedTime = this.riseTimer.getElapsedTime();
-      sprite.top = this.baseline - parseFloat(
-                      (elapsedTime / this.riseTime) * this.distance);
-   },
+  startRising: function(sprite) {
+    this.baseline = sprite.top;
+    this.bounceStart = sprite.top;
 
-   finishRising: function (sprite) {
-      this.riseTimer.stop();
-      this.baseline = sprite.top;
-      this.fallTimer.start();
-   },
-      
-   isFalling: function () {
-      return this.fallTimer.isRunning();
-   },
-      
-   isRising: function () {
-      return this.riseTimer.isRunning();
-   },
+    this.riseTimer.start();
+  },
 
-   fall: function (sprite) {
-      var elapsedTime = this.fallTimer.getElapsedTime();  
-      sprite.top = this.baseline +
+  rise: function(sprite) {
+    var elapsedTime = this.riseTimer.getElapsedTime();
+    sprite.top = this.baseline - parseFloat(
+      (elapsedTime / this.riseTime) * this.distance);
+  },
+
+  finishRising: function(sprite) {
+    this.riseTimer.stop();
+    this.baseline = sprite.top;
+    this.fallTimer.start();
+  },
+
+  isFalling: function() {
+    return this.fallTimer.isRunning();
+  },
+
+  isRising: function() {
+    return this.riseTimer.isRunning();
+  },
+
+  fall: function(sprite) {
+    var elapsedTime = this.fallTimer.getElapsedTime();
+    sprite.top = this.baseline +
       parseFloat((elapsedTime / this.fallTime) * this.distance);
-   },
+  },
 
-   finishFalling: function (sprite) {
-      this.fallTimer.stop();
-      sprite.top = this.bounceStart;
+  finishFalling: function(sprite) {
+    this.fallTimer.stop();
+    sprite.top = this.bounceStart;
+    this.startRising(sprite);
+  },
+
+  execute: function(sprite, time, fps) {
+    // If nothing's happening, start rising and return
+
+    if (this.paused || !this.isRising() && !this.isFalling()) {
       this.startRising(sprite);
-   },
-      
-   execute: function(sprite, time, fps) {
-      // If nothing's happening, start rising and return
+      return;
+    }
 
-      if (this.paused || !this.isRising() && ! this.isFalling()) {
-         this.startRising(sprite);
-         return;
+    if (this.isRising()) { // Rising
+      if (!this.riseTimer.isExpired()) { // Not done rising
+        this.rise(sprite);
+      } else { // Done rising
+        this.finishRising(sprite);
       }
-
-      if(this.isRising()) {   // Rising
-         if(!this.riseTimer.isOver()) {  // Not done rising
-            this.rise(sprite);
-         }
-         else {  // Done rising
-            this.finishRising(sprite);
-         }
+    } else if (this.isFalling()) { // Falling
+      if (!this.fallTimer.isExpired()) { // Not done falling
+        this.fall(sprite);
+      } else { // Done falling
+        this.finishFalling(sprite);
       }
-      else if(this.isFalling()) { // Falling
-         if(!this.fallTimer.isOver()) {     // Not done falling
-            this.fall(sprite);
-         }
-         else { // Done falling
-            this.finishFalling(sprite);
-         }
-      }
-   }
+    }
+  }
 };
