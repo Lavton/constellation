@@ -103,7 +103,7 @@ window.requestNextAnimationFrame =
                callback(start);
                finish = +new Date();
 
-               self.timeout = 1000 / 60 - (finish - start);
+               self.timeout = 1000 / magicNumbers.fps - (finish - start);
 
             }, self.timeout);
          };

@@ -174,7 +174,7 @@ Collide.prototype = {
 
       if (this.isCandidateForCollision(sprite, otherSprite)) {
         if (this.didCollide(sprite, otherSprite, context)) {
-          console.log("collide with " + otherSprite.type)
+          // console.log("collide with " + otherSprite.type)
             // this.processCollision(sprite, otherSprite);
         }
       }
@@ -186,7 +186,8 @@ Collide.prototype = {
       sprite.visible && otherSprite.visible &&
       !sprite.exploding && !otherSprite.exploding &&
       otherSprite.left - otherSprite.offset <
-      sprite.left - sprite.offset + sprite.width * 2;
+      sprite.left - sprite.offset + sprite.width * 2 &&
+      otherSprite.type != "suricane";
   },
 
   didSandCollideWithRunner: function(left, top, right, bottom,

@@ -42,5 +42,7 @@ var magicNumbers = {
     LEFT: 1,
     RIGHT: 2,
     NOWHERE: 3
-  }
+  },
+
+  fps: 2,
 }

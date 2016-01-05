@@ -494,7 +494,7 @@ ConstellationGame.prototype = {
   armRunner: function() {
     this.runner.suricane = new Sprite('suricane',
       new SpriteSheetArtist(this.spritesheet, this.orangeSuricaneCells), [
-        new suricaneMove(), new Cycle(10)
+        new suricaneMove(), new Cycle(10), new SuricaneCollide(),
       ]
     );
     this.runner.suricane.width = _.max(this.orangeSuricaneCells, function(cell) {
@@ -586,10 +586,9 @@ ConstellationGame.prototype = {
   createRedStarSprites: function() {
     var redStar;
     for (var i = 0; i < this.redStarData.length; ++i) {
-      redStar = new Sprite('redStar', new SpriteSheetArtist(this.spritesheet, this.redStarCells), 
-        [new Cycle(200),
-        new BounceBehavior()]
-        );
+      redStar = new Sprite('redStar', new SpriteSheetArtist(this.spritesheet, this.redStarCells), [new Cycle(200),
+        new BounceBehavior()
+      ]);
       redStar.width = _.max(this.redStarCells, function(cell) {
         return cell.width
       }).width;
@@ -685,6 +684,9 @@ ConstellationGame.prototype = {
   },
 
   initializeSprites: function() {
+    for (var i = 0; i < constellationGame.sprites.length; ++i) {
+      constellationGame.sprites[i].offset = 0;
+    }
     // this.positionSprites(this.bats, this.batData);
     this.positionSprites(this.orangeStars, this.orangeStarData);
     this.positionSprites(this.clouds, this.cloudData);
@@ -800,7 +802,7 @@ window.onfocus = function(e) { // unpause if paused
     constellationGame.toast.style.font = '128px fantasy';
 
     constellationGame.splashToast('3', 500); // Display 3 for one half second
-    setTimeout(function(e){
+    setTimeout(function(e) {
       if (!constellationGame.paused) {
         constellationGame.togglePaused();
       }
