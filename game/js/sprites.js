@@ -157,13 +157,13 @@ Sprite.prototype = {
     context.restore();
   },
 
-  update: function(time, fps) {
+  update: function(time, fps, context) {
     for (var i = 0; i < this.behaviors.length; ++i) {
       if (this.behaviors[i] === undefined) { // Modified while looping?
         return;
       }
 
-      this.behaviors[i].execute(this, time, fps);
+      this.behaviors[i].execute(this, time, fps, context);
     }
   }
 };

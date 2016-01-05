@@ -190,8 +190,10 @@ var ConstellationGame = function() {
       new Run(),
       new runnerShoot(),
       new Jump(),
+      new Collide(),
     ]);
   this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
+
   // All sprites.......................................................
   // 
   // (addSpritesToSpriteArray() adds sprites from the preceding sprite
@@ -372,6 +374,10 @@ ConstellationGame.prototype = {
     this.runner.top = this.calculatePlatformTop(this.runner.track) - this.RUNNER_CELLS_HEIGHT;
 
     this.runner.artist.cells = this.runnerCellsRight;
+    this.runner.width = _.max(this.runnerManCellsRight, function(cell) {
+      return cell.width
+    }).width;
+    this.runner.offset = 0;
     this.runner.direction = magicNumbers.direction.RIGHT;
     this.equipRunnerForJumping();
     this.armRunner();
@@ -620,7 +626,7 @@ ConstellationGame.prototype = {
     for (var i = 0; i < this.sprites.length; ++i) {
       sprite = this.sprites[i];
       if (sprite.visible && this.spriteInView(sprite)) {
-        sprite.update(now, this.fps);
+        sprite.update(now, this.fps, this.context);
       }
     }
   },

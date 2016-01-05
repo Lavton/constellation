@@ -32,7 +32,7 @@ runnerShoot.prototype = {
       suricane.top = constellationGame.runner.top //+ this.runner.suricane.height / 2;
       suricane.visible = true;
     } else if (sprite.shoot) {
-      console.log(suricane.visible, sprite.direction)
+      // console.log(suricane.visible, sprite.direction)
     }
     sprite.shoot = false;
   }
@@ -159,6 +159,130 @@ Jump.prototype = {
       } else {
         this.finishDescent(sprite);
       }
+    }
+  }
+};
+
+
+Collide = function() {};
+
+Collide.prototype = {
+  execute: function(sprite, time, fps, context) {
+    var otherSprite;
+    for (var i = 0; i < constellationGame.sprites.length; ++i) {
+      otherSprite = constellationGame.sprites[i];
+
+      if (this.isCandidateForCollision(sprite, otherSprite)) {
+        if (this.didCollide(sprite, otherSprite, context)) {
+          console.log("collide with " + otherSprite.type)
+            // this.processCollision(sprite, otherSprite);
+        }
+      }
+    }
+  },
+
+  isCandidateForCollision: function(sprite, otherSprite) {
+    return sprite !== otherSprite &&
+      sprite.visible && otherSprite.visible &&
+      !sprite.exploding && !otherSprite.exploding &&
+      otherSprite.left - otherSprite.offset <
+      sprite.left - sprite.offset + sprite.width * 2;
+  },
+
+  didSandCollideWithRunner: function(left, top, right, bottom,
+    sand, context) {
+    // Determine if the center of the snail bomb lies within
+    // the runner's bounding box  
+    if (!context) {
+      return false;
+    }
+    context.beginPath();
+    context.rect(left, top, right - left, bottom - top);
+
+    return context.isPointInPath(
+      sand.left - sand.offset + sand.width / 2,
+      sand.top + sand.height / 2);
+  },
+
+  didRunnerCollideWithOtherSprite: function(left, top, right, bottom,
+    centerX, centerY,
+    otherSprite, context) {
+    // Determine if either of the runner's four corners or its
+    // center lie within the other sprite's bounding box. 
+    if (!context) {
+      return false;
+    }
+    context.beginPath();
+    context.rect(otherSprite.left - otherSprite.offset, otherSprite.top,
+      otherSprite.width, otherSprite.height);
+
+    return context.isPointInPath(left, top) ||
+      context.isPointInPath(right, top) ||
+
+      context.isPointInPath(centerX, centerY) ||
+
+      context.isPointInPath(left, bottom) ||
+      context.isPointInPath(right, bottom);
+  },
+
+  didCollide: function(sprite, otherSprite, context) {
+    var MARGIN_TOP = 5,
+      MARGIN_LEFT = 5,
+      MARGIN_RIGHT = 5,
+      MARGIN_BOTTOM = 0,
+      left = sprite.left + sprite.offset + MARGIN_LEFT,
+      right = sprite.left + sprite.offset + sprite.width - MARGIN_RIGHT,
+      top = sprite.top + MARGIN_TOP,
+      bottom = sprite.top + sprite.height - MARGIN_BOTTOM,
+      centerX = left + sprite.width / 2,
+      centerY = sprite.top + sprite.height / 2;
+
+    if (otherSprite.type === 'oldMan_sand') {
+      return this.didSandCollideWithRunner(left, top, right, bottom,
+        otherSprite, context);
+    } else {
+      return this.didRunnerCollideWithOtherSprite(left, top, right, bottom,
+        centerX, centerY,
+        otherSprite, context);
+    }
+  },
+
+  processCollision: function(sprite, otherSprite) {
+    if (otherSprite.value) { // Modify Snail Bait sprites so they have values
+      // Keep score...
+    }
+
+    if ('coin' === otherSprite.type ||
+      'sapphire' === otherSprite.type ||
+      'ruby' === otherSprite.type ||
+      'button' === otherSprite.type ||
+      'snail bomb' === otherSprite.type) {
+      otherSprite.visible = false;
+    }
+
+    if ('bat' === otherSprite.type ||
+      'bee' === otherSprite.type ||
+      'snail' === otherSprite.type ||
+      'snail bomb' === otherSprite.type) {
+      constellationGame.explode(sprite);
+    }
+
+    if (sprite.jumping && 'platform' === otherSprite.type) {
+      this.processPlatformCollisionDuringJump(sprite, otherSprite);
+    }
+  },
+
+  processPlatformCollisionDuringJump: function(sprite, platform) {
+    var isDescending = sprite.descendAnimationTimer.isRunning();
+
+    sprite.stopJumping();
+
+    if (isDescending) { // Collided with platform while descending
+      // land on platform
+      sprite.track = platform.track;
+      sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
+    } else { // Collided with platform while ascending
+      sprite.fall();
     }
   }
 };
