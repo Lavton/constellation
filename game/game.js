@@ -208,9 +208,21 @@ var ConstellationGame = function() {
 
   this.explosionAnimator = new SpriteAnimator(
     this.explosionCells, // Animation cells
-    this.EXPLOSION_DURATION, // Duration of the explosion
+    magicNumbers.EXPLOSION_DURATION, // Duration of the explosion
+
     function(sprite, animator) { // Callback after animation
       sprite.exploding = false;
+
+      if (sprite.jumping) {
+        sprite.stopJumping();
+      } else if (sprite.falling) {
+        sprite.stopFalling();
+      }
+
+      sprite.visible = true;
+      sprite.track = 1;
+      sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
+      sprite.artist.cellIndex = 0;
     }
   );
 };

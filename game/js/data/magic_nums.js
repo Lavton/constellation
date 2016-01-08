@@ -45,4 +45,6 @@ var magicNumbers = {
   },
 
   fps: 2,
+
+  EXPLOSION_DURATION: 500, //время взрыва
 }

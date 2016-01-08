@@ -483,4 +483,56 @@ var cellsFactory = function() {
     width: 29,
     height: 20
   }, ];
+
+  // взрыв
+  this.explosionCells = [
+  {
+    left: 3,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  {
+    left: 68,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  {
+    left: 131,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  {
+    left: 197,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  {
+    left: 256,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  {
+    left: 321,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  {
+    left: 384,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  {
+    left: 447,
+    top: 939,
+    width: 49,
+    height: 49
+  },
+  ];
 }

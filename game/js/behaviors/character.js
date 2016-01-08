@@ -137,7 +137,7 @@ Jump.prototype = {
   // Execute..............................................................
 
   execute: function(sprite, time, fps) {
-    if (!sprite.jumping) {
+    if (!sprite.jumping || sprite.exploding) {
       return;
     }
 
@@ -258,7 +258,10 @@ Collide.prototype = {
     }
 
     if ("bad" === otherSprite.common_type) {
-      // constellationGame.explode(sprite);
+      if("cloud" === otherSprite.type && otherSprite.artist.cellIndex != 0) {
+        return
+      }
+      constellationGame.explode(sprite);
     }
     if (sprite.jumping && 'platform' === otherSprite.common_type) {
       this.processPlatformCollisionDuringJump(sprite, otherSprite);

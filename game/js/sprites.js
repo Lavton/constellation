@@ -104,13 +104,14 @@ SpriteAnimator.prototype = {
       originalIndex = sprite.artist.cellIndex,
       self = this;
 
+    sprite.runAnimationRate = constellationGame.RUN_ANIMATION_RATE
     sprite.artist.cells = this.cells;
     sprite.artist.cellIndex = 0;
 
     setTimeout(function() {
       sprite.artist.cells = originalCells;
       sprite.artist.cellIndex = originalIndex;
-
+      sprite.runAnimationRate = 0;
       sprite.visible = reappear;
 
       if (self.callback) {
