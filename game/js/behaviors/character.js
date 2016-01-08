@@ -187,7 +187,8 @@ Collide.prototype = {
       !sprite.exploding && !otherSprite.exploding &&
       otherSprite.left - otherSprite.offset <
       sprite.left - sprite.offset + sprite.width * 2 &&
-      otherSprite.type != "suricane";
+      otherSprite.type != "suricane" &&
+      !otherSprite.exploding;
   },
 
   didSandCollideWithRunner: function(left, top, right, bottom,

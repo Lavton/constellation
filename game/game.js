@@ -219,10 +219,20 @@ var ConstellationGame = function() {
         sprite.stopFalling();
       }
 
-      sprite.visible = true;
       sprite.track = 1;
       sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
       sprite.artist.cellIndex = 0;
+    }
+  );
+
+  this.explosionEnemyAnimator = new SpriteAnimator(
+    this.explosionCells, // Animation cells
+    magicNumbers.EXPLOSION_DURATION, // Duration of the explosion
+
+    function(sprite, animator) { // Callback after animation
+      sprite.exploding = false;
+
+      sprite.visible = false;
     }
   );
 };
@@ -354,7 +364,11 @@ ConstellationGame.prototype = {
 
   explode: function(sprite, silent) {
     sprite.exploding = true;
-    this.explosionAnimator.start(sprite, true); // true means sprite reappears
+    if (sprite.type === "runner") {
+      this.explosionAnimator.start(sprite, true); // true means sprite reappears
+    } else {
+      this.explosionAnimator.start(sprite, false);
+    }
   },
 
   equipRunnerForJumping: function() {

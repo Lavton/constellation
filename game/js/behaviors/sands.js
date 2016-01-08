@@ -10,7 +10,7 @@ oldManShoot.prototype = {
     if (!constellationGame.spriteInView(sprite)) {
       return;
     }
-    if (!sand.visible && sprite.artist.cellIndex === 2 && sprite.direction == magicNumbers.direction.LEFT) {
+    if ((!sand.visible || !constellationGame.spriteInView(sand)) && sprite.artist.cellIndex === 2 && sprite.direction == magicNumbers.direction.LEFT) {
       sand.left = sprite.left;
       sand.visible = true;
     }
@@ -108,9 +108,9 @@ SuricaneCollide.prototype = {
     if (otherSprite.value) { // Modify Snail Bait sprites so they have values
       // Keep score...
     }
-
-    otherSprite.visible = false;
     sprite.visible = false;
+    constellationGame.explode(otherSprite)
+    // otherSprite.visible = false;
 
   },
 };

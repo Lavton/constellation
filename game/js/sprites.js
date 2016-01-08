@@ -113,6 +113,7 @@ SpriteAnimator.prototype = {
       sprite.artist.cellIndex = originalIndex;
       sprite.runAnimationRate = 0;
       sprite.visible = reappear;
+      console.log(sprite.visible)
 
       if (self.callback) {
         self.callback(sprite, self);
