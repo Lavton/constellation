@@ -45,8 +45,7 @@ SuricaneCollide.prototype = {
       otherSprite = constellationGame.sprites[i];
       if (this.isCandidateForCollision(sprite, otherSprite)) {
         if (this.didCollide(sprite, otherSprite, context)) {
-          console.log("suricane collide with " + otherSprite.type)
-            // this.processCollision(sprite, otherSprite);
+          this.processCollision(sprite, otherSprite);
         }
       }
     }
@@ -56,10 +55,11 @@ SuricaneCollide.prototype = {
     return sprite !== otherSprite &&
       sprite.visible && otherSprite.visible &&
       !sprite.exploding && !otherSprite.exploding &&
+      otherSprite.common_type == "bad" &&
       otherSprite.type != "runner" &&
       otherSprite.type != "oldMan_sand" &&
       otherSprite.left - otherSprite.offset <
-      sprite.left - sprite.offset + sprite.width * 10 && 
+      sprite.left - sprite.offset + sprite.width * 10 &&
       otherSprite.left - otherSprite.offset >
       sprite.left - sprite.offset - sprite.width * 10;
   },
@@ -81,8 +81,7 @@ SuricaneCollide.prototype = {
       context.isPointInPath(centerX, centerY) ||
 
       context.isPointInPath(left, bottom) ||
-      context.isPointInPath(right, bottom)) {
-    }
+      context.isPointInPath(right, bottom)) {}
     return context.isPointInPath(left, top) ||
       context.isPointInPath(right, top) ||
 
@@ -110,37 +109,8 @@ SuricaneCollide.prototype = {
       // Keep score...
     }
 
-    if ('coin' === otherSprite.type ||
-      'sapphire' === otherSprite.type ||
-      'ruby' === otherSprite.type ||
-      'button' === otherSprite.type ||
-      'snail bomb' === otherSprite.type) {
-      otherSprite.visible = false;
-    }
+    otherSprite.visible = false;
+    sprite.visible = false;
 
-    if ('bat' === otherSprite.type ||
-      'bee' === otherSprite.type ||
-      'snail' === otherSprite.type ||
-      'snail bomb' === otherSprite.type) {
-      constellationGame.explode(sprite);
-    }
-
-    if (sprite.jumping && 'platform' === otherSprite.type) {
-      this.processPlatformCollisionDuringJump(sprite, otherSprite);
-    }
   },
-
-  processPlatformCollisionDuringJump: function(sprite, platform) {
-    var isDescending = sprite.descendAnimationTimer.isRunning();
-
-    sprite.stopJumping();
-
-    if (isDescending) { // Collided with platform while descending
-      // land on platform
-      sprite.track = platform.track;
-      sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
-    } else { // Collided with platform while ascending
-      sprite.fall();
-    }
-  }
 };

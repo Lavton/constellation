@@ -192,7 +192,12 @@ var ConstellationGame = function() {
       new Jump(),
       new Collide(),
     ]);
+  this.runner.common_type == "runner"
   this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
+  this.runner.fall = function() {
+    constellationGame.runner.track = 1;
+    constellationGame.runner.top = constellationGame.calculatePlatformTop(constellationGame.runner.track) - constellationGame.runner.height;
+  };
 
   // All sprites.......................................................
   // 
@@ -363,6 +368,19 @@ ConstellationGame.prototype = {
       this.verticalLaunchPosition = this.top;
       this.ascendAnimationTimer.start();
     };
+    this.runner.stopJumping = function() {
+      this.jumping = false;
+      this.ascendAnimationTimer.stop();
+      this.descendAnimationTimer.stop();
+      this.runAnimationRate = constellationGame.RUN_ANIMATION_RATE;
+      constellationGame.stopRun();
+      if (constellationGame.keyPress == magicNumbers.now_going.LEFT) {
+        constellationGame.turnLeft();
+      } else if (constellationGame.keyPress == magicNumbers.now_going.RIGHT) {
+        constellationGame.turnRight();
+      }
+
+    };
   },
 
   equipRunner: function() {
@@ -389,7 +407,7 @@ ConstellationGame.prototype = {
     for (var i = 0; i < this.platformData.length; ++i) {
       pd = this.platformData[i];
       sprite = new Sprite('platform-' + i, this.platformArtist);
-
+      sprite.common_type = "platform"
       sprite.left = pd.left;
       sprite.width = pd.width;
       sprite.height = pd.height;
@@ -497,6 +515,7 @@ ConstellationGame.prototype = {
         new suricaneMove(), new Cycle(10), new SuricaneCollide(),
       ]
     );
+    this.runner.suricane.common_type = "suricane"
     this.runner.suricane.width = _.max(this.orangeSuricaneCells, function(cell) {
       return cell.width
     }).width;
@@ -521,7 +540,7 @@ ConstellationGame.prototype = {
       oldMan.sand = new Sprite('oldMan_sand',
         new SpriteSheetArtist(this.spritesheet, this.sandCells), [new sandMove(), new Cycle(300)]);
       oldMan.sand.vertical = magicNumbers.pegging.BUTTON;
-
+      oldMan.sand.common_type = "bad"
       oldMan.sand.width = _.max(this.sandCells, function(cell) {
         return cell.width
       }).width;
@@ -574,6 +593,7 @@ ConstellationGame.prototype = {
     for (var i = 0; i < this.cloudData.length; ++i) {
       cloud = new Sprite('cloud', new SpriteSheetArtist(this.spritesheet, this.cloudCells), [new Cycle(700)]);
       cloud.vertical = magicNumbers.pegging.TOP;
+      cloud.common_type = "bad";
       cloud.width = _.max(this.cloudCells, function(cell) {
         return cell.width
       }).width;
@@ -608,6 +628,7 @@ ConstellationGame.prototype = {
         new oldManShoot(),
         new Cycle(250)
       ]);
+      oldMan.common_type = "bad"
 
       oldMan.width = _.max(this.oldManCellsRight, function(cell) {
         return cell.width

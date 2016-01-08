@@ -175,7 +175,7 @@ Collide.prototype = {
       if (this.isCandidateForCollision(sprite, otherSprite)) {
         if (this.didCollide(sprite, otherSprite, context)) {
           // console.log("collide with " + otherSprite.type)
-            // this.processCollision(sprite, otherSprite);
+          this.processCollision(sprite, otherSprite);
         }
       }
     }
@@ -253,29 +253,20 @@ Collide.prototype = {
       // Keep score...
     }
 
-    if ('coin' === otherSprite.type ||
-      'sapphire' === otherSprite.type ||
-      'ruby' === otherSprite.type ||
-      'button' === otherSprite.type ||
-      'snail bomb' === otherSprite.type) {
+    if ("good" === otherSprite.common_type) {
       otherSprite.visible = false;
     }
 
-    if ('bat' === otherSprite.type ||
-      'bee' === otherSprite.type ||
-      'snail' === otherSprite.type ||
-      'snail bomb' === otherSprite.type) {
-      constellationGame.explode(sprite);
+    if ("bad" === otherSprite.common_type) {
+      // constellationGame.explode(sprite);
     }
-
-    if (sprite.jumping && 'platform' === otherSprite.type) {
+    if (sprite.jumping && 'platform' === otherSprite.common_type) {
       this.processPlatformCollisionDuringJump(sprite, otherSprite);
     }
   },
 
   processPlatformCollisionDuringJump: function(sprite, platform) {
     var isDescending = sprite.descendAnimationTimer.isRunning();
-
     sprite.stopJumping();
 
     if (isDescending) { // Collided with platform while descending

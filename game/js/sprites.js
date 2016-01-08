@@ -143,6 +143,7 @@ var Sprite = function(type, artist, behaviors) {
   this.visible = true;
   this.horizontal = magicNumbers.pegging.CENTER;
   this.vertical = magicNumbers.pegging.CENTER;
+  this.common_type = "good"
   return this;
 };
 

@@ -97,48 +97,49 @@ var cellsFactory = function() {
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     },
     {
-      left: 198,
+      left: 194,
       top: 165,
       width: 57,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, 
     {
-      left: 264,
+      left: 262,
       top: 165,
       width: 50,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, 
     {
-      left: 322,
+      left: 319,
       top: 165,
       width: 54,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, 
     {
-      left: 380,
+      left: 372,
       top: 165,
-      width: 61,
+      width: 65,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, 
     {
-      left: 452,
+      left: 438,
       top: 165,
-      width: 55,
+      width: 63,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, 
     {
-      left: 20,
+      left: 18,
       top: 165,
       width: 46,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, 
     {
-      left: 76,
+      left: 75,
       top: 165,
       width: 52,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, 
     ],
+
 
     this.runnerManCellsLeft = [
     {
