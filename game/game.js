@@ -460,7 +460,6 @@ ConstellationGame.prototype = {
 
   togglePaused: function() {
     var now = +new Date();
-
     this.paused = !this.paused;
     this.togglePausedStateOfAllBehaviors();
     if (this.paused) {
@@ -786,9 +785,6 @@ window.onkeyup = function(e) {
     return;
   }
   var key = e.keyCode;
-  if (key === 80 || (constellationGame.paused && key !== 80)) { // 'p'
-    constellationGame.togglePaused();
-  }
 
   if (key === 68 || key === 37) { // 'd' or left arrow
     constellationGame.keyPress = magicNumbers.now_going.NOWHERE;

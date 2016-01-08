@@ -13,7 +13,7 @@ var magicNumbers = {
   RED_SURICANE_CELLS_WIDTH: 39, // ширина красного сюрикена
 
   CLOUD_CELLS_HEIGHT: 48, // высота (максимальная) облака
-  OLD_MAN_CELLS_HEIGHT: 60, // высота старика
+  OLD_MAN_CELLS_HEIGHT: 58, // высота старика
 
   PLATFORM_HEIGHT: 8, // высота платформ
 

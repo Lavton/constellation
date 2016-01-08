@@ -424,43 +424,43 @@ var cellsFactory = function() {
   // старик............................................................
   this.oldManCellsRight = [{
     left: 12,
-    top: 509,
+    top: 508,
     width: 36,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, {
     left: 48,
-    top: 509,
+    top: 508,
     width: 33,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, {
     left: 84,
-    top: 509,
+    top: 508,
     width: 36,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, {
     left: 123,
-    top: 509,
+    top: 508,
     width: 36,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, ];
 
   this.oldManCellsLeft = [{
-    left: 13,
+    left: 14,
     top: 576,
     width: 34,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, {
-    left: 48,
+    left: 54,
     top: 576,
     width: 36,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, {
-    left: 85,
+    left: 89,
     top: 576,
     width: 33,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
   }, {
-    left: 120,
+    left: 126,
     top: 576,
     width: 36,
     height: magicNumbers.OLD_MAN_CELLS_HEIGHT
