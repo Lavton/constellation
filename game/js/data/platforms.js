@@ -5,7 +5,7 @@ var platformFactory = function() {
       // Screen 1.......................................................
       {
         left: 10,
-        width: 230,
+        width: 280,
         height: magicNumbers.PLATFORM_HEIGHT,
         fillStyle: 'rgb(150,190,255)',
         opacity: 1.0,
@@ -15,7 +15,7 @@ var platformFactory = function() {
       
       {
         left: 250,
-        width: 300,
+        width: 400,
         height: magicNumbers.PLATFORM_HEIGHT,
         fillStyle: 'rgb(150,190,255)',
         opacity: 1.0,
@@ -35,7 +35,7 @@ var platformFactory = function() {
 
       {
         left: 633,
-        width: 100,
+        width: 200,
         height: magicNumbers.PLATFORM_HEIGHT,
         fillStyle: 'rgb(80,140,230)',
         opacity: 1.0,

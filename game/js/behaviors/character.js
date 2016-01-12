@@ -32,7 +32,6 @@ runnerShoot.prototype = {
       suricane.top = constellationGame.runner.top //+ this.runner.suricane.height / 2;
       suricane.visible = true;
     } else if (sprite.shoot) {
-      // console.log(suricane.visible, sprite.direction)
     }
     sprite.shoot = false;
   }
@@ -121,17 +120,16 @@ Jump.prototype = {
   },
 
   finishDescent: function(sprite) {
-    sprite.top = sprite.verticalLaunchPosition;
-    sprite.jumping = false;
-    sprite.runAnimationRate = magicNumbers.RUN_ANIMATION_RATE;
-    sprite.ascendAnimationTimer.stop();
-    sprite.descendAnimationTimer.stop();
-    constellationGame.stopRun();
-    if (constellationGame.keyPress == magicNumbers.now_going.LEFT) {
-      constellationGame.turnLeft();
-    } else if (constellationGame.keyPress == magicNumbers.now_going.RIGHT) {
-      constellationGame.turnRight();
+    sprite.stopJumping();
+
+    if (constellationGame.isOverPlatform(sprite) !== -1) {
+      sprite.top = sprite.verticalLaunchPosition;
+    } else {
+      sprite.fall(magicNumbers.GRAVITY_FORCE *
+        (sprite.descendAnimationTimer.getElapsedTime() / 1000) *
+        magicNumbers.PIXELS_PER_METER);
     }
+
   },
 
   // Execute..............................................................
@@ -174,7 +172,6 @@ Collide.prototype = {
 
       if (this.isCandidateForCollision(sprite, otherSprite)) {
         if (this.didCollide(sprite, otherSprite, context)) {
-          // console.log("collide with " + otherSprite.type)
           this.processCollision(sprite, otherSprite);
         }
       }
@@ -228,9 +225,9 @@ Collide.prototype = {
   },
 
   didCollide: function(sprite, otherSprite, context) {
-    var MARGIN_TOP = 5,
-      MARGIN_LEFT = 5,
-      MARGIN_RIGHT = 5,
+    var MARGIN_TOP = 10,
+      MARGIN_LEFT = 10,
+      MARGIN_RIGHT = 10,
       MARGIN_BOTTOM = 0,
       left = sprite.left + sprite.offset + MARGIN_LEFT,
       right = sprite.left + sprite.offset + sprite.width - MARGIN_RIGHT,
@@ -259,7 +256,7 @@ Collide.prototype = {
     }
 
     if ("bad" === otherSprite.common_type) {
-      if("cloud" === otherSprite.type && otherSprite.artist.cellIndex != 0) {
+      if ("cloud" === otherSprite.type && otherSprite.artist.cellIndex != 0) {
         return
       }
       constellationGame.explode(sprite);
@@ -279,6 +276,83 @@ Collide.prototype = {
       sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
     } else { // Collided with platform while ascending
       sprite.fall();
+    }
+  }
+};
+
+
+Fall = function() {};
+
+Fall.prototype = {
+  isOutOfPlay: function(sprite) {
+    return sprite.top > constellationGame.TRACK_1_BASELINE;
+  },
+
+  willFallBelowCurrentTrack: function(sprite, deltaY) {
+    return sprite.top + sprite.height + deltaY >
+      constellationGame.calculatePlatformTop(sprite.track);
+  },
+
+  fallOnPlatform: function(sprite) {
+    sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
+    sprite.stopFalling();
+    // constellationGame.playSound(constellationGame.thudSound);
+  },
+
+  setSpriteVelocity: function(sprite) {
+    var fallingElapsedTime;
+
+    sprite.velocityY = sprite.initialVelocityY + magicNumbers.GRAVITY_FORCE *
+      (sprite.fallAnimationTimer.getElapsedTime() / 1000) *
+      magicNumbers.PIXELS_PER_METER;
+    // debugger;
+  },
+
+  calculateVerticalDrop: function(sprite, fps) {
+    return sprite.velocityY / fps;
+  },
+
+  isPlatformUnderneath: function(sprite) {
+    return constellationGame.isOverPlatform(sprite) !== -1;
+  },
+
+  execute: function(sprite, time, fps) {
+    var deltaY;
+
+    if (sprite.jumping) {
+      return;
+    }
+
+    if (this.isOutOfPlay(sprite) || sprite.exploding) {
+      if (sprite.falling) {
+        sprite.stopFalling();
+      }
+      return;
+    }
+
+    if (!sprite.falling) {
+      if (!sprite.exploding && !this.isPlatformUnderneath(sprite)) {
+        sprite.fall();
+      }
+      return;
+    }
+    this.setSpriteVelocity(sprite);
+    deltaY = this.calculateVerticalDrop(sprite, fps);
+    if (!this.willFallBelowCurrentTrack(sprite, deltaY)) {
+      sprite.top += deltaY;
+    } else { // will fall below current track
+      if (this.isPlatformUnderneath(sprite)) {
+        this.fallOnPlatform(sprite);
+        sprite.stopFalling();
+      } else {
+        sprite.track--;
+
+        sprite.top += deltaY;
+
+        if (sprite.track === 0) {
+          // constellationGame.playSound(constellationGame.fallingWhistleSound);
+        }
+      }
     }
   }
 };

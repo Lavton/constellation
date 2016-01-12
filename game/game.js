@@ -82,7 +82,6 @@ var ConstellationGame = function() {
 
     // Constants are listed in alphabetical order from here on out
 
-    this.BACKGROUND_VELOCITY = 42,
 
     this.PAUSED_CHECK_INTERVAL = 200,
 
@@ -191,13 +190,10 @@ var ConstellationGame = function() {
       new runnerShoot(),
       new Jump(),
       new Collide(),
+      new Fall(),
     ]);
   this.runner.common_type == "runner"
   this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
-  this.runner.fall = function() {
-    constellationGame.runner.track = 1;
-    constellationGame.runner.top = constellationGame.calculatePlatformTop(constellationGame.runner.track) - constellationGame.runner.height;
-  };
 
   // All sprites.......................................................
   // 
@@ -333,7 +329,7 @@ ConstellationGame.prototype = {
   turnLeft: function() {
     if (!this.runner.jumping) {
       this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
-      this.bgVelocity = -this.BACKGROUND_VELOCITY;
+      this.bgVelocity = -magicNumbers.BACKGROUND_VELOCITY;
       this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
       this.runnerArtist.cells = this.runnerCellsLeft;
       this.runner.direction = magicNumbers.direction.LEFT;
@@ -343,7 +339,7 @@ ConstellationGame.prototype = {
   turnRight: function() {
     if (!this.runner.jumping) {
       this.runner.runAnimationRate = this.RUN_ANIMATION_RATE
-      this.bgVelocity = this.BACKGROUND_VELOCITY;
+      this.bgVelocity = magicNumbers.BACKGROUND_VELOCITY;
       this.runnerPageflipInterval = this.RUNNER_PAGE_FLIP_INTERVAL;
       this.runnerArtist.cells = this.runnerCellsRight;
       this.runner.direction = magicNumbers.direction.RIGHT;
@@ -388,7 +384,7 @@ ConstellationGame.prototype = {
     this.runner.jump = function() {
       if (this.jumping) // 'this' is the runner
         return;
-
+      this.jump_direction = constellationGame.bgVelocity / magicNumbers.BACKGROUND_VELOCITY;
       this.runAnimationRate = 0;
       this.jumping = true;
       this.verticalLaunchPosition = this.top;
@@ -405,10 +401,29 @@ ConstellationGame.prototype = {
       } else if (constellationGame.keyPress == magicNumbers.now_going.RIGHT) {
         constellationGame.turnRight();
       }
-
     };
   },
+  equipRunnerForFalling: function() {
+    this.runner.falling = false;
+    this.runner.fallAnimationTimer = new AnimationTimer();
 
+    this.runner.fall = function(initialVelocity) {
+      this.velocityY = initialVelocity || 0;
+      this.initialVelocityY = initialVelocity || 0;
+      this.fallAnimationTimer.start();
+      if (initialVelocity) {
+        constellationGame.bgVelocity = this.jump_direction * magicNumbers.BACKGROUND_VELOCITY;
+      }
+      this.falling = true;
+    }
+
+    this.runner.stopFalling = function() {
+      constellationGame.stopRun();
+      this.falling = false;
+      this.velocityY = 0;
+      this.fallAnimationTimer.stop();
+    }
+  },
   equipRunner: function() {
     this.runner.track = this.STARTING_RUNNER_TRACK;
     this.runner.direction = this.LEFT;
@@ -425,6 +440,7 @@ ConstellationGame.prototype = {
     this.runner.direction = magicNumbers.direction.RIGHT;
     this.equipRunnerForJumping();
     this.armRunner();
+    this.equipRunnerForFalling();
   },
 
   createPlatformSprites: function() {
@@ -547,7 +563,6 @@ ConstellationGame.prototype = {
     this.runner.suricane.height = _.max(this.orangeSuricaneCells, function(cell) {
       return cell.height
     }).height;
-    console.log(this.runner.suricane.top)
     this.runner.suricane.top = this.runner.top //+ this.runner.suricane.height / 2;
     this.runner.suricane.left = this.runner.left + this.runner.suricane.width / 2;
     this.runner.suricane.visible = false;
@@ -698,12 +713,33 @@ ConstellationGame.prototype = {
         sprite.left < this.spriteOffset + this.canvas.width);
   },
 
+  isOverPlatform: function(sprite, track) {
+    var p,
+      index = -1,
+      center = sprite.left + sprite.offset + sprite.width / 2;
+
+    if (track === undefined) {
+      track = sprite.track; // Look on sprite track only
+    }
+
+    for (var i = 0; i < this.platforms.length; ++i) {
+      p = this.platforms[i];
+
+      if (track === p.track) {
+        if (center > p.left - p.offset && center < (p.left - p.offset + p.width)) {
+          index = i;
+          break;
+        }
+      }
+    }
+    return index;
+  },
+
   putSpriteOnPlatform: function(sprite, platformSprite) {
     sprite.top = platformSprite.top - sprite.height;
     sprite.left = platformSprite.left;
     sprite.platform = platformSprite;
   },
-
   createSprites: function(is_man) {
     if (is_man) {
       this.runnerCellsRight = this.runnerManCellsRight;
@@ -799,11 +835,10 @@ window.onkeydown = function(e) {
 
   } else if (key === 74 || key === 32) { // 'j' or space
     e.preventDefault();
-    constellationGame.runner.jump();
+    if (!constellationGame.runner.jumping && !constellationGame.runner.falling) {
+      constellationGame.runner.jump();
+    }
   }
-
-  constellationGame.runner.top = constellationGame.calculatePlatformTop(constellationGame.runner.track) -
-    constellationGame.RUNNER_CELLS_HEIGHT;
 };
 
 window.onkeyup = function(e) {

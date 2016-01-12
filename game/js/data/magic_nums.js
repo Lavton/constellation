@@ -1,7 +1,7 @@
 var magicNumbers = {
   RUNNER_CELLS_HEIGHT: 60, // высота бегуна
   STARTING_RUNNER_LEFT: 100, // начальное положение бегуна
-  RUNNER_JUMP_DURATION: 1500, // время прыжка
+  RUNNER_JUMP_DURATION: 900, // время прыжка
   RUNNER_JUMP_HEIGHT: 120, // высота прыжка в пикселях
 
   ORANGE_STAR_CELLS_HEIGHT: 38, // высота оранжевой звезды
@@ -25,7 +25,7 @@ var magicNumbers = {
   OLDMAN_PACE_VELOCITY: 50, // скорость "снувания" старика
   SAND_VALOCITY: 150, // скорость распространения песка
 
-  SURICANE_VELOCITY:300, // скорость стрельбы сюрикена
+  SURICANE_VELOCITY: 300, // скорость стрельбы сюрикена
 
   pegging: { // привязка изображения спрайте к левому(верху)/центру/правому(низу)
     TOP: 1,
@@ -47,4 +47,8 @@ var magicNumbers = {
   fps: 2,
 
   EXPLOSION_DURATION: 500, //время взрыва
+  GRAVITY_FORCE: 9.81, // гравитация
+  PIXELS_PER_METER: 800 / 10, // масштабирование
+  BACKGROUND_VELOCITY: 42 // скорость фона
+
 }
