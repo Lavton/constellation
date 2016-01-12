@@ -69,7 +69,7 @@ SpriteSheetArtist.prototype = {
     var cell = this.cells[this.cellIndex];
 
     var left_coner = sprite.left + (sprite.width - cell.width) / 2;
-    var top_coner = sprite.top+(sprite.height -cell.height)/2;
+    var top_coner = sprite.top + (sprite.height - cell.height) / 2;
 
     if (sprite.horizontal == magicNumbers.pegging.TOP) {
       left_coner = sprite.left;
@@ -87,6 +87,11 @@ SpriteSheetArtist.prototype = {
       cell.width, cell.height,
       left_coner, top_coner,
       cell.width, cell.height);
+    if (sprite.type == "cloud" && this.cellIndex == 0) {
+      if (sprite.left - sprite.offset <
+        constellationGame.runner.left - constellationGame.runner.offset + 300)
+        constellationGame.playSound(constellationGame.thunderSound);
+    }
   }
 };
 

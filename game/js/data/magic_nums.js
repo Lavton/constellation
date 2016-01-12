@@ -49,6 +49,21 @@ var magicNumbers = {
   EXPLOSION_DURATION: 500, //время взрыва
   GRAVITY_FORCE: 9.81, // гравитация
   PIXELS_PER_METER: 800 / 10, // масштабирование
-  BACKGROUND_VELOCITY: 42 // скорость фона
+  BACKGROUND_VELOCITY: 42, // скорость фона
 
+
+  // Звуки (громкость)............................................................
+
+  COIN_VOLUME: 1.0,
+  SOUNDTRACK_VOLUME: 0.05, // фоновая музыка
+  JUMP_WHISTLE_VOLUME: 0.05, // упал вниз
+  PLOP_VOLUME: 0.20, // удар о платформу
+  THUD_VOLUME: 0.20, // прыгнул на платформу
+  FALLING_WHISTLE_VOLUME: 0.10, // падение за экран
+  EXPLOSION_VOLUME: 0.25, // взрыв
+  CHIMES_VOLUME: 1.0,
+
+  SURICANE_VOLUME: 0.8, // выпуск сюрикена
+  SAND_VOLUME: 0.1,
+  THUNDER_VOLUME: 0.2,
 }

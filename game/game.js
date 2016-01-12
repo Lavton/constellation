@@ -133,9 +133,36 @@ var ConstellationGame = function() {
     this.background = new Image(),
     this.spritesheet = new Image(),
 
-    // Time..............................................................
+    // Sounds............................................................
 
-    this.lastAnimationFrameTime = 0,
+    this.soundCheckbox = document.getElementById('sound-checkbox'),
+    this.musicCheckbox = document.getElementById('music-checkbox'),
+
+    this.soundOn = this.soundCheckbox.checked,
+    this.musicOn = this.musicCheckbox.checked,
+
+    this.audioTracks = [ // 8 tracks is more than enough
+      new Audio(), new Audio(), new Audio(), new Audio(),
+      new Audio(), new Audio(), new Audio(), new Audio()
+    ],
+
+    this.soundtrack = document.getElementById('soundtrack'),
+    this.chimesSound = document.getElementById('chimes-sound'),
+    this.plopSound = document.getElementById('plop-sound'),
+    this.explosionSound = document.getElementById('explosion-sound'),
+    this.fallingWhistleSound = document.getElementById('whistle-down-sound'),
+    this.coinSound = document.getElementById('coin-sound'),
+    this.jumpWhistleSound = document.getElementById('jump-sound'),
+    this.thudSound = document.getElementById('thud-sound'),
+    this.suricaneSound = document.getElementById('suricane-sound'),
+    this.sandSound = document.getElementById('sand-sound'),
+    this.thunderSound = document.getElementById('thunder-sound'),
+
+
+
+  // Time..............................................................
+
+  this.lastAnimationFrameTime = 0,
     this.lastFpsUpdateTime = 0,
     this.fps = 60,
 
@@ -365,6 +392,7 @@ ConstellationGame.prototype = {
     } else {
       this.explosionAnimator.start(sprite, false);
     }
+    this.playSound(this.explosionSound);
   },
 
   equipRunnerForJumping: function() {
@@ -389,6 +417,7 @@ ConstellationGame.prototype = {
       this.jumping = true;
       this.verticalLaunchPosition = this.top;
       this.ascendAnimationTimer.start();
+      constellationGame.playSound(constellationGame.jumpWhistleSound);
     };
     this.runner.stopJumping = function() {
       this.jumping = false;
@@ -509,6 +538,54 @@ ConstellationGame.prototype = {
     } else {
       this.lastAnimationFrameTime += (now - this.pauseStartTime);
     }
+
+    if (this.paused && this.musicOn) {
+      this.soundtrack.pause();
+    } else if (!this.paused && this.musicOn) {
+      this.soundtrack.play();
+    }
+  },
+
+  // Playing sounds.......................................................
+
+  soundIsPlaying: function(sound) {
+    return !sound.ended && sound.currentTime > 0;
+  },
+
+  playSound: function(sound) {
+    var track, index;
+
+    if (this.soundOn) {
+      if (!this.soundIsPlaying(sound)) {
+        sound.play();
+      } else {
+        for (i = 0; index < this.audioTracks.length; ++index) {
+          track = this.audioTracks[index];
+
+          if (!this.soundIsPlaying(track)) {
+            track.src = sound.currentSrc;
+            track.load();
+            track.volume = sound.volume;
+            track.play();
+
+            break;
+          }
+        }
+      }
+    }
+  },
+
+  initializeSounds: function() {
+    this.soundtrack.volume = magicNumbers.SOUNDTRACK_VOLUME;
+    this.jumpWhistleSound.volume = magicNumbers.JUMP_WHISTLE_VOLUME;
+    this.thudSound.volume = magicNumbers.THUD_VOLUME;
+    this.fallingWhistleSound.volume = magicNumbers.FALLING_WHISTLE_VOLUME;
+    this.chimesSound.volume = magicNumbers.CHIMES_VOLUME;
+    this.explosionSound.volume = magicNumbers.EXPLOSION_VOLUME;
+    this.coinSound.volume = magicNumbers.COIN_VOLUME;
+    this.suricaneSound.volume = magicNumbers.SURICANE_VOLUME;
+    this.sandSound.volume = magicNumbers.SAND_VOLUME;
+    this.thunderSound.volume = magicNumbers.THUNDER_VOLUME;
   },
 
   // ------------------------- INITIALIZATION ----------------------------
@@ -517,6 +594,7 @@ ConstellationGame.prototype = {
     this.createSprites(is_man);
     this.initializeImages();
     this.equipRunner();
+    this.initializeSounds();
     this.splashToast('Good Luck!');
   },
 
@@ -532,6 +610,9 @@ ConstellationGame.prototype = {
   },
 
   startGame: function() {
+    if (this.musicOn) {
+      this.soundtrack.play();
+    }
     requestNextAnimationFrame(this.animate);
   },
 
@@ -838,6 +919,8 @@ window.onkeydown = function(e) {
     if (!constellationGame.runner.jumping && !constellationGame.runner.falling) {
       constellationGame.runner.jump();
     }
+  } else if (key === 70) { // 'f'
+    constellationGame.fire();
   }
 };
 
@@ -853,8 +936,6 @@ window.onkeyup = function(e) {
   } else if (key === 75 || key === 39) { // 'k'or right arrow
     constellationGame.keyPress = magicNumbers.now_going.NOWHERE;
     constellationGame.stopRun();
-  } else if (key === 70) { // 'f'
-    constellationGame.fire();
   }
 };
 
@@ -911,6 +992,23 @@ window.onfocus = function(e) { // unpause if paused
     }, 1000);
   }
 };
+
+// Sound and music controls............................................
+
+document.getElementById('sound-checkbox').onchange = function(e) {
+  constellationGame.soundOn = constellationGame.soundCheckbox.checked;
+};
+
+document.getElementById('music-checkbox').onchange = function(e) {
+  constellationGame.musicOn = constellationGame.musicCheckbox.checked;
+
+  if (constellationGame.musicOn) {
+    constellationGame.soundtrack.play();
+  } else {
+    constellationGame.soundtrack.pause();
+  }
+};
+
 
 // Launch game.........................................................
 var manOrWomanElement = document.getElementById('man-or-woman');

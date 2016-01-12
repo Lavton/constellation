@@ -31,6 +31,7 @@ runnerShoot.prototype = {
       suricane.left = constellationGame.spriteOffset + constellationGame.STARTING_RUNNER_LEFT + sprite.width;
       suricane.top = constellationGame.runner.top //+ this.runner.suricane.height / 2;
       suricane.visible = true;
+      constellationGame.playSound(constellationGame.suricaneSound)
     } else if (sprite.shoot) {
     }
     sprite.shoot = false;
@@ -253,6 +254,7 @@ Collide.prototype = {
 
     if ("good" === otherSprite.common_type) {
       otherSprite.visible = false;
+      constellationGame.playSound(constellationGame.chimesSound);
     }
 
     if ("bad" === otherSprite.common_type) {
@@ -275,6 +277,7 @@ Collide.prototype = {
       sprite.track = platform.track;
       sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
     } else { // Collided with platform while ascending
+      constellationGame.playSound(constellationGame.plopSound);
       sprite.fall();
     }
   }
@@ -296,7 +299,7 @@ Fall.prototype = {
   fallOnPlatform: function(sprite) {
     sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
     sprite.stopFalling();
-    // constellationGame.playSound(constellationGame.thudSound);
+    constellationGame.playSound(constellationGame.thudSound);
   },
 
   setSpriteVelocity: function(sprite) {
@@ -350,7 +353,7 @@ Fall.prototype = {
         sprite.top += deltaY;
 
         if (sprite.track === 0) {
-          // constellationGame.playSound(constellationGame.fallingWhistleSound);
+          constellationGame.playSound(constellationGame.fallingWhistleSound);
         }
       }
     }

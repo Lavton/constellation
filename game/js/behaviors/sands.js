@@ -13,6 +13,7 @@ oldManShoot.prototype = {
     if ((!sand.visible || !constellationGame.spriteInView(sand)) && sprite.artist.cellIndex === 2 && sprite.direction == magicNumbers.direction.LEFT) {
       sand.left = sprite.left;
       sand.visible = true;
+      constellationGame.playSound(constellationGame.sandSound)
     }
   }
 };
