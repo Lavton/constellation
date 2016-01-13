@@ -66,4 +66,12 @@ var magicNumbers = {
   SURICANE_VOLUME: 0.8, // выпуск сюрикена
   SAND_VOLUME: 0.1,
   THUNDER_VOLUME: 0.2,
+
+  // очки:
+  LIFE_VALUE: 300,
+  ORANGE_STAR_VALUE: 100,
+  RED_STAR_VALUE: 200,
+
+  FPS_SLOW_CHECK_INTERVAL: 4000, // частота проверки fps
+  MAX_NUMBER_OF_LIVES: 3, // макс жизней
 }

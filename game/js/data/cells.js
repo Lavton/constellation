@@ -339,58 +339,58 @@ var cellsFactory = function() {
   }, ];
 
   this.redSuricaneCells = [{
-    left: 7,
-    top: 728,
+    left: 9,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 56,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 105,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 154,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 203,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 255,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 304,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 351,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 396,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 442,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, {
     left: 495,
-    top: 682,
+    top: 729,
     width: magicNumbers.RED_SURICANE_CELLS_WIDTH,
     height: magicNumbers.RED_SURICANE_CELLS_HEIGHT
   }, ];

@@ -52,12 +52,72 @@ var ConstellationGame = function() {
 
     // HTML elements........................................................
 
-    this.fpsElement = document.getElementById('fps'),
+    this.fpsElement = document.getElementById('fps-mess'),
     this.toast = document.getElementById('toast'),
     this.manOrWomanElement = document.getElementById('man-or-woman');
-  // Constants............................................................
 
-  this.LEFT = 1,
+
+  // Score.............................................................
+
+  this.scoreElement = document.getElementById('score');
+  this.score = 0;
+
+  // Running slowly warning............................................
+
+  this.FPS_SLOW_CHECK_INTERVAL = 4000; // Only check every 4 seconds
+  this.DEFAULT_RUNNING_SLOWLY_THRESHOLD = 40; // fps
+  this.MAX_RUNNING_SLOWLY_THRESHOLD = 60; // fps
+
+  this.runningSlowlyElement =
+    document.getElementById('running-slowly');
+
+  this.slowlyOkayElement =
+    document.getElementById('slowly-okay');
+
+  this.slowlyDontShowElement =
+    document.getElementById('slowly-dont-show');
+
+  this.slowlyWarningElement =
+    document.getElementById('slowly-warning');
+
+  this.runningSlowlyThreshold = this.DEFAULT_RUNNING_SLOWLY_THRESHOLD;
+
+  // Slow fps detection and warning....................................
+
+  this.lastSlowWarningTime = 0;
+  this.showSlowWarning = false;
+
+  this.speedSamples = [60, 60, 60, 60, 60, 60, 60, 60, 60, 60];
+  this.speedSamplesIndex = 0;
+
+  this.NUM_SPEED_SAMPLES = this.speedSamples.length;
+
+  // Credits...........................................................
+
+  this.creditsElement = document.getElementById('credits');
+  this.newGameLink = document.getElementById('new-game-link');
+
+  // Tweet score..........................................................
+
+  this.tweetElement = document.getElementById('tweet');
+
+  this.TWEET_PREAMBLE = 'https://twitter.com/intent/tweet?text=I scored ';
+  this.TWEET_PROLOGUE = ' playing this HTML5 Canvas platformer: ' +
+    'http://bit.ly/NDV761 &hashtags=html5';
+
+  // Lives.............................................................
+
+  this.livesElement = document.getElementById('lives');
+  this.lifeIconLeft = document.getElementById('life-icon-left');
+  this.lifeIconMiddle = document.getElementById('life-icon-middle');
+  this.lifeIconRight = document.getElementById('life-icon-right');
+
+  this.lives = magicNumbers.MAX_NUMBER_OF_LIVES;
+  this.orange_num = 0,
+    this.red_num = 0,
+    // Constants............................................................
+
+    this.LEFT = 1,
     this.RIGHT = 2,
 
     this.BAT_CELLS_HEIGHT = 34, // Bat cell width is not uniform
@@ -160,9 +220,9 @@ var ConstellationGame = function() {
 
 
 
-  // Time..............................................................
+    // Time..............................................................
 
-  this.lastAnimationFrameTime = 0,
+    this.lastAnimationFrameTime = 0,
     this.lastFpsUpdateTime = 0,
     this.fps = 60,
 
@@ -334,6 +394,11 @@ ConstellationGame.prototype = {
     if (now - this.lastFpsUpdateTime > 1000) {
       this.lastFpsUpdateTime = now;
       this.fpsElement.innerHTML = fps.toFixed(0) + ' fps';
+      if (fps < 15) {
+        this.fpsElement.className = " warn"
+      } else {
+        this.fpsElement.className = ""
+      }
     }
 
     return fps;
@@ -384,6 +449,51 @@ ConstellationGame.prototype = {
     this.runner.shoot = true;
   },
   // Sprites..............................................................
+
+  shake: function() {
+    var SHAKE_INTERVAL = 90, // milliseconds
+      v = constellationGame.BACKGROUND_VELOCITY,
+      ov = constellationGame.bgVelocity; // ov means original velocity
+
+    this.bgVelocity = -this.BACKGROUND_VELOCITY;
+
+    setTimeout(function(e) {
+      constellationGame.bgVelocity = v;
+      setTimeout(function(e) {
+        constellationGame.bgVelocity = -v;
+        setTimeout(function(e) {
+          constellationGame.bgVelocity = v;
+          setTimeout(function(e) {
+            constellationGame.bgVelocity = -v;
+            setTimeout(function(e) {
+              constellationGame.bgVelocity = v;
+              setTimeout(function(e) {
+                constellationGame.bgVelocity = -v;
+                setTimeout(function(e) {
+                  constellationGame.bgVelocity = v;
+                  setTimeout(function(e) {
+                    constellationGame.bgVelocity = -v;
+                    setTimeout(function(e) {
+                      constellationGame.bgVelocity = v;
+                      setTimeout(function(e) {
+                        constellationGame.bgVelocity = -v;
+                        setTimeout(function(e) {
+                          constellationGame.bgVelocity = v;
+                          setTimeout(function(e) {
+                            constellationGame.bgVelocity = ov;
+                          }, SHAKE_INTERVAL);
+                        }, SHAKE_INTERVAL);
+                      }, SHAKE_INTERVAL);
+                    }, SHAKE_INTERVAL);
+                  }, SHAKE_INTERVAL);
+                }, SHAKE_INTERVAL);
+              }, SHAKE_INTERVAL);
+            }, SHAKE_INTERVAL);
+          }, SHAKE_INTERVAL);
+        }, SHAKE_INTERVAL);
+      }, SHAKE_INTERVAL);
+    }, SHAKE_INTERVAL);
+  },
 
   explode: function(sprite, silent) {
     sprite.exploding = true;
@@ -451,6 +561,11 @@ ConstellationGame.prototype = {
       this.falling = false;
       this.velocityY = 0;
       this.fallAnimationTimer.stop();
+      if (constellationGame.keyPress == magicNumbers.now_going.LEFT) {
+        constellationGame.turnLeft();
+      } else if (constellationGame.keyPress == magicNumbers.now_going.RIGHT) {
+        constellationGame.turnRight();
+      }
     }
   },
   equipRunner: function() {
@@ -616,6 +731,19 @@ ConstellationGame.prototype = {
     requestNextAnimationFrame(this.animate);
   },
 
+  loseLife: function() {
+    this.lives--;
+    // this.updateLivesElement();
+    document.getElementById("lives-num").innerHTML = this.lives;
+    if (this.lives === 1) {
+      constellationGame.revealToast('Last chance!');
+    }
+
+    if (this.lives === 0) {
+      // this.gameOver();
+    }
+  },
+
   positionSprites: function(sprites, spriteData) {
     var sprite;
     // debugger;
@@ -706,6 +834,7 @@ ConstellationGame.prototype = {
         return cell.width
       }).width;
       orangeStar.height = magicNumbers.ORANGE_STAR_CELLS_HEIGHT;
+      orangeStar.value = magicNumbers.ORANGE_STAR_VALUE;
       this.orangeStars.push(orangeStar);
     }
   },
@@ -733,7 +862,8 @@ ConstellationGame.prototype = {
       redStar.width = _.max(this.redStarCells, function(cell) {
         return cell.width
       }).width;
-      redStar.height = magicNumbers.ORANGE_STAR_CELLS_HEIGHT;
+      redStar.height = magicNumbers.RED_STAR_CELLS_HEIGHT;
+      redStar.value = magicNumbers.RED_STAR_VALUE;
       this.redStars.push(redStar);
     }
   },
@@ -1012,12 +1142,32 @@ document.getElementById('music-checkbox').onchange = function(e) {
 
 // Launch game.........................................................
 var manOrWomanElement = document.getElementById('man-or-woman');
+var introElement = document.getElementById('intro');
 var constellationGame = null;
-manOrWomanElement.style.display = 'block';
+introElement.style.display = 'block';
 
 setTimeout(function() {
-  manOrWomanElement.style.opacity = 1.0;
+  introElement.style.opacity = 1.0;
 }, 10);
+document.getElementById('go-play').onclick = function(e) {
+  e.preventDefault();
+  var CREDITS_REVEAL_DELAY = 2000;
+
+  introElement.style.opacity = 0;
+
+  manOrWomanElement.style.display = 'block';
+
+  setTimeout(function() {
+    manOrWomanElement.style.opacity = 1.0;
+  }, 10);
+  setTimeout(function(e) {
+    introElement.style.display = 'none';
+  }, CREDITS_REVEAL_DELAY);
+
+};
+
+
+
 
 document.getElementById('man-play').onclick = function(e) {
   e.preventDefault();
@@ -1030,7 +1180,6 @@ document.getElementById('man-play').onclick = function(e) {
   setTimeout(function(e) {
     manOrWomanElement.style.display = 'none';
   }, CREDITS_REVEAL_DELAY);
-
 };
 
 document.getElementById('woman-play').onclick = function(e) {

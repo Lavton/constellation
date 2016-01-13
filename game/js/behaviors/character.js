@@ -28,12 +28,30 @@ runnerShoot.prototype = {
   execute: function(sprite, time, fps) {
     var suricane = sprite.suricane;
     if (!suricane.visible && sprite.shoot && sprite.direction == magicNumbers.direction.RIGHT) {
+      if (constellationGame.orange_num) {
+        constellationGame.orange_num -= 1
+        constellationGame.score -= magicNumbers.ORANGE_STAR_VALUE;
+        // debugger;
+        sprite.suricane.artist.cells = constellationGame.orangeSuricaneCells;
+
+      } else if (constellationGame.red_num) {
+        constellationGame.red_num -= 1
+        constellationGame.score -= magicNumbers.RED_STAR_VALUE;
+        sprite.suricane.artist.cells = constellationGame.redSuricaneCells;
+      } else {
+        sprite.shoot = false;
+        return
+      }
+      constellationGame.score = constellationGame.score < 0 ? 0 : constellationGame.score;
+      constellationGame.scoreElement.innerHTML = constellationGame.score;
+      document.getElementById("oranges-num").innerHTML = constellationGame.orange_num;
+      document.getElementById("reds-num").innerHTML = constellationGame.red_num;
+
       suricane.left = constellationGame.spriteOffset + constellationGame.STARTING_RUNNER_LEFT + sprite.width;
       suricane.top = constellationGame.runner.top //+ this.runner.suricane.height / 2;
       suricane.visible = true;
       constellationGame.playSound(constellationGame.suricaneSound)
-    } else if (sprite.shoot) {
-    }
+    } else if (sprite.shoot) {}
     sprite.shoot = false;
   }
 };
@@ -247,6 +265,21 @@ Collide.prototype = {
     }
   },
 
+  adjustScore: function(otherSprite) {
+    if (otherSprite.type == "orangeStar") {
+      constellationGame.orange_num += 1;
+    } else if (otherSprite.type == "redStar") {
+      constellationGame.red_num += 1;
+    }
+    if (otherSprite.value) {
+      constellationGame.score += otherSprite.value;
+      constellationGame.score = constellationGame.score < 0 ? 0 : constellationGame.score;
+      constellationGame.scoreElement.innerHTML = constellationGame.score;
+      document.getElementById("oranges-num").innerHTML = constellationGame.orange_num;
+      document.getElementById("reds-num").innerHTML = constellationGame.red_num;
+    }
+  },
+
   processCollision: function(sprite, otherSprite) {
     if (otherSprite.value) { // Modify Snail Bait sprites so they have values
       // Keep score...
@@ -255,6 +288,7 @@ Collide.prototype = {
     if ("good" === otherSprite.common_type) {
       otherSprite.visible = false;
       constellationGame.playSound(constellationGame.chimesSound);
+      this.adjustScore(otherSprite);
     }
 
     if ("bad" === otherSprite.common_type) {
@@ -262,6 +296,12 @@ Collide.prototype = {
         return
       }
       constellationGame.explode(sprite);
+      constellationGame.shake();
+      setTimeout(function() {
+        constellationGame.loseLife();
+        // constellationGame.reset();
+        // constellationGame.fadeAndRestoreCanvas();
+      }, constellationGame.EXPLOSION_DURATION);
     }
     if (sprite.jumping && 'platform' === otherSprite.common_type) {
       this.processPlatformCollisionDuringJump(sprite, otherSprite);
@@ -354,6 +394,7 @@ Fall.prototype = {
 
         if (sprite.track === 0) {
           constellationGame.playSound(constellationGame.fallingWhistleSound);
+          constellationGame.loseLife();
         }
       }
     }
