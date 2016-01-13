@@ -278,6 +278,7 @@ var ConstellationGame = function() {
       new Jump(),
       new Collide(),
       new Fall(),
+      new Undef(),
     ]);
   this.runner.common_type == "runner"
   this.runner.height = magicNumbers.RUNNER_CELLS_HEIGHT;
@@ -291,7 +292,7 @@ var ConstellationGame = function() {
 
   this.explosionAnimator = new SpriteAnimator(
     this.explosionCells, // Animation cells
-    magicNumbers.EXPLOSION_DURATION, // Duration of the explosion
+    magicNumbers.EXPLOSION_DURATION, // Duration of the undef
 
     function(sprite, animator) { // Callback after animation
       sprite.exploding = false;
@@ -302,7 +303,7 @@ var ConstellationGame = function() {
         sprite.stopFalling();
       }
 
-      sprite.track = 1;
+      // sprite.track = 1;
       sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
       sprite.artist.cellIndex = 0;
     }
@@ -498,7 +499,7 @@ ConstellationGame.prototype = {
   explode: function(sprite, silent) {
     sprite.exploding = true;
     if (sprite.type === "runner") {
-      this.explosionAnimator.start(sprite, true); // true means sprite reappears
+      sprite.UndefStopWatch.start()
     } else {
       this.explosionAnimator.start(sprite, false);
     }
@@ -540,6 +541,9 @@ ConstellationGame.prototype = {
       } else if (constellationGame.keyPress == magicNumbers.now_going.RIGHT) {
         constellationGame.turnRight();
       }
+      if (constellationGame.isOverPlatform(this) !== -1) {
+        this.lastPlatformIndex = constellationGame.isOverPlatform(this);
+      }
     };
   },
   equipRunnerForFalling: function() {
@@ -553,6 +557,10 @@ ConstellationGame.prototype = {
       if (initialVelocity) {
         constellationGame.bgVelocity = this.jump_direction * magicNumbers.BACKGROUND_VELOCITY;
       }
+      if (constellationGame.isOverPlatform(this) !== -1) {
+        this.lastPlatformIndex = constellationGame.isOverPlatform(this);
+      }
+
       this.falling = true;
     }
 
@@ -560,6 +568,10 @@ ConstellationGame.prototype = {
       constellationGame.stopRun();
       this.falling = false;
       this.velocityY = 0;
+      if (constellationGame.isOverPlatform(this) !== -1) {
+        this.lastPlatformIndex = constellationGame.isOverPlatform(this);
+      }
+
       this.fallAnimationTimer.stop();
       if (constellationGame.keyPress == magicNumbers.now_going.LEFT) {
         constellationGame.turnLeft();
@@ -585,6 +597,8 @@ ConstellationGame.prototype = {
     this.equipRunnerForJumping();
     this.armRunner();
     this.equipRunnerForFalling();
+    this.runner.lastPlatformIndex = 0;
+    this.runner.UndefStopWatch = new Stopwatch();
   },
 
   createPlatformSprites: function() {
@@ -736,7 +750,7 @@ ConstellationGame.prototype = {
     // this.updateLivesElement();
     document.getElementById("lives-num").innerHTML = this.lives;
     if (this.lives === 1) {
-      constellationGame.revealToast('Last chance!');
+      constellationGame.splashToast('Last chance!');
     }
 
     if (this.lives === 0) {
@@ -746,7 +760,6 @@ ConstellationGame.prototype = {
 
   positionSprites: function(sprites, spriteData) {
     var sprite;
-    // debugger;
     for (var i = 0; i < sprites.length; ++i) {
       sprite = sprites[i];
 
@@ -935,7 +948,6 @@ ConstellationGame.prototype = {
 
     for (var i = 0; i < this.platforms.length; ++i) {
       p = this.platforms[i];
-
       if (track === p.track) {
         if (center > p.left - p.offset && center < (p.left - p.offset + p.width)) {
           index = i;

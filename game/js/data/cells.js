@@ -89,107 +89,90 @@ var cellsFactory = function() {
 
   // Бегущий парень.........................................................
 
-  this.runnerManCellsRight = [
-  {
+  this.runnerManCellsRight = [{
       left: 128,
       top: 165,
       width: 62,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    },
-    {
+    }, {
       left: 194,
       top: 165,
       width: 57,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
+    }, {
       left: 262,
       top: 165,
       width: 50,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
+    }, {
       left: 319,
       top: 165,
       width: 54,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
+    }, {
       left: 372,
       top: 165,
       width: 65,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
+    }, {
       left: 438,
       top: 165,
       width: 63,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
+    }, {
       left: 18,
       top: 165,
       width: 46,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
+    }, {
       left: 75,
       top: 165,
       width: 52,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    ],
+    }, ],
 
 
-    this.runnerManCellsLeft = [
-    {
-      left: 67,
-      top: 245,
-      width: 58,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
-      left: 133,
-      top: 245,
-      width: 54,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
-      left: 196,
-      top: 245,
-      width: 50,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
-      left: 255,
-      top: 245,
-      width: 57,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
-      left: 317,
-      top: 245,
-      width: 62,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
-      left: 380,
-      top: 245,
-      width: 52,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
-      left: 445,
-      top: 245,
-      width: 46,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
-    {
-      left: 4,
-      top: 245,
-      width: 55,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, 
+    this.runnerManCellsLeft = [{
+        left: 67,
+        top: 245,
+        width: 58,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      }, {
+        left: 133,
+        top: 245,
+        width: 54,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      }, {
+        left: 196,
+        top: 245,
+        width: 50,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      }, {
+        left: 255,
+        top: 245,
+        width: 57,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      }, {
+        left: 317,
+        top: 245,
+        width: 62,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      }, {
+        left: 380,
+        top: 245,
+        width: 52,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      }, {
+        left: 445,
+        top: 245,
+        width: 46,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      }, {
+        left: 4,
+        top: 245,
+        width: 55,
+        height: magicNumbers.RUNNER_CELLS_HEIGHT
+      },
 
     ];
 
@@ -485,54 +468,59 @@ var cellsFactory = function() {
   }, ];
 
   // взрыв
-  this.explosionCells = [
-  {
+  this.explosionCells = [{
     left: 3,
     top: 939,
     width: 49,
     height: 49
-  },
-  {
+  }, {
     left: 68,
     top: 939,
     width: 49,
     height: 49
-  },
-  {
+  }, {
     left: 131,
     top: 939,
     width: 49,
     height: 49
-  },
-  {
+  }, {
     left: 197,
     top: 939,
     width: 49,
     height: 49
-  },
-  {
+  }, {
     left: 256,
     top: 939,
     width: 49,
     height: 49
-  },
-  {
+  }, {
     left: 321,
     top: 939,
     width: 49,
     height: 49
-  },
-  {
+  }, {
     left: 384,
     top: 939,
     width: 49,
     height: 49
-  },
-  {
+  }, {
     left: 447,
     top: 939,
     width: 49,
     height: 49
-  },
-  ];
+  }, ];
+
+
+
+  this.undefCells = [{
+    left: 340,
+    top: 350,
+    width: 62,
+    height: magicNumbers.RUNNER_CELLS_HEIGHT
+  },{
+    left: 340,
+    top: 350,
+    width: 62,
+    height: magicNumbers.RUNNER_CELLS_HEIGHT
+  }, ];
 }

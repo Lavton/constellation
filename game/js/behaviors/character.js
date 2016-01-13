@@ -154,7 +154,7 @@ Jump.prototype = {
   // Execute..............................................................
 
   execute: function(sprite, time, fps) {
-    if (!sprite.jumping || sprite.exploding) {
+    if (!sprite.jumping) {
       return;
     }
 
@@ -200,7 +200,8 @@ Collide.prototype = {
   isCandidateForCollision: function(sprite, otherSprite) {
     return sprite !== otherSprite &&
       sprite.visible && otherSprite.visible &&
-      !sprite.exploding && !otherSprite.exploding &&
+      (!sprite.exploding || (sprite.exploding && otherSprite.common_type == "platform")) &&
+      !otherSprite.exploding &&
       otherSprite.left - otherSprite.offset <
       sprite.left - sprite.offset + sprite.width * 2 &&
       otherSprite.type != "suricane" &&
@@ -296,7 +297,7 @@ Collide.prototype = {
         return
       }
       constellationGame.explode(sprite);
-      constellationGame.shake();
+      // constellationGame.shake();
       setTimeout(function() {
         constellationGame.loseLife();
         // constellationGame.reset();
@@ -315,6 +316,10 @@ Collide.prototype = {
     if (isDescending) { // Collided with platform while descending
       // land on platform
       sprite.track = platform.track;
+      if (constellationGame.isOverPlatform(sprite) !== -1) {
+        sprite.lastPlatformIndex = constellationGame.isOverPlatform(sprite);
+      }
+
       sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
     } else { // Collided with platform while ascending
       constellationGame.playSound(constellationGame.plopSound);
@@ -366,7 +371,7 @@ Fall.prototype = {
       return;
     }
 
-    if (this.isOutOfPlay(sprite) || sprite.exploding) {
+    if (this.isOutOfPlay(sprite)) {
       if (sprite.falling) {
         sprite.stopFalling();
       }
@@ -374,7 +379,7 @@ Fall.prototype = {
     }
 
     if (!sprite.falling) {
-      if (!sprite.exploding && !this.isPlatformUnderneath(sprite)) {
+      if (!this.isPlatformUnderneath(sprite)) {
         sprite.fall();
       }
       return;
@@ -395,6 +400,65 @@ Fall.prototype = {
         if (sprite.track === 0) {
           constellationGame.playSound(constellationGame.fallingWhistleSound);
           constellationGame.loseLife();
+          constellationGame.explode(sprite, true)
+          sprite.stopFalling();
+          var platformSprite = constellationGame.platforms[sprite.lastPlatformIndex]
+
+          constellationGame.spriteOffset = platformSprite.left-sprite.left;
+          sprite.top = platformSprite.top - sprite.height;
+          sprite.track = platformSprite.track;
+        }
+      }
+    }
+  }
+};
+
+
+
+Undef = function() {
+  this.mig = magicNumbers.UNDEF_PULSE;
+  this.this_state = false;
+  this.originalCells = null;
+  this.originalIndex = 0;
+};
+
+Undef.prototype = {
+  pause: function(sprite) {
+    if (sprite.UndefStopWatch.isRunning()) {
+      sprite.UndefStopWatch.pause();
+    }
+  },
+
+  unpause: function(sprite) {
+    if (sprite.UndefStopWatch.isRunning()) {
+      sprite.UndefStopWatch.unpause();
+    }
+  },
+
+
+  execute: function(sprite, time, fps) {
+    if (!sprite.UndefStopWatch) {
+      return;
+    }
+    if (sprite.UndefStopWatch.isRunning()) {
+      if (sprite.UndefStopWatch.getElapsedTime() > this.mig) {
+        this.mig += magicNumbers.UNDEF_PULSE;
+        if (this.this_state) {
+          sprite.artist.cells = this.originalCells;
+          sprite.artist.cellIndex = this.originalIndex;
+        } else {
+          this.originalIndex = sprite.artist.cellIndex;
+          this.originalCells = sprite.artist.cells;
+          sprite.artist.cells = constellationGame.undefCells;
+          sprite.artist.cellIndex = 0;
+        }
+        this.this_state = !this.this_state;
+        if (this.mig > magicNumbers.UNDEFITABLE_DURATION) {
+          this.mig = magicNumbers.UNDEF_PULSE;
+          sprite.UndefStopWatch.stop();
+          sprite.artist.cells = this.originalCells;
+          sprite.artist.cellIndex = this.originalIndex;
+          sprite.exploding = false;
         }
       }
     }
