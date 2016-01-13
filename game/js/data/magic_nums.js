@@ -74,6 +74,6 @@ var magicNumbers = {
 
   FPS_SLOW_CHECK_INTERVAL: 4000, // частота проверки fps
   MAX_NUMBER_OF_LIVES: 3, // макс жизней
-  UNDEFITABLE_DURATION: 4000, // после смерти есть время, когда нельзя убить
+  UNDEFITABLE_DURATION: 2000, // после смерти есть время, когда нельзя убить
   UNDEF_PULSE: 300, // как часто спрайт "мигает"
 }

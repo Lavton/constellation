@@ -469,25 +469,7 @@ ConstellationGame.prototype = {
             setTimeout(function(e) {
               constellationGame.bgVelocity = v;
               setTimeout(function(e) {
-                constellationGame.bgVelocity = -v;
-                setTimeout(function(e) {
-                  constellationGame.bgVelocity = v;
-                  setTimeout(function(e) {
-                    constellationGame.bgVelocity = -v;
-                    setTimeout(function(e) {
-                      constellationGame.bgVelocity = v;
-                      setTimeout(function(e) {
-                        constellationGame.bgVelocity = -v;
-                        setTimeout(function(e) {
-                          constellationGame.bgVelocity = v;
-                          setTimeout(function(e) {
-                            constellationGame.bgVelocity = ov;
-                          }, SHAKE_INTERVAL);
-                        }, SHAKE_INTERVAL);
-                      }, SHAKE_INTERVAL);
-                    }, SHAKE_INTERVAL);
-                  }, SHAKE_INTERVAL);
-                }, SHAKE_INTERVAL);
+                constellationGame.bgVelocity = ov;
               }, SHAKE_INTERVAL);
             }, SHAKE_INTERVAL);
           }, SHAKE_INTERVAL);
@@ -543,6 +525,10 @@ ConstellationGame.prototype = {
       }
       if (constellationGame.isOverPlatform(this) !== -1) {
         this.lastPlatformIndex = constellationGame.isOverPlatform(this);
+        if (constellationGame.runner.lastPlatformIndex == window.victoryPlatform.index) {
+          window.victory = true;
+          constellationGame.gameOver()
+        }
       }
     };
   },
@@ -559,6 +545,11 @@ ConstellationGame.prototype = {
       }
       if (constellationGame.isOverPlatform(this) !== -1) {
         this.lastPlatformIndex = constellationGame.isOverPlatform(this);
+        if (constellationGame.runner.lastPlatformIndex == window.victoryPlatform.index) {
+          window.victory = true;
+          constellationGame.gameOver()
+        }
+
       }
 
       this.falling = true;
@@ -570,6 +561,10 @@ ConstellationGame.prototype = {
       this.velocityY = 0;
       if (constellationGame.isOverPlatform(this) !== -1) {
         this.lastPlatformIndex = constellationGame.isOverPlatform(this);
+        if (constellationGame.runner.lastPlatformIndex == window.victoryPlatform.index) {
+          window.victory = true;
+          constellationGame.gameOver()
+        }
       }
 
       this.fallAnimationTimer.stop();
@@ -618,9 +613,13 @@ ConstellationGame.prototype = {
       sprite.pulsate = pd.pulsate;
 
       sprite.top = this.calculatePlatformTop(pd.track);
-
+      sprite.index = i;
       this.platforms.push(sprite);
     }
+    // выиграешь если окажешься на последней платформе
+    window.victoryPlatform = _.max(this.platforms, function(platform) {
+      return platform.left + platform.width
+    });
   },
 
   // Animation............................................................
@@ -755,6 +754,7 @@ ConstellationGame.prototype = {
 
     if (this.lives === 0) {
       this.gameOver();
+      this.soundtrack.pause();
     }
   },
 
@@ -767,12 +767,23 @@ ConstellationGame.prototype = {
     constellationGame.musicOn = false;
     constellationGame.soundOn = false;
     window.playing = false;
-    this.showEnding();
-    // this.revealCredits();
+    if (window.lastEnemy) {
+      if (window.lastEnemy == "oldMan_sand" || window.lastEnemy == "oldMan") {
+        this.showEnding("sand")
+      } else if (window.lastEnemy == "cloud") {
+        this.showEnding("cloud")
+      }
+    } else {
+      if (window.victory) {
+        this.showEnding("win")
+      } else {
+        this.showEnding("fall");
+      }
+    }
   },
 
-  showEnding: function() {
-    var fallingElement = document.getElementById('fall');
+  showEnding: function(id) {
+    var fallingElement = document.getElementById(id);
     fallingElement.style.display = 'block';
 
     setTimeout(function() {
@@ -788,6 +799,40 @@ ConstellationGame.prototype = {
     url += '&noparse=true';
     document.getElementById("share-vk").href = url
     fallingElement.innerHTML += document.getElementById("common-ending").innerHTML;
+
+    var total_pics_num = 3; // колличество изображений
+    var interval = 3000; // задержка между изображениями
+    var time_out = 1; // задержка смены изображений
+    var i = 0;
+    var timeout;
+    var opacity = 100;
+
+
+    function fade_to_next() {
+      opacity--;
+      var k = i + 1;
+      var image_now = id + '_' + i;
+      if (i == total_pics_num) k = 1;
+      var image_next = id + '_' + k;
+      document.getElementById(image_now).style.opacity = opacity / 100;
+      document.getElementById(image_now).style.filter = 'alpha(opacity=' + opacity + ')';
+      document.getElementById(image_next).style.opacity = (100 - opacity) / 100;
+      document.getElementById(image_next).style.filter = 'alpha(opacity=' + (100 - opacity) + ')';
+      if (opacity == 1) {
+        opacity = 100;
+        clearTimeout(timeout);
+      }
+    }
+    var my_interval = setInterval(
+      function() {
+        i++;
+        if (i >= total_pics_num - 1) {
+          clearTimeout(my_interval)
+        };
+        timeout = setInterval(fade_to_next, time_out);
+        // fade_to_next();
+      }, interval
+    );
 
   },
 
@@ -1006,14 +1051,9 @@ ConstellationGame.prototype = {
     }
     this.createPlatformSprites(); // Platforms must be created first
 
-    // this.createBatSprites();
     this.createOrangeStarSprites();
     this.createCloudSprites();
     this.createRedStarSprites();
-    // this.createButtonSprites();
-    // this.createCoinSprites();
-    // this.createRubySprites();
-    // this.createSapphireSprites();
     this.createOldManSprites();
 
     this.initializeSprites();
@@ -1025,16 +1065,10 @@ ConstellationGame.prototype = {
     for (var i = 0; i < constellationGame.sprites.length; ++i) {
       constellationGame.sprites[i].offset = 0;
     }
-    // this.positionSprites(this.bats, this.batData);
     this.positionSprites(this.orangeStars, this.orangeStarData);
     this.positionSprites(this.clouds, this.cloudData);
     this.positionSprites(this.redStars, this.redStarData);
-    // this.positionSprites(this.buttons, this.buttonData);
-    // this.positionSprites(this.coins, this.coinData);
-    // this.positionSprites(this.rubies, this.rubyData);
-    // this.positionSprites(this.sapphires, this.sapphireData);
     this.positionSprites(this.oldMans, this.oldManData);
-    // this.positionSprites(this.snailBombs, this.snailBombData);
     this.armOldMans();
 
   },

@@ -31,7 +31,6 @@ runnerShoot.prototype = {
       if (constellationGame.orange_num) {
         constellationGame.orange_num -= 1
         constellationGame.score -= magicNumbers.ORANGE_STAR_VALUE;
-        // debugger;
         sprite.suricane.artist.cells = constellationGame.orangeSuricaneCells;
 
       } else if (constellationGame.red_num) {
@@ -143,6 +142,11 @@ Jump.prototype = {
 
     if (constellationGame.isOverPlatform(sprite) !== -1) {
       sprite.top = sprite.verticalLaunchPosition;
+      sprite.lastPlatformIndex = constellationGame.isOverPlatform(sprite);
+      if (constellationGame.runner.lastPlatformIndex == window.victoryPlatform.index) {
+        window.victory = true;
+        constellationGame.gameOver()
+      }
     } else {
       sprite.fall(magicNumbers.GRAVITY_FORCE *
         (sprite.descendAnimationTimer.getElapsedTime() / 1000) *
@@ -298,11 +302,9 @@ Collide.prototype = {
       }
       window.lastEnemy = otherSprite.type;
       constellationGame.explode(sprite);
-      // constellationGame.shake();
+      constellationGame.shake();
       setTimeout(function() {
         constellationGame.loseLife();
-        // constellationGame.reset();
-        // constellationGame.fadeAndRestoreCanvas();
       }, constellationGame.EXPLOSION_DURATION);
     }
     if (sprite.jumping && 'platform' === otherSprite.common_type) {
@@ -316,9 +318,14 @@ Collide.prototype = {
 
     if (isDescending) { // Collided with platform while descending
       // land on platform
+      console.log("landing")
       sprite.track = platform.track;
       if (constellationGame.isOverPlatform(sprite) !== -1) {
         sprite.lastPlatformIndex = constellationGame.isOverPlatform(sprite);
+        if (constellationGame.runner.lastPlatformIndex == window.victoryPlatform.index) {
+          window.victory = true;
+          constellationGame.gameOver()
+        }
       }
 
       sprite.top = constellationGame.calculatePlatformTop(sprite.track) - sprite.height;
@@ -354,7 +361,6 @@ Fall.prototype = {
     sprite.velocityY = sprite.initialVelocityY + magicNumbers.GRAVITY_FORCE *
       (sprite.fallAnimationTimer.getElapsedTime() / 1000) *
       magicNumbers.PIXELS_PER_METER;
-    // debugger;
   },
 
   calculateVerticalDrop: function(sprite, fps) {
