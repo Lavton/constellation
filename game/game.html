@@ -35,6 +35,7 @@
   <title>Star Capture</title>
   <link rel='stylesheet' href='game.css' />
   <meta charset="UTF-8" />
+  <script type="text/javascript" src="http://vk.com/js/api/share.js?90" charset="windows-1251"></script>
 </head>
 <!-- Body........................................................-->
 
@@ -99,7 +100,7 @@
     </div>
     <!-- Arena..................................................-->
     <div id='arena'>
-    <!-- выбор персонажа -->
+      <!-- выбор персонажа -->
       <div id='man-or-woman'>
         <h1>Выберете персонажа</h1>
         <p>Кем вы хотите играть:
@@ -125,23 +126,50 @@
         <p>Доброго времени суток тебе, друг!
         </p>
         <p>Совсем скоро на месте этого абзаца появится хорошая история, а пока...</p>
-
-        <p><i><u>Правила</u></i><br>
-        <ul>
-          <li>Добеги своим персонажем до финиша</li>
-          <li>Собирай звёзды: <img src="images/intro/orangeStar.png">, <img src="images/intro/redStar.png"></li>
-          <li>Избегай врагов: <img src="images/intro/enemy.png"> </li>
-          <li>Собранные звёзды тебя защищают: используй их как сюрикен!</li>
-          <li>Подсчёт очков происходит исходя из оставшихся звёзд. Красные стоят дороже оранжевых.</li>
-        </ul>
+        <p><i><u>Правила</u></i>
+          <br>
+          <ul>
+            <li>Добеги своим персонажем до финиша</li>
+            <li>Собирай звёзды: <img src="images/intro/orangeStar.png">, <img src="images/intro/redStar.png"></li>
+            <li>Избегай врагов: <img src="images/intro/enemy.png"> </li>
+            <li>Собранные звёзды тебя защищают: используй их как сюрикен!</li>
+            <li>Подсчёт очков происходит исходя из оставшихся звёзд. Красные стоят дороже оранжевых.</li>
+          </ul>
         </p>
-
         <p>И, конечно, не забудь поделиться своими достижениями ВКонтакте! Чемпионов ждут шоколадки на первой Школе Вожатского Мастерства!</p>
-
         <p>
           <a href="" id="go-play">Поехали!</a>
         </p>
       </div>
+      <!-- концовки -->
+      <div id="common-ending" style="display:none">
+        <p>Ты заработал целых
+          <span id="final-score"></span> очков! Поздравляем!</p>
+        <hr> Поделись достижениями с друзьями или сыгрый заново!
+        <br> Помни, людям, собравшим больше всего очков, достанется шоколадка на первой школе вожатского мастерства, которая состоится...
+        <table width="100%">
+          <tr>
+            <td>
+            <div id="vk_share_button"><img src="http://vk.com/images/icons/share_link.png"><a href="" id="share-vk" target="_blank">Поделиться!</a></div>
+            </td>
+            <td><a href="./game.html">Заново</a></td>
+          </tr>
+        </table>
+
+        <br><br>
+        <i>Игра от СПО "СОзвездие", Санкт-Петербург. На основе цикла статей <a href="http://www.ibm.com/search/csass/search/?sn=dw&lang=ru&cc=RU&en=utf&hpp=20&dws=rudw&lo=ru&q=%D0%A0%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B0+2D-%D0%B8%D0%B3%D1%80+%D0%BD%D0%B0+HTML5&Search=%D0%9F%D0%BE%D0%B8%D1%81%D0%BA:" target="_blank">Разработка 2D-игр на HTML5</a></i>
+      </div>
+      <div id='fall' class="ending">
+        <h1>Ты очень низко пал :(</h1>
+        <p>Спасибо за игру, дорогой друг!</p>
+        <p>Пусть ты слегка не дотянул до финиша, но разве это важно?! </p>
+      </div>
+
+      <div id='sand' class="ending">
+        <h1>Песочек-то уже сыплется</h1>
+        <p> </p>
+      </div>
+      <!-- конец концовок -->
       <!-- The game canvas.....................................-->
       <canvas id='game-canvas' width='800' height='400'>
         Your browser does not support HTML5 Canvas.
@@ -178,11 +206,9 @@
           <input id='music-checkbox' type='checkbox' checked/>
         </div>
       </div>
-
       <div id='fps-mess'></div>
     </div>
   </div>
-
   </div>
   <!-- JavaScript................................................-->
   <script type="text/javascript" src='js/data/magic_nums.js'></script>
@@ -202,7 +228,6 @@
   <script src='game.js'></script>
   <div style="display:none">
     <img src="images/sprites.png">
-
   </div>
 </body>
 

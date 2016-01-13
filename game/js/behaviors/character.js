@@ -296,6 +296,7 @@ Collide.prototype = {
       if ("cloud" === otherSprite.type && otherSprite.artist.cellIndex != 0) {
         return
       }
+      window.lastEnemy = otherSprite.type;
       constellationGame.explode(sprite);
       // constellationGame.shake();
       setTimeout(function() {
@@ -407,6 +408,7 @@ Fall.prototype = {
         if (sprite.track === 0) {
           constellationGame.playSound(constellationGame.fallingWhistleSound);
           constellationGame.loseLife();
+          window.lastEnemy = null;
         }
       }
     }

@@ -759,7 +759,36 @@ ConstellationGame.prototype = {
   },
 
   gameOver: function() {
+    constellationGame.canvas.style.opacity = 1.0;
+
+    setTimeout(function() {
+      constellationGame.canvas.style.opacity = 0.0;
+    }, 1500);
+    constellationGame.musicOn = false;
+    constellationGame.soundOn = false;
+    window.playing = false;
+    this.showEnding();
     // this.revealCredits();
+  },
+
+  showEnding: function() {
+    var fallingElement = document.getElementById('fall');
+    fallingElement.style.display = 'block';
+
+    setTimeout(function() {
+      fallingElement.style.opacity = 1.0;
+    }, 10);
+    document.getElementById("final-score").innerHTML = constellationGame.score;
+    var des = "я заработал " + constellationGame.score + " очков в игре от СПО \"СОзвездие\"! Сможешь ли ты?";
+    var url = 'http://vkontakte.ru/share.php?';
+    url += 'url=' + encodeURIComponent("http://spo-sozvezdie.hol.es/game/game.html");
+    url += '&title=' + encodeURIComponent("star Capture game");
+    url += '&description=' + encodeURIComponent(des);
+    url += '&image=' + encodeURIComponent("images/game_logo.jpg");
+    url += '&noparse=true';
+    document.getElementById("share-vk").href = url
+    fallingElement.innerHTML += document.getElementById("common-ending").innerHTML;
+
   },
 
   positionSprites: function(sprites, spriteData) {
@@ -1041,6 +1070,9 @@ ConstellationGame.prototype = {
 // Event handlers.......................................................
 
 window.onkeydown = function(e) {
+  if (!window.playing) {
+    return;
+  }
   if (constellationGame == null) {
     return;
   }
@@ -1165,6 +1197,7 @@ introElement.style.display = 'block';
 setTimeout(function() {
   introElement.style.opacity = 1.0;
 }, 10);
+
 document.getElementById('go-play').onclick = function(e) {
   e.preventDefault();
   var CREDITS_REVEAL_DELAY = 2000;
@@ -1186,6 +1219,7 @@ document.getElementById('go-play').onclick = function(e) {
 
 
 document.getElementById('man-play').onclick = function(e) {
+  window.playing = true;
   e.preventDefault();
   constellationGame = new ConstellationGame();
   constellationGame.start(true);
@@ -1199,6 +1233,7 @@ document.getElementById('man-play').onclick = function(e) {
 };
 
 document.getElementById('woman-play').onclick = function(e) {
+  window.playing = true;
   e.preventDefault();
   constellationGame = new ConstellationGame();
   constellationGame.start(false);

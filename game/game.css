@@ -276,18 +276,45 @@ body {
   transition: opacity 5s;
 }
 
-.warn { 
-   color: red !important;
+.warn {
+  color: red !important;
 }
 
-
 #score_deps {
-   color: #ff0;
-   position: absolute;
-   margin-top: -40px;
-   margin-left: 5px;
-   left: 1060px;
-   -webkit-transition: opacity 2s;
-   -moz-transition: opacity 2s;
-   -o-transition: opacity 2s;
+  color: #ff0;
+  position: absolute;
+  margin-top: -40px;
+  margin-left: 5px;
+  left: 1060px;
+  -webkit-transition: opacity 2s;
+  -moz-transition: opacity 2s;
+  -o-transition: opacity 2s;
+}
+
+.ending {
+  position: absolute;
+  width: 600px;
+  margin-top: 85px;
+  margin-left: 90px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 0px 20px 20px 20px;
+  color: navy;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+  -webkit-transition: opacity 1s;
+  -moz-transition: opacity 1s;
+  -o-transition: opacity 1s;
+  transition: opacity 1s;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 4px 4px 8px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) 4px 4px 8px;
+  -o-box-shadow: rgba(0, 0, 0, 0.5) 4px 4px 8px;
+  box-shadow: rgba(0, 0, 0, 0.5) 4px 4px 8px;
+  opacity: 0;
+  display: none;
+  z-index: 2;
+}
+
+#final-score {
+  font: 26px fantasy;
+  color: green;
 }
