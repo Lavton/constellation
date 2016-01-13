@@ -200,10 +200,10 @@ Collide.prototype = {
   isCandidateForCollision: function(sprite, otherSprite) {
     return sprite !== otherSprite &&
       sprite.visible && otherSprite.visible &&
-      (!sprite.exploding || (sprite.exploding && otherSprite.common_type == "platform")) &&
       !otherSprite.exploding &&
       otherSprite.left - otherSprite.offset <
       sprite.left - sprite.offset + sprite.width * 2 &&
+      (!sprite.exploding || (sprite.exploding && otherSprite.common_type != "bad")) &&
       otherSprite.type != "suricane" &&
       !otherSprite.exploding;
   },
@@ -333,7 +333,7 @@ Fall = function() {};
 
 Fall.prototype = {
   isOutOfPlay: function(sprite) {
-    return sprite.top > constellationGame.TRACK_1_BASELINE;
+    return sprite.top - 50 > constellationGame.TRACK_1_BASELINE;
   },
 
   willFallBelowCurrentTrack: function(sprite, deltaY) {
@@ -374,6 +374,13 @@ Fall.prototype = {
     if (this.isOutOfPlay(sprite)) {
       if (sprite.falling) {
         sprite.stopFalling();
+        constellationGame.explode(sprite, true)
+        var platformSprite = constellationGame.platforms[sprite.lastPlatformIndex]
+
+        constellationGame.spriteOffset = platformSprite.left - sprite.left;
+        sprite.top = platformSprite.top - sprite.height;
+        sprite.track = platformSprite.track;
+
       }
       return;
     }
@@ -400,13 +407,6 @@ Fall.prototype = {
         if (sprite.track === 0) {
           constellationGame.playSound(constellationGame.fallingWhistleSound);
           constellationGame.loseLife();
-          constellationGame.explode(sprite, true)
-          sprite.stopFalling();
-          var platformSprite = constellationGame.platforms[sprite.lastPlatformIndex]
-
-          constellationGame.spriteOffset = platformSprite.left-sprite.left;
-          sprite.top = platformSprite.top - sprite.height;
-          sprite.track = platformSprite.track;
         }
       }
     }

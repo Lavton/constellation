@@ -754,8 +754,12 @@ ConstellationGame.prototype = {
     }
 
     if (this.lives === 0) {
-      // this.gameOver();
+      this.gameOver();
     }
+  },
+
+  gameOver: function() {
+    // this.revealCredits();
   },
 
   positionSprites: function(sprites, spriteData) {
