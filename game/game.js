@@ -767,7 +767,7 @@ ConstellationGame.prototype = {
     constellationGame.musicOn = false;
     constellationGame.soundOn = false;
     window.playing = false;
-    if (window.lastEnemy) {
+    if (window.lastEnemy && !window.victory) {
       if (window.lastEnemy == "oldMan_sand" || window.lastEnemy == "oldMan") {
         this.showEnding("sand")
       } else if (window.lastEnemy == "cloud") {
@@ -790,12 +790,12 @@ ConstellationGame.prototype = {
       fallingElement.style.opacity = 1.0;
     }, 10);
     document.getElementById("final-score").innerHTML = constellationGame.score;
-    var des = "я заработал " + constellationGame.score + " очков в игре от СПО \"СОзвездие\"! Сможешь ли ты?";
+    var des = "я заработал " + constellationGame.score + " очков в игре starCapture от СПО \"СОзвездие\"! Сможешь ли ты?";
     var url = 'http://vkontakte.ru/share.php?';
     url += 'url=' + encodeURIComponent("http://spo-sozvezdie.hol.es/game/game.html");
-    url += '&title=' + encodeURIComponent("star Capture game");
+    url += '&title=' + encodeURIComponent("starCapture от СПО \"СОзвездие\"");
     url += '&description=' + encodeURIComponent(des);
-    url += '&image=' + encodeURIComponent("images/game_logo.jpg");
+    url += '&image=' + encodeURIComponent("http://spo-sozvezdie.hol.es/game/images/for_vk_man.png");
     url += '&noparse=true';
     document.getElementById("share-vk").href = url
     fallingElement.innerHTML += document.getElementById("common-ending").innerHTML;
