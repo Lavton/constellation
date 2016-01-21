@@ -206,14 +206,19 @@
 
     // выдаёт онлайн статус бойцов
     $scope.onlineStatus = function() {
+      var online_users = []
       var uids = _.pluck($scope.users, "uid")
       getVkData(uids, ["online"],
         function(response) {
           for (var i = 0; i < $scope.users.length; i++) {
             $scope.users[i].online = response[uids[i]].online;
             $scope.users[i].online_mobile = response[uids[i]].online_mobile;
-
+            if (response[uids[i]].online) {
+              online_users.push($scope.users[i])
+            }
           };
+          online_users.reverse();
+          $scope.users = online_users;
           $scope.$apply();
         }
       )
