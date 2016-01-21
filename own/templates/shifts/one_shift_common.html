@@ -6,6 +6,7 @@
       <li ng-show="shift.start_date"><strong>Дата начала:</strong> <span class="date {{shift.start_date}}">{{formatDate(shift.start_date)}}</span></li>
       <li ng-show="shift.finish_date"><strong>Дата окончания:</strong> <span class="date {{shift.finish_date}}">{{formatDate(shift.finish_date)}}</span></li>
       <li ng-show="shift.place"><strong>Место:</strong> {{shift.place}} </li>
+      <li ng-show="window.current_group>=window.groups.COMMAND_STAFF.num && shift.salary"><strong>Общая зарплата:</strong> {{shift.salary}}</li>
       <li ng-show="shift.visibility && window.current_group>=window.groups.COMMAND_STAFF.num"><strong>Виден для: </strong>{{shift.visibility}} ({{window.groups[window.visibilities[shift.visibility]].rus}})</li>
       <li ng-show="shift.bbcomments"><strong>Комментарии:</strong>
         <br/>
@@ -24,6 +25,10 @@
         <input type="date" ng-model="newshift.finish_date" size="{{(newshift.finish_date).length}}" /> </li>
       <li><strong>Место:</strong>
         <input type="text" ng-model="newshift.place" size="{{(newshift.place).length}}" /> </li>
+      <li><strong>Общая зарплата: </strong> 
+        <input type="number" ng-model="newshift.salary">
+        
+      </li>
       <li><strong>Виден для: </strong>
         <input type="number" min="1" max="7" ng-model="newshift.visibility" size="{{(newshift.visibility).length}}" /> ({{window.groups[window.visibilities[newshift.visibility]].rus}})</li>
       <li><strong>Комментарии:</strong>

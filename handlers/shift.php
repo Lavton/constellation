@@ -327,7 +327,10 @@ function get_one_info_shift() {
 		$link->set_charset("utf8");
 
 		// поиск смены
-		$query = "SELECT * FROM EventsMain WHERE (id='" . $_POST['id'] . "' AND visibility <= " . $_SESSION["current_group"] . " );";
+		$query = "SELECT EventsMain.*, ES.salary 
+		FROM EventsMain
+		JOIN EventsShifts AS ES ON EventsMain.id = ES.id
+		 WHERE (EventsMain.id='" . $_POST['id'] . "' AND EventsMain.visibility <= " . $_SESSION["current_group"] . " );";
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shift"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 		$st = "'" . $result["shift"]["start_date"] . "'";
@@ -531,8 +534,11 @@ function edit_shift() {
 		$link->set_charset("utf8");
 		$result = updater($link, "EventsMain", array("id" => $_POST["id"], 
 			"place" => $_POST["place"], "name" => $_POST["name"], "start_date" => $_POST["start_date"],
-			"finish_date" => $_POST["finish_date"], "visibility" => $_POST["visibility"],
+			"finish_date" => $_POST["finish_date"],"visibility" => $_POST["visibility"],
 			"comments" => $_POST["comments"]));
+		$result2 = updater($link, "EventsShifts", array("id" => $_POST["id"], 
+			"salary" => $_POST["salary"]));
+
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {

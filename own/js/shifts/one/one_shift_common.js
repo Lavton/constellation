@@ -178,6 +178,7 @@
         $(".bbcomments-shift").html($scope.shift.bbcomments) // почему-то иначе не работает(
         $scope.$apply();
       });
+      console.log(data)
       $.ajax({
         type: "POST",
         url: '/handlers/shift.php',
