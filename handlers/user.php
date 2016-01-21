@@ -586,7 +586,7 @@ function add_achv() {
 			exit;
 		}
 		$link->set_charset("utf8");
-		$result = inserter($link, "UsersFightersAchievements", array("fighter" => $_POST["fighter"],
+		$result = inserter($link, "UsersFightersAchievements", array("fighter" => $_POST["user"],
 			"start_year" => $_POST["start_year"], "finish_year" => $_POST["finish_year"], 
 			"achievement" => $_POST["achievement"]), True);
 		mysqli_close($link);
