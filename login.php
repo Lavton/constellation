@@ -10,7 +10,8 @@
   <?php include( 'own/templates/menu.php'); ?>
   <div id="page-container">
     <div id="auth_wrapper">
-  Если вы не видите виджет ВКонтакте ниже - пишите комсоставу.
+  Если вы не видите виджет ВКонтакте ниже - обновите страницу <br>
+  Не сработало -- пишите <a href="http://spo-constellation.ru/about/command_staff#commander" target="_blank"> комсоставу</a>.
       <div id="vk_auth"></div>
     </div>
     <br>

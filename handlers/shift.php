@@ -190,7 +190,7 @@ function arhive() {
 		    FROM EventsMain AS EM JOIN EventsShifts AS ES ON EM.id=ES.id 
 			WHERE (EM.finish_date < CURRENT_DATE AND EM.visibility<='.$_SESSION["current_group"].'
 				AND EM.start_date>='.$_POST["year"].'-01-01)
-			 ORDER BY EM.start_date;';
+			 ORDER BY EM.start_date DESC;';
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 		$result["shifts"] = array();
 

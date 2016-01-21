@@ -729,7 +729,7 @@ ConstellationGame.prototype = {
   initializeImages: function() {
     var self = this;
 
-    this.background.src = 'images/mb.jpg';
+    this.background.src = 'images/mb2.jpg';
     this.spritesheet.src = 'images/sprites.png';
 
     this.background.onload = function(e) {
