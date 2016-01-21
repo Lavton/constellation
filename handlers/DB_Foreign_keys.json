@@ -39,6 +39,11 @@
     "fk": "user",
     "ref": "id",
     "del": "cascade"
+  }, {
+    "name": "UniversityUserConn",
+    "fk": "user_id",
+    "ref": "id",
+    "del": "cascade"
   }],
   "UsersCandidats": [
 
@@ -167,5 +172,11 @@
   }],
   "NewsAddressee": [
 
-  ]
+  ],
+  "University": [{
+    "name": "UniversityUserConn",
+    "fk": "user_id",
+    "ref": "id",
+    "del": "cascade"
+  }]
 }

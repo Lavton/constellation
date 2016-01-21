@@ -35,6 +35,12 @@ if (is_ajax()) {
 			case "own_add_candidate":own_add_candidate();
 				break;
 
+
+			case "new_university": new_university();
+			    break;
+			case "get_university_list": get_university_list();
+				break;
+
 			/*общая инфа о всех*/
 			case "get_common_inf":get_common_inf(); //DELETE
 				break;
@@ -112,18 +118,26 @@ function get_one_info() {
 
 		// поиск юзера
 		$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, IFNULL(UF.id, 0) AS isFighter, 
-			IFNULL(UC.id, 0) AS isCandidate FROM UsersMain AS UM
+			IFNULL(UC.id, 0) AS isCandidate, Un.id AS university_id, Un.university, Un.department,
+			UUC.entance_university_year
+			FROM UsersMain AS UM
 			LEFT JOIN UsersFighters AS UF ON UF.id=UM.id
 			LEFT JOIN UsersCandidats AS UC ON UC.id= UM.id
+			LEFT JOIN UniversityUserConn AS UUC ON UUC.user_id = UM.id
+			LEFT JOIN University AS Un ON Un.id = UUC.university_id
 			WHERE UM.id='" . $_POST['id'] . "';";
 
 		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
 			$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, UM.middle_name, UM.phone,
 			UM.birthdate, UM.group_of_rights, IFNULL(UF.id, 0) AS isFighter, UF.second_phone,
 			UF.email, UF.instagram_id, UF.year_of_entrance, UF.nickname, UF.maiden_name, 
-			IFNULL(UC.id, 0) AS isCandidate FROM UsersMain AS UM
+			IFNULL(UC.id, 0) AS isCandidate, Un.id AS university_id, Un.university, Un.department,
+			UUC.entance_university_year
+			 FROM UsersMain AS UM
 			LEFT JOIN UsersFighters AS UF ON UF.id=UM.id
 			LEFT JOIN UsersCandidats AS UC ON UC.id= UM.id
+			LEFT JOIN UniversityUserConn AS UUC ON UUC.user_id = UM.id
+			LEFT JOIN University AS Un ON Un.id = UUC.university_id
 			WHERE UM.id='" . $_POST['id'] . "';";
 		}
 		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
@@ -198,6 +212,15 @@ function user_modify() {
 			}
 
 		}
+		if ($_POST["id"] == 0) {
+			$_POST["id"] = $_SESSION["id"];
+		}
+		if ($_POST["university_id"] == 0) {
+			$res = deleter($link, "UniversityUserConn", "user_id=" . $_POST["id"]);
+		}
+		$res = inserter($link, "UniversityUserConn", array("user_id" => $_POST["id"], 
+				"university_id" => $_POST["university_id"], "entance_university_year" => $_POST["entance_university_year"]), True, True);
+
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {
@@ -291,7 +314,7 @@ function get_own_info() {
 		$_SESSION["id"] = $_SESSION["id"]["id"];
 	}
 	// поиск юзера
-	$query = "SELECT * FROM fighters WHERE id='" . $_SESSION['fighter_id'] . "' ORDER BY id;";
+	$query = "SELECT * FROM fighters WHERE id='" . $_SESSION['id'] . "' ORDER BY id;";
 	$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
 	$result["user"] = mysqli_fetch_array($rt, MYSQL_ASSOC);
 	$result["result"] = "Success";
@@ -474,7 +497,7 @@ function get_shifts_nd_ach() {
 function ok_edit_achv() {
 	check_session();
 	session_start();
-	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["fighter_id"]*1)) {
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["id"]*1)) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -523,7 +546,7 @@ function ok_edit_achv() {
 function delete_achv() {
 	check_session();
 	session_start();
-	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["fighter_id"]*1)) {
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["id"]*1)) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -550,7 +573,7 @@ function delete_achv() {
 function add_achv() {
 	check_session();
 	session_start();
-	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["fighter_id"]*1)) {
+	if (isset($_SESSION["current_group"]) && (($_SESSION["current_group"] >= COMMAND_STAFF) || $_SESSION["id"]*1 == $_POST["id"]*1)) {
 		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
 		$link = mysqli_connect(
 			Passwords::$db_host, /* Хост, к которому мы подключаемся */
@@ -604,5 +627,65 @@ function get_phones() {
 		mysqli_close($link);
 		echo json_encode($result);
 	}
+}
+
+// добавляет универ
+function new_university() {
+	check_session();
+	session_start();
+	if (True) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		$result = inserter($link, "University", array("university" => $_POST["university"],
+			"department" => $_POST["department"]), True);
+		mysqli_close($link);
+		echo json_encode($result);
+	} else {
+		mysqli_close($link);
+		echo json_encode(Array('result' => 'Fail'));
+	}
+}
+
+
+function get_university_list() {
+	check_session();
+	session_start();
+	if (True) {
+		require_once $_SERVER['DOCUMENT_ROOT'] . '/own/passwords.php';
+
+		$link = mysqli_connect(
+			Passwords::$db_host, /* Хост, к которому мы подключаемся */
+			Passwords::$db_user, /* Имя пользователя */
+			Passwords::$db_pass, /* Используемый пароль */
+			Passwords::$db_name); /* База данных для запросов по умолчанию */
+
+		if (!$link) {
+			printf("Невозможно подключиться к базе данных. Код ошибки: %s\n", mysqli_connect_error());
+			exit;
+		}
+		$link->set_charset("utf8");
+		// поиск юзера
+		$query = 'SELECT  * 
+		FROM University;';
+		$rt = mysqli_query($link, $query) or die('Запрос не удался: ');
+		$result["universities"] = array();
+
+		while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+			array_push($result["universities"], $line);
+		}
+		$result["result"] = "Success";
+		mysqli_close($link);
+		echo json_encode($result);
+	}	
 }
 ?>

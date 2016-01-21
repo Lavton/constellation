@@ -1,10 +1,9 @@
 <!-- просмотр профиля одного бойца -->
 <div ng-cloak ng-controller="oneFighterApp" id="one-user">
-    <span class="scrl"></span>
+  <span class="scrl"></span>
   <div class="user-info hidden">
-<!-- просмотр -->
+    <!-- просмотр -->
     <div class="col-xs-12">
-
       <h2>{{user.last_name}}<span ng-show="user.maiden_name"> ({{user.maiden_name}})</span> {{user.first_name}} {{user.middle_name}} 
         <em ng-show="user.nickname">({{user.nickname}})</em>
         <button type="button" class="btn btn-primary text-right" ng-click="editPerson()" ng-show="isCS || user.id == window.getCookie('id')">Редактировать</button>
@@ -18,8 +17,8 @@
       </div>
       <div class="col-xs-9 info-str">
         <ul>
-          <li> <strong>статус:</strong> <span ng-show="user.isFighter">боец</span> 
-          <span ng-show="user.isCandidate">кандидат</span>
+          <li> <strong>статус:</strong> <span ng-show="user.isFighter">боец</span>
+            <span ng-show="user.isCandidate">кандидат</span>
           </li>
           <li ng-show="user.domain"><strong>vk: </strong><a target='_blank' href='//vk.com/{{user.domain}}'>vk.com/{{user.domain}}</a></li>
           <li ng-show="user.phone"><strong>Телефон:</strong><a href='tel:+7{{user.phone}}'> {{goodView(user.phone)}} </a></li>
@@ -29,19 +28,22 @@
           <li ng-show="user.birthdate"><strong>День рождения: </strong> <span class="date {{user.birthdate}}">{{window.formatDate(user.birthdate)}}</span></li>
           <li ng-show="user.year_of_entrance"><strong>Год вступления в отряд: </strong>{{user.year_of_entrance}}</li>
           <li ng-show="user.group_of_rights && isCS"><strong>Права доступа: </strong>{{user.group_of_rights}} ({{window.groups[window.visibilities[user.group_of_rights]].rus}})</li>
+          <br>
+          <li ng-show="user.university"><strong>Университет: </strong> {{user.university}}</li>
+          <li ng-show="user.department"><strong>Факультет/Институт: </strong> {{user.department}}</li>
+          <li ng-show="user.entance_university_year"><strong>Курс: </strong>{{getCourse(user.entance_university_year)}}</li>
         </ul>
       </div>
     </div>
   </div>
-
   <!-- редактирование -->
   <div ng-show="isCS || user.id == window.getCookie('id')">
     <div class="user-edit hidden">
-          <h2>
-          <span ng-show="canEdit">
+      <h2>
+          <span ng-show="notCSbutEdit">
         {{newperson.last_name}}<span ng-show="newperson.maiden_name"> ({{newperson.maiden_name}})</span> {{newperson.first_name}}
           </span>
-          <span ng-hide="canEdit">
+          <span ng-hide="notCSbutEdit">
           <input type="text" ng-model="newperson.last_name"  size="{{(newperson.last_name).length}}+1" placeholder="Фамилия" />
           (<input type="text" ng-model="newperson.maiden_name"  size="{{(newperson.maiden_name).length}}+1" placeholder="Девичья фамилия (при наличии)" ng-show="newperson.status==3"/>)
 
@@ -49,11 +51,11 @@
           </span>
           <input type="text" ng-model="newperson.middle_name"  size="{{(newperson.middle_name).length}}+1" placeholder="Отчество"/>
 
-            <button class="btn btn-success text-right" ng-click="editPersonSubmit(canEdit)">Сохранить</button>
+            <button class="btn btn-success text-right" ng-click="editPersonSubmit(notCSbutEdit)">Сохранить</button>
             <button type="button" class="btn btn-primary text-right" ng-click="hideEdit()" >Отменить</button>
         </h2>
-          <hr>
-      <form ng-submit="editPersonSubmit({{canEdit}})">
+      <hr>
+      <form ng-submit="editPersonSubmit({{notCSbutEdit}})">
         <!-- <div class="col-xs-12"> -->
         <!-- </div> -->
         <div class="row own-row">
@@ -62,22 +64,25 @@
           </div>
           <div class="col-xs-9 info-str">
             <ul>
-              <li ng-hide="canEdit"> статус*: <select ng-model="newperson.status" ng-change="newStatus(newperson.status)" ng-options="value.id as value.title for (key , value) in pos_status"></select> {{newperson.status}}</li>
-              <li ng-show="canEdit"><strong>статус:</strong> <span ng-show="newperson.isFighter">боец</span> 
-          <span ng-show="newperson.isCandidate">кандидат</span></li>
-
-              <li ng-hide="canEdit"><strong>vk: </strong>
-                <input type="text" class="vk-domain vk_input" ng-model="newperson.uid" size="{{(newperson.uid).length}}" /></li>
-              <li ng-show="canEdit"><strong>vk: </strong><a target='_blank' href='//vk.com/{{newperson.domain}}'>vk.com/{{newperson.domain}}</a></li>
+              <li ng-hide="notCSbutEdit"> статус*:
+                <select ng-model="newperson.status" ng-change="newStatus(newperson.status)" ng-options="value.id as value.title for (key , value) in pos_status"></select> {{newperson.status}}</li>
+              <li ng-show="notCSbutEdit"><strong>статус:</strong> <span ng-show="newperson.isFighter">боец</span>
+                <span ng-show="newperson.isCandidate">кандидат</span></li>
+              <li ng-hide="notCSbutEdit"><strong>vk: </strong>
+                <input type="text" class="vk-domain vk_input" ng-model="newperson.uid" size="{{(newperson.uid).length}}" />
+              </li>
+              <li ng-show="notCSbutEdit"><strong>vk: </strong><a target='_blank' href='//vk.com/{{newperson.domain}}'>vk.com/{{newperson.domain}}</a></li>
               <li><strong>Телефон:</strong>
-                <input type="text" ng-model="newperson.phone" size="{{(newperson.phone).length}}" /></li>
+                <input type="text" ng-model="newperson.phone" size="{{(newperson.phone).length}}" />
+              </li>
               <li><strong>День рождения: </strong>
                 <input type="date" ng-model="newperson.birthdate" class="date" size="{{(newperson.birthdate).length}}" /> {{newperson.birthdate}}
               </li>
-              <li ng-hide="canEdit"><strong>Права доступа*: </strong>
+              <li ng-hide="notCSbutEdit"><strong>Права доступа*: </strong>
                 <input type="number" min="1" max="7" ng-model="newperson.group_of_rights" /> ({{window.groups[window.visibilities[newperson.group_of_rights]].rus}})</li>
-              <li ng-show="canEdit"><strong>Права доступа: </strong>{{newperson.group_of_rights}} ({{window.groups[window.visibilities[newperson.group_of_rights]].rus}})</li><br><br>
-              
+              <li ng-show="notCSbutEdit"><strong>Права доступа: </strong>{{newperson.group_of_rights}} ({{window.groups[window.visibilities[newperson.group_of_rights]].rus}})</li>
+              <br>
+              <br>
               <span ng-show="newperson.status==3">
               <li><strong>Ник: </strong> <input ng-model="newperson.nickname" /> </li>
               <li><strong>Второй телефон:</strong>
@@ -88,13 +93,31 @@
               <li><strong>id в Instagram:</strong>
                 <input ng-model="newperson.instagram_id" size="{{(newperson.intagram_id).length}}" />
               </li>
-              <li ng-show="canEdit"><strong>Год вступления в отряд: </strong>{{newperson.year_of_entrance}}</li>
-              <li ng-hide="canEdit"><strong>Год вступления в отряд*: </strong>
+              <li ng-show="notCSbutEdit"><strong>Год вступления в отряд: </strong>{{newperson.year_of_entrance}}</li>
+              <li ng-hide="notCSbutEdit"><strong>Год вступления в отряд*: </strong>
                 <input type="number" min="2000" max="3000" ng-model="newperson.year_of_entrance" size="{{(newperson.year_of_entrance).length}}" />
               </li>
               </span>
+              <br>
+              <li>
+                <strong>Университет: </strong>
+                <select ng-hide="no_university" ng-model="newperson.old_university" ng-options="key as value for (key , value) in university_array" ng-change="changeUniversity(newperson.old_university)"></select>
+                <!-- {{newperson.old_university | json}} fd &nbsp;  -->
+                <!-- {{newperson.university}}  -->
+                нет моего университета
+                <input type="checkbox" ng-model="no_university">&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="no_university">введи название университета <input type="text" size="30" ng-model="newperson.university"></span>
+              </li>
+              <li><strong>Факультет/Институт: </strong>
+                <select ng-hide="no_department" ng-model="newperson.old_department" ng-options="key as value.department for (key , value) in universities[university_array[newperson.old_university]]"></select>
+                <!-- {{newperson.old_department | json}} -->
+                <!-- {{universities[university_array[newperson.old_university]] | json}} -->
+                <!-- {{newperson.department}}  -->
+                нет моего института
+                <input type="checkbox" ng-model="no_department">&nbsp;&nbsp;&nbsp;&nbsp;<span ng-show="no_department">введи название института <input type="text" size="30" ng-model="newperson.department"></span></li>
+              <li><strong>Год поступления: </strong>
+                <input type="number" min="1900" max="3000" ng-model="newperson.entance_university_year" size="{{(newperson.entance_university_year).length}}" /> <i>введи год поступления таким образом, чтобы корректно отображался твой курс обучения ({{getCourse(newperson.entance_university_year)}})</i> </li>
             </ul>
-          <input type="submit" class="btn btn-success" value="Сохранить"></input>
+            <input type="submit" class="btn btn-success" value="Сохранить"></input>
           </div>
         </div>
       </form>
@@ -107,9 +130,8 @@
         <input type="radio" value="{{group.num}}" name="group_r" ng-checked="window.getCookie('current_group')*1 == group.num*1" >{{group.rus}}<br></span>
       </div>
     </div>
-    <button type="button" class="btn btn-danger kill-user" ng-click="killUser()" ng-hide="canEdit">Удалить профиль</button>
+    <button type="button" class="btn btn-danger kill-user" ng-click="killUser()" ng-hide="notCSbutEdit">Удалить профиль</button>
   </div>
-
   <!--  -->
   <!-- доп. информация -->
   <div class="row own-row" ng-show="window.current_group>=window.groups.FIGHTER.num || user.id == window.getCookie('id')">
@@ -137,8 +159,8 @@
       <ul>
         <li ng-repeat="achv in achievements">
           <span ng-hide="achv.edit_flag">
-            {{achv.achievement}}, {{achv.start_year}} <span ng-show="achv.finish_year && achv.finish_year != achv.start_year">- {{achv.finish_year}}</span> г. 
-            <span ng-hide="achv.finish_year"> - н.в.</span>  &nbsp;&nbsp;
+            {{achv.achievement}}, {{achv.start_year}} <span ng-show="achv.finish_year && achv.finish_year != achv.start_year">- {{achv.finish_year}}</span> г.
+          <span ng-hide="achv.finish_year"> - н.в.</span> &nbsp;&nbsp;
           <a href="" ng-click="editAchv(achv)"><img src="/own/images/edit.png" width="15px" ng-show="edit_achiv"></a>
           <a href="" ng-click="deleteAchv(achv)"><img src="/own/images/delete.png" width="15px" ng-show="edit_achiv"></a>
           </span>

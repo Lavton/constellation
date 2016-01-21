@@ -26,7 +26,7 @@
       })
       // чтобы дату вводить
     window.initDatePicker($scope);
-    
+
     /*инициализация*/
     $scope.user = {};
     $scope.f_groups = _.toArray(window.groups)
@@ -60,11 +60,12 @@
           $scope.user.group_of_rights = 1 * $scope.user.group_of_rights;
           $scope.user.id = $scope.user.id * 1;
           $scope.user.uid = $scope.user.uid * 1;
-          $scope.canEdit = ($scope.user.id == window.getCookie('id') * 1) && window.current_group < window.groups.COMMAND_STAFF.num
+          $scope.user.entance_university_year *= 1;
+          $scope.notCSbutEdit = ($scope.user.id == window.getCookie('id') * 1) && window.current_group < window.groups.COMMAND_STAFF.num
         }
         $scope.user.isCandidate = Boolean($scope.user.isCandidate * 1);
         $scope.user.isFighter = Boolean($scope.user.isFighter * 1);
-
+        $scope.user.course = $scope.getCourse($scope.user.entance_university_year)
         $("a.profile_priv").attr("href", json.prev.mid)
         $("a.profile_next").attr("href", json.next.mid)
         if (!json.prev.mid) {
@@ -141,6 +142,8 @@
         }, 500); // анимируем скроолинг к элементу
 
       });
+      $scope.no_university = false;
+      $scope.no_department = false;
       $scope.master = angular.copy($scope.user);
       $scope.newperson = angular.copy($scope.user);
       $scope.newperson.status = 1;
@@ -150,39 +153,113 @@
       if ($scope.user.isFighter) {
         $scope.newperson.status = 3;
       }
-    };
 
-    /*отправляет на сервер изменения*/
-    $scope.editPersonSubmit = function(is_me) {
-      $scope.newperson.phone = window.getPhone($scope.newperson.phone);
-      $scope.newperson.second_phone = window.getPhone($scope.newperson.second_phone);
-      var data = angular.copy($scope.newperson);
-      $scope.user = angular.copy($scope.newperson);
-      if (is_me) {
-        data.id = 0;
+      // получить список универов
+      var data = {
+        "action": "get_university_list"
       }
-      data.action = "user_modify"
       $.ajax({
         type: "POST",
         url: "/handlers/user.php",
         dataType: "json",
         data: $.param(data)
       }).done(function(json) {
-        console.log(json)
-          // анимация на выходе
-        $(".user-edit").hide("slow");
-        $(".user-info").show("slow", function() {
-          setTimeout(function() {
-            var saved = $(".saved");
-            $(saved).stop(true, true);
-            $(saved).fadeIn("slow");
-            $(saved).fadeOut("slow");
-          }, 1000);
+        $scope.universities = _.groupBy(json.universities, "university")
+        $scope.university_array = ["--нет--"];
+        _.forEach($scope.universities, function(element, university) {
+          $scope.university_array.push(university);
         });
-        $('html, body').animate({
-          scrollTop: $("nav").offset().top
-        }, 500); // анимируем скроолинг к элементу
+        $scope.newperson.old_university = _.findIndex($scope.university_array,
+          function(uni) {
+            return uni == $scope.newperson.university;
+          })
+        if ($scope.newperson.old_university == -1) {
+          $scope.newperson.old_university = 0;
+        } else {
+          /*$scope.universities[$scope.university_array[$scope.newperson.old_university]]
+          [$scope.newperson.old_department].id;*/
+          $scope.newperson.old_department = _.findIndex($scope.universities[$scope.newperson.university], function(dep) {
+            return dep.department == $scope.newperson.department;
+          }) + ""
+        }
+        $scope.newperson.old_university += ""
+
+        $scope.$apply();
+        console.log("univ", $scope.universities)
+        console.log("univ", $scope.university_array)
       })
+
+    };
+
+    /*отправляет на сервер изменения*/
+    $scope.editPersonSubmit = function(is_me) {
+      // сначала создаём новый университет+институт, если нужно
+      if (($scope.no_university || $scope.no_department) && ($scope.newperson.university && $scope.newperson.department)) {
+        var data = {
+          "action": "new_university",
+          "university": $scope.newperson.university,
+          "department": $scope.newperson.department
+        }
+        console.log(data)
+        $.ajax({
+          type: "POST",
+          url: "/handlers/user.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(json) {
+          console.log("univ", json)
+
+          $scope.newperson.university_id = json.id
+          send_user()
+        })
+      } else {
+        // строчка "--нет--" для универа
+        // debugger;
+        if (!($scope.newperson.old_university * 1)) {
+          $scope.newperson.university_id = 0
+          $scope.newperson.university = null;
+          $scope.newperson.department = null;
+          $scope.newperson.entance_university_year = null;
+        } else {
+          $scope.newperson.university_id = $scope.universities[$scope.university_array[$scope.newperson.old_university]][$scope.newperson.old_department].id;
+          $scope.newperson.university = $scope.universities[$scope.university_array[$scope.newperson.old_university]][$scope.newperson.old_department].university;
+          $scope.newperson.department = $scope.universities[$scope.university_array[$scope.newperson.old_university]][$scope.newperson.old_department].department;
+        }
+        send_user()
+      }
+
+      function send_user() {
+        // теперь отправляем изменения о пользователе
+        $scope.newperson.phone = window.getPhone($scope.newperson.phone);
+        $scope.newperson.second_phone = window.getPhone($scope.newperson.second_phone);
+        var data = angular.copy($scope.newperson);
+        $scope.user = angular.copy($scope.newperson);
+        if (is_me) {
+          data.id = 0;
+        }
+        data.action = "user_modify"
+        $.ajax({
+          type: "POST",
+          url: "/handlers/user.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(json) {
+          console.log(json)
+            // анимация на выходе
+          $(".user-edit").hide("slow");
+          $(".user-info").show("slow", function() {
+            setTimeout(function() {
+              var saved = $(".saved");
+              $(saved).stop(true, true);
+              $(saved).fadeIn("slow");
+              $(saved).fadeOut("slow");
+            }, 1000);
+          });
+          $('html, body').animate({
+            scrollTop: $("nav").offset().top
+          }, 500); // анимируем скроолинг к элементу
+        })
+      }
     }
 
     // убирает форму редактирования
@@ -311,6 +388,18 @@
         $scope.$apply();
 
       });
+    }
+
+    // подбирает факультеты под универ
+    $scope.changeUniversity = function(id) {
+
+    }
+
+    $scope.getCourse = function(year) {
+      var d1 = new Date(year + '-09-01')
+      var d2 = new Date()
+      var years = (d2 - d1) / (1000 * 60 * 60 * 24 * 365) + 1
+      return Math.floor(years);
     }
   }
 
