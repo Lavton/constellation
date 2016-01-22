@@ -1,6 +1,6 @@
 /*перемещение вдоль платформы*/
 
-Pace = function(leftCells,  rightCells) {
+Pace = function(leftCells, rightCells) {
   this.lastAdvanceTime = 0; //  milliseconds
   this.wasTurned = false;
   this.leftCells = leftCells;
@@ -15,17 +15,21 @@ Pace.prototype = {
 
     if (sRight > pRight && sprite.direction === magicNumbers.direction.RIGHT) {
       sprite.direction = magicNumbers.direction.LEFT;
-      sprite.artist.cells=this.leftCells;
+      sprite.artist.cells = this.leftCells;
       this.wasTurned = true;
     } else if (sprite.left < sprite.platform.left &&
       sprite.direction === magicNumbers.direction.LEFT) {
       sprite.direction = magicNumbers.direction.RIGHT;
-      sprite.artist.cells=this.rightCells;
+      sprite.artist.cells = this.rightCells;
       this.wasTurned = true;
     }
   },
 
   moveSprite: function(sprite, fps) {
+    // костыль
+    if (fps <= 2) {
+      fps = 2;
+    }
     var pixelsToMove = sprite.velocityX / fps;
     if (sprite.direction === magicNumbers.direction.RIGHT) {
       sprite.left += pixelsToMove;
