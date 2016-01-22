@@ -1043,9 +1043,11 @@ ConstellationGame.prototype = {
   },
   createSprites: function(is_man) {
     if (is_man) {
+      window.is_man = true;
       this.runnerCellsRight = this.runnerManCellsRight;
       this.runnerCellsLeft = this.runnerManCellsLeft;
     } else {
+      window.is_man = false;
       this.runnerCellsRight = this.runnerWomanCellsRight;
       this.runnerCellsLeft = this.runnerWomanCellsLeft;
     }
