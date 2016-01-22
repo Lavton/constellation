@@ -25,6 +25,7 @@
           <img src="/own/images/close.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&&detachment.childrenEdit" ng-click="editChildrenDel(key)"><img src="/own/images/white.jpg" width="15px"  style="display: block;" align="right">
           <img src="/own/images/check.png" width="15px" style="display: block;" align="right" ng-show="canEditDet(key)&&detachment.childrenEdit" ng-click="editChildrenOK(key)">
         </span>
+        
         <br ng-show="canEditDet(key) || detachment[0].children_num">
         <span ng-show="detachment[0].children_dis || canEditDet(key)"><strong>описание отряда:</strong> <input type="text" ng-show="detachment.childrenEdit" ng-model="detachment[0].children_dis"> {{detachment[0].children_dis}}</span>
       </li>
