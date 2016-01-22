@@ -3,86 +3,86 @@ var cellsFactory = function() {
   // Бегущая девочка.........................................................
 
   this.runnerWomanCellsRight = [{
-      left: 58,
-      top: 13,
-      width: 46,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 102,
-      top: 13,
-      width: 45,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 148,
-      top: 12,
-      width: 43,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 194,
-      top: 10,
-      width: 44,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 238,
-      top: 13,
-      width: 48,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 289,
-      top: 14,
-      width: 40,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 330,
-      top: 12,
-      width: 44,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 11,
+      left: 77,
       top: 9,
-      width: 41,
+      width: 49,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 129,
+      top: 9,
+      width: 66,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 196,
+      top: 9,
+      width: 59,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 262,
+      top: 9,
+      width: 49,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 325,
+      top: 9,
+      width: 47,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 381,
+      top: 9,
+      width: 61,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 448,
+      top: 9,
+      width: 60,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 9,
+      top: 9,
+      width: 54,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, ],
 
     this.runnerWomanCellsLeft = [{
-      left: 281,
-      top: 87,
-      width: 47,
+      left: 388,
+      top: 92,
+      width: 49,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, {
-      left: 328,
-      top: 87,
-      width: 41,
+      left: 450,
+      top: 92,
+      width: 53,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, {
       left: 7,
-      top: 86,
-      width: 44,
+      top: 92,
+      width: 56,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, {
-      left: 52,
-      top: 87,
-      width: 40,
-      height: magicNumbers.RUNNER_CELLS_HEIGHT
-    }, {
-      left: 96,
-      top: 86,
-      width: 48,
+      left: 73,
+      top: 92,
+      width: 60,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, {
       left: 141,
-      top: 87,
-      width: 44,
+      top: 92,
+      width: 48,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, {
-      left: 192,
-      top: 87,
-      width: 43,
+      left: 203,
+      top: 92,
+      width: 48,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, {
-      left: 236,
-      top: 87,
-      width: 45,
+      left: 259,
+      top: 92,
+      width: 60,
+      height: magicNumbers.RUNNER_CELLS_HEIGHT
+    }, {
+      left: 323,
+      top: 92,
+      width: 61,
       height: magicNumbers.RUNNER_CELLS_HEIGHT
     }, ];
 

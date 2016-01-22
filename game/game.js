@@ -1040,6 +1040,7 @@ ConstellationGame.prototype = {
     sprite.top = platformSprite.top - sprite.height;
     sprite.left = platformSprite.left;
     sprite.platform = platformSprite;
+    console.error(platformSprite, sprite)
   },
   createSprites: function(is_man) {
     if (is_man) {

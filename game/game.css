@@ -283,7 +283,7 @@ body {
 #score_deps {
   color: #ff0;
   position: absolute;
-  margin-top: -40px;
+  margin-top: -65px;
   margin-left: 5px;
   left: 1060px;
   -webkit-transition: opacity 2s;
