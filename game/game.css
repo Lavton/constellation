@@ -314,7 +314,7 @@ body {
   z-index: 2;
 }
 
-#final-score {
+#final-score-man, #final-score-girl {
   font: 26px fantasy;
   color: green;
 }

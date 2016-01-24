@@ -783,13 +783,13 @@ ConstellationGame.prototype = {
   },
 
   showEnding: function(id) {
-    var fallingElement = document.getElementById(id);
+    var fallingElement = document.getElementById(id + (window.is_man ? "-man" : "-girl"));
     fallingElement.style.display = 'block';
 
     setTimeout(function() {
       fallingElement.style.opacity = 1.0;
     }, 10);
-    document.getElementById("final-score").innerHTML = constellationGame.score;
+    document.getElementById("final-score-man").innerHTML = constellationGame.score;
     var des = "я заработал " + constellationGame.score + " очков в игре starCapture от СПО \"СОзвездие\"! Сможешь ли ты?";
     var url = 'http://vkontakte.ru/share.php?';
     url += 'url=' + encodeURIComponent("http://spo-sozvezdie.hol.es/game/game.html");
@@ -797,8 +797,8 @@ ConstellationGame.prototype = {
     url += '&description=' + encodeURIComponent(des);
     url += '&image=' + encodeURIComponent("http://spo-sozvezdie.hol.es/game/images/for_vk_man.png");
     url += '&noparse=true';
-    document.getElementById("share-vk").href = url
-    fallingElement.innerHTML += document.getElementById("common-ending").innerHTML;
+    document.getElementById("share-vk-man").href = url
+    fallingElement.innerHTML += document.getElementById("common-ending-man").innerHTML;
 
     var total_pics_num = 3; // колличество изображений
     var interval = 3000; // задержка между изображениями
