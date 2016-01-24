@@ -789,16 +789,20 @@ ConstellationGame.prototype = {
     setTimeout(function() {
       fallingElement.style.opacity = 1.0;
     }, 10);
-    document.getElementById("final-score-man").innerHTML = constellationGame.score;
+    document.getElementById("final-score" + (window.is_man ? "-man" : "-girl")).innerHTML = constellationGame.score;
     var des = "я заработал " + constellationGame.score + " очков в игре starCapture от СПО \"СОзвездие\"! Сможешь ли ты?";
+    if (!window.is_man) {
+      des = "я заработала " + constellationGame.score + " очков в игре starCapture от СПО \"СОзвездие\"! Сможешь ли ты?";
+    }
+    var u_image = (window.is_man) ? "http://spo-sozvezdie.hol.es/game/images/for_vk_man.png" : "http://spo-sozvezdie.hol.es/game/images/for_vk_girl.png";
     var url = 'http://vkontakte.ru/share.php?';
     url += 'url=' + encodeURIComponent("http://spo-sozvezdie.hol.es/game/game.html");
     url += '&title=' + encodeURIComponent("starCapture от СПО \"СОзвездие\"");
     url += '&description=' + encodeURIComponent(des);
-    url += '&image=' + encodeURIComponent("http://spo-sozvezdie.hol.es/game/images/for_vk_man.png");
+    url += '&image=' + encodeURIComponent(u_image);
     url += '&noparse=true';
-    document.getElementById("share-vk-man").href = url
-    fallingElement.innerHTML += document.getElementById("common-ending-man").innerHTML;
+    document.getElementById("share-vk"+ (window.is_man ? "-man" : "-girl")).href = url
+    fallingElement.innerHTML += document.getElementById("common-ending"+ (window.is_man ? "-man" : "-girl")).innerHTML;
 
     var total_pics_num = 3; // колличество изображений
     var interval = 3000; // задержка между изображениями
@@ -811,9 +815,9 @@ ConstellationGame.prototype = {
     function fade_to_next() {
       opacity--;
       var k = i + 1;
-      var image_now = id + '_' + i;
+      var image_now = id + '_' + i+(window.is_man ? "" : "_girl");
       if (i == total_pics_num) k = 1;
-      var image_next = id + '_' + k;
+      var image_next = id + '_' + k+(window.is_man ? "" : "_girl");
       document.getElementById(image_now).style.opacity = opacity / 100;
       document.getElementById(image_now).style.filter = 'alpha(opacity=' + opacity + ')';
       document.getElementById(image_next).style.opacity = (100 - opacity) / 100;
