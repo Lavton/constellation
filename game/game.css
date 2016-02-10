@@ -318,3 +318,9 @@ body {
   font: 26px fantasy;
   color: green;
 }
+
+.selected {
+  border-style: dotted;
+  border-color: red;
+  border-width: medium;
+}

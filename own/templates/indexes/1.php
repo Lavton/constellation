@@ -6,7 +6,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG)
   <div class="starter-template">
   <h3>ПРИХОДИ НА ПЕРВУЮ ШКОЛУ ВОЖАТСКОГО МАСТЕРСТВА<br>
   16 февраля, ауд. 232 Главного Здания СПбПУ Петра Великого</h3>
-  <!-- <h4> и играй в <a href="/game/game.html"> нашу игру</a>. Победителям - призы</h4> -->
+  <h4> и играй в <a href="/game/game.html"> нашу игру</a>. Победителям - призы</h4>
     <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
       <div id="myTabContent" class="tab-content">
         <div role="tabpanel" class="tab-pane fade active in" id="adm" aria-labelledby="adm-tab">

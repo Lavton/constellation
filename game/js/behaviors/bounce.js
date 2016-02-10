@@ -33,9 +33,9 @@
 //         and easing in on the way down.
 
 BounceBehavior = function(riseTime, fallTime, distance) {
-  this.riseTime = riseTime || 1000;
-  this.fallTime = fallTime || 1000;
-  this.distance = distance || 30;
+  this.riseTime = riseTime || 2000;
+  this.fallTime = fallTime || 1700;
+  this.distance = distance || 150;
 
   this.riseTimer = new AnimationTimer(this.riseTime,
     AnimationTimer.makeEaseOutTransducer(1.2));

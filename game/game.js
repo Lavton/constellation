@@ -1108,15 +1108,39 @@ ConstellationGame.prototype = {
 };
 
 // Event handlers.......................................................
-
+window.nowSelected = "p"
 window.onkeydown = function(e) {
+  
+  var key = e.keyCode;
   if (!window.playing) {
+    console.log(e.keyCode)
+    if (key == 13) {
+      if (window.state == 0) {
+        window.state = 1;
+        document.getElementById("go-play").click();
+      } else if (window.state == 1) {
+        if (window.nowSelected == "p") {
+          document.getElementById('man-play').click()
+        } else {
+          document.getElementById('woman-play').click()
+        }
+      }
+    }
+    if (key == 39) {
+      window.nowSelected = "d"
+      document.getElementById("parn").removeAttribute("class")
+      document.getElementById("devu").className = "selected"
+    }
+    if (key == 37) {
+      window.nowSelected = "p"
+      document.getElementById("devu").removeAttribute("class")
+      document.getElementById("parn").className = "selected"
+    }
     return;
   }
   if (constellationGame == null) {
     return;
   }
-  var key = e.keyCode;
   if (key === 80 || (constellationGame.paused && key !== 80)) { // 'p'
     constellationGame.togglePaused();
   }
@@ -1239,6 +1263,7 @@ setTimeout(function() {
 }, 10);
 
 document.getElementById('go-play').onclick = function(e) {
+  window.state = 1;
   e.preventDefault();
   var CREDITS_REVEAL_DELAY = 2000;
 
@@ -1293,3 +1318,4 @@ document.getElementById('game-canvas').onclick = function(e) {
   var h = e.offsetY;
   console.log(w, h)
 }
+window.state = 0;
