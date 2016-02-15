@@ -759,6 +759,20 @@ ConstellationGame.prototype = {
   },
 
   gameOver: function() {
+    // отправка на серв о том, что ты закончил игру
+    var data = {
+    action: "set",
+    "one": constellationGame.score
+  }
+   $$a({
+        type:'post',//тип запроса: get,post либо head
+        url:'/game/game_ch.php',//url адрес файла обработчика
+        "data":data,//параметры запроса
+        response:'json',//тип возвращаемого ответа text либо xml
+        success:function (data) {//возвращаемый результат от сервера
+        }
+    });
+
     constellationGame.canvas.style.opacity = 1.0;
 
     setTimeout(function() {
@@ -803,7 +817,6 @@ ConstellationGame.prototype = {
     url += '&noparse=true';
     document.getElementById("share-vk"+ (window.is_man ? "-man" : "-girl")).href = url
     fallingElement.innerHTML += document.getElementById("common-ending"+ (window.is_man ? "-man" : "-girl")).innerHTML;
-
     var total_pics_num = 3; // колличество изображений
     var interval = 3000; // задержка между изображениями
     var time_out = 1; // задержка смены изображений
@@ -1319,3 +1332,41 @@ document.getElementById('game-canvas').onclick = function(e) {
   console.log(w, h)
 }
 window.state = 0;
+
+function setCookie (name, value, expires, path, domain, secure) {
+      document.cookie = name + "=" + escape(value) +
+        ((expires) ? "; expires=" + expires : "") +
+        ((path) ? "; path=" + path : "") +
+        ((domain) ? "; domain=" + domain : "") +
+        ((secure) ? "; secure" : "");
+}
+
+// возвращает cookie с именем name, если есть, если нет, то undefined
+function getCookie(name) {
+  var matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+if (!getCookie("visit_game")) {
+  var data = {
+    action: "set",
+    "one": "1"
+  }
+   $$a({
+        type:'post',//тип запроса: get,post либо head
+        url:'/game/game_ch.php',//url адрес файла обработчика
+        "data":data,//параметры запроса
+        response:'json',//тип возвращаемого ответа text либо xml
+        success:function (data) {//возвращаемый результат от сервера
+        }
+    });
+
+  // $.ajax({
+  //   type: "POST",
+  //   url: "/game/game_ch.php",
+  //   dataType: "json",
+  //   data: $.param(data)
+  // }).done(function(json) {})
+}
+setCookie("visit_game", "1", 60*60*24*30)

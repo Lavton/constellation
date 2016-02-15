@@ -194,7 +194,7 @@ var platformFactory = function() {
         },
         {
             left: 3534,
-            width: 90,
+            width: 110,
             height: magicNumbers.PLATFORM_HEIGHT,
             fillStyle: 'rgb(23,140,100)',
             opacity: 1.0,

@@ -31,6 +31,9 @@ var dataFactory = function() {
             left: 3550,
             top: 71
         }, {
+            left: 4071,
+            top: 184
+        },{
             left: 4724,
             top: 71
         },
