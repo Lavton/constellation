@@ -84,9 +84,9 @@ if (isset($_GET["id"]) && (isset($_SESSION["current_group"]) && ($_SESSION["curr
     <form ng-submit="editEventSubmit()">
         <div class="col-xs-5 info-str">
           <ul>
-            <li ng-hide="event.shift_id">  отметить как <abbr title="отмечая мероприятие как планируемое, вы показываете людям, что только думаете о проведении мероприятия, без каких-либо гарантий">планируемое</abbr>
-               <input type="checkbox" ng-model="newevent.planning"> 
-            </li>
+            <!-- <li ng-hide="event.shift_id">  отметить как <abbr title="отмечая мероприятие как планируемое, вы показываете людям, что только думаете о проведении мероприятия, без каких-либо гарантий">планируемое</abbr> -->
+               <!-- <input type="checkbox" ng-model="newevent.planning">  -->
+            <!-- </li> -->
             <li ng-hide="event.shift_id"><span ng-hide="newevent.parent_id"> Базовое мероприятие:  <select ng-change="changeBase(newevent.base_id)" ng-model="newevent.base_id" ng-options="value.id as value.name for (key , value) in eventsBase"></select> </span></li>
     <li ng-hide="event.shift_id"><span ng-hide="newevent.base_id"> Головное мероприятие: <select ng-model="newevent.parent_id" ng-options="value.id as value.name for (key , value) in pos_parents"></select></span>
       <br>

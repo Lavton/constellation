@@ -74,8 +74,8 @@
       $scope.edit_ev = false;
       $scope.newevent = {
         "visibility": 3,
-        "start_time": "00:00",
-        "finish_time": "23:59",
+        "start_time": "18:30",
+        "finish_time": "22:00",
         "auto_parent": true,
         "planning": false
       }

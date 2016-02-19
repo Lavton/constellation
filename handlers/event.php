@@ -66,7 +66,7 @@ function add_new_event() {
 
 		// записываем в мероприятия
 		$res2 = inserter($link, "EventsEvents", array("id" => $result["id"], "contact" => $_POST["contact"], 
-			"planning" => ((bool)$_POST["planning"])));
+			"planning" => False));
 		// записываем редактирующего
 		$res3 = inserter($link, "EventsEventsEditors", array("editor" => $_POST["editor"], "event" => $result["id"]));
 		// автоматическая запись на мероприятие для человека, создавшего его.
