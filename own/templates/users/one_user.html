@@ -79,7 +79,7 @@
                 <input type="date" ng-model="newperson.birthdate" class="date" size="{{(newperson.birthdate).length}}" /> {{newperson.birthdate}}
               </li>
               <li ng-hide="notCSbutEdit"><strong>Права доступа*: </strong>
-                <input type="number" min="1" max="7" ng-model="newperson.group_of_rights" /> ({{window.groups[window.visibilities[newperson.group_of_rights]].rus}})</li>
+                <input type="number" min="1" max="7" ng-model="newperson.group_of_rights" ng-init="newperson.group_of_rights*1" />  ({{window.groups[window.visibilities[newperson.group_of_rights]].rus}})</li>
               <li ng-show="notCSbutEdit"><strong>Права доступа: </strong>{{newperson.group_of_rights}} ({{window.groups[window.visibilities[newperson.group_of_rights]].rus}})</li>
               <br>
               <br>
@@ -95,7 +95,7 @@
               </li>
               <li ng-show="notCSbutEdit"><strong>Год вступления в отряд: </strong>{{newperson.year_of_entrance}}</li>
               <li ng-hide="notCSbutEdit"><strong>Год вступления в отряд*: </strong>
-                <input type="number" min="2000" max="3000" ng-model="newperson.year_of_entrance" size="{{(newperson.year_of_entrance).length}}" />
+                <input type="number" min="2000" max="3000" ng-model="newperson.year_of_entrance" size="{{(newperson.year_of_entrance).length}}" ng-init="newperson.year_of_entrance*1"/>
               </li>
               </span>
               <br>
@@ -121,7 +121,7 @@
           </div>
         </div>
       </form>
-      <div ng-show="user.id == window.getCookie('id')">
+      <div ng-show="user.id == window.getCookie('id') && user.isFighter">
         <h2>Выбрать категорию доступа</h2>
         <i>данное поле влияет на то, как вы видите страницы.</i>
         <span class="saved">  (Изменения сохранены)</span>

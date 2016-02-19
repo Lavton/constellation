@@ -127,7 +127,8 @@ function get_one_info() {
 			LEFT JOIN University AS Un ON Un.id = UUC.university_id
 			WHERE UM.id='" . $_POST['id'] . "';";
 
-		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER))) {
+			// если боец выпрашивает - больше сведений. Ровно как и если сам про себя.
+		if ((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= FIGHTER)) || ($_POST['id'] == $_SESSION["id"])) {
 			$query = "SELECT UM.id, UM.uid, UM.first_name, UM.last_name, UM.middle_name, UM.phone,
 			UM.birthdate, UM.group_of_rights, IFNULL(UF.id, 0) AS isFighter, UF.second_phone,
 			UF.email, UF.instagram_id, UF.year_of_entrance, UF.nickname, UF.maiden_name, 

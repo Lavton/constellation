@@ -61,8 +61,9 @@
           $scope.user.id = $scope.user.id * 1;
           $scope.user.uid = $scope.user.uid * 1;
           $scope.user.entance_university_year *= 1;
-          $scope.notCSbutEdit = ($scope.user.id == window.getCookie('id') * 1) && window.current_group < window.groups.COMMAND_STAFF.num
+          $scope.notCSbutEdit = ($scope.user.id == window.getCookie('id') * 1) && window.current_group < window.groups.COMMAND_STAFF.num;
         }
+        $scope.user.group_of_rights = 1 * $scope.user.group_of_rights;
         $scope.user.isCandidate = Boolean($scope.user.isCandidate * 1);
         $scope.user.isFighter = Boolean($scope.user.isFighter * 1);
         $scope.user.course = $scope.getCourse($scope.user.entance_university_year)
@@ -153,6 +154,7 @@
       if ($scope.user.isFighter) {
         $scope.newperson.status = 3;
       }
+      $scope.newperson.group_of_rights *= 1;
 
       // получить список универов
       var data = {
