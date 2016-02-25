@@ -4,9 +4,7 @@
 if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG) || (!(isset($_SESSION["vk_id"])))) {
 ?>
   <div class="starter-template">
-  <h3>ПРИХОДИ НА ПЕРВУЮ ШКОЛУ ВОЖАТСКОГО МАСТЕРСТВА<br>
-  16 февраля, ауд. 232 Главного Здания СПбПУ Петра Великого</h3>
-  <h4> и играй в <a href="/game/game.html"> нашу игру</a>. Победителям - призы</h4>
+  <h3>Наши ШВМ - каждый вторник в 316 аудитории <a href="https://pp.vk.me/c629217/v629217287/3aab5/1RmsBFdycvw.jpg" target="_blank">ГК!</a><br> Приходи, ждем всех!</h3>
     <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
       <div id="myTabContent" class="tab-content">
         <div role="tabpanel" class="tab-pane fade active in" id="adm" aria-labelledby="adm-tab">

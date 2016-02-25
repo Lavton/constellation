@@ -216,12 +216,13 @@ function user_modify() {
 		if ($_POST["id"] == 0) {
 			$_POST["id"] = $_SESSION["id"];
 		}
-		if ($_POST["university_id"] == 0) {
+		if (isset($_POST["university_id"]) && $_POST["university_id"] == 0) {
 			$res = deleter($link, "UniversityUserConn", "user_id=" . $_POST["id"]);
 		}
-		$res = inserter($link, "UniversityUserConn", array("user_id" => $_POST["id"], 
+		if (isset($_POST["university_id"]) && isset($_POST["entance_university_year"])){
+			$res = inserter($link, "UniversityUserConn", array("user_id" => $_POST["id"], 
 				"university_id" => $_POST["university_id"], "entance_university_year" => $_POST["entance_university_year"]), True, True);
-
+		}
 		mysqli_close($link);
 		echo json_encode($result);
 	} else {

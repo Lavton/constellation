@@ -66,12 +66,12 @@
             <ul>
               <li ng-hide="notCSbutEdit"> статус*:
                 <select ng-model="newperson.status" ng-change="newStatus(newperson.status)" ng-options="value.id as value.title for (key , value) in pos_status"></select> {{newperson.status}}</li>
-              <li ng-show="notCSbutEdit"><strong>статус:</strong> <span ng-show="newperson.isFighter">боец</span>
-                <span ng-show="newperson.isCandidate">кандидат</span></li>
+              <li ng-show="notCSbutEdit"><strong>статус:</strong> <span ng-show="user.isFighter">боец</span>
+                <span ng-show="user.isCandidate">кандидат</span></li>
               <li ng-hide="notCSbutEdit"><strong>vk: </strong>
                 <input type="text" class="vk-domain vk_input" ng-model="newperson.uid" size="{{(newperson.uid).length}}" />
               </li>
-              <li ng-show="notCSbutEdit"><strong>vk: </strong><a target='_blank' href='//vk.com/{{newperson.domain}}'>vk.com/{{newperson.domain}}</a></li>
+              <li ng-show="notCSbutEdit"><strong>vk: </strong><a target='_blank' href='//vk.com/{{user.domain}}'>vk.com/{{user.domain}}</a></li>
               <li><strong>Телефон:</strong>
                 <input type="text" ng-model="newperson.phone" size="{{(newperson.phone).length}}" />
               </li>

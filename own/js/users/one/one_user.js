@@ -39,6 +39,7 @@
         $scope.$apply();
       }
       initialize();
+
     });
 
     function initialize() {
@@ -54,15 +55,15 @@
         data: $.param(data)
       }).done(function(json) {
         _.extend($scope.user, json.user);
-
         if ($scope.user.year_of_entrance) {
           $scope.user.year_of_entrance = 1 * $scope.user.year_of_entrance;
           $scope.user.group_of_rights = 1 * $scope.user.group_of_rights;
           $scope.user.id = $scope.user.id * 1;
           $scope.user.uid = $scope.user.uid * 1;
           $scope.user.entance_university_year *= 1;
-          $scope.notCSbutEdit = ($scope.user.id == window.getCookie('id') * 1) && window.current_group < window.groups.COMMAND_STAFF.num;
         }
+
+        $scope.notCSbutEdit = ($scope.user.id == window.getCookie('id') * 1) && (window.current_group < window.groups.COMMAND_STAFF.num);
         $scope.user.group_of_rights = 1 * $scope.user.group_of_rights;
         $scope.user.isCandidate = Boolean($scope.user.isCandidate * 1);
         $scope.user.isFighter = Boolean($scope.user.isFighter * 1);
@@ -83,6 +84,7 @@
           uid: $scope.user.uid,
           id: userid
         }
+      
         $.ajax({ //TODO: make with angular
           type: "POST",
           url: "/handlers/user.php",
@@ -103,6 +105,7 @@
             $(".achiv-info").removeClass("hidden");
             $scope.$apply();
           }
+
         });
 
         $scope.$apply();
@@ -123,6 +126,8 @@
           function(response) {
             $scope.user.photo = response[$scope.user.uid].photo_200;
             $scope.$apply();
+        
+
           }
         );
       });
@@ -196,13 +201,15 @@
     /*отправляет на сервер изменения*/
     $scope.editPersonSubmit = function(is_me) {
       // сначала создаём новый университет+институт, если нужно
-      if (($scope.no_university || $scope.no_department) && ($scope.newperson.university && $scope.newperson.department)) {
+      // console.log("hello", is_me)
+
+      if (($scope.no_university || $scope.no_department) && ($scope.newperson.university || $scope.newperson.department)) {
         var data = {
           "action": "new_university",
-          "university": $scope.newperson.university,
+          "university": $scope.newperson.university || $scope.university_array[$scope.newperson.old_university],
           "department": $scope.newperson.department
         }
-        console.log(data)
+        console.log("UNI",data)
         $.ajax({
           type: "POST",
           url: "/handlers/user.php",
@@ -210,13 +217,11 @@
           data: $.param(data)
         }).done(function(json) {
           console.log("univ", json)
-
           $scope.newperson.university_id = json.id
           send_user()
         })
       } else {
         // строчка "--нет--" для универа
-        // debugger;
         if (!($scope.newperson.old_university * 1)) {
           $scope.newperson.university_id = 0
           $scope.newperson.university = null;
@@ -240,13 +245,14 @@
           data.id = 0;
         }
         data.action = "user_modify"
+          console.log("SEND USER", data)
         $.ajax({
           type: "POST",
           url: "/handlers/user.php",
           dataType: "json",
           data: $.param(data)
         }).done(function(json) {
-          console.log(json)
+          console.log("GET USER", json)
             // анимация на выходе
           $(".user-edit").hide("slow");
           $(".user-info").show("slow", function() {

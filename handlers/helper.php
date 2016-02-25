@@ -79,20 +79,21 @@ function updater($link, $table, $data, $is_by_id=True, $condition="") {
 function deleter($link, $table, $condition="") {
 	if (!Passwords::$is_local) {
 		$DB_Fk = json_decode(file_get_contents("DB_Foreign_keys.json"),true);
-
+		$result["table"] = $table;
 		// для всех зависимостей
-		foreach ($DB_Fk[$table] as $key => $value) {
-			// ищем строки, которые подвергнуться редактированию
-			$query = "SELECT ".$value['ref']." AS ref_value FROM ".$table." WHERE ".$condition;
-			$rt = mysqli_query($link, $query) or die('Запрос не удался: '. $query);
-			while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
-				// если каскадно - удаляем
-				if ($value["del"] == "cascade") {
-					deleter($link, $value["name"], "".$value["fk"]."='".$line["ref_value"]."'");
-
-				// иначе - выставляем на ноль.
-				} else {
-					updater($link, $value["name"], array($value["fk"] => "NULL"), False, "".$value["fk"]."='".$line["ref_value"]."'");
+		if (isset($DB_Fk[$table])) {
+			foreach ($DB_Fk[$table] as $key => $value) {
+				// ищем строки, которые подвергнуться редактированию
+				$query = "SELECT ".$value['ref']." AS ref_value FROM ".$table." WHERE ".$condition;
+				$rt = mysqli_query($link, $query) or die('Запрос не удался: '. $query);
+				while ($line = mysqli_fetch_array($rt, MYSQL_ASSOC)) {
+					// если каскадно - удаляем
+					if ($value["del"] == "cascade") {
+						deleter($link, $value["name"], "".$value["fk"]."='".$line["ref_value"]."'");
+					// иначе - выставляем на ноль.
+					} else {
+						updater($link, $value["name"], array($value["fk"] => "NULL"), False, "".$value["fk"]."='".$line["ref_value"]."'");
+					}
 				}
 			}
 		}
