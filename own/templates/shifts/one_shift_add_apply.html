@@ -8,7 +8,7 @@
         <span ng-repeat="(ind, person) in detachment">
         <!-- {{person | json}} -->
           <span ng-show="person.user">
-            <a href="/about/users/{{person.id}}" target="_blank">
+            <a href="/about/users/{{person.user}}" target="_blank">
               <img ng-src="{{person.photo}}" width="20">
             </a>
             {{person.first_name}} {{person.last_name}}

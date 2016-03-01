@@ -114,7 +114,7 @@ window.initDatePicker = function($scope, before_in) {
     if (before_in) {
       before_in();
     }
-    
+
     if (self2) {
       $scope.$apply();
     }
@@ -291,6 +291,10 @@ window.getPerson = function(uid, callback) {
 var vk_users = {};
 var vk_request_response = {};
 
+function __innerVKData() {
+
+}
+
 /* делает запрос к вконтакте */
 function getVkData(ids, fields, callback) {
   /*если мы передали один id, запихнём его в массив*/
@@ -322,7 +326,6 @@ function getVkData(ids, fields, callback) {
         };    
     }
   */
-
   /*позволяем добавлять адрес типа https://vk.com/lavton */
   var without_vk_com = [];
   _.each(ids, function(element, index_f, list_f) {
@@ -332,22 +335,20 @@ function getVkData(ids, fields, callback) {
       without_vk_com.push(element.split("vk.com/")[element.split("vk.com/").length - 1])
     }
   })
-  var data_vk = {
-    "user_ids": _.unique(without_vk_com),
-    "fields": fields
+  vk_idddds = _.unique(without_vk_com)
+
+  // ВК не воспринимает большие запросы :(
+  response_count = Math.ceil(vk_idddds.length / 150)
+  for (var i = 0; i < response_count; i++) {
+    linearer(vk_idddds.slice(i * 150, (i + 1) * 150))
   }
-  $.ajax({
-    type: "GET",
-    url: "https://api.vk.com/method/users.get",
-    dataType: "jsonp",
-    data: $.param(data_vk)
-  }).done(function(json) {
-    console.log("go to VK.")
-    if (json.error == undefined) {
-      console.log("Get")
-      console.log(json.response);
-      for (var i = 0; i < json.response.length; i++) {
-        var vk_user = json.response[i];
+  var need_json = []
+
+  function post_process(resp) {
+    need_json = need_json.concat(resp)
+    if (need_json.length == vk_idddds.length) {
+      for (var i = 0; i < resp.length; i++) {
+        var vk_user = resp[i];
         /* Если мы спросили фотку, но не получили - ставим заглушку*/
         var leng = _.filter(fields, function(field) {
           return field == "photo_200";
@@ -383,7 +384,6 @@ function getVkData(ids, fields, callback) {
           vk_users[uid][index] = element;
         })
       }
-
       /*сопоставим ответ и исходный запрос*/
       var result = {};
       _.each(ids, function(element, index, list) {
@@ -391,20 +391,20 @@ function getVkData(ids, fields, callback) {
           element += ""
           var clear_el = element.split("vk.com/")[element.split("vk.com/").length - 1];
           /*считаем, что передали доменное имя*/
-          result[element] = _.findWhere(json.response, {
+          result[element] = _.findWhere(need_json, {
             "domain": clear_el
           });
           /*если нет - наверно строку вида id1*/
           if (result[element] == undefined) {
             if (clear_el.search("id") == 0) {
-              result[element] = _.findWhere(json.response, {
+              result[element] = _.findWhere(need_json, {
                 "uid": clear_el.split("id")[1] * 1
               });
             }
           }
           /*если нет - может чистый id?*/
           if (result[element] == undefined) {
-            result[element] = _.findWhere(json.response, {
+            result[element] = _.findWhere(need_json, {
               "uid": clear_el * 1
             });
           }
@@ -422,87 +422,109 @@ function getVkData(ids, fields, callback) {
       if (callback) {
         callback(result)
       };
-      return true;
-    } else {
-      console.log("error");
-      var result = {};
-      _.each(ids, function(element, index, list) {
-        /*считаем, что передали доменное имя*/
-        result[element] = undefined;
-      });
-      if (callback) {
-        callback(result)
-      };
-      return false;
     }
-  });
+  }
+  var ending = []
+
+  function linearer(vk_ids) {
+    var data_vk = {
+      "user_ids": vk_ids,
+      "fields": fields
+    }
+
+    $.ajax({
+      type: "GET",
+      url: "https://api.vk.com/method/users.get",
+      dataType: "jsonp",
+      data: $.param(data_vk)
+    }).done(function(json) {
+      console.log("go to VK.")
+      if (json.error == undefined) {
+        console.log("Get")
+        console.log(json.response);
+        post_process(json.response);
+
+        return true;
+      } else {
+        console.log("error");
+        var result = {};
+        _.each(ids, function(element, index, list) {
+          /*считаем, что передали доменное имя*/
+          result[element] = undefined;
+        });
+        if (callback) {
+          callback(result)
+        };
+        return false;
+      }
+    });
+  }
 
 }
 
 // сохраняет мероприятия в кеш для доступа к ним оффлайн
 window.getEventsToOffline = function(force) {
-  console.log("events loaded")
-  if (force || ((!(_.isArray(window.events))) || (!window.events.length))) {
-    var events = [];
+    console.log("events loaded")
+    if (force || ((!(_.isArray(window.events))) || (!window.events.length))) {
+      var events = [];
 
-    function supports_html5_storage() {
-      try {
-        return 'localStorage' in window && window['localStorage'] !== null;
-      } catch (e) {
-        return false;
+      function supports_html5_storage() {
+        try {
+          return 'localStorage' in window && window['localStorage'] !== null;
+        } catch (e) {
+          return false;
+        }
       }
-    }
-    var hasLocal = supports_html5_storage();
-    if (force || ((!hasLocal) || (hasLocal && !window.localStorage.getItem("events")))) {
-      var data = {
-        "action": "get_events_for_offline"
-      }
-      $.ajax({
-        type: "POST",
-        url: "/handlers/event.php",
-        dataType: "json",
-        data: $.param(data)
-      }).done(function(json) {
-        var comments = []
-        _.each(json.events, function(element, index, list) {
-          comments.push({
-            id: element.id,
-            comment: element.comments
-          });
-        });
-        var bbdata = {
-          bbcode: comments,
-          ownaction: "bbcodesToHtml"
-        };
+      var hasLocal = supports_html5_storage();
+      if (force || ((!hasLocal) || (hasLocal && !window.localStorage.getItem("events")))) {
+        var data = {
+          "action": "get_events_for_offline"
+        }
         $.ajax({
           type: "POST",
-          url: "/standart/markitup/sets/bbcode/parser.php",
-          dataType: 'json',
-          global: false,
-          data: $.param(bbdata)
-        }).done(function(rdata) {
+          url: "/handlers/event.php",
+          dataType: "json",
+          data: $.param(data)
+        }).done(function(json) {
+          var comments = []
           _.each(json.events, function(element, index, list) {
-            element.comments = _.findWhere(rdata, {
-              id: element.id + ""
-            }).bbcomment;
+            comments.push({
+              id: element.id,
+              comment: element.comments
+            });
           });
-          window.events = json.events;
-          if (hasLocal) {
-            window.localStorage.setItem("events", JSON.stringify(window.events))
-          }
-        })
+          var bbdata = {
+            bbcode: comments,
+            ownaction: "bbcodesToHtml"
+          };
+          $.ajax({
+            type: "POST",
+            url: "/standart/markitup/sets/bbcode/parser.php",
+            dataType: 'json',
+            global: false,
+            data: $.param(bbdata)
+          }).done(function(rdata) {
+            _.each(json.events, function(element, index, list) {
+              element.comments = _.findWhere(rdata, {
+                id: element.id + ""
+              }).bbcomment;
+            });
+            window.events = json.events;
+            if (hasLocal) {
+              window.localStorage.setItem("events", JSON.stringify(window.events))
+            }
+          })
 
-      });
-    } else {
-      if (hasLocal) {
-        console.log("cached")
-        window.events = JSON.parse(window.localStorage.getItem("events"))
+        });
+      } else {
+        if (hasLocal) {
+          console.log("cached")
+          window.events = JSON.parse(window.localStorage.getItem("events"))
+        }
       }
-    }
-  } else {
+    } else {}
   }
-}
-// при каждой перезагрузке подгружаем и это
+  // при каждой перезагрузке подгружаем и это
 window.getEventsToOffline(true)
 
 window.clearEventsOffline = function() {
