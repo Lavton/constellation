@@ -16,6 +16,7 @@
     $scope.candidats = [];
     $scope.adding = {};
     $scope.adding.vk_likes = {};
+    $scope.me = {}
     $(".shift-info").removeClass("hidden")
       /*инициализация*/
     window.setPeople(function() {
@@ -107,6 +108,9 @@
             $("div.me-comments").html(rdata); // почему-то бинд не работает(
             $scope.$apply();
           })
+        } else {
+          $scope.me = {}
+          $scope.$apply();
         }
 
         var comments = [];

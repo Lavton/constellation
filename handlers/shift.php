@@ -654,7 +654,7 @@ function del_from_shift() {
 	check_session();
 	session_start();
 	if (isset($_SESSION["current_group"])) {
-		if (isset($_POST["id"])) {
+		if (isset($_POST["user"])) {
 			if (!((isset($_SESSION["current_group"]) && ($_SESSION["current_group"] >= COMMAND_STAFF)))) {
 				echo json_encode(array('result' => "Fail"));
 				return;
@@ -675,6 +675,7 @@ function del_from_shift() {
 		}
 		$link->set_charset("utf8");
 		$result = deleter($link, "EventsSupply", "user=".$_POST["user"]." AND event=".$_POST["event"]);
+		$result = $_POST;
 		mysqli_close($link);
 		echo json_encode($result);
 	}
