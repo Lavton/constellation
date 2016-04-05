@@ -25,6 +25,7 @@
       <li><a href="map" class="ajax-nav">территория и люди</a></li>
       <li><a href="time" class="ajax-nav">распорядок, периоды и мероприятия</a></li>
       <li><a href="age" class="ajax-nav">возрастные особенности</a></li>
+      <li><a href="social" class="ajax-nav">социальные дети</a></li>
       <li><a href="conflicts" class="ajax-nav">конфликты</a></li>
       <li><a href="partners" class="ajax-nav">напарники</a></li>
       <hr>
