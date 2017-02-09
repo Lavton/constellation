@@ -4,7 +4,8 @@
 if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG) || (!(isset($_SESSION["vk_id"])))) {
 ?>
   <div class="starter-template">
-  <h3>Наши ШВМ - каждый вторник в 316 аудитории <a href="https://pp.vk.me/c629217/v629217287/3aab5/1RmsBFdycvw.jpg" target="_blank">ГК!</a><br> Приходи, ждем всех!</h3>
+<!--   <h3>Наши ШВМ - каждый вторник в 316 аудитории <a href="https://pp.vk.me/c629217/v629217287/3aab5/1RmsBFdycvw.jpg" target="_blank">ГК!</a><br> Приходи, ждем всех!</h3> -->
+  <h3>Первая Школа Вожатского Мастерства - <a href="https://vk.com/sozvezdie_school?w=wall-19748633_6788%2Fall" target="_blank">14 февраля 232 аудитории ГЗ СПбПУ!</a> <br> Приходи, ждем всех!</h3>
     <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
       <div id="myTabContent" class="tab-content">
         <div role="tabpanel" class="tab-pane fade active in" id="adm" aria-labelledby="adm-tab">
@@ -22,7 +23,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG)
               <div class="item active">
                 <!-- <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide"> -->
                 <img class="first-slide" src="/own/templates/indexes/images/S.jpg" alt="First slide">
-  
+
                 <div class="carousel-caption">
                   <div class="container">
                     <div class="carousel-caption">
@@ -98,7 +99,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG)
     </div>
     <div class="col-xs-4">
       <h1>CПО "СОзвездие"</h1>
-      <p class="lead">Мы - 
+      <p class="lead">Мы -
         <ul>
         <u>
           <li><b>С</b>туденческий - большинство из нас студенты ВУЗов</li>
@@ -107,7 +108,7 @@ if (isset($_SESSION["current_group"]) && ($_SESSION["current_group"]*1 == UNREG)
         </u>
         </ul>
       </p>
-      <p class="lead">Хочешь к нам? приходи на ШВМы! 
+      <p class="lead">Хочешь к нам? приходи на ШВМы!
         Любые вопросы можно задать в группе <a href="https://vk.com/sozvezdie_school" target="_blank">ВК</a>
       </p>
       <p class="lead"> Если вы - представитель лагеря и ищете молодых и активных вожатых - пишите <a href="https://vk.com/page-19748633_38662439" target="blank">сюда</a> </p>
